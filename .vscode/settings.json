@@ -1,0 +1,9 @@
+{
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "html.format.indentInnerHtml": true,
+  "editor.insertSpaces": false,
+  "css.customData": ["./.vscode/.css-data.json"],
+  "editor.formatOnSave": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
