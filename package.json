@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A monorepo for Datum UI apps and supporting libraries",
   "repository": "git@github.com:datumforge/datum-ui.git",
-  "author": "springerkc <jordan@showmewebs.com>",
+  "author": "datum <info@datum.net>",
   "license": "Apache-2.0",
   "private": true,
   "scripts": {

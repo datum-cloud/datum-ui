@@ -1,0 +1,9 @@
+version: "3"
+
+tasks:
+  install:
+    desc: installs tools and packages needed to develop against the datum-ui repo
+    cmds:
+      - "curl -fsSL https://bun.sh/install | bash"
+      - "bun install"
+      - "npm install turbo --global"
