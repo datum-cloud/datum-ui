@@ -1,0 +1,40 @@
+{
+	"name": "@repo/ui",
+	"version": "0.0.0",
+	"private": true,
+	"sideEffects": [
+		"**/*.css"
+	],
+	"exports": {
+		"./styles.css": "./dist/index.css",
+		"./button": "./src/button.tsx",
+		"./card": "./src/card.tsx",
+		"./code": "./src/code.tsx"
+	},
+	"scripts": {
+		"build": "tailwindcss -i ./src/styles.css -o dist/index.css",
+		"lint": "eslint src/",
+		"dev": "tailwindcss -i ./src/styles.css -o ./dist/index.css --watch",
+		"type-check": "tsc --noEmit"
+	},
+	"peerDependencies": {
+		"react": "latest"
+	},
+	"devDependencies": {
+		"@repo/eslint-config": "workspace:*",
+		"@repo/tailwind-config": "workspace:*",
+		"autoprefixer": "latest",
+		"@turbo/gen": "latest",
+		"@types/node": "latest",
+		"@types/eslint": "latest",
+		"@types/react": "latest",
+		"@types/react-dom": "latest",
+		"eslint": "latest",
+		"@mui/base": "latest",
+		"postcss": "latest",
+		"postcss-nesting": "latest",
+		"tailwindcss": "latest",
+		"tsup": "latest",
+		"typescript": "latest"
+	}
+}
