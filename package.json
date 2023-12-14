@@ -1,31 +1,31 @@
 {
-  "name": "datum-ui",
-  "version": "1.0.0",
-  "description": "A monorepo for Datum UI apps and supporting libraries",
-  "repository": "git@github.com:datumforge/datum-ui.git",
-  "author": "springerkc <jordan@showmewebs.com>",
-  "license": "Apache-2.0",
-  "private": true,
-  "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev --parallel",
-    "type-check": "turbo type-check",
-    "clean": "turbo clean",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
-  },
-  "devDependencies": {
-    "eslint": "latest",
-    "prettier": "latest",
-    "prettier-plugin-tailwindcss": "latest",
-    "turbo": "latest"
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "packageManager": "bun@1.0.15",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+	"name": "datum-ui",
+	"version": "1.0.0",
+	"description": "A monorepo for Datum UI apps and supporting libraries",
+	"repository": "git@github.com:datumforge/datum-ui.git",
+	"author": "datum <info@datum.net>",
+	"license": "Apache-2.0",
+	"private": true,
+	"scripts": {
+		"build": "turbo build",
+		"dev": "turbo dev --parallel",
+		"type-check": "turbo type-check",
+		"clean": "turbo clean",
+		"lint": "turbo lint",
+		"format": "prettier --write \"**/*.{ts,tsx,md}\""
+	},
+	"devDependencies": {
+		"eslint": "latest",
+		"prettier": "latest",
+		"prettier-plugin-tailwindcss": "latest",
+		"turbo": "latest"
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"packageManager": "bun@1.0.15",
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	]
 }
