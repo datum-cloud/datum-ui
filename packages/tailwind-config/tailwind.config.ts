@@ -1,15 +1,15 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss'
 
 // We want each package to be responsible for its own content.
-const config: Omit<Config, "content"> = {
+export const config: Omit<Config, 'content'> = {
   theme: {
     extend: {
-      backgroundImage: {
-        "glow-conic":
-          "conic-gradient(from 180deg at 50% 50%, #2a8af6 0deg, #a853ba 180deg, #e92a67 360deg)",
+      colors: {
+        'surface-0': '#F5F5F7',
+        'dk-surface-0': '#383238',
+        'orange-0': '#F37967',
       },
     },
   },
-  plugins: [],
-};
-export default config;
+}
+export default config

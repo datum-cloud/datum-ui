@@ -1,10 +1,10 @@
-"use client";
+'use client'
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react'
 
 interface ButtonProps {
-  children: ReactNode;
-  appName: string;
+  children: ReactNode
+  appName: string
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -13,13 +13,13 @@ export const Button: React.FC<ButtonProps> = ({
 }: ButtonProps) => {
   return (
     <button
-      className="ui-px-4 ui-py-8 ui-bg-blue-600"
+      className="ui-px-4 ui-py-3 ui-bg-orange-0 ui-rounded-md ui-mt-4 ui-mx-auto ui-text-white"
       onClick={() => alert(appName)}
       type="button"
     >
       {children}
     </button>
-  );
-};
+  )
+}
 
-export default Button;
+export default Button
