@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { Button } from '@repo/ui/button'
 import logoReversed from '../../public/logos/full_reversed.svg'
 
-export const Landing: React.FC = () => {
+const Landing: React.FC = () => {
   return (
     <main className="flex flex-col min-h-screen w-full items-center space-between sp-24 dark:bg-dk-surface-0 bg-surface-0">
       <div className="flex flex-col justify-center mx-auto my-auto w-full p-6 sm:w-1/3 h-full relativee ease-in-out">
