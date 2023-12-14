@@ -37,5 +37,12 @@ module.exports = {
 	// add rules configurations here
 	rules: {
 		"import/no-default-export": "off",
+		"no-console": 1,
+		"no-alert": 1,
+		"@typescript-eslint/no-confusing-void-expression": 0,
+		"react/function-component-definition": [2, {
+			namedComponents: "arrow-function",
+			unnamedComponents: "arrow-function",
+		}],
 	},
 };
