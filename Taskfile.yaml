@@ -1,0 +1,31 @@
+version: "3"
+
+env:
+
+tasks:
+  build:
+    desc: build all apps and package
+    cmd: bun run build
+  
+  install:
+    desc: install the dependencies listed in package.json
+    cmds: 
+      - bun install
+
+  dev:
+    desc: develop all apps
+    cmds:
+      - task: install
+      - bun dev
+
+  dev:docs:
+    desc: develop docs
+    cmds:
+      - task: install
+      - bun dev --filter docs
+
+  dev:operator:
+    desc: develop docs
+    cmds:
+      - task: install
+      - bun dev --filter operator
