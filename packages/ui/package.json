@@ -21,18 +21,17 @@
 		"react": "latest"
 	},
 	"devDependencies": {
+		"@mui/base": "latest",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tailwind-config": "workspace:*",
-		"autoprefixer": "latest",
-		"@turbo/gen": "latest",
 		"@types/node": "latest",
 		"@types/eslint": "latest",
 		"@types/react": "latest",
 		"@types/react-dom": "latest",
+		"autoprefixer": "latest",
 		"eslint": "latest",
-		"@mui/base": "latest",
 		"postcss": "latest",
-		"postcss-nesting": "latest",
+		"react": "latest",
 		"tailwindcss": "latest",
 		"tsup": "latest",
 		"typescript": "latest"
