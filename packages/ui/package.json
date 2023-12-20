@@ -8,8 +8,10 @@
 	"exports": {
 		"./styles.css": "./dist/index.css",
 		"./button": "./src/button.tsx",
+		"./text-input": "./src/text-input.tsx",
 		"./card": "./src/card.tsx",
-		"./code": "./src/code.tsx"
+		"./code": "./src/code.tsx",
+		"./simple-form": "./src/simple-form.tsx"
 	},
 	"scripts": {
 		"build": "tailwindcss -i ./src/styles.css -o dist/index.css",
@@ -29,6 +31,7 @@
 		"@types/react": "latest",
 		"@types/react-dom": "latest",
 		"autoprefixer": "latest",
+		"clsx": "latest",
 		"eslint": "latest",
 		"postcss": "latest",
 		"react": "latest",
