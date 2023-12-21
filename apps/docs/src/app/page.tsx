@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import Image from 'next/image'
 import { Button } from '@repo/ui/button'
@@ -14,7 +16,12 @@ const Landing: React.FC = () => {
           src={logoReversed as string}
           width={385}
         />
-        <Button appName="Datum susUI Docs">Let&apos;s read some docs</Button>
+        <Button
+          onClick={(e) => alert('susUI Docs app')}
+          className="w-full mt-8"
+        >
+          Let&apos;s read some docs
+        </Button>
       </div>
     </main>
   )
