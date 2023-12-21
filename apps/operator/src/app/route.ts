@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 
-export async function GET(request: Request) {
+export function GET(request: Request) {
   /**
    * EXAMPLE:
    * Stub auth logic

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@repo/ui/button'
 import { TextInput } from '@repo/ui/text-input'
-import SimpleForm from '@repo/ui/simple-form'
+import { SimpleForm } from '@repo/ui/simple-form'
 import logoReversed from '../../../../public/logos/full_reversed.svg'
 
 const AuthLogin: React.FC = () => {
@@ -21,7 +21,9 @@ const AuthLogin: React.FC = () => {
         />
         <div className="flex flex-col mt-8 justify-start">
           <SimpleForm
-            onSubmit={(e: any) => console.log('submit form json data => ', e)}
+            onSubmit={(e: object) => {
+              console.log('submit form json data => ', e)
+            }}
             classNames="space-y-2"
           >
             <TextInput name="email" placeholder="email@domain.net" />

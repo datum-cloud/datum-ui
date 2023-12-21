@@ -17,8 +17,10 @@ const Landing: React.FC = () => {
           width={385}
         />
         <Button
-          onClick={(e) => alert('susUI Docs app')}
           className="w-full mt-8"
+          onClick={() => {
+            console.log('susUI Docs app')
+          }}
         >
           Let&apos;s read some docs
         </Button>

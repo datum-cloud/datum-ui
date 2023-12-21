@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react'
 
-export const Form: React.FC<any> = ({
+export const SimpleForm: React.FC<any> = ({
   children,
   action,
   onSubmit,
@@ -42,4 +42,4 @@ export const Form: React.FC<any> = ({
   )
 }
 
-export default Form
+export default SimpleForm
