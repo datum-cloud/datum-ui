@@ -1,15 +1,13 @@
-version: "3"
-
-env:
+version: '3'
 
 tasks:
   build:
     desc: build all apps and package
     cmd: bun run build
-  
+
   install:
     desc: install the dependencies listed in package.json
-    cmds: 
+    cmds:
       - bun install
 
   dev:
@@ -22,10 +20,10 @@ tasks:
     desc: develop docs
     cmds:
       - task: install
-      - bun dev --filter docs
+      - bun dev --filter-{apps/docs}
 
   dev:operator:
     desc: develop docs
     cmds:
       - task: install
-      - bun dev --filter operator
+      - bun dev --filter={apps/operator}

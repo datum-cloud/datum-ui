@@ -5,11 +5,13 @@
 	"compilerOptions": {
 		"lib": [
 			"ES2015",
-			"DOM"
+			"DOM",
+			"DOM.Iterable"
 		],
 		"module": "ESNext",
 		"target": "ES6",
 		"jsx": "react-jsx",
-		"noEmit": true
+		"noEmit": true,
+		"downlevelIteration": true
 	}
 }
