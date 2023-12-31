@@ -20,7 +20,7 @@ tasks:
     desc: develop docs
     cmds:
       - task: install
-      - bun dev --filter-{apps/docs}
+      - bun dev --filter={apps/docs}
 
   dev:operator:
     desc: develop docs
