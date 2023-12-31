@@ -1,5 +1,10 @@
 version: '3'
 
+env: 
+  # env vars needed for the auth stubs
+  AUTH_SECRET: $(openssl rand -base64 32)
+  AUTH_ALLOWED_EMAILS: demo@datum.net
+
 tasks:
   build:
     desc: build all apps and package
