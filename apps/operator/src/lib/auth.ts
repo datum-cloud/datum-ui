@@ -44,7 +44,7 @@ export const config = {
     }),
   ],
   callbacks: {
-    jwt: ({ token, user }) => {
+    jwt: ({ token }) => {
       /**
        * Here is we persist and data we want into the JWT
        * that isn't there by default
