@@ -8,6 +8,10 @@
 			"dependsOn": [
 				"^build"
 			],
+			"env": [
+				"NODE_ENV",
+				"AUTH_ALLOWED_EMAILS"
+			],
 			"outputs": [
 				"dist/**",
 				".next/**",

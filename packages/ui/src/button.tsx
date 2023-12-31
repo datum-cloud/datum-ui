@@ -1,8 +1,9 @@
 'use client'
 
-import React from 'react'
-import clsx from 'clsx'
-import { Button as MButton, ButtonProps } from '@mui/base/Button'
+import * as React from 'react'
+import { clsx } from 'clsx'
+import { Button as MButton } from '@mui/base/Button'
+import type { ButtonProps } from '@mui/base/Button'
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
@@ -14,11 +15,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           `ui-px-4 ui-py-3 ui-bg-orange-0 ui-rounded-md ui-text-white`,
           className,
         )}
+        ref={ref}
       >
         {children}
       </MButton>
     )
   },
 )
+
+Button.displayName = 'Button'
 
 export default Button

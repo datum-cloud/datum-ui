@@ -11,6 +11,9 @@ module.exports = {
 		"@vercel/style-guide/eslint/next",
 		"eslint-config-turbo",
 	].map(require.resolve),
+	plugins: [
+		"eslint-plugin-tsdoc",
+	],
 	parserOptions: {
 		project,
 	},
@@ -31,7 +34,17 @@ module.exports = {
 	ignorePatterns: ["node_modules/", "dist/"],
 	// add rules configurations here
 	rules: {
-		"import/no-default-export": "off",
-		"no-console": "warn",
+		"import/no-default-export": 0,
+		"no-console": 1,
+		"no-unsafe-unassignment": 0,
+		"tsdoc/syntax": 0,
+		"react/function-component-definition": ["off", {
+			namedComponents: "arrow-function",
+			unnamedComponents: "arrow-function",
+		}],
+		"@typescript-eslint/no-unsafe-argument": 0,
+		"@typescript-eslint/no-explicit-any": 0,
+		"@typescript-eslint/no-floating-promises": 0,
+		"@typescript-eslint/explicit-function-return-type": 0
 	},
 };

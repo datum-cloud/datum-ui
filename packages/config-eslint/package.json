@@ -4,6 +4,7 @@
 	"private": true,
 	"devDependencies": {
 		"@vercel/style-guide": "latest",
-		"eslint-config-turbo": "latest"
+		"eslint-config-turbo": "latest",
+		"eslint-plugin-tsdoc": "latest"
 	}
 }
