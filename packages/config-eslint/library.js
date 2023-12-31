@@ -7,6 +7,9 @@ module.exports = {
 		"@vercel/style-guide/eslint/node",
 		"@vercel/style-guide/eslint/typescript",
 	].map(require.resolve),
+	plugins: [
+		"eslint-plugin-tsdoc",
+	],
 	parserOptions: {
 		project,
 	},
@@ -25,4 +28,13 @@ module.exports = {
 		},
 	},
 	ignorePatterns: ["node_modules/", "dist/"],
+	rules: {
+		"import/no-default-export": 0,
+		"no-console": "warn",
+		"no-unsafe-unassignment": 0,
+		"tsdoc/syntax": "warn",
+		"@typescript-eslint/no-unsafe-argument": 0,
+		"@typescript-eslint/no-explicit-any": 0,
+		"@typescript-eslint/no-floating-promises": 0,
+	},
 };

@@ -21,10 +21,10 @@ const Landing: React.FC = () => {
         />
         <div className="flex flex-col mt-8 justify-start">
           <SimpleForm
+            classNames="space-y-2"
             onSubmit={(e: object) => {
               console.log('submit form json data => ', e)
             }}
-            classNames="space-y-2"
           >
             <TextInput name="name" placeholder="Frodo Baggins" />
             <TextInput name="email" placeholder="email@domain.net" />
@@ -34,14 +34,14 @@ const Landing: React.FC = () => {
               placeholder="confirm password"
               type="password"
             />
-            <Button type="submit" className="mr-auto mt-2 w-full">
+            <Button className="mr-auto mt-2 w-full" type="submit">
               Sign In
             </Button>
           </SimpleForm>
           <div className="flex items-center mt-4">
             <Link
-              href="/login"
               className="text-base underline-offset-2 text-orange-0 underline"
+              href="/login"
             >
               Already have an account?
             </Link>

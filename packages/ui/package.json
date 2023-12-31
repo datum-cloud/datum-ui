@@ -11,7 +11,8 @@
 		"./text-input": "./src/text-input.tsx",
 		"./card": "./src/card.tsx",
 		"./code": "./src/code.tsx",
-		"./simple-form": "./src/simple-form.tsx"
+		"./simple-form": "./src/simple-form.tsx",
+		"./my-session": "./src/utils/session.ts"
 	},
 	"scripts": {
 		"build": "tailwindcss -i ./src/styles.css -o dist/index.css",

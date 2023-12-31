@@ -1,10 +1,28 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-
+import { SessionProvider } from 'next-auth/react'
+import localFont from 'next/font/local'
 import './globals.css'
 import '@repo/ui/styles.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const ftRegola = localFont({
+  src: [
+    {
+      path: './fonts/FTRegolaNeueTrial-Regular.woff',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: './fonts/FTRegolaNeueTrial-Medium.woff',
+      weight: '500',
+      style: 'medium',
+    },
+    {
+      path: './fonts/FTRegolaNeueTrial-Semibold.woff',
+      weight: '600',
+      style: 'semibold',
+    },
+  ],
+})
 
 export const metadata: Metadata = {
   title: 'Operator Portal | Datum | Start here, go anywhere',
@@ -18,7 +36,9 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html className="h-full relative" lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={ftRegola.className}>
+        <SessionProvider>{children}</SessionProvider>
+      </body>
     </html>
   )
 }

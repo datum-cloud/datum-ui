@@ -1,4 +1,5 @@
-import React, { FormEvent, useState } from 'react'
+import React, { useState } from 'react'
+import type { FormEvent } from 'react'
 
 export const SimpleForm: React.FC<any> = ({
   children,
@@ -27,15 +28,15 @@ export const SimpleForm: React.FC<any> = ({
 
   return (
     <form
-      id={id}
       action={action || 'submit'}
+      className={`${classNames} w-full`}
+      id={id}
       onChange={(e) =>
         onChange ? onChange(grabData(e)) : setValues(grabData(e))
       }
       onSubmit={(e) =>
         onSubmit ? onSubmit(grabData(e)) : setValues(grabData(e))
       }
-      className={`${classNames} w-full`}
     >
       {typeof children === 'function' ? children(values) : children}
     </form>
