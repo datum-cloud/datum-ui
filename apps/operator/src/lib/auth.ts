@@ -52,9 +52,6 @@ export const config = {
        * For this example, I just stubbed a fake JWT value
        * because we dont fetch anything from a DB
        */
-      token.id = user.id
-      token.name = user.name
-      token.email = user.email
 
       return token
     },
@@ -70,7 +67,6 @@ export const config = {
        * as that data is memoized in the Node process
        */
       if (session.user) {
-        session.user.id = token.id as string
         session.user.name = token.name
         session.user.email = token.email
       }
