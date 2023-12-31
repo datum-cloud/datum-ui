@@ -1,13 +1,8 @@
 'use client'
 import * as React from 'react'
-import clsx from 'clsx'
-import { Input as MInput, InputProps } from '@mui/base/Input'
-
-type TextInputProps = InputProps & {
-  name: string
-  id?: string
-  placeholder?: string
-}
+import { clsx } from 'clsx'
+import { Input as MInput } from '@mui/base/Input'
+import type { InputProps } from '@mui/base/Input'
 
 const resolveSlotProps = (fn: any, args: any) =>
   typeof fn === 'function' ? fn(args) : fn
@@ -38,5 +33,7 @@ export const TextInput = React.forwardRef<HTMLInputElement, InputProps>(
     )
   },
 )
+
+TextInput.displayName = 'TextInput'
 
 export default TextInput

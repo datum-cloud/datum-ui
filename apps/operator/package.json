@@ -12,7 +12,8 @@
 		"@repo/ui": "workspace:*",
 		"next": "latest",
 		"react": "latest",
-		"react-dom": "latest"
+		"react-dom": "latest",
+		"next-auth": "beta"
 	},
 	"devDependencies": {
 		"@next/eslint-plugin-next": "latest",
