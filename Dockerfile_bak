@@ -1,0 +1,22 @@
+FROM oven/bun:latest as builder
+
+WORKDIR /usr/src/app
+
+# COPY package*.json bun.lockb ./
+COPY . .
+RUN bun install --frozen-lockfile
+RUN bun run build
+
+FROM oven/bun:alpine
+RUN apk add --no-cache tini
+COPY --from=builder /user/src/app/dist .
+
+CMD ["/sbin/tini", "--", "bun", "run", "start"]
+
+# FROM oven/bun:alpine
+# RUN apk add --no-cache tini
+# COPY --from=builder /app/dist dist
+# COPY --from=builder /app/package.json .
+# COPY . .
+
+# CMD ["/sbin/tini", "--", "bun", "dev"]
