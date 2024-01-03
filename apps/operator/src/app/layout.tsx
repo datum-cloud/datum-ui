@@ -25,7 +25,10 @@ const ftRegola = localFont({
 })
 
 export const metadata: Metadata = {
-  title: 'Operator Portal | Datum | Start here, go anywhere',
+  title: {
+    template: '%s | Datum | Start here, go anywhere',
+    default: 'Operator Portal | Datum | Start here, go anywhere',
+  },
   description: 'The open source foundation of a sustainable digital world',
 }
 
@@ -36,7 +39,7 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html className="h-full relative" lang="en">
-      <body className={ftRegola.className}>
+      <body className={`${ftRegola.className} w-full h-full bg-[#F5F5F7]`}>
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

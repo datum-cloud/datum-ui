@@ -8,11 +8,12 @@
 	"exports": {
 		"./styles.css": "./dist/index.css",
 		"./button": "./src/button.tsx",
-		"./text-input": "./src/text-input.tsx",
 		"./card": "./src/card.tsx",
 		"./code": "./src/code.tsx",
-		"./simple-form": "./src/simple-form.tsx",
-		"./my-session": "./src/utils/session.ts"
+		"./drawer": "./src/drawer.tsx",
+		"./global-search": "./src/global-search.tsx",
+		"./text-input": "./src/text-input.tsx",
+		"./simple-form": "./src/simple-form.tsx"
 	},
 	"scripts": {
 		"build": "tailwindcss -i ./src/styles.css -o dist/index.css",
@@ -24,9 +25,11 @@
 		"react": "latest"
 	},
 	"devDependencies": {
-		"@mui/base": "latest",
+		"@headlessui/react": "latest",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tailwind-config": "workspace:*",
+		"@tailwindui/react": "latest",
+		"@tailwindcss/forms": "latest",
 		"@types/node": "latest",
 		"@types/eslint": "latest",
 		"@types/react": "latest",
