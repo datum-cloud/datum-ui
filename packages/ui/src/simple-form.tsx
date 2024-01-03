@@ -29,7 +29,7 @@ export const SimpleForm: React.FC<any> = ({
   return (
     <form
       action={action || 'submit'}
-      className={`${classNames} w-full`}
+      className={`${classNames}`}
       id={id}
       onChange={(e) =>
         onChange ? onChange(grabData(e)) : setValues(grabData(e))

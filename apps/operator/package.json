@@ -16,6 +16,7 @@
 		"next-auth": "beta"
 	},
 	"devDependencies": {
+		"@headlessui/react": "latest",
 		"@next/eslint-plugin-next": "latest",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
@@ -25,6 +26,7 @@
 		"@types/react": "latest",
 		"@types/react-dom": "latest",
 		"autoprefixer": "latest",
+		"clsx": "latest",
 		"eslint": "latest",
 		"postcss": "latest",
 		"tailwindcss": "latest",
