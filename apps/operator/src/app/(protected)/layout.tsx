@@ -18,8 +18,21 @@ export const metadata: Metadata = {
 }
 
 const navigation = [
-  { name: 'Dashboard', href: '#', icon: speedometerIcon, current: true },
-  { name: 'Carbon', href: '#', icon: carbonIcon, current: false },
+  {
+    name: 'Dashboard',
+    href: '#',
+    icon: speedometerIcon,
+    current: true,
+    detail: true,
+    children: [],
+  },
+  {
+    name: 'Carbon',
+    href: '#',
+    icon: carbonIcon,
+    current: false,
+    detail: false,
+  },
   { name: 'Tasks & Mentions', href: '#', icon: tasksIcon, current: false },
   { name: 'Inbox', href: '#', icon: envelopOpenIcon, current: false },
 ]
@@ -35,7 +48,6 @@ export default function RootLayout({
 
       {/* Static sidebar for desktop */}
       <div className="hidden lg:fixed lg:top-16 h-full lg:inset-y-0 lg:z-30 lg:flex lg:w-72 lg:flex-col bg-white dark:bg-peat-800 border-0 border-r-[1px] border-blackberry-400 dark:border-peat-700">
-        {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="flex grow flex-col gap-y-5 overflow-y-auto">
           <nav className="flex flex-1 flex-col px-6 py-4">
             <ul className="flex flex-1 flex-col gap-y-7">
@@ -46,9 +58,9 @@ export default function RootLayout({
                       <a
                         className={clsx(
                           item.current
-                            ? 'bg-gray-100 text-slate-800'
-                            : 'text-slate-800 hover:text-slate-700 hover:bg-gray-100',
-                          'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6',
+                            ? 'bg-blackberry-50 dark:bg-peat-700'
+                            : 'hover:bg-blackberry-100 hover:dark:bg-peat-900 hover:dark:text-blackberry-100',
+                          'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 transition-all ease-in-out',
                         )}
                         href={item.href}
                       >
@@ -69,7 +81,7 @@ export default function RootLayout({
         </div>
       </div>
 
-      <div className="fixed w-full top-0 z-40 flex items-center h-16 pr-4 bg-blackberry-800 dark:bg-peat-800 border-0 border-b-[1px] border-blackberry-400 dark:border-peat-700">
+      <div className="fixed w-full top-0 z-40 flex items-center h-16 pr-4 bg-blackberry-800 dark:bg-peat-800 border-0 border-b border-blackberry-400 dark:border-peat-700">
         <div className="flex items-center px-4">
           <Image alt="dataum logo" className="max-h-16" src={logo} />
         </div>

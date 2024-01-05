@@ -40,7 +40,7 @@ export default function RootLayout({
   return (
     <html className="h-full relative" lang="en">
       <body
-        className={`${ftRegola.className} w-full h-full dark:text-white dark:bg-peat-900 bg-blackberry-50 text-peat-900`}
+        className={`${ftRegola.className} w-full h-full dark:text-white dark:bg-peat-900 bg-blackberry-50 text-peat-800`}
       >
         <SessionProvider>{children}</SessionProvider>
       </body>

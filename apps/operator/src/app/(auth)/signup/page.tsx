@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { SimpleForm } from '@repo/ui/simple-form'
 import { TextInput } from '@repo/ui/text-input'
 import { Button } from '@repo/ui/button'
-import logoReversed from '../../../../public/logos/full_reversed.svg'
+import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
 const Landing: React.FC = () => {
   return (
@@ -40,7 +40,7 @@ const Landing: React.FC = () => {
           </SimpleForm>
           <div className="flex items-center mt-4">
             <Link
-              className="text-base underline-offset-2 text-orange-0 underline"
+              className="text-base text-sunglow-900 underline underline-offset-2"
               href="/login"
             >
               Already have an account?

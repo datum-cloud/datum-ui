@@ -2,6 +2,7 @@
 
 import { Fragment, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Dialog, Transition } from '@headlessui/react'
 import { clsx } from 'clsx'
 import logo from './assets/icon_logo.svg'
@@ -59,22 +60,20 @@ export const Drawer = ({ navigation }: any) => {
                 </div>
               </Transition.Child>
 
-              <div className="ui-flex ui-flex-col ui-w-full ui-gap-y-5 ui-overflow-y-auto dark:bg-peat-800 ui-px-6 ui-pb-4 ui-ring-1 ui-ring-white/10 ui-ease-in-out">
-                <div className="flex items-center px-4">
+              <div className="ui-flex ui-flex-col ui-w-full ui-gap-y-5 ui-overflow-y-auto dark:ui-bg-peat-800 ui-px-6 ui-pb-4 ui-ring-1 ui-ring-white/10 ease-in-out">
+                <div className="ui-flex ui-items-center px-4">
                   <Image src={logo} alt="dataum logo" className="max-h-16" />
                 </div>
                 <nav className="flex flex-1 flex-col">
-                  <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                  <ul className="flex flex-1 flex-col gap-y-7">
                     <li>
-                      <ul role="list" className="-mx-2 space-y-1">
+                      <ul className="-mx-2 space-y-1">
                         {navigation.map((item: any) => (
                           <li key={item.name}>
-                            <a
+                            <Link
                               href={item.href}
                               className={clsx(
-                                item.current
-                                  ? 'bg-gray-800 text-white'
-                                  : 'text-gray-400 hover:text-white hover:bg-gray-800',
+                                item.current ? '' : '',
                                 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold',
                               )}
                             >
@@ -85,7 +84,7 @@ export const Drawer = ({ navigation }: any) => {
                                 src={item.icon}
                               />
                               {item.name}
-                            </a>
+                            </Link>
                           </li>
                         ))}
                       </ul>

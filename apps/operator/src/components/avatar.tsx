@@ -27,10 +27,10 @@ export const Avatar = () => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+        <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white dark:bg-peat-900 py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
           <Menu.Item>
             <Link
-              className="text-slate-800 hover:text-slate-700 hover:bg-gray-100 group flex items-center gap-x-3 rounded-t-md p-2 text-sm leading-6"
+              className="hover:dark:bg-peat-800 hover:bg-blackberry-100 group flex items-center gap-x-3 rounded-t-md p-2 text-sm leading-6"
               href="/profile"
             >
               My Profile
@@ -39,7 +39,7 @@ export const Avatar = () => {
           <Menu.Item>
             <button
               type="button"
-              className="text-slate-800 hover:text-slate-700 hover:bg-gray-100 group flex items-center gap-x-3 rounded-b-md p-2 text-sm leading-6 w-full"
+              className="hover:dark:bg-peat-800 hover:bg-blackberry-100 group flex items-center gap-x-3 rounded-b-md p-2 text-sm leading-6 w-full"
               onClick={() => {
                 signOut()
               }}
