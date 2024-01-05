@@ -34,7 +34,7 @@ export default function RootLayout({
       <Drawer navigation={navigation} />
 
       {/* Static sidebar for desktop */}
-      <div className="hidden lg:fixed lg:top-16 h-full lg:inset-y-0 lg:z-30 lg:flex lg:w-72 lg:flex-col bg-white border-0 border-r-2 border-gray-200">
+      <div className="hidden lg:fixed lg:top-16 h-full lg:inset-y-0 lg:z-30 lg:flex lg:w-72 lg:flex-col bg-white dark:bg-peat-800 border-0 border-r-[1px] border-blackberry-400 dark:border-peat-700">
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="flex grow flex-col gap-y-5 overflow-y-auto">
           <nav className="flex flex-1 flex-col px-6 py-4">
@@ -69,7 +69,7 @@ export default function RootLayout({
         </div>
       </div>
 
-      <div className="fixed w-full top-0 z-40 flex items-center h-16 pr-4 bg-[#433A5B]">
+      <div className="fixed w-full top-0 z-40 flex items-center h-16 pr-4 bg-blackberry-800 dark:bg-peat-800 border-0 border-b-[1px] border-blackberry-400 dark:border-peat-700">
         <div className="flex items-center px-4">
           <Image alt="dataum logo" className="max-h-16" src={logo} />
         </div>

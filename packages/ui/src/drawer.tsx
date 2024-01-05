@@ -59,7 +59,7 @@ export const Drawer = ({ navigation }: any) => {
                 </div>
               </Transition.Child>
 
-              <div className="ui-flex ui-flex-col ui-w-full ui-gap-y-5 ui-overflow-y-auto ui-bg-gray-900 ui-px-6 ui-pb-4 ui-ring-1 ui-ring-white/10 ui-ease-in-out">
+              <div className="ui-flex ui-flex-col ui-w-full ui-gap-y-5 ui-overflow-y-auto dark:bg-peat-800 ui-px-6 ui-pb-4 ui-ring-1 ui-ring-white/10 ui-ease-in-out">
                 <div className="flex items-center px-4">
                   <Image src={logo} alt="dataum logo" className="max-h-16" />
                 </div>

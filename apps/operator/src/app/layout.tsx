@@ -39,7 +39,9 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html className="h-full relative" lang="en">
-      <body className={`${ftRegola.className} w-full h-full bg-[#F5F5F7]`}>
+      <body
+        className={`${ftRegola.className} w-full h-full dark:text-white dark:bg-peat-900 bg-blackberry-50 text-peat-900`}
+      >
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
