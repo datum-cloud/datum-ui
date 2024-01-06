@@ -38,11 +38,11 @@ export const Avatar = () => {
           </Menu.Item>
           <Menu.Item>
             <button
-              type="button"
               className="hover:dark:bg-peat-800 hover:bg-blackberry-100 group flex items-center gap-x-3 rounded-b-md p-2 text-sm leading-6 w-full"
               onClick={() => {
                 signOut()
               }}
+              type="button"
             >
               Logout
             </button>

@@ -38,93 +38,93 @@ const DashboardLanding: React.FC = () => {
           <div className="flex items-center w-full mb-4">
             <h2 className="text-lg">My Assets</h2>
             <Link
-              href="#"
               className="flex items-center ml-auto rounded px-2 py-1 border border-blackberry-400 dark:border-peat-700 font-light text-sm hover:bg-blackberry-100 hover:dark:bg-peat-700"
+              href="#"
             >
               view all
               <Image
-                src={arrowRight}
                 alt="view all assets icon"
                 className="w-3 ml-2"
+                src={arrowRight}
               />
             </Link>
           </div>
 
-          <div className="bg-blackberry-100 dark:bg-peat-700 rounded w-full flex-1 animate-pulse"></div>
+          <div className="bg-blackberry-100 dark:bg-peat-700 rounded w-full flex-1 animate-pulse" />
         </div>
         <div className="col-span-1 flex flex-col items-start justify-center rounded border border-blackberry-100 dark:border-peat-700 px-6 py-4 bg-white dark:bg-peat-800">
           <div className="flex items-center w-full mb-4">
             <h2 className="text-lg">Groups &amp; Users</h2>
             <Link
-              href="#"
               className="flex items-center ml-auto rounded px-2 py-1 border border-blackberry-400 dark:border-peat-700 font-light text-sm hover:bg-blackberry-100 hover:dark:bg-peat-700"
+              href="#"
             >
               view all
               <Image
-                src={arrowRight}
                 alt="view all assets icon"
                 className="w-3 ml-2"
+                src={arrowRight}
               />
             </Link>
           </div>
-          <div className="bg-blackberry-100 dark:bg-peat-700 rounded w-full flex-1 animate-pulse"></div>
+          <div className="bg-blackberry-100 dark:bg-peat-700 rounded w-full flex-1 animate-pulse" />
         </div>
         <div className="col-span-1 flex flex-col items-start justify-center rounded border border-blackberry-100 dark:border-peat-700 px-6 py-4 bg-white dark:bg-peat-800">
           <div className="flex items-center w-full mb-4">
             <h2 className="text-lg">Connected Integrations</h2>
             <Link
-              href="#"
               className="flex items-center ml-auto rounded px-2 py-1 border border-blackberry-400 dark:border-peat-700 font-light text-sm hover:bg-blackberry-100 hover:dark:bg-peat-700"
+              href="#"
             >
               view all
               <Image
-                src={arrowRight}
                 alt="view all assets icon"
                 className="w-3 ml-2"
+                src={arrowRight}
               />
             </Link>
           </div>
-          <div className="bg-blackberry-100 dark:bg-peat-700 rounded w-full flex-1 animate-pulse"></div>
+          <div className="bg-blackberry-100 dark:bg-peat-700 rounded w-full flex-1 animate-pulse" />
         </div>
         <div className="col-span-1 flex flex-col items-start justify-center rounded border border-blackberry-100 dark:border-peat-700 px-6 py-4 bg-white dark:bg-peat-800">
           <div className="flex items-center w-full mb-4">
             <h2 className="text-lg">Top Active Sessions</h2>
             <Link
-              href="#"
               className="flex items-center ml-auto rounded px-2 py-1 border border-blackberry-400 dark:border-peat-700 font-light text-sm hover:bg-blackberry-100 hover:dark:bg-peat-700"
+              href="#"
             >
               view all
               <Image
-                src={arrowRight}
                 alt="view all assets icon"
                 className="w-3 ml-2"
+                src={arrowRight}
               />
             </Link>
           </div>
           <Link
-            href="#"
             className="flex items-center mb-4 underline underline-offset-2 text-blue-400 dark:text-blue-200"
+            href="#"
           >
             Add Integration
           </Link>
-          <div className="bg-blackberry-100 dark:bg-peat-700 rounded w-full flex-1 animate-pulse"></div>
+          <div className="bg-blackberry-100 dark:bg-peat-700 rounded w-full flex-1 animate-pulse" />
         </div>
         <div className="col-span-1 flex flex-col items-start justify-center rounded border border-blackberry-100 dark:border-peat-700 px-6 py-4 bg-white dark:bg-peat-800">
           <div className="flex items-center w-full mb-4">
             <h2 className="text-lg">My Tasks</h2>
             <Link
-              href="#"
               className="flex items-center ml-auto rounded px-2 py-1 border border-blackberry-400 dark:border-peat-700 font-light text-sm hover:bg-blackberry-100 hover:dark:bg-peat-700"
+              href="#"
             >
               view all
               <Image
-                src={arrowRight}
                 alt="view all assets icon"
                 className="w-3 ml-2"
+                src={arrowRight}
               />
             </Link>
           </div>
-          <div className="bg-blackberry-100 dark:bg-peat-700 rounded w-full flex-1 animate-pulse"></div>
+          <div className="bg-blackberry-100 dark:bg-peat-700 rounded w-full flex-1 animate-pulse" />
         </div>
       </div>
     </section>

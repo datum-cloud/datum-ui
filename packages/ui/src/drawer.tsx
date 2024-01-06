@@ -17,7 +17,7 @@ export const Drawer = ({ routes }: any) => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      function handleResize() {
+      const handleResize = () => {
         /**
          * Window is going into mobile mode
          */
@@ -242,7 +242,7 @@ export const Drawer = ({ routes }: any) => {
                               <Image
                                 alt={`${item.name} icon`}
                                 aria-hidden="true"
-                                className="ui-h-auto ui-w-auto"
+                                className="ui-h-auto  ui-w-auto"
                                 src={item.icon}
                               />
                               <span

@@ -4,7 +4,6 @@ import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import logoReversed from '../../public/logos/logo_orange_icon.svg'
-import bg00 from '../../public/backgrounds/bg_01.svg'
 
 const Landing = () => {
   const router = useRouter()
