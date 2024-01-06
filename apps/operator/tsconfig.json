@@ -8,7 +8,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "postcss.config.js"
+    "postcss.config.js",
+    "../../packages/ui/src/alerts.tsx"
   ],
   "exclude": ["node_modules"]
 }

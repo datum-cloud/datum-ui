@@ -1,10 +1,8 @@
-'use client'
-
 import React from 'react'
 
 const DashboardLandingLoader: React.FC = () => {
   return (
-    <section className="rounded-md h-1/3 bg-gray-300 dark:bg-gray-600 animate-pulse" />
+    <section className="h-full w0full rounded bg-white dark:bg-peat-800 animate-pulse" />
   )
 }
 

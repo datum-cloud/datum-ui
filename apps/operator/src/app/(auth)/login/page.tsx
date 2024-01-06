@@ -50,7 +50,7 @@ const AuthLogin: React.FC = () => {
           </SimpleForm>
           <div className="flex items-center mt-4">
             <Link
-              className="text-base text-orange-0 underline underline-offset-2"
+              className="text-base text-sunglow-900 underline underline-offset-2"
               href="/signup"
             >
               Need to create an account?
