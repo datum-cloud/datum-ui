@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Dialog, Transition, Disclosure } from '@headlessui/react'
 import { clsx } from 'clsx'
 import logo from './assets/icon_logo.svg'
@@ -10,10 +11,11 @@ import chevronRight from './assets/chevron-right.svg'
 import bars from './assets/horizonal-bars.svg'
 import arrowRight from './assets/arrow-right.svg'
 
-export const Drawer = ({ routes }: any) => {
+export const Drawer = ({ routes, currentPath }: any) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [tabletMenuOpen, setTabletMenuOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -54,6 +56,27 @@ export const Drawer = ({ routes }: any) => {
       return () => window.removeEventListener('resize', handleResize)
     }
   }, [mobileMenuOpen, tabletMenuOpen])
+
+  routes.map((route: any) => {
+    route.current = false
+
+    if (route.children) {
+      route.current = pathname.includes(route.href)
+
+      route.children.map((childRoute: any) => {
+        childRoute.current = false
+        childRoute.current = pathname === childRoute.href
+      })
+    }
+
+    if (route.detail) {
+      route.current = pathname.includes(route.href)
+    }
+
+    if (!route.children || !route.detail) {
+      route.current = route.href === pathname
+    }
+  })
 
   return (
     <>
@@ -127,7 +150,7 @@ export const Drawer = ({ routes }: any) => {
                                         <Image
                                           alt={`${item.name} icon`}
                                           aria-hidden="true"
-                                          className="ui-h-4 w-4 ui-shrink-0"
+                                          className="ui-h-auto ui-w-auto"
                                           src={item.icon}
                                         />
                                         {item.name}
@@ -145,22 +168,24 @@ export const Drawer = ({ routes }: any) => {
                                         as="ul"
                                         className="ui-mt-1 ui-pl-6"
                                       >
-                                        {item?.children.map((child: any) => (
-                                          <li key={`${idx}_children`}>
-                                            <Disclosure.Button
-                                              as="a"
-                                              href={child.href}
-                                              className={clsx(
-                                                child.current
-                                                  ? 'ui-bg-blackberry-50 dark:ui-bg-peat-700'
-                                                  : 'hover:ui-bg-blackberry-100 hover:dark:ui-bg-peat-900 hover:dark:ui-text-blackberry-100',
-                                                'ui-group ui-flex ui-items-center ui-gap-x-3 ui-rounded-md ui-p-2 ui-text-sm ui-leading-6 ui-transition-all ui-ease-in-out',
-                                              )}
-                                            >
-                                              {child.name}
-                                            </Disclosure.Button>
-                                          </li>
-                                        ))}
+                                        {item?.children.map(
+                                          (child: any, cdx: number) => (
+                                            <li key={`${idx}_${cdx}_child`}>
+                                              <Disclosure.Button
+                                                as="a"
+                                                href={child.href}
+                                                className={clsx(
+                                                  child.current
+                                                    ? 'ui-bg-blackberry-50 dark:ui-bg-peat-700'
+                                                    : 'hover:ui-bg-blackberry-100 hover:dark:ui-bg-peat-900 hover:dark:ui-text-blackberry-100',
+                                                  'ui-group ui-flex ui-items-center ui-gap-x-3 ui-rounded-md ui-p-2 ui-text-sm ui-leading-6 ui-transition-all ui-ease-in-out',
+                                                )}
+                                              >
+                                                {child.name}
+                                              </Disclosure.Button>
+                                            </li>
+                                          ),
+                                        )}
                                       </Disclosure.Panel>
                                     </>
                                   )}

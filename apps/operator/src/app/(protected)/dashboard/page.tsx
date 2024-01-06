@@ -1,38 +1,25 @@
 'use client'
 
 import React from 'react'
-import localFont from 'next/font/local'
 import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import arrowRight from '../../../../../public/icons/arrow-right-dark.svg'
-
-const karelia = localFont({
-  src: [
-    {
-      path: '../../../fonts/KareliaWeb-Regular.ttf',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../../../fonts/KareliaWeb-Medium.ttf',
-      weight: '500',
-      style: 'medium',
-    },
-  ],
-})
+import arrowRight from '../../../../public/icons/arrow-right-dark.svg'
+import PageTitle from '../../../components/page-title'
 
 const DashboardLanding: React.FC = () => {
   const session = useSession()
 
   return (
     <section className="h-full rounded-md flex flex-col items-center justify-center relative">
-      <h1
-        className={`text-4xl leading-10 mb-4 text-left w-full font-bold ${karelia.className}`}
-      >
-        <span className="capitalize">{session.data?.user?.name}</span>, welcome
-        back!
-      </h1>
+      <PageTitle
+        title={
+          <>
+            <span className="capitalize">{session.data?.user?.name}</span>,
+            welcome back!
+          </>
+        }
+      />
       <div className="w-full h-full grid lg:grid-cols-2 gap-4">
         <div className="col-span-1 min-h-[294px] flex flex-col items-start justify-center rounded border border-blackberry-100 dark:border-peat-700 px-6 py-4 bg-white dark:bg-peat-800">
           <div className="flex flex-col items-start xl:flex-row xl:items-center w-full mb-4">
