@@ -41,13 +41,13 @@ const PageTitle = ({ title, description }: any) => {
       className={`text-4xl leading-10 mb-4 text-left w-full font-bold ${karelia.className}`}
     >
       {title}
-      {description && (
+      {description ? (
         <p
           className={`text-2xl mt-4 leading-5 text-left font-thin ${ftRegola.className}`}
         >
           {description}
         </p>
-      )}
+      ) : null}
     </h1>
   )
 }
