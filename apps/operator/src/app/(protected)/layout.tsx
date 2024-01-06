@@ -27,10 +27,12 @@ export default function RootLayout({
           <Image alt="dataum logo" className="max-h-16" src={logo} />
         </div>
 
-        <GlobalSearch />
+        <div className="hidden xl:block ml-auto">
+          <GlobalSearch />
+        </div>
 
         <a
-          className="flex items-center hover:bg-indigo-400/50 h-10 rounded px-4 py-2 ease-in-out mr-6"
+          className="flex items-center hover:bg-indigo-400/50 h-10 rounded px-4 py-2 ease-in-out mr-6 ml-auto xl:ml-0"
           href="https://docs.datum.net/overview/datum"
           rel="noopener noreferrer"
           target="_blank"
@@ -43,7 +45,7 @@ export default function RootLayout({
         <Avatar />
       </div>
 
-      <main className="w-full h-[calc(100%-4rem)] fixed top-16 overflow-hidden lg:left-16 lg:w-[calc(100%-4rem)] 2xl:left-72 2xl:w-[calc(100%-18rem)] px-7 py-8 ease-in-out">
+      <main className="w-full h-auto mt-16 overflow-y-scroll lg:fixed lg:top-16 lg:mt-0 lg:overflow-hidden lg:left-16 lg:h-[calc(100%-4rem)] lg:w-[calc(100%-4rem)] 2xl:left-72 2xl:w-[calc(100%-18rem)] px-7 py-8 ease-in-out">
         {children}
       </main>
     </>
