@@ -11,7 +11,7 @@ const DashboardLanding: React.FC = () => {
   const session = useSession()
 
   return (
-    <section className="h-full rounded-md flex flex-col items-center justify-center relative">
+    <section className="rounded-md flex flex-col items-center justify-center relative">
       <PageTitle
         title={
           <>

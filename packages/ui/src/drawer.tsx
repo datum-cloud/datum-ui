@@ -261,7 +261,8 @@ export const Drawer = ({ routes, currentPath }: any) => {
                                 item.current
                                   ? 'ui-bg-blackberry-50 dark:ui-bg-peat-700'
                                   : 'hover:ui-bg-blackberry-100 hover:dark:ui-bg-peat-900 hover:dark:ui-text-blackberry-100',
-                                'ui-group ui-flex ui-justify-center ui-items-center ui-w-full ui-gap-x-3 ui-rounded-md ui-p-2 ui-text-sm ui-leading-6 ui-transition-all ui-ease-in-out',
+                                tabletMenuOpen ? '!ui-flex' : null,
+                                'ui-group ui-hidden 2xl:ui-flex ui-justify-center ui-items-center ui-w-full ui-gap-x-3 ui-rounded-md ui-p-2 ui-text-sm ui-leading-6 ui-transition-all ui-ease-in-out',
                               )}
                             >
                               <Image
@@ -289,6 +290,23 @@ export const Drawer = ({ routes, currentPath }: any) => {
                                 aria-hidden="true"
                               />
                             </Disclosure.Button>
+                            <Link
+                              className={clsx(
+                                item.current
+                                  ? 'ui-bg-blackberry-50 dark:ui-bg-peat-700'
+                                  : 'hover:ui-bg-blackberry-100 hover:dark:ui-bg-peat-900 hover:dark:ui-text-blackberry-100',
+                                tabletMenuOpen ? '!ui-hidden' : null,
+                                'ui-group ui-flex 2xl:ui-hidden ui-justify-center ui-gap-x-3 ui-rounded-md ui-p-2 ui-text-sm ui-leading-6 ui-transition-all ui-ease-in-out',
+                              )}
+                              href={item?.children[0].href}
+                            >
+                              <Image
+                                alt={`${item.name} icon`}
+                                aria-hidden="true"
+                                className="ui-h-4 ui-w-4 ui-shrink-0"
+                                src={item.icon}
+                              />
+                            </Link>
                             <Disclosure.Panel
                               as="ul"
                               className={clsx(

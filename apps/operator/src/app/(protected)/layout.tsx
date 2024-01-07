@@ -45,7 +45,7 @@ export default function RootLayout({
         <Avatar />
       </div>
 
-      <main className="w-full h-auto mt-16 overflow-y-scroll lg:fixed lg:top-16 lg:mt-0 lg:overflow-hidden lg:left-16 lg:h-[calc(100%-4rem)] lg:w-[calc(100%-4rem)] 2xl:left-72 2xl:w-[calc(100%-18rem)] px-7 py-8 ease-in-out">
+      <main className="w-full h-auto mt-16 overflow-y-scroll lg:fixed lg:top-16 lg:mt-0 lg:left-16 lg:h-[calc(100%-4rem)] lg:w-[calc(100%-4rem)] 2xl:left-72 2xl:w-[calc(100%-18rem)] px-7 py-8 ease-in-out">
         {children}
       </main>
     </>
