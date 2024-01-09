@@ -29,6 +29,8 @@ const AuthSignup: React.FC = () => {
             classNames="space-y-2"
             onSubmit={async (payload: RegisterUser) => {
               if (payload.password === payload.confirmedPassword) {
+                delete payload.confirmedPassword
+
                 const res = await registerUser(payload)
 
                 console.log(res)
