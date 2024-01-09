@@ -18,9 +18,11 @@
 	"peerDependencies": {
 		"react": "latest"
 	},
-	"devDependencies": {
+	"dependencies": {
 		"swr": "latest",
-		"dotenv": "latest",
+		"dotenv": "latest"
+	},
+	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
 		"@types/node": "latest",
 		"@types/eslint": "latest",
