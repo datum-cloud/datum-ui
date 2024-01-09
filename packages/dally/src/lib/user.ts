@@ -14,13 +14,23 @@ export interface RegisterUser {
 }
 
 export async function registerUser(arg: RegisterUser) {
-  await fetch(`${restUrl}/register`, {
+  const fData = await fetch(`${restUrl}/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(arg),
   })
+
+  if (fData.ok) {
+    return await fData.json()
+  }
+
+  if (!fData.ok) {
+    return {
+      message: await fData.text(),
+    }
+  }
 }
 
 export const useRegister = (

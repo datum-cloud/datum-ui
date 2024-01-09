@@ -1,23 +1,18 @@
 'use client'
 
 import React from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { SimpleForm } from '@repo/ui/simple-form'
 import { TextInput } from '@repo/ui/text-input'
 import { Button } from '@repo/ui/button'
-import { RegisterUser, registerUser } from '@repo/dally/user'
+import { registerUser } from '@repo/dally/user'
+import type { RegisterUser } from '@repo/dally/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
-const AuthSignin: React.FC = () => {
-  /**
-   * Submit client-side register function
-   */
-  const submit = async (payload: RegisterUser) => {
-    const res = await registerUser(payload)
-
-    console.log(res)
-  }
+const AuthSignup: React.FC = () => {
+  const router = useRouter()
 
   return (
     <main className="flex flex-col min-h-screen w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">
@@ -32,8 +27,11 @@ const AuthSignin: React.FC = () => {
         <div className="flex flex-col mt-8 justify-start">
           <SimpleForm
             classNames="space-y-2"
-            onSubmit={(e: any) => {
-              submit(e)
+            onSubmit={async (payload: RegisterUser) => {
+              const res = await registerUser(payload)
+
+              console.log(res)
+              router.push('/dashboard')
             }}
           >
             <div className="flex flex-col sm:flex-row gap-2">
@@ -65,4 +63,4 @@ const AuthSignin: React.FC = () => {
   )
 }
 
-export default AuthSignin
+export default AuthSignup

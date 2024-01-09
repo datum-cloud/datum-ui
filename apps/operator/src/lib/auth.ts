@@ -50,7 +50,7 @@ export const config = {
           return data
         }
 
-        if (!fData.ok) {
+        if (fData.status !== 200) {
           console.log('error => ', await fData.text())
           return false
         }
