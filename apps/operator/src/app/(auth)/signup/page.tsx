@@ -46,7 +46,7 @@ const AuthSignup: React.FC = () => {
               type="password"
             />
             <Button className="mr-auto mt-2 w-full" type="submit">
-              Sign In
+              Register
             </Button>
           </SimpleForm>
           <div className="flex items-center mt-4">
