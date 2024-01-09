@@ -11,6 +11,7 @@ This monorepo is run on [Bun](https://bun.sh/) and built using [Turborepo](https
 - `docs`: susUI docs repo https://docs.sus-ui.datum.net/
 - `operator`: Datum Operator Portal https://console.datum.net/
 - `@repo/ui`: susUI component library shared by our other applications
+- `@repo/dally`: DAL library for sharing common patterns and functionality in our other apps
 - `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
@@ -26,8 +27,9 @@ Our team using this stack for our Turborepo:
 - [Prettier](https://prettier.io) for code formatting
 - [Next.js](https://nextjs.org/) the React frame for the web
 - [React](https://react.dev/) for creating user interfaces
-- [MUIBase](https://mui.com/base-ui/) for headless accessibility-compliant components
-- [Tailwindcss](https://tailwindcss.com/) for styles
+- [SWR](https://swr.vercel.app/) for client-side data fetching, caching, and de-deduping API requests
+- [HeadlessUI](https://headlessui.com/) for headless accessibility-compliant components
+- [Tailwindcss](https://tailwindcss.com/) for styles without leaving TSX syntax
 
 ### Prerequisites
 
