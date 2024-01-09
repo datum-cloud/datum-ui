@@ -11,6 +11,7 @@ export interface RegisterUser {
   last_name: string
   username: string
   password: string
+  confirmedPassword?: string
 }
 
 export async function registerUser(arg: RegisterUser) {

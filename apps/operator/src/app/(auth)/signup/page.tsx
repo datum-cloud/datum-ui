@@ -28,10 +28,14 @@ const AuthSignup: React.FC = () => {
           <SimpleForm
             classNames="space-y-2"
             onSubmit={async (payload: RegisterUser) => {
-              const res = await registerUser(payload)
+              if (payload.password === payload.confirmedPassword) {
+                const res = await registerUser(payload)
 
-              console.log(res)
-              router.push('/dashboard')
+                console.log(res)
+                router.push('/dashboard')
+              }
+
+              throw new Error('Passwords do not match')
             }}
           >
             <div className="flex flex-col sm:flex-row gap-2">
