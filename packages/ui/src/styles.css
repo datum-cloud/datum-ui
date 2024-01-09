@@ -1,3 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer ui_base, ui_components_utils;
+
+@layer ui_base {
+  @tailwind base;
+}
+
+@layer ui_components_utils {
+  @tailwind components;
+  @tailwind utilities;
+}
