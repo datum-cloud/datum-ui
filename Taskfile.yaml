@@ -1,9 +1,11 @@
 version: '3'
 
-env: 
+env:
   # env vars needed for the auth stubs
+  AUTH_URL: https://console.datum.net
   AUTH_SECRET: $(openssl rand -base64 32)
-  AUTH_ALLOWED_EMAILS: demo@datum.net
+  API_REST_URL: https://api.datum.net/v1
+  API_GQL_URL: https://api.datum.net/query
 
 tasks:
   build:

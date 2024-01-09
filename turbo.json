@@ -10,7 +10,8 @@
 			],
 			"env": [
 				"NODE_ENV",
-				"AUTH_ALLOWED_EMAILS"
+				"API_REST_URL",
+				"API_GQL_URL"
 			],
 			"outputs": [
 				"dist/**",

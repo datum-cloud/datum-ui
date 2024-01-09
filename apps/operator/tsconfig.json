@@ -9,7 +9,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "postcss.config.js",
-    "../../packages/ui/src/alerts.tsx"
+    "../../packages/ui/src/alerts.tsx",
+    "../../packages/config-typescript/typings.d.ts"
   ],
   "exclude": ["node_modules"]
 }

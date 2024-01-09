@@ -1,14 +1,19 @@
 'use client'
 
 import React from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { SimpleForm } from '@repo/ui/simple-form'
 import { TextInput } from '@repo/ui/text-input'
 import { Button } from '@repo/ui/button'
+import { registerUser } from '@repo/dally/user'
+import type { RegisterUser } from '@repo/dally/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
-const Landing: React.FC = () => {
+const AuthSignup: React.FC = () => {
+  const router = useRouter()
+
   return (
     <main className="flex flex-col min-h-screen w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">
       <div className="flex flex-col justify-center mx-auto my-auto w-full p-6 sm:w-1/3 h-full relative ease-in-out">
@@ -22,20 +27,32 @@ const Landing: React.FC = () => {
         <div className="flex flex-col mt-8 justify-start">
           <SimpleForm
             classNames="space-y-2"
-            onSubmit={(e: object) => {
-              console.log('submit form json data => ', e)
+            onSubmit={async (payload: RegisterUser) => {
+              if (payload.password === payload.confirmedPassword) {
+                delete payload.confirmedPassword
+
+                const res = await registerUser(payload)
+
+                console.log(res)
+                router.push('/dashboard')
+              }
+
+              throw new Error('Passwords do not match')
             }}
           >
-            <TextInput name="name" placeholder="Frodo Baggins" />
-            <TextInput name="email" placeholder="email@domain.net" />
+            <div className="flex flex-col sm:flex-row gap-2">
+              <TextInput name="first_name" placeholder="Frodo" />
+              <TextInput name="last_name" placeholder="Baggins" />
+            </div>
+            <TextInput name="username" placeholder="email@domain.net" />
             <TextInput name="password" placeholder="password" type="password" />
             <TextInput
-              name="confirmPassword"
+              name="confirmedPassword"
               placeholder="confirm password"
               type="password"
             />
             <Button className="mr-auto mt-2 w-full" type="submit">
-              Sign In
+              Register
             </Button>
           </SimpleForm>
           <div className="flex items-center mt-4">
@@ -52,4 +69,4 @@ const Landing: React.FC = () => {
   )
 }
 
-export default Landing
+export default AuthSignup

@@ -8,6 +8,13 @@ import { auth } from './lib/auth'
 
 export default auth((req) => {
   /**
+   * Set this header so we can read it and set the current route
+   * and metadata on the client side without invoking the
+   * navigation hooks in React
+   */
+  req.headers.append('next-url', req.nextUrl.toString())
+
+  /**
    * Here we are running middleware on each matched route
    * in the config below.
    *
@@ -15,7 +22,6 @@ export default auth((req) => {
    * has a valid user attached and if so let the user
    * continue on, otherwise redirect them to the login page
    */
-  req.headers.append('next-url', req.nextUrl.toString())
   if (req.auth?.user) return NextResponse.next()
 
   return NextResponse.redirect(new URL('/login', req.url))

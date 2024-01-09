@@ -1,6 +1,7 @@
 import type { NextAuthConfig } from 'next-auth'
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
+import { restUrl } from '@repo/dally/auth'
 
 export const config = {
   theme: {
@@ -16,7 +17,7 @@ export const config = {
         username: { label: 'Username' },
         password: { label: 'Password', type: 'password' },
       },
-      authorize(credentials) {
+      async authorize(credentials) {
         /**
          * Here we would call out to the Datum API
          * to validate our credentials without having
@@ -25,18 +26,33 @@ export const config = {
          * This runs on the server so we can store the API
          * route in an env var that way we don't expose
          * your API login routes to our end users
-         *
-         * For this example, we just check this email is in
-         * the allowed email list and proceed
          */
-        const allowedEmails = process.env.AUTH_ALLOWED_EMAILS || '[]'
+        const fData = await fetch(`${restUrl}/login`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            username: credentials.username as string,
+            password: credentials.password as string,
+          }),
+        })
 
-        if (allowedEmails.includes(credentials.username as any)) {
-          return {
-            id: '999',
-            name: (credentials.username as string).split('@')[0],
-            email: credentials.username as string,
-          }
+        if (fData.ok) {
+          const data = await fData.json()
+
+          /**
+           * Should we be calling the /v1/authenticate endpoint after
+           * successful login to get an access token so its a passes
+           * though to our auth callbacks below?
+           *
+           * This call will return a 200 { message: success } if
+           * login is successful, no auth token
+           */
+          return data
+        }
+
+        if (fData.status !== 200) {
+          console.log('error => ', await fData.text())
+          return false
         }
 
         return null

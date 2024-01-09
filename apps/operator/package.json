@@ -10,6 +10,7 @@
 	},
 	"dependencies": {
 		"@repo/ui": "workspace:*",
+		"@repo/dally": "workspace:*",
 		"next": "latest",
 		"react": "latest",
 		"react-dom": "latest",
