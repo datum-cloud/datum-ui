@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import localFont from 'next/font/local'
-import './globals.css'
 import '@repo/ui/styles.css'
+import './globals.css'
 
 const ftRegola = localFont({
   src: [
