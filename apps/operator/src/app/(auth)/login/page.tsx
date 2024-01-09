@@ -7,18 +7,14 @@ import { signIn } from 'next-auth/react'
 import { Button } from '@repo/ui/button'
 import { TextInput } from '@repo/ui/text-input'
 import { SimpleForm } from '@repo/ui/simple-form'
+import { LoginUser } from '@repo/dally/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
-
-interface UserLogin {
-  username: string
-  password: string
-}
 
 const AuthLogin: React.FC = () => {
   /**
    * Submit client-side signin function
    */
-  const submit = async (payload: UserLogin) => {
+  const submit = async (payload: LoginUser) => {
     await signIn('credentials', {
       callbackUrl: '/dashboard',
       ...payload,

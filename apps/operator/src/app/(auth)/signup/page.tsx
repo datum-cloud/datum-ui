@@ -6,9 +6,19 @@ import Link from 'next/link'
 import { SimpleForm } from '@repo/ui/simple-form'
 import { TextInput } from '@repo/ui/text-input'
 import { Button } from '@repo/ui/button'
+import { RegisterUser, registerUser } from '@repo/dally/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
-const Landing: React.FC = () => {
+const AuthSignin: React.FC = () => {
+  /**
+   * Submit client-side register function
+   */
+  const submit = async (payload: RegisterUser) => {
+    const res = await registerUser(payload)
+
+    console.log(res)
+  }
+
   return (
     <main className="flex flex-col min-h-screen w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">
       <div className="flex flex-col justify-center mx-auto my-auto w-full p-6 sm:w-1/3 h-full relative ease-in-out">
@@ -22,15 +32,18 @@ const Landing: React.FC = () => {
         <div className="flex flex-col mt-8 justify-start">
           <SimpleForm
             classNames="space-y-2"
-            onSubmit={(e: object) => {
-              console.log('submit form json data => ', e)
+            onSubmit={(e: any) => {
+              submit(e)
             }}
           >
-            <TextInput name="name" placeholder="Frodo Baggins" />
-            <TextInput name="email" placeholder="email@domain.net" />
+            <div className="flex flex-col sm:flex-row gap-2">
+              <TextInput name="first_name" placeholder="Frodo" />
+              <TextInput name="last_name" placeholder="Baggins" />
+            </div>
+            <TextInput name="username" placeholder="email@domain.net" />
             <TextInput name="password" placeholder="password" type="password" />
             <TextInput
-              name="confirmPassword"
+              name="confirmedPassword"
               placeholder="confirm password"
               type="password"
             />
@@ -52,4 +65,4 @@ const Landing: React.FC = () => {
   )
 }
 
-export default Landing
+export default AuthSignin
