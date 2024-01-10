@@ -10,14 +10,12 @@ export const config = {
   pages: {
     signIn: '/login',
     newUser: '/signup',
+    verifyRequest: '/verify',
   },
   providers: [
     Credentials({
-      credentials: {
-        username: { label: 'Username' },
-        password: { label: 'Password', type: 'password' },
-      },
-      async authorize(credentials) {
+      credentials: {},
+      async authorize(credentials: any) {
         /**
          * Here we would call out to the Datum API
          * to validate our credentials without having
@@ -47,7 +45,9 @@ export const config = {
            * This call will return a 200 { message: success } if
            * login is successful, no auth token
            */
-          return data
+          const { username: email } = credentials
+
+          return { name: email.split('@')[0], email, ...data }
         }
 
         if (fData.status !== 200) {
@@ -60,14 +60,17 @@ export const config = {
     }),
   ],
   callbacks: {
-    jwt: ({ token }) => {
+    jwt: ({ user, token }) => {
       /**
        * Here is we persist and data we want into the JWT
        * that isn't there by default
        *
-       * For this example, I just stubbed a fake JWT value
-       * because we dont fetch anything from a DB
+       * Get the token from the response cookies?
        */
+      if (user.email) {
+        token.email = user.email
+        token.name = user.name
+      }
 
       return token
     },

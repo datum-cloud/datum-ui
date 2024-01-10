@@ -7,8 +7,8 @@ import Link from 'next/link'
 import { SimpleForm } from '@repo/ui/simple-form'
 import { TextInput } from '@repo/ui/text-input'
 import { Button } from '@repo/ui/button'
-import { registerUser } from '@repo/dally/user'
-import type { RegisterUser } from '@repo/dally/user'
+import { registerUser } from '../../../lib/user'
+import type { RegisterUser } from '../../../lib/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
 const AuthSignup: React.FC = () => {
@@ -19,7 +19,7 @@ const AuthSignup: React.FC = () => {
       <div className="flex flex-col justify-center mx-auto my-auto w-full p-6 sm:w-1/3 h-full relative ease-in-out">
         <Image
           alt="datum imagery background"
-          className="mx-auto"
+          className="mx-auto max-h-20"
           priority
           src={logoReversed as string}
           width={385}
@@ -28,23 +28,30 @@ const AuthSignup: React.FC = () => {
           <SimpleForm
             classNames="space-y-2"
             onSubmit={async (payload: RegisterUser) => {
-              if (payload.password === payload.confirmedPassword) {
-                delete payload.confirmedPassword
+              try {
+                if (payload.password === payload.confirmedPassword) {
+                  delete payload.confirmedPassword
 
-                const res = await registerUser(payload)
+                  const res = await registerUser(payload)
 
-                console.log(res)
-                router.push('/dashboard')
+                  if (res?.token) {
+                    router.push(`/verify?token=${res?.token}`)
+                  }
+
+                  if (res?.message) {
+                    console.log('toast message => ', res.message)
+                  }
+                }
+              } catch (error) {
+                console.log(error)
               }
-
-              throw new Error('Passwords do not match')
             }}
           >
             <div className="flex flex-col sm:flex-row gap-2">
               <TextInput name="first_name" placeholder="Frodo" />
               <TextInput name="last_name" placeholder="Baggins" />
             </div>
-            <TextInput name="username" placeholder="email@domain.net" />
+            <TextInput name="email" placeholder="email@domain.net" />
             <TextInput name="password" placeholder="password" type="password" />
             <TextInput
               name="confirmedPassword"
