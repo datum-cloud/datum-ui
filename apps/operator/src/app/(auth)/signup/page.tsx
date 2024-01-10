@@ -34,8 +34,8 @@ const AuthSignup: React.FC = () => {
 
                   const res = await registerUser(payload)
 
-                  if (res?.token) {
-                    router.push(`/verify?token=${res?.token}`)
+                  if (res) {
+                    router.push('/verify')
                   }
 
                   if (res?.message) {
