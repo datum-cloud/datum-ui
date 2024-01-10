@@ -14,7 +14,8 @@
 		"next": "latest",
 		"react": "latest",
 		"react-dom": "latest",
-		"next-auth": "beta"
+		"next-auth": "beta",
+		"swr": "latest"
 	},
 	"devDependencies": {
 		"@headlessui/react": "latest",
