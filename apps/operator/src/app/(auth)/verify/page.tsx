@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { Button } from '@repo/ui/button'
@@ -8,9 +8,9 @@ import { useVerifyUser } from '../../../lib/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
 const VerifyUser: React.FC = () => {
-  const token = useSearchParams().get('token') || ''
+  const token = useSearchParams().get('token')
 
-  const { verified, isLoading } = useVerifyUser(token)
+  const { isLoading } = useVerifyUser(token ? token : null)
 
   return (
     <main className="flex flex-col min-h-screen w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">
@@ -33,7 +33,9 @@ const VerifyUser: React.FC = () => {
           <div className="flex flex-col mt-8 min-h-1/3 justify-start bg-blackberry-200 dark:bg-peat-200 p-4 rounded">
             <Button
               className="mr-auto mt-2 w-full"
-              onClick={() => console.log('resend email')}
+              onClick={() => {
+                console.log('resend email')
+              }}
               type="button"
             >
               Resent email?

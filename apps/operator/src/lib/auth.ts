@@ -60,14 +60,14 @@ export const config = {
     }),
   ],
   callbacks: {
-    jwt: ({ user, account, token, profile }) => {
+    jwt: ({ user, token }) => {
       /**
        * Here is we persist and data we want into the JWT
        * that isn't there by default
        *
        * Get the token from the response cookies?
        */
-      if (typeof user !== 'undefined' && user.email) {
+      if (user.email) {
         token.email = user.email
         token.name = user.name
       }
