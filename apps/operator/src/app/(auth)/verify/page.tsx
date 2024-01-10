@@ -1,15 +1,11 @@
 'use client'
 
 import React from 'react'
-import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { Button } from '@repo/ui/button'
-import { useVerifyUser } from '../../../lib/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
 const VerifyUser: React.FC = () => {
-  const token = useSearchParams().get('token')
-
   return (
     <main className="flex flex-col min-h-screen w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">
       <div className="flex flex-col justify-center mx-auto my-auto w-full p-6 sm:w-1/3 h-full relative ease-in-out">
@@ -33,7 +29,7 @@ const VerifyUser: React.FC = () => {
             }}
             type="button"
           >
-            Didn't get the email? Click here to resend.
+            Didn&apos;t get the email? Click here to resend.
           </Button>
         </div>
       </div>
