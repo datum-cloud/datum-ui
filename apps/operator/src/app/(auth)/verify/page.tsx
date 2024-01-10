@@ -10,7 +10,7 @@ import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 const VerifyUser: React.FC = () => {
   const token = useSearchParams().get('token')
 
-  const { isLoading, error } = useVerifyUser(token ? token : null)
+  const { isLoading } = useVerifyUser(token ? token : null)
 
   return (
     <main className="flex flex-col min-h-screen w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">
@@ -22,11 +22,18 @@ const VerifyUser: React.FC = () => {
           src={logoReversed as string}
           width={385}
         />
-        <div>
-          <h1 className="text-3xl text-center mt-4">
-            Please check your email to verify your account.
+        {isLoading && (
+          <h1 className="text-3xl text-center mt-4 animate-pulse">
+            Verifying your account...
           </h1>
-        </div>
+        )}
+        {!isLoading && (
+          <div>
+            <h1 className="text-3xl text-center mt-4">
+              Please check your email to verify your account.
+            </h1>
+          </div>
+        )}
         <div className="mt-12">
           <Button
             className="mr-auto mt-2 w-full"
