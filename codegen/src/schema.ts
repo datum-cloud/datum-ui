@@ -2980,6 +2980,11 @@ export interface UserWhereInput {
   updatedByNotNil: InputMaybe<Scalars['Boolean']['input']>;
 }
 
+export type GetAllGroupsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllGroupsQuery = { __typename?: 'Query', groups: { __typename?: 'GroupConnection', edges: Array<{ __typename?: 'GroupEdge', node: { __typename?: 'Group', id: string, name: string, description: string | null, displayName: string, logoURL: string | null, setting: { __typename?: 'GroupSetting', visibility: GroupSettingVisibility, joinPolicy: GroupSettingJoinPolicy, syncToSlack: boolean, syncToGithub: boolean, tags: Array<string> } } | null } | null> | null } };
+
 export type GetUserProfileQueryVariables = Exact<{
   userId: Scalars['ID']['input'];
 }>;
@@ -4237,6 +4242,28 @@ export type DirectiveResolvers<ContextType = any> = {
 };
 
 
+export const GetAllGroupsDocument = gql`
+    query GetAllGroups {
+  groups {
+    edges {
+      node {
+        id
+        name
+        description
+        displayName
+        logoURL
+        setting {
+          visibility
+          joinPolicy
+          syncToSlack
+          syncToGithub
+          tags
+        }
+      }
+    }
+  }
+}
+    `;
 export const GetUserProfileDocument = gql`
     query GetUserProfile($userId: ID!) {
   user(id: $userId) {
@@ -4261,6 +4288,9 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+    GetAllGroups(variables?: GetAllGroupsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetAllGroupsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetAllGroupsQuery>(GetAllGroupsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetAllGroups', 'query', variables);
+    },
     GetUserProfile(variables: GetUserProfileQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetUserProfileQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetUserProfileQuery>(GetUserProfileDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetUserProfile', 'query', variables);
     }
@@ -4271,6 +4301,9 @@ export function getSdkWithHooks(client: GraphQLClient, withWrapper: SdkFunctionW
   const sdk = getSdk(client, withWrapper);
   return {
     ...sdk,
+    useGetAllGroups(key: SWRKeyInterface, variables?: GetAllGroupsQueryVariables, config?: SWRConfigInterface<GetAllGroupsQuery, ClientError>) {
+      return useSWR<GetAllGroupsQuery, ClientError>(key, () => sdk.GetAllGroups(variables), config);
+    },
     useGetUserProfile(key: SWRKeyInterface, variables: GetUserProfileQueryVariables, config?: SWRConfigInterface<GetUserProfileQuery, ClientError>) {
       return useSWR<GetUserProfileQuery, ClientError>(key, () => sdk.GetUserProfile(variables), config);
     }
@@ -4278,6 +4311,60 @@ export function getSdkWithHooks(client: GraphQLClient, withWrapper: SdkFunctionW
 }
 export type SdkWithHooks = ReturnType<typeof getSdkWithHooks>;
 
+export const GetAllGroupsDocument = gql`
+    query GetAllGroups {
+  groups {
+    edges {
+      node {
+        id
+        name
+        description
+        displayName
+        logoURL
+        setting {
+          visibility
+          joinPolicy
+          syncToSlack
+          syncToGithub
+          tags
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllGroupsQuery__
+ *
+ * To run a query within a React component, call `useGetAllGroupsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllGroupsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllGroupsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllGroupsQuery, GetAllGroupsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllGroupsQuery, GetAllGroupsQueryVariables>(GetAllGroupsDocument, options);
+      }
+export function useGetAllGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllGroupsQuery, GetAllGroupsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllGroupsQuery, GetAllGroupsQueryVariables>(GetAllGroupsDocument, options);
+        }
+export function useGetAllGroupsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAllGroupsQuery, GetAllGroupsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAllGroupsQuery, GetAllGroupsQueryVariables>(GetAllGroupsDocument, options);
+        }
+export type GetAllGroupsQueryHookResult = ReturnType<typeof useGetAllGroupsQuery>;
+export type GetAllGroupsLazyQueryHookResult = ReturnType<typeof useGetAllGroupsLazyQuery>;
+export type GetAllGroupsSuspenseQueryHookResult = ReturnType<typeof useGetAllGroupsSuspenseQuery>;
+export type GetAllGroupsQueryResult = Apollo.QueryResult<GetAllGroupsQuery, GetAllGroupsQueryVariables>;
 export const GetUserProfileDocument = gql`
     query GetUserProfile($userId: ID!) {
   user(id: $userId) {
