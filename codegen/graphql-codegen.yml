@@ -28,12 +28,16 @@ config:
   schema: yup
 overwrite: true
 schema: https://raw.githubusercontent.com/datumforge/datum/main/schema.graphql
+documents: './query/*.graphql'
 generates:
   ./src/introspectionschema.json:
     plugins:
       - introspection
     config:
       minify: true
+      # If you have a query that you want to use `useSWRInfinite`, list it in Options
+      useSWRInfinite:
+        - GetUsers
   ./src/schema.ts:
 #    preset: near-operation-file
 #    presetConfig:
@@ -42,7 +46,8 @@ generates:
       - typescript # This plugin generates the base TypeScript types, based on your GraphQL schema
       - typescript-operations # This plugin generates TypeScript types based on your GraphQLSchema and your GraphQL operations and fragments. It generates types for your GraphQL documents: Query, Mutation, Subscription and Fragment
       - typescript-resolvers # This plugin generates TypeScript signature for resolve functions of your GraphQL API. You can use this plugin to generate simple resolvers signature based on your GraphQL types, or you can change its behavior be providing custom model types (mappers)
-      # - typescript-graphql-request
+      - typescript-graphql-request
+      - plugin-typescript-swr
       # - typescript-react-query # This plugin generates React-Query Hooks with TypeScript typings
       # - typescript-urql # This plugin generates urql (https://github.com/FormidableLabs/urql) components and HOC with TypeScript typings
       - typescript-react-apollo

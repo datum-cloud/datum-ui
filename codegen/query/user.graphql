@@ -1,0 +1,15 @@
+query GetUserProfile($userId: ID!) {
+  user(id: $userId) {
+    id
+    firstName
+    lastName
+    displayName
+    email
+    avatarRemoteURL
+    setting {
+      status
+      tags
+    }
+  }
+}
+
