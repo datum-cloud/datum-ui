@@ -3,7 +3,6 @@ import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import { restUrl } from '@repo/dally/auth'
 
-
 export const config = {
   theme: {
     logo: '/logos/logo_orange_icon.svg',
