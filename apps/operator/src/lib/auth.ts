@@ -66,7 +66,7 @@ export const config = {
       /* 
       set tokens on user
       */
-      if (user) { // eslint-disable-line -- not-truthy
+      if (typeof user !== 'undefined') {
         token.accessToken = user.accessToken
         token.refreshToken = user.refreshToken
       }
