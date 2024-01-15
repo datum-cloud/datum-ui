@@ -90,8 +90,6 @@ export const config = {
       session.user.accessToken = token.accessToken
       session.user.refreshToken = token.refreshToken
 
-      console.log(session.user)
-
       return session
     },
   },
