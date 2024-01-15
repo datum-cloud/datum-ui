@@ -3,6 +3,7 @@ import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import { restUrl } from '@repo/dally/auth'
 
+
 export const config = {
   theme: {
     logo: '/logos/logo_orange_icon.svg',
@@ -65,8 +66,10 @@ export const config = {
       /* 
       set tokens on user
       */
-      token.accessToken = user.accessToken
-      token.refreshToken = user.refreshToken
+      if (user) { // eslint-disable-line -- not-truthy
+        token.accessToken = user.accessToken
+        token.refreshToken = user.refreshToken
+      }
 
       return token
     },
