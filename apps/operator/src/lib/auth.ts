@@ -12,6 +12,9 @@ export const config = {
     newUser: '/signup',
     verifyRequest: '/verify',
   },
+  session: {
+    strategy: 'jwt',
+  },
   providers: [
     Credentials({
       credentials: {},
@@ -37,17 +40,15 @@ export const config = {
         if (fData.ok) {
           const data = await fData.json()
 
-          /**
-           * Should we be calling the /v1/authenticate endpoint after
-           * successful login to get an access token so its a passes
-           * though to our auth callbacks below?
-           *
-           * This call will return a 200 { message: success } if
-           * login is successful, no auth token
-           */
+          // get access token and refresh tokens from headers
+          const cookie = fData.headers.getSetCookie();
+          const cookieSplit = cookie[0].split(", ")
+          const accessToken = cookieSplit[0].split("; ")[0].split("access_token=")[1];
+          const refreshToken = cookieSplit[1].split("; ")[0].split("refresh_token=")[1];
+
           const { username: email } = credentials
 
-          return { name: email.split('@')[0], email, ...data }
+          return { name: email.split('@')[0], email, accessToken: accessToken, refreshToken: refreshToken, ...data }
         }
 
         if (fData.status !== 200) {
@@ -60,19 +61,12 @@ export const config = {
     }),
   ],
   callbacks: {
-    jwt: ({ token }) => {
-      /**
-       * Here is we persist and data we want into the JWT
-       * that isn't there by default
-       *
-       * Get the token from the response cookies?
-       */
-      /**
-      if (user.email) {
-        token.email = user.email
-        token.name = user.name
-      }
-      **/
+    jwt({ token, user }) {
+      /* 
+      set tokens on user
+      */
+      token.accessToken = user.accessToken
+      token.refreshToken = user.refreshToken
 
       return token
     },
@@ -87,10 +81,14 @@ export const config = {
        * but do not use a client side hook to access it
        * as that data is memoized in the Node process
        */
-      if (session.user) {
-        session.user.name = token.name
-        session.user.email = token.email
-      }
+
+      session.user.name = token.name
+      session.user.email = token.email
+      session.user.accessToken = token.accessToken
+      session.user.refreshToken = token.refreshToken
+
+      console.log(session.user)
+
       return session
     },
   },
