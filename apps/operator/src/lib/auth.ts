@@ -85,10 +85,12 @@ export const config = {
        * as that data is memoized in the Node process
        */
 
-      session.user.name = token.name
-      session.user.email = token.email
-      session.user.accessToken = token.accessToken
-      session.user.refreshToken = token.refreshToken
+      if (session.user) {
+        session.user.name = token.name
+        session.user.email = token.email
+        session.user.accessToken = token.accessToken
+        session.user.refreshToken = token.refreshToken
+      }
 
       return session
     },
