@@ -10,16 +10,16 @@ import { SimpleForm } from '@repo/ui/simple-form'
 import { LoginUser } from '../../../lib/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
-const AuthLogin: React.FC = () => {
+const AuthType: React.FC = () => {
 	/**
 	 * Submit client-side signin function
 	 */
-	const submit = async (payload: LoginUser) => {
-		await signIn('credentials', {
-			callbackUrl: '/dashboard',
-			...payload,
-		})
-	}
+	// const submit = async (payload: LoginUser) => {
+	// 	await signIn('credentials', {
+	// 		callbackUrl: '/dashboard',
+	// 		...payload,
+	// 	})
+	// }
 
 	return (
 		<main className="flex flex-col min-h-screen w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">
@@ -32,24 +32,28 @@ const AuthLogin: React.FC = () => {
 					width={385}
 				/>
 				<div className="flex flex-col mt-8 justify-start">
-					<SimpleForm
-						classNames="space-y-2"
-						onSubmit={(e: any) => {
-							submit(e)
-						}}
-					>
-						<TextInput name="username" placeholder="email@domain.net" />
-						<TextInput name="password" placeholder="password" type="password" />
-						<Button className="mr-auto mt-2 w-full" type="submit">
-							Login
-						</Button>
-					</SimpleForm>
 					<div className="flex items-center mt-4">
 						<Link
 							className="text-base text-sunglow-900 underline underline-offset-2"
-							href="/authType"
+							href="/signup"
 						>
-							Need to create an account?
+							Email Based Account
+						</Link>
+					</div>
+					<div className="flex items-center mt-4">
+						<Link
+							className="text-base text-sunglow-900 underline underline-offset-2"
+							href="/signup"
+						>
+							Github
+						</Link>
+					</div>
+					<div className="flex items-center mt-4">
+						<Link
+							className="text-base text-sunglow-900 underline underline-offset-2"
+							href="/signup"
+						>
+							Google
 						</Link>
 					</div>
 				</div>
@@ -58,4 +62,4 @@ const AuthLogin: React.FC = () => {
 	)
 }
 
-export default AuthLogin
+export default AuthType

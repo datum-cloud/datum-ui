@@ -8,7 +8,7 @@ export interface LoginUser {
 export interface RegisterUser {
 	first_name: string
 	last_name: string
-	username: string
+	email: string
 	password: string
 	confirmedPassword?: string
 }
@@ -25,9 +25,15 @@ export async function registerUser<T>(arg: RegisterUser) {
 		},
 		body: JSON.stringify(arg),
 	})
-	console.dir(fData)
-	fData.message = await fData.json();
-	return fData;
+	try {
+		let fDataMessage = await fData.json();
+		fData.message = fDataMessage.message;
+		return fData;
+	}
+	catch (error) {
+		console.log(error)
+		return { message: 'error' }
+	}
 }
 
 export const useVerifyUser = (arg: string | null) => {

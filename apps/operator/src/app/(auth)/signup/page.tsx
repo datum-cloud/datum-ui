@@ -13,9 +13,13 @@ import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
 const AuthSignup: React.FC = () => {
 	const router = useRouter()
-	const [passwordMatch, setPasswordMatch] = useState(true);
+	// const [passwordMatch, setPasswordMatch] = useState(true);
+	const [afterSubmit, setAfterSubmit] = useState(false);
 	const [firstName, setFirstName] = useState('0');
 	const [lastName, setLastName] = useState('0');
+	const [email, setEmail] = useState('0');
+	const [password, setPassword] = useState('0');
+	const [apiResponse, setApiResponse] = useState({ message: '' });
 
 	return (
 		<main className="flex flex-col min-h-screen w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">
@@ -32,50 +36,63 @@ const AuthSignup: React.FC = () => {
 						classNames="space-y-2"
 						onSubmit={async (payload: RegisterUser) => {
 							console.log("hello")
+							console.dir(payload)
+							setAfterSubmit(true)
 							try {
 								setFirstName(payload.first_name);
 								setLastName(payload.last_name);
+								setEmail(payload.email);
+								setPassword(payload.password);
 
-								if (payload.password === payload.confirmedPassword) {
-									delete payload.confirmedPassword
+								// if (payload.password === payload.confirmedPassword) {
+								// delete payload.confirmedPassword
 
-									const res = await registerUser(payload)
-									console.dir(res)
+								const res: any = await registerUser(payload)
+								console.dir(res)
 
-									if (res && res.ok) {
+								if (res && res.ok) {
 
-										router.push('/verify')
-									}
-
-									if (res?.message) {
-										console.log('toast message => ', res.message)
-									}
+									router.push('/verify')
 								}
-								else {
-									setPasswordMatch(false)
-									console.log('passwords dont match')
+
+								if (res?.message) {
+									console.log('toast message => ', res.message)
+									setApiResponse({ message: res.message ? res.message : res.message.message })
+
 								}
+								// }
+								// else {
+								// 	// setPasswordMatch(false)
+								// 	console.log('passwords dont match')
+								// }
 							} catch (error) {
 								console.log(error)
+								setApiResponse({ message: 'Unknown Error' })
+								console.dir(apiResponse)
 							}
 						}}
 						onChange={(formData: any) => {
-							console.log(formData)
+							console.log('onChangepage')
+							console.dir(formData)
+							setFirstName(formData.first_name);
+							setLastName(formData.last_name);
+							setEmail(formData.email);
+							setPassword(formData.password);
 						}}
 					>
 						<div className="flex flex-col sm:flex-row gap-2">
-							<TextInput name="first_name" invalid={!firstName} placeholder="Frodo" />
-							<TextInput name="last_name" invalid={!lastName} placeholder="Baggins" />
+							<TextInput name="first_name" invalid={(!firstName && afterSubmit) ? 'true' : undefined} placeholder="First Name" />
+							<TextInput name="last_name" invalid={(!lastName && afterSubmit) ? 'true' : undefined} placeholder="Last Name" />
 						</div>
-						<TextInput name="email" placeholder="email@domain.net" />
-						<TextInput name="password" placeholder="password" type="password" />
-						<TextInput
-							invalid={!passwordMatch}
+						<TextInput name="email" invalid={(!email && afterSubmit) ? 'true' : undefined} placeholder="email@domain.net" />
+						<TextInput name="password" invalid={(!password && afterSubmit) ? 'true' : undefined} placeholder="password" type="password" />
+						{/* <TextInput
+							invalid={!passwordMatch ? true : undefined}
 							name="confirmedPassword"
 							placeholder="confirm password"
 							type="password"
-						/>
-						<div className={passwordMatch ? "hidden" : "visible"}>Passwords dont match</div>
+						/> */}
+						<div>{apiResponse['message']}</div>
 						<Button className="mr-auto mt-2 w-full" type="submit">
 							Register
 						</Button>

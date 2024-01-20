@@ -46,7 +46,7 @@ export const SimpleForm: React.FC<any> = ({
 			className={`${classNames}`}
 			id={id}
 			onChange={(e) =>
-				onChange(onChangeData(e))
+				onChange ? onChange(onChangeData(e)) : setValues(onChangeData(e))
 			}
 			onSubmit={(e) =>
 				onSubmit ? onSubmit(grabData(e)) : setValues(grabData(e))
