@@ -11,15 +11,6 @@ import { LoginUser } from '../../../lib/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
 const AuthType: React.FC = () => {
-	/**
-	 * Submit client-side signin function
-	 */
-	// const submit = async (payload: LoginUser) => {
-	// 	await signIn('credentials', {
-	// 		callbackUrl: '/dashboard',
-	// 		...payload,
-	// 	})
-	// }
 
 	return (
 		<main className="flex flex-col min-h-screen w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">

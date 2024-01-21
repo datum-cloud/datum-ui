@@ -3,7 +3,9 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
+import { AuthError } from "next-auth"
 import { Button } from '@repo/ui/button'
 import { TextInput } from '@repo/ui/text-input'
 import { SimpleForm } from '@repo/ui/simple-form'
@@ -11,14 +13,39 @@ import { LoginUser } from '../../../lib/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
 const AuthLogin: React.FC = () => {
+
+	const router = useRouter()
+
 	/**
 	 * Submit client-side signin function
 	 */
 	const submit = async (payload: LoginUser) => {
-		await signIn('credentials', {
-			callbackUrl: '/dashboard',
-			...payload,
-		})
+		try {
+			let res: any = await signIn('credentials', {
+				redirect: false,
+				...payload,
+			})
+			console.dir(res)
+			if (res.ok && !res.error) {
+				console.log('signin success')
+				router.push("/dashboard");
+			} else {
+				console.log("error")
+				console.log(res.error)
+			}
+			// console.dir(signInRes)
+			// if (signInRes?.status == 200) {
+			// 	console.log('great redirect')
+			// } else {
+			// 	console.log(signInRes?.error)
+			// 	router.push('/')
+			// }
+
+		} catch (error) {
+			// if (error instanceof AuthError) // Handle auth errors
+			console.dir(error)
+
+		}
 	}
 
 	return (

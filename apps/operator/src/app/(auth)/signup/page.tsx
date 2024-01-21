@@ -35,8 +35,6 @@ const AuthSignup: React.FC = () => {
 					<SimpleForm
 						classNames="space-y-2"
 						onSubmit={async (payload: RegisterUser) => {
-							console.log("hello")
-							console.dir(payload)
 							setAfterSubmit(true)
 							try {
 								setFirstName(payload.first_name);
@@ -72,8 +70,6 @@ const AuthSignup: React.FC = () => {
 							}
 						}}
 						onChange={(formData: any) => {
-							console.log('onChangepage')
-							console.dir(formData)
 							setFirstName(formData.first_name);
 							setLastName(formData.last_name);
 							setEmail(formData.email);

@@ -13,7 +13,7 @@ export const SimpleForm: React.FC<any> = ({
 
 	const grabData = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		console.log('grabdata')
+
 		const formData = new FormData(event.currentTarget)
 		const data: any = {}
 
@@ -35,7 +35,6 @@ export const SimpleForm: React.FC<any> = ({
 		>) {
 			data[ky] = vl
 		}
-		console.log(data)
 		setValues(data)
 		return data
 	}

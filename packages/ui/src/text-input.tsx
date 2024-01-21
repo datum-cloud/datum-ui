@@ -16,7 +16,6 @@ export const TextInput = React.forwardRef<HTMLInputElement, any>(
 				)}
 				ref={ref}
 				type="text"
-				onChange={() => { console.log("HELLO") }}
 				{...props}
 			/>
 		)
