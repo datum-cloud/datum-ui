@@ -29,6 +29,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "nextauth": "",
     "tailwind-merge": "^2.2.0"
   }
 }

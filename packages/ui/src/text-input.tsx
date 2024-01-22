@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { twMerge } from 'tailwind-merge'
+import { clsx } from 'clsx'
 
 export const TextInput = React.forwardRef<HTMLInputElement, any>(
 	(props, ref) => {
@@ -10,10 +10,13 @@ export const TextInput = React.forwardRef<HTMLInputElement, any>(
 
 		return (
 			<input
-				className={'border-blue-500'
-				}
+				className={clsx(
+					`w-full h-10 rounded-md pl-2 ring-blackberry-800 dark:peat-800 focus:outline-0 dark:text-white text-blackberry-800 dark:bg-peat-900 bg-blackberry-50 border border-blackberry-200 dark:border-peat-700`,
+					props.invalid ? 'border-red-500' : '', props.className
+				)}
 				ref={ref}
 				type="text"
+				onChange={() => { console.log("HELLO") }}
 				{...props}
 			/>
 		)

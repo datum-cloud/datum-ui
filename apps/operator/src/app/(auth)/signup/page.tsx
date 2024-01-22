@@ -42,6 +42,8 @@ const AuthSignup: React.FC = () => {
 								setEmail(payload.email);
 								setPassword(payload.password);
 
+								console.log(!password && afterSubmit)
+
 								// if (payload.password === payload.confirmedPassword) {
 								// delete payload.confirmedPassword
 
@@ -76,7 +78,7 @@ const AuthSignup: React.FC = () => {
 						}}
 					>
 						<div className="flex flex-col sm:flex-row gap-2">
-							<TextInput className={'border-green-500'} name="first_name" invalid={(!firstName && afterSubmit) ? 'true' : undefined} placeholder="First Name" />
+							<TextInput name="first_name" invalid={(!firstName && afterSubmit) ? 'true' : undefined} placeholder="First Name" />
 							<TextInput name="last_name" invalid={(!lastName && afterSubmit) ? 'true' : undefined} placeholder="Last Name" />
 						</div>
 						<TextInput name="email" invalid={(!email && afterSubmit) ? 'true' : undefined} placeholder="email@domain.net" />
@@ -100,6 +102,8 @@ const AuthSignup: React.FC = () => {
 							Already have an account?
 						</Link>
 					</div>
+					{/* temporary hack to get tailwind class to work in ui package */}
+					<input className='border-red-500 hidden' />
 				</div>
 			</div>
 		</main>

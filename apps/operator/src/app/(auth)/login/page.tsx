@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -14,11 +14,16 @@ import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 const AuthLogin: React.FC = () => {
 
 	const router = useRouter()
+	const [afterSubmit, setAfterSubmit] = useState(false);
+	const [signInError, setSignInError] = useState(false);
 
 	/**
 	 * Submit client-side signin function
 	 */
 	const submit = async (payload: LoginUser) => {
+
+		setSignInError(false);
+
 		try {
 			let res: any = await signIn('credentials', {
 				redirect: false,
@@ -31,6 +36,7 @@ const AuthLogin: React.FC = () => {
 			} else {
 				console.log("error")
 				console.log(res.error)
+				setSignInError(true);
 			}
 			// console.dir(signInRes)
 			// if (signInRes?.status == 200) {
@@ -70,6 +76,7 @@ const AuthLogin: React.FC = () => {
 							Login
 						</Button>
 					</SimpleForm>
+					<div>{signInError ? "Could not login please try again." : ''}</div>
 					<div className="flex items-center mt-4">
 						<Link
 							className="text-base text-sunglow-900 underline underline-offset-2"
