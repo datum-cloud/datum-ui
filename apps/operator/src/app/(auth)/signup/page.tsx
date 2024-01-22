@@ -46,9 +46,8 @@ const AuthSignup: React.FC = () => {
 								// delete payload.confirmedPassword
 
 								const res: any = await registerUser(payload)
-								console.dir(res)
 
-								if (res && res.ok) {
+								if (res?.res.ok) {
 
 									router.push('/verify')
 								}
@@ -65,7 +64,7 @@ const AuthSignup: React.FC = () => {
 								// }
 							} catch (error) {
 								console.log(error)
-								setApiResponse({ message: 'Unknown Error' })
+								setApiResponse({ message: 'Unknown error. Please try again.' })
 								console.dir(apiResponse)
 							}
 						}}
@@ -77,7 +76,7 @@ const AuthSignup: React.FC = () => {
 						}}
 					>
 						<div className="flex flex-col sm:flex-row gap-2">
-							<TextInput name="first_name" invalid={(!firstName && afterSubmit) ? 'true' : undefined} placeholder="First Name" />
+							<TextInput className={'border-green-500'} name="first_name" invalid={(!firstName && afterSubmit) ? 'true' : undefined} placeholder="First Name" />
 							<TextInput name="last_name" invalid={(!lastName && afterSubmit) ? 'true' : undefined} placeholder="Last Name" />
 						</div>
 						<TextInput name="email" invalid={(!email && afterSubmit) ? 'true' : undefined} placeholder="email@domain.net" />
@@ -88,7 +87,7 @@ const AuthSignup: React.FC = () => {
 							placeholder="confirm password"
 							type="password"
 						/> */}
-						<div>{apiResponse['message']}</div>
+						<div>{apiResponse.message}</div>
 						<Button className="mr-auto mt-2 w-full" type="submit">
 							Register
 						</Button>

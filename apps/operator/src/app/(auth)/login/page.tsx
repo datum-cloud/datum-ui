@@ -5,7 +5,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { AuthError } from "next-auth"
 import { Button } from '@repo/ui/button'
 import { TextInput } from '@repo/ui/text-input'
 import { SimpleForm } from '@repo/ui/simple-form'

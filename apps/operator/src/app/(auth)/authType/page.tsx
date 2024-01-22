@@ -3,11 +3,6 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { signIn } from 'next-auth/react'
-import { Button } from '@repo/ui/button'
-import { TextInput } from '@repo/ui/text-input'
-import { SimpleForm } from '@repo/ui/simple-form'
-import { LoginUser } from '../../../lib/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
 const AuthType: React.FC = () => {
