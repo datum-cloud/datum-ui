@@ -3,8 +3,8 @@
 import React from 'react'
 import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
-import { useVerifyUser } from '../../../lib/user'
 import { Button } from '@repo/ui/button'
+import { useVerifyUser } from '../../../lib/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
 const VerifyUser: React.FC = () => {

@@ -1,37 +1,38 @@
 {
-	"name": "operator",
-	"version": "1.0.0",
-	"private": true,
-	"scripts": {
-		"dev": "next dev",
-		"build": "next build",
-		"start": "next start",
-		"lint": "next lint"
-	},
-	"dependencies": {
-		"@repo/ui": "workspace:*",
-		"@repo/dally": "workspace:*",
-		"next": "latest",
-		"react": "latest",
-		"react-dom": "latest",
-		"next-auth": "beta",
-		"swr": "latest"
-	},
-	"devDependencies": {
-		"@headlessui/react": "latest",
-		"@next/eslint-plugin-next": "latest",
-		"@repo/eslint-config": "workspace:*",
-		"@repo/typescript-config": "workspace:*",
-		"@repo/tailwind-config": "workspace:*",
-		"@types/eslint": "latest",
-		"@types/node": "latest",
-		"@types/react": "latest",
-		"@types/react-dom": "latest",
-		"autoprefixer": "latest",
-		"clsx": "latest",
-		"eslint": "latest",
-		"postcss": "latest",
-		"tailwindcss": "latest",
-		"typescript": "latest"
-	}
+  "name": "operator",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@repo/ui": "workspace:*",
+    "@repo/dally": "workspace:*",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "next-auth": "beta",
+    "swr": "latest",
+    "graphql-request": "latest"
+  },
+  "devDependencies": {
+    "@headlessui/react": "latest",
+    "@next/eslint-plugin-next": "latest",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/tailwind-config": "workspace:*",
+    "@types/eslint": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "autoprefixer": "latest",
+    "clsx": "latest",
+    "eslint": "latest",
+    "postcss": "latest",
+    "tailwindcss": "latest",
+    "typescript": "latest"
+  }
 }
