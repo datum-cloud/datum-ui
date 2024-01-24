@@ -83,7 +83,7 @@ export const config = {
 
 			return token
 		},
-		session: ({ session, token }) => {
+		session: ({ session }) => {
 			/**
 			 * Here we can persist data into the client-side
 			 * session object that is used to read data
@@ -94,10 +94,11 @@ export const config = {
 			 * but do not use a client side hook to access it
 			 * as that data is memoized in the Node process
 			 */
-			if (session.user) {
-				session.user.name = token.name
-				session.user.email = token.email
-			}
+			// if (session.user) {
+			// 	session.user.name = token.name
+			// 	session.user.email = token.email
+			// }
+			console.dir(session)
 			return session
 		},
 	},

@@ -35,7 +35,12 @@ const AuthSignup: React.FC = () => {
 					<SimpleForm
 						classNames="space-y-2"
 						onSubmit={async (payload: RegisterUser) => {
+
 							setAfterSubmit(true)
+
+							if (!(payload.first_name && payload.last_name)) {
+								return false
+							}
 							try {
 								setFirstName(payload.first_name);
 								setLastName(payload.last_name);
@@ -49,7 +54,7 @@ const AuthSignup: React.FC = () => {
 
 								const res: any = await registerUser(payload)
 
-								if (res?.res.ok) {
+								if (res?.ok) {
 
 									router.push('/verify')
 								}

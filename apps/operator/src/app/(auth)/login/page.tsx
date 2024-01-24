@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { Button } from '@repo/ui/button'
 import { TextInput } from '@repo/ui/text-input'
+import { MessageBox } from '@repo/ui/message-box'
 import { SimpleForm } from '@repo/ui/simple-form'
 import { LoginUser } from '../../../lib/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
@@ -14,7 +15,6 @@ import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 const AuthLogin: React.FC = () => {
 
 	const router = useRouter()
-	const [afterSubmit, setAfterSubmit] = useState(false);
 	const [signInError, setSignInError] = useState(false);
 
 	/**
@@ -38,13 +38,6 @@ const AuthLogin: React.FC = () => {
 				console.log(res.error)
 				setSignInError(true);
 			}
-			// console.dir(signInRes)
-			// if (signInRes?.status == 200) {
-			// 	console.log('great redirect')
-			// } else {
-			// 	console.log(signInRes?.error)
-			// 	router.push('/')
-			// }
 
 		} catch (error) {
 			// if (error instanceof AuthError) // Handle auth errors
@@ -76,7 +69,7 @@ const AuthLogin: React.FC = () => {
 							Login
 						</Button>
 					</SimpleForm>
-					<div>{signInError ? "Could not login please try again." : ''}</div>
+					{signInError && <MessageBox className="p-4 ui-ml-1" message={'Could not login. Please try again.'} />}
 					<div className="flex items-center mt-4">
 						<Link
 							className="text-base text-sunglow-900 underline underline-offset-2"
