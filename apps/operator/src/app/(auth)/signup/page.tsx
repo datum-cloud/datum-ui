@@ -107,8 +107,6 @@ const AuthSignup: React.FC = () => {
 							Already have an account?
 						</Link>
 					</div>
-					{/* temporary hack to get tailwind class to work in ui package */}
-					<input className='border-red-500 hidden' />
 				</div>
 			</div>
 		</main>

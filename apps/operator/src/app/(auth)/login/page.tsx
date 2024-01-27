@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import clsx from 'clsx';
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -16,33 +17,30 @@ const AuthLogin: React.FC = () => {
 
 	const router = useRouter()
 	const [signInError, setSignInError] = useState(false);
-
+	const [signInLoading, setSignInLoading] = useState(false);
+	const showLoginError = !signInLoading && signInError;
 	/**
 	 * Submit client-side signin function
 	 */
 	const submit = async (payload: LoginUser) => {
-
+		setSignInLoading(true);
 		setSignInError(false);
-
 		try {
 			let res: any = await signIn('credentials', {
 				redirect: false,
 				...payload,
 			})
-			console.dir(res)
 			if (res.ok && !res.error) {
-				console.log('signin success')
 				router.push("/dashboard");
 			} else {
-				console.log("error")
-				console.log(res.error)
+				setSignInLoading(false);
 				setSignInError(true);
-			}
 
+			}
 		} catch (error) {
 			// if (error instanceof AuthError) // Handle auth errors
-			console.dir(error)
-
+			setSignInLoading(false);
+			setSignInError(true);
 		}
 	}
 
@@ -63,13 +61,13 @@ const AuthLogin: React.FC = () => {
 							submit(e)
 						}}
 					>
-						<TextInput name="username" placeholder="email@domain.net" />
-						<TextInput name="password" placeholder="password" type="password" />
-						<Button className="mr-auto mt-2 w-full" type="submit">
+						<TextInput name="username" loading={signInLoading ? true : undefined} placeholder="email@domain.net" />
+						<TextInput name="password" loading={signInLoading ? true : undefined} placeholder="password" type="password" />
+						<Button className="mr-auto mt-2 w-full" loading={signInLoading ? true : undefined} type="submit">
 							Login
 						</Button>
 					</SimpleForm>
-					{signInError && <MessageBox className="p-4 ui-ml-1" message={'Could not login. Please try again.'} />}
+					<MessageBox className={clsx("p-4 ui-ml-1", showLoginError ? '' : 'invisible')} message={'Could not login. Please try again.'} />
 					<div className="flex items-center mt-4">
 						<Link
 							className="text-base text-sunglow-900 underline underline-offset-2"
