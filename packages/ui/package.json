@@ -14,7 +14,8 @@
 		"./drawer": "./src/drawer.tsx",
 		"./global-search": "./src/global-search.tsx",
 		"./text-input": "./src/text-input.tsx",
-		"./simple-form": "./src/simple-form.tsx"
+		"./simple-form": "./src/simple-form.tsx",
+		"./message-box": "./src/message-box.tsx"
 	},
 	"scripts": {
 		"build": "tailwindcss -i ./src/styles.css -o dist/index.css",
