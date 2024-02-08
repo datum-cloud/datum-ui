@@ -2,6 +2,7 @@
 	"dependencies": {
 		"@graphql-tools/schema": "^10.0.0",
 		"graphql": "^16.8.1",
+		"graphql-codegen": "^0.4.0",
 		"graphql-codegen-plugin-typescript-swr": "^0.8.5",
 		"graphql-codegen-typescript-validation-schema": "^0.12.1",
 		"graphql-request": "^6.1.0",
