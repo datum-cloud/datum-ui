@@ -48,7 +48,13 @@ export const config = {
 
           const { username: email } = credentials
 
-          return { name: email.split('@')[0], email, accessToken: accessToken, refreshToken: refreshToken, ...data }
+          return {
+            name: email.split('@')[0],
+            email,
+            accessToken,
+            refreshToken,
+            ...data
+          }
         }
 
         if (fData.status !== 200) {

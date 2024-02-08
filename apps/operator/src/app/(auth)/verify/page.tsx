@@ -2,15 +2,16 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { useSearchParams } from 'next/navigation'
 import { Button } from '@repo/ui/button'
+import { useSearchParams } from 'next/navigation'
 import { useVerifyUser } from '../../../lib/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
 const VerifyUser: React.FC = () => {
-  const token = useSearchParams().get('token')
+  const searchParams = useSearchParams()
+  const token = searchParams.get('token')
 
-  const { isLoading } = useVerifyUser(token ? token : null)
+  const { isLoading } = useVerifyUser(token ?? null)
 
   return (
     <main className="flex flex-col min-h-screen w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">
