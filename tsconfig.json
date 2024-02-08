@@ -2,7 +2,4 @@
 	"extends": [
 		"@repo/typescript-config/base.json"
 	],
-	"experimental": {
-		"missingSuspenseWithCSRBailout": false,
-	},
 }
