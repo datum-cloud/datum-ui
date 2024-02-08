@@ -16,6 +16,13 @@
   },
   "devDependencies": {
     "eslint": "latest",
+    "eslint-config-next": "14.0.3",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-react": "7.33.2",
+    "eslint-plugin-storybook": "^0.6.15",
+    "eslint-plugin-tailwindcss": "^3.13.0",
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "latest",
     "turbo": "latest"
@@ -23,7 +30,7 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "bun@1.0.15",
+  "packageManager": "bun@1.0.26",
   "workspaces": [
     "apps/*",
     "packages/*"

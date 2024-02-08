@@ -20,19 +20,19 @@
   },
   "devDependencies": {
     "@headlessui/react": "latest",
-    "@next/eslint-plugin-next": "latest",
-    "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
-    "@repo/tailwind-config": "workspace:*",
-    "@types/eslint": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
     "clsx": "latest",
+		"@types/eslint": "latest",
     "eslint": "latest",
+		"@repo/eslint-config": "workspace:*",
+		"@next/eslint-plugin-next": "latest",
     "postcss": "latest",
     "tailwindcss": "latest",
-    "typescript": "latest"
+		"@repo/tailwind-config": "workspace:*",
+    "typescript": "latest",
+		"@repo/typescript-config": "workspace:*"
   }
 }

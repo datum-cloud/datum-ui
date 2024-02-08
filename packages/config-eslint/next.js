@@ -13,7 +13,9 @@ module.exports = {
 	].map(require.resolve),
 	plugins: [
 		"eslint-plugin-tsdoc",
+		"@typescript-eslint",
 	],
+	parser: '@typescript-eslint/parser',
 	parserOptions: {
 		project,
 	},

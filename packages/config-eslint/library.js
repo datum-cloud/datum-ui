@@ -6,10 +6,16 @@ module.exports = {
 	extends: [
 		"@vercel/style-guide/eslint/node",
 		"@vercel/style-guide/eslint/typescript",
+		"@vercel/style-guide/eslint/browser",
+		"@vercel/style-guide/eslint/react",
+		"@vercel/style-guide/eslint/next",
+		"eslint-config-turbo",
 	].map(require.resolve),
 	plugins: [
 		"eslint-plugin-tsdoc",
+		"@typescript-eslint",
 	],
+	parser: '@typescript-eslint/parser',
 	parserOptions: {
 		project,
 	},

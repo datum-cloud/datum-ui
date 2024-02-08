@@ -1,25 +1,21 @@
-# datum-ui
+# Datum UI
 
-This is the Datum UI monorepo. This repo is intended to help our teams and developers speed up development while building sustainable and low carbon footprint user interfaces.
+This repository contains the code for the [Datum](https://docs.datum.net) [operator portal](https://console.datum.net). 
 
-## What's inside?
+> This repository is experimental meaning that it's based on untested ideas or techniques and not yet established or finalized!
+> This means that support is best effort (at best!) and we strongly encourage you to NOT use this in production - reach out to [@matoszz](https://github.com/matoszz) with any questions regarding timeline, roadmap, etc.
+
+## Overview
 
 This monorepo is run on [Bun](https://bun.sh/) and built using [Turborepo](https://turbo.build/repo/). It includes the following packages/apps:
 
-### Apps and Packages
-
-- `docs`: susUI docs repo https://docs.sus-ui.datum.net/
 - `operator`: Datum Operator Portal https://console.datum.net/
 - `@repo/ui`: susUI component library shared by our other applications
 - `@repo/dally`: DAL library for sharing common patterns and functionality in our other apps
 - `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Stack
-
-Our team using this stack for our Turborepo:
+These apps / packages are built with the following tools and frameworks:
 
 - [Bun](https://bun.sh/) to bundle, dev, test, deploy and run apps
 - [TypeScript](https://www.typescriptlang.org/) for static type-checking
@@ -31,37 +27,26 @@ Our team using this stack for our Turborepo:
 - [HeadlessUI](https://headlessui.com/) for headless accessibility-compliant components
 - [Tailwindcss](https://tailwindcss.com/) for styles without leaving TSX syntax
 
-### Prerequisites
+## Prerequisites
 
-Datum suggests using [Bun](https://bun.sh/) for its speed and versatility, however, Turborepo supports many of the common package managers such as `npm`, `yarn`, or `pnpm`.
+We've chosen to use [Turboo](https://turbo.build/) for our bundler and build systems and [Bun](https://bun.sh/) for package management, and have a [Taskfile] setup for several convenient actions which occur across the various components used within this repo.
 
-To install Bun run:
+[Install task](https://taskfile.dev/installation/) to take advantage of some of the automation; you can use `bun` or `turbo` to do common things such as `turbo build` or `turbo dev`; see the Taskfile or run `task` to have the available commands and descriptions echo'd out for you. 
 
-```
-curl -fsSL https://bun.sh/install | bash
-```
+## Development
 
-### Build
+Given this is a mono-repo setup, we're making potentially many apps with shared configurations. This is called "workspaces". If you look at some of the structure we've setup below:
 
-To build all apps and packages, run the following command:
+- apps/docs: nextjs with typescript
+- apps/operator: nextjs with typescript
+- packages/ui: shared React component library
+- packages/eslint-config: Shared configuration (ESLint)
+- packages/typescript-config: Shared TypeScript `tsconfig.json`
 
-```
-bun run build
-```
+Each of these is a workspace - a folder containing a `package.json`. Each workspace can declare its own dependencies, run its own scripts, and export code for other workspaces to use. When you run tasks with `turbo`, such as `turbo lint`, Turborepo looks at each lint script in each workspace and runs it.
 
-### Develop
+### Shared components
 
-To develop all apps and packages, run the following command:
+As an example, if you look within `packages/typescript-config` you will see the that the name of the package is `@repo/typescript-config`, but if you look within `apps/docs/tsconfig.json` you'll see we're importing `@repo/typescript-config/nextjs.json` directly into our `tsconfig.json` file.
 
-```
-bun install
-bun dev
-```
-
-Alternatively, you can run a single repo instead of all the repos with the filter argument:
-
-For example to develop on the docs app only run:
-
-```
-bun dev --filter docs
-```
+This pattern allows for a monorepo to share a single `tsconfig.json` across all its workspaces, reducing code duplication.

@@ -1,5 +1,10 @@
 {
 	"name": "@repo/eslint-config",
+  "files": [
+    "library.js",
+    "next.js",
+    "react-internal.js"
+  ],
 	"version": "0.0.0",
 	"private": true,
 	"devDependencies": {
