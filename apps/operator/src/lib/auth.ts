@@ -40,11 +40,9 @@ export const config = {
         if (fData.ok) {
           const data = await fData.json()
 
-          // get access token and refresh tokens from headers
-          const cookie = fData.headers.getSetCookie();
-          const cookieSplit = cookie[0].split(", ")
-          const accessToken = cookieSplit[0].split("; ")[0].split("access_token=")[1];
-          const refreshToken = cookieSplit[1].split("; ")[0].split("refresh_token=")[1];
+          // get access token and refresh tokens from response
+          const accessToken = data?.data?.access_token;
+          const refreshToken = data?.data?.refresh_token;
 
           const { username: email } = credentials
 
