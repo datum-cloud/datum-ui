@@ -4,6 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import { Button } from '@repo/ui/button'
 import { useSearchParams } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { useVerifyUser } from '../../../lib/user'
 import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
 
@@ -11,7 +12,20 @@ const VerifyUser: React.FC = () => {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
 
-  const { isLoading } = useVerifyUser(token ?? null)
+  const { isLoading, verified, error } = useVerifyUser(token ?? null)
+
+  React.useEffect(() => {
+    if (verified) {
+      const accessToken = verified?.data?.access_token
+      const refreshToken = verified?.data?.refresh_token
+
+      signIn('credentials', {
+        callbackUrl: '/dashboard',
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      })
+    }
+  }, [verified, error])
 
   return (
     <main className="flex flex-col min-h-screen w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">
