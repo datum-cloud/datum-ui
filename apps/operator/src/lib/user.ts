@@ -37,7 +37,6 @@ export const useVerifyUser = (arg: string | null) => {
       revalidateIfStale: false,
     },
   )
-
   return {
     verified: data,
     isLoading,

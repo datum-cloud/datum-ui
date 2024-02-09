@@ -19,45 +19,66 @@ export const config = {
     Credentials({
       credentials: {},
       async authorize(credentials: any) {
-        /**
-         * Here we would call out to the Datum API
-         * to validate our credentials without having
-         * a direct connection to the DB.
-         *
-         * This runs on the server so we can store the API
-         * route in an env var that way we don't expose
-         * your API login routes to our end users
-         */
-        const fData = await fetch(`${restUrl}/login`, {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({
-            username: credentials.username as string,
-            password: credentials.password as string,
-          }),
-        })
+        let accessToken = ""
+        let refreshToken = ""
 
-        if (fData.ok) {
-          const data = await fData.json()
+        // If the request did not come through with the access tokens, take the 
+        // credentials and use them to get the access token and refresh token
+        if (!credentials.accessToken) {
+          /**
+           * Here we would call out to the Datum API
+           * to validate our credentials
+           *
+           * This runs on the server so we can store the API
+           * route in an env var that way we don't expose
+           * your API login routes to our end users
+           */
+          const fData = await fetch(`${restUrl}/v1/login`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+              username: credentials.username as string,
+              password: credentials.password as string,
+            }),
+          })
 
-          // get access token and refresh tokens from response
-          const accessToken = data?.data?.access_token;
-          const refreshToken = data?.data?.refresh_token;
-
-          const { username: email } = credentials
-
-          return {
-            name: email.split('@')[0],
-            email,
-            accessToken,
-            refreshToken,
-            ...data
+          if (fData.status !== 200) {
+            console.log('error => ', await fData.text())
+            return false
           }
+
+          if (fData.ok) {
+            const data = await fData.json()
+
+            // get access token and refresh tokens from response
+            accessToken = data?.data?.access_token
+            refreshToken = data?.data?.refresh_token
+          }
+
+        } else {
+          // else these came from the sign in call back and we can use them
+          // to proceed
+          accessToken = credentials.accessToken
+          refreshToken = credentials.refreshToken
         }
 
-        if (fData.status !== 200) {
-          console.log('error => ', await fData.text())
-          return false
+        // Get user data for sessions
+        const uData = await fetch(`${restUrl}/oauth/userinfo`, {
+          method: 'GET',
+          headers: { 'Authorization': 'Bearer ' + accessToken },
+        })
+
+        if (uData.ok) {
+          const data = await uData.json()
+
+          return {
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+            email: data?.email,
+            name: data?.first_name + ' ' + data?.last_name,
+            image: data?.avatar_remote_url,
+            ...data,
+          }
         }
 
         return null
@@ -87,7 +108,6 @@ export const config = {
        * but do not use a client side hook to access it
        * as that data is memoized in the Node process
        */
-
       if (session.user) {
         session.user.name = token.name
         session.user.email = token.email
