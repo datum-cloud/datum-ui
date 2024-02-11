@@ -13,15 +13,27 @@ export interface RegisterUser {
   confirmedPassword?: string
 }
 
-export async function registerUser(arg: RegisterUser) {
-  const fData = await fetch('/api/auth/register', {
+interface HttpResponse<T> extends Response {
+  message?: T;
+}
+
+export async function registerUser<T>(arg: RegisterUser) {
+  const fData: HttpResponse<T> = await fetch('/api/auth/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(arg),
   })
-  return fData.json()
+  try {
+    let fDataMessage = await fData.json();
+    fData.message = fDataMessage.message;
+    return fData;
+  }
+  catch (error) {
+    console.log(error)
+    return { message: 'error' }
+  }
 }
 
 export const useVerifyUser = (arg: string | null) => {
