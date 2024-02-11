@@ -13,6 +13,7 @@ export const TextInput = React.forwardRef<HTMLInputElement, any>(
         )}
         ref={ref}
         type="text"
+        required={props.required}
         {...props}
       />
     )
