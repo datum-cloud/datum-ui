@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import { useEffect } from 'react'
 import Image from 'next/image'
 import { Button } from '@repo/ui/button'
 import { useSearchParams } from 'next/navigation'
@@ -14,15 +14,15 @@ const VerifyUser: React.FC = () => {
 
   const { isLoading, verified, error } = useVerifyUser(token ?? null)
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (verified) {
       const accessToken = verified?.data?.access_token
       const refreshToken = verified?.data?.refresh_token
 
       signIn('credentials', {
         callbackUrl: '/dashboard',
-        accessToken: accessToken,
-        refreshToken: refreshToken,
+        accessToken,
+        refreshToken,
       })
     }
   }, [verified, error])
@@ -37,11 +37,9 @@ const VerifyUser: React.FC = () => {
           src={logoReversed as string}
           width={385}
         />
-        {isLoading && (
-          <h1 className="text-3xl text-center mt-4 animate-pulse">
+        {isLoading ? <h1 className="text-3xl text-center mt-4 animate-pulse">
             Verifying your account...
-          </h1>
-        )}
+          </h1> : null}
         {!isLoading && (
           <div>
             <h1 className="text-3xl text-center mt-4">
@@ -53,6 +51,7 @@ const VerifyUser: React.FC = () => {
           <Button
             className="mr-auto mt-2 w-full"
             onClick={() => {
+							// TODO: Call resend email endpoint
               console.log('resend email')
             }}
             type="button"

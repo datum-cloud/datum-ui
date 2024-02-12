@@ -4,7 +4,6 @@ import Credentials from 'next-auth/providers/credentials'
 import GithubProvider from 'next-auth/providers/github'
 import GoogleProvider from 'next-auth/providers/google'
 import { restUrl } from '@repo/dally/auth'
-import { access } from 'fs';
 
 export const config = {
   theme: {
@@ -77,17 +76,17 @@ export const config = {
         // Get user data for sessions
         const uData = await fetch(`${restUrl}/oauth/userinfo`, {
           method: 'GET',
-          headers: { 'Authorization': 'Bearer ' + accessToken },
+          headers: { 'Authorization': `Bearer ${accessToken}` },
         })
 
         if (uData.ok) {
           const data = await uData.json()
 
           return {
-            accessToken: accessToken,
-            refreshToken: refreshToken,
+            accessToken,
+            refreshToken,
             email: data?.email,
-            name: data?.first_name + ' ' + data?.last_name,
+            name: `${data?.first_name} ${data?.last_name}`,
             image: data?.avatar_remote_url,
             ...data,
           }
@@ -119,14 +118,14 @@ export const config = {
         // Get user data for sessions
         const uData = await fetch(`${restUrl}/oauth/userinfo`, {
           method: 'GET',
-          headers: { 'Authorization': 'Bearer ' + user.accessToken },
+          headers: { 'Authorization': `Bearer ${user.accessToken}` },
         })
 
         if (uData.ok) {
           const userJson = await uData.json()
 
           user.email = userJson?.email
-          user.name = userJson?.first_name + ' ' + userJson?.last_name
+          user.name = `${userJson?.first_name} ${userJson?.last_name}`
           user.image = userJson?.avatar_remote_url
         }
       }

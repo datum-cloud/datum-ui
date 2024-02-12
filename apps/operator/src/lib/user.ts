@@ -26,7 +26,7 @@ export async function registerUser<T>(arg: RegisterUser) {
     body: JSON.stringify(arg),
   })
   try {
-    let fDataMessage = await fData.json();
+    const fDataMessage = await fData.json();
     fData.message = fDataMessage.message;
     return fData;
   }
