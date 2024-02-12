@@ -4,6 +4,7 @@ import Credentials from 'next-auth/providers/credentials'
 import GithubProvider from 'next-auth/providers/github'
 import GoogleProvider from 'next-auth/providers/google'
 import { restUrl } from '@repo/dally/auth'
+import { access } from 'fs';
 
 export const config = {
   theme: {
@@ -97,7 +98,7 @@ export const config = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       // register user that signed in via oauth provider
       if (account?.provider !== "credentials") {
         const oauthUser = {
@@ -105,7 +106,8 @@ export const config = {
           name: user.name,
           email: user.email,
           image: user.image,
-          authProvider: account?.provider
+          authProvider: account?.provider,
+          accessToken: account?.access_token,
         };
 
         const data = await getTokenFromDatumAPI(oauthUser);
@@ -197,6 +199,7 @@ const getTokenFromDatumAPI = async (reqBody: any) => {
         name: reqBody.name as string,
         image: reqBody.image as string,
         authProvider: reqBody.authProvider as string,
+        clientToken: reqBody.accessToken as string,
       })
     }).then((res) => res.json()).then((data) => data);
 
