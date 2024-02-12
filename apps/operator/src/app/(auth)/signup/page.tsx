@@ -62,16 +62,16 @@ const AuthSignup: React.FC = () => {
             }}
           >
             <div className="flex flex-col sm:flex-row gap-2">
-              <TextInput name="first_name" placeholder="First Name" required={true} />
-              <TextInput name="last_name" placeholder="Last Name" required={true} />
+              <TextInput name="first_name" placeholder="First Name" required />
+              <TextInput name="last_name" placeholder="Last Name" required />
             </div>
-            <TextInput name="email" placeholder="email@domain.net" type="email" required={true} />
-            <TextInput name="password" placeholder="password" type="password" required={true} />
+            <TextInput name="email" placeholder="email@domain.net" required type="email" />
+            <TextInput name="password" placeholder="password" required type="password" />
             <TextInput
               name="confirmedPassword"
               placeholder="confirm password"
+              required
               type="password"
-              required={true}
             />
             <Button className="mr-auto mt-2 w-full" loading={isLoading ? true : undefined} type="submit">
               Register

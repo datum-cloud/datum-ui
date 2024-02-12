@@ -14,6 +14,11 @@ declare module 'next-auth' {
     accessToken: string;
     refreshToken: string;
   }
+  interface Profile extends DefaultProfile {
+    display_name: string;
+    first_name: string;
+    last_name: string;
+  }
 }
 
 declare module "@auth/core/jwt" {
