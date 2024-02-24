@@ -62,8 +62,8 @@ export const config = {
             const data = await fData.json()
 
             // get access token and refresh tokens from response
-            accessToken = data?.data?.access_token
-            refreshToken = data?.data?.refresh_token
+            accessToken = data?.access_token
+            refreshToken = data?.refresh_token
           }
 
         } else {
