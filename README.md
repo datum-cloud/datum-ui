@@ -59,7 +59,7 @@ bun run build
    cp ./config/.env-example ./config/.env
  
 
-2. To develop all apps and packages, run the following command:
+1. To develop all apps and packages, run the following command:
 
  ```
 bun install
