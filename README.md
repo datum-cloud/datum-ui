@@ -52,10 +52,11 @@ bun run build
 ### Develop
 
 1. Copy the .env, this is in .gitignore so you do not have to worry about accidentally committing it.
-This hold example of environment configurations which you should review and potentially override depending on your needs.
- ```bash
- cp ./config/.env-example ./config/.env
- ```
+
+  This holds example of environment configurations which you should review and potentially override depending on your needs.
+  
+   ```bash
+   cp ./config/.env-example ./config/.env
  
 
 2. To develop all apps and packages, run the following command:
