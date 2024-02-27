@@ -27,11 +27,10 @@ export async function registerUser<T>(arg: RegisterUser) {
   })
   try {
     const fDataMessage = await fData.json();
-    fData.message = fDataMessage.message;
+    fData.message = fDataMessage.error;
     return fData;
   }
   catch (error) {
-    console.log(error)
     return { message: 'error' }
   }
 }
