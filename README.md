@@ -53,17 +53,16 @@ bun run build
 
 1. Copy the .env, this is in .gitignore so you do not have to worry about accidentally committing it.
    This hold example of environment configurations which you should review and potentially override depending on your needs.
+    ```bash
+    cp ./config/.env-example ./config/.env
+    ```
 
-```bash
-cp ./config/.env-example ./config/.env
-```
+1. To develop all apps and packages, run the following command:
 
-2. To develop all apps and packages, run the following command:
-
-```
-bun install
-bun dev
-```
+    ```
+    bun install
+    bun dev
+    ```
 
 Alternatively, you can run a single repo instead of all the repos with the filter argument:
 
