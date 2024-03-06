@@ -16,8 +16,8 @@ const VerifyUser: React.FC = () => {
 
   useEffect(() => {
     if (verified) {
-      const accessToken = verified?.data?.access_token
-      const refreshToken = verified?.data?.refresh_token
+      const accessToken = verified?.access_token
+      const refreshToken = verified?.refresh_token
 
       signIn('credentials', {
         callbackUrl: '/dashboard',
