@@ -1,28 +1,9 @@
 import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
-import localFont from 'next/font/local'
 import './globals.css'
 import '@repo/ui/styles.css'
+import { aime, ftRegola, karelia } from './fonts/fonts'
 
-const ftRegola = localFont({
-  src: [
-    {
-      path: './fonts/FTRegolaNeueTrial-Regular.woff',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: './fonts/FTRegolaNeueTrial-Medium.woff',
-      weight: '500',
-      style: 'medium',
-    },
-    {
-      path: './fonts/FTRegolaNeueTrial-Semibold.woff',
-      weight: '600',
-      style: 'semibold',
-    },
-  ],
-})
 
 export const metadata: Metadata = {
   title: {
@@ -40,7 +21,7 @@ export default function RootLayout({
   return (
     <html className="h-full relative" lang="en">
       <body
-        className={`${ftRegola.className} w-full h-full dark:text-white dark:bg-peat-900 bg-blackberry-50 text-peat-800`}
+        className={` ${karelia.variable} ${aime.variable} ${ftRegola.variable} font-sans  w-full h-full dark:text-white dark:bg-peat-900 bg-blackberry-50 text-peat-800`}
       >
         <SessionProvider>{children}</SessionProvider>
       </body>
