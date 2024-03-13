@@ -6,7 +6,7 @@ const PageTitle = ({ title, description }: any) => {
       {title}
       {description ? (
         <p
-          className={`text-2xl mt-4 leading-5 text-left font-thin font-san`}
+          className={`text-2xl mt-4 leading-5 text-left font-thin font-sans`}
         >
           {description}
         </p>
