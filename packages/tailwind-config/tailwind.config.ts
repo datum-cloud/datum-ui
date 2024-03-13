@@ -76,6 +76,11 @@ export const config: Omit<Config, 'content'> = {
           50: '#FDF2F2',
         },
       },
+      fontFamily: {
+        sans: ['var(--font-ftRegola)'],
+        mono: ['var(--font-karelia)'],
+        serif: ['var(--font-FAMAime)'],
+      },
     },
   },
 }
