@@ -16,6 +16,7 @@ import visibility from '../../../../public/icons/visibility.svg'
 import LandingBackground from '../../../../public/backgrounds/landing-bg.svg'
 import googleIcon from '../../../../public/icons/google-icon.svg'
 import githubIcon from '../../../../public/icons/github-icon.svg'
+import arrowOutward from '../../../../public/icons/arrow-outward.svg'
 
 const AuthLogin: React.FC = () => {
   const router = useRouter()
@@ -66,7 +67,7 @@ const AuthLogin: React.FC = () => {
   }
 
   return (
-    <main className="flex flex-row h-full w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">
+    <main className="flex flex-row h-full w-full items-center space-between bg-blackberry-900 ">
       <div className="flex flex-col justify-center mx-auto my-auto w-full p-6 sm:w-1/3 h-full relative ease-in-out">
         <div className="bg-white border border-winter-sky-900 p-8 rounded-lg">
           <div className="flex flex-col  justify-start">
@@ -83,7 +84,7 @@ const AuthLogin: React.FC = () => {
                 name="username"
                 placeholder="email@domain.net"
               />
-              <div className="flex relative">
+              <div className="relative">
                 <TextInput
                   label="Password"
                   name="password"
@@ -98,9 +99,9 @@ const AuthLogin: React.FC = () => {
                   }}
                 >
                   {showPassword ? (
-                    <Image alt="hide password icon" src={visibilityOff} />
+                    <Image  alt="hide password icon" src={visibilityOff} />
                   ) : (
-                    <Image alt="show password icon" src={visibility} />
+                    <Image  alt="show password icon" src={visibility} />
                   )}
                 </button>
               </div>
@@ -113,9 +114,9 @@ const AuthLogin: React.FC = () => {
                 <div className="w-1/2 bg-winter-sky-900 h-px"></div>
               </div>
 
-              <div className="w-full">
+              <div className="w-full mb-8">
                 <button
-                  className="!text-blackberry-900 w-full bg-white hover:bg-blackberry-50 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium border border-winter-sky-900 rounded-lg text-sm px-5 py-2.5 text-center inline-flex justify-center me-1 mb-2 ml-1"
+                  className="!text-blackberry-900 mb-4 w-full bg-white hover:bg-blackberry-50 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium border border-winter-sky-900 rounded-lg text-sm px-5 py-2.5 text-center inline-flex justify-center "
                   onClick={() => {
                     google()
                   }}
@@ -129,7 +130,7 @@ const AuthLogin: React.FC = () => {
                   Sign in with Google
                 </button>
                 <button
-                  className="!text-blackberry-900 w-full bg-white hover:bg-blackberry-50 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 font-medium rounded-lg border border-winter-sky-900 text-sm px-5 py-2.5 text-center inline-flex justify-center me-1 mb-2 ml-1"
+                  className="!text-blackberry-900 w-full bg-white hover:bg-blackberry-50 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 font-medium rounded-lg border border-winter-sky-900 text-sm px-5 py-2.5 text-center inline-flex justify-center  mb-2 "
                   onClick={() => {
                     github()
                   }}
@@ -145,26 +146,29 @@ const AuthLogin: React.FC = () => {
               </div>
 
               <Button
-                className="mr-auto w-full"
+                className=" w-full inline-flex justify-center items-center"
                 loading={signInLoading ? true : undefined}
                 type="submit"
               >
-                Login
+                Sign in <Image  className='ml-2 ' alt="show password icon" src={arrowOutward} />
               </Button>
             </SimpleForm>
             <br />
 
-            <MessageBox
-              className={clsx('p-4 ui-ml-1', showLoginError ? '' : 'invisible')}
+              <MessageBox
+              className={clsx('p-4 ui-ml-1', showLoginError ? '' : 'hidden')}
               message="Could not login. Please try again."
             />
-            <div className="flex items-center mt-4">
+            <div className="flex items-center  justify-center mt-4 text-blackberry-800">
+              <p>
+              Don't have an account yet?
               <Link
-                className="text-base text-sunglow-900 underline underline-offset-2"
+                className="text-base text-sunglow-900 pl-1  underline  underline-offset-4 "
                 href="/signup"
               >
-                Need to create an account?
+                 Sign up
               </Link>
+              </p>
             </div>
           </div>
         </div>
