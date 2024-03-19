@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react'
-import clsx from 'clsx'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -168,12 +167,12 @@ const AuthLogin: React.FC = () => {
             ) : null}
             <div className="flex items-center  justify-center mt-4 text-blackberry-800">
               <p>
-                Don't have an account yet?
+                Don&apos;t have an account yet?
                 <Link
                   className="text-base text-sunglow-900 pl-1  underline  underline-offset-4 "
                   href="/signup"
                 >
-                  Sign up
+                Sign up
                 </Link>
               </p>
             </div>
