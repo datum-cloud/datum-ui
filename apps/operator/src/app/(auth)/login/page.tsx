@@ -67,7 +67,7 @@ const AuthLogin: React.FC = () => {
   }
 
   return (
-    <main className="flex flex-row h-full w-full items-center space-between bg-blackberry-900 ">
+    <main className="flex flex-row h-full w-full items-center space-between bg-blackberry-900">
       <div className="flex flex-col justify-center mx-auto my-auto w-full p-6 sm:w-1/3 h-full relative ease-in-out">
         <div className="bg-white border border-winter-sky-900 p-8 rounded-lg">
           <div className="flex flex-col  justify-start">
@@ -99,9 +99,9 @@ const AuthLogin: React.FC = () => {
                   }}
                 >
                   {showPassword ? (
-                    <Image  alt="hide password icon" src={visibilityOff} />
+                    <Image alt="hide password icon" src={visibilityOff} />
                   ) : (
-                    <Image  alt="show password icon" src={visibility} />
+                    <Image alt="show password icon" src={visibility} />
                   )}
                 </button>
               </div>
@@ -150,24 +150,31 @@ const AuthLogin: React.FC = () => {
                 loading={signInLoading ? true : undefined}
                 type="submit"
               >
-                Sign in <Image  className='ml-2 ' alt="show password icon" src={arrowOutward} />
+                Sign in
+                <Image
+                  className="ml-2"
+                  alt="show password icon"
+                  src={arrowOutward}
+                />
               </Button>
             </SimpleForm>
             <br />
 
+            {showLoginError ? (
               <MessageBox
-              className={clsx('p-4 ui-ml-1', showLoginError ? '' : 'hidden')}
-              message="Could not login. Please try again."
-            />
+                className="p-4 ui-ml-1"
+                message="Could not login. Please try again."
+              />
+            ) : null}
             <div className="flex items-center  justify-center mt-4 text-blackberry-800">
               <p>
-              Don't have an account yet?
-              <Link
-                className="text-base text-sunglow-900 pl-1  underline  underline-offset-4 "
-                href="/signup"
-              >
-                 Sign up
-              </Link>
+                Don't have an account yet?
+                <Link
+                  className="text-base text-sunglow-900 pl-1  underline  underline-offset-4 "
+                  href="/signup"
+                >
+                  Sign up
+                </Link>
               </p>
             </div>
           </div>
