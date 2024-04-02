@@ -24,7 +24,7 @@ export const GlobalSearch = () => {
         <input
           id="search-field"
           className="!block !h-full !w-full !border-0 !py-0 !pl-0 !pr-0 placeholder:!text-white
-					focus:!border-0 focus:!ring-0 !text-sm !bg-transparent !text-white !rounded border border-[#D5D1DC]"
+					focus:!border-0 focus:!ring-0 !text-sm !bg-transparent !text-white !rounded border-[#D5D1DC]"
           placeholder="Global search"
           type="search"
           name="search"

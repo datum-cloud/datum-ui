@@ -13,6 +13,7 @@
     "./code": "./src/code.tsx",
     "./drawer": "./src/drawer.tsx",
     "./global-search": "./src/global-search.tsx",
+    "./logo": "./src/logo/logo.tsx",
     "./text-input": "./src/text-input.tsx",
     "./simple-form": "./src/simple-form.tsx",
     "./message-box": "./src/message-box.tsx"

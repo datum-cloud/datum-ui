@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect } from 'react'
-import Image from 'next/image'
 import { Button } from '@repo/ui/button'
 import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
+import { Logo } from '@repo/ui/logo'
 import { useVerifyUser } from '../../../lib/user'
 
 const VerifyUser: React.FC = () => {
@@ -29,14 +29,9 @@ const VerifyUser: React.FC = () => {
   return (
     <main className="flex flex-col min-h-screen w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">
       <div className="flex flex-col justify-center mx-auto my-auto w-full p-6 sm:w-1/3 h-full relative ease-in-out">
-        <Image
-          alt=""
-          className="mx-auto max-h-20"
-          height={114}
-          priority
-          src="logos/logo_orange_icon.svg"
-          width={385}
-        />
+        <div className="mx-auto mb-3">
+          <Logo theme="dark" width={200} />
+        </div>
         {isLoading ? (
           <h1 className="text-3xl text-center mt-4 animate-pulse">
             Verifying your account...

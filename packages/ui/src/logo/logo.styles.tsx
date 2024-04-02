@@ -2,19 +2,17 @@ import { tv, type VariantProps } from 'tailwind-variants'
 
 export const logoStyles = tv({
   slots: {
-    base: 'block',
-    icon: 'fill',
-    text: 'relative w-full flex-none mb-2 text-2xl font-semibold text-stone-900 dark:text-white',
+    base: 'block max-w-full max-h-full',
+    icon: 'fill-sunglow-900',
+    text: 'fill-white',
   },
   variants: {
     theme: {
       light: {
-        icon: 'bg-blue-500 shadow-blue-500/50',
-        text: 'peer-checked:bg-blue',
+        icon: 'fill-blackberry-800',
       },
       dark: {
-        icon: 'bg-purple-500 shadow-purple-500/50',
-        text: 'peer-checked:bg-purple',
+        icon: 'fill-sunglow-900',
       },
     },
   },

@@ -3,9 +3,9 @@ import Image from 'next/image'
 import { Drawer } from '@repo/ui/drawer'
 import { GlobalSearch } from '@repo/ui/global-search'
 import { Alerts } from '@repo/ui/alerts'
+import { Logo } from '@repo/ui/logo'
 import { routes } from '../../routes'
 import { Avatar } from '../../components/avatar'
-import logo from '../../../public/logos/logo_orange_icon.svg'
 import bookIcon from '../../../public/icons/book.svg'
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ export default function RootLayout({
 
       <div className="fixed w-full top-0 z-40 flex items-center h-16 pr-4 bg-blackberry-800 dark:bg-peat-800 border-0 border-b border-blackberry-100 dark:border-peat-700">
         <div className="flex items-center px-4">
-          <Image alt="dataum logo" className="max-h-16" src={logo} />
+          <Logo theme="dark" width={96} />
         </div>
 
         <div className="hidden xl:block ml-auto">
