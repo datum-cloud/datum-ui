@@ -3,7 +3,6 @@
 import React from 'react'
 import Image from 'next/image'
 import { Button } from '@repo/ui/button'
-import logoReversed from '../../public/logos/full_reversed.svg'
 
 const Landing: React.FC = () => {
   return (
@@ -12,18 +11,12 @@ const Landing: React.FC = () => {
         <Image
           alt="datum imagery background"
           className="mx-auto"
+          height={114}
           priority
-          src={logoReversed as string}
+          src="/logos/full_reversed.svg"
           width={385}
         />
-        <Button
-          className="w-full mt-8"
-          onClick={() => {
-            console.log('susUI Docs app')
-          }}
-        >
-          Let&apos;s read some docs
-        </Button>
+        <Button className="w-full mt-8">Let&apos;s read some docs</Button>
       </div>
     </main>
   )

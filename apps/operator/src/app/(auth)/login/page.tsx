@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import clsx from 'clsx'
+import { clsx } from 'clsx'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -88,14 +88,14 @@ const AuthLogin: React.FC = () => {
                 type={showPassword ? 'text' : 'password'}
               />
               <button
-                type="button"
                 className="flex justify-around items-center absolute  right-2.5 bottom-2"
                 onClick={() => {
                   setShowPassword(!showPassword)
                 }}
+                type="button"
               >
                 {showPassword ? (
-                  <Image  alt="hide password icon" src={visibilityOff} />
+                  <Image alt="hide password icon" src={visibilityOff} />
                 ) : (
                   <Image alt="show password icon" src={visibility} />
                 )}
