@@ -83,7 +83,7 @@ export const config = {
             accessToken,
             refreshToken,
             email: data?.email,
-            name: `${data?.first_name} ${data?.last_name}`,
+            name: `${data?.first_name as string} ${data?.last_name as string}`,
             image: data?.avatar_remote_url,
             ...data,
           }
@@ -122,7 +122,7 @@ export const config = {
           const userJson = await uData.json()
 
           user.email = userJson?.email
-          user.name = `${userJson?.first_name} ${userJson?.last_name}`
+          user.name = `${userJson?.first_name as string} ${userJson?.last_name as string}`
           user.image = userJson?.avatar_remote_url
         }
       }

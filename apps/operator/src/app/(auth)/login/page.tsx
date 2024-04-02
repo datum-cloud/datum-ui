@@ -11,9 +11,6 @@ import { TextInput } from '@repo/ui/text-input'
 import { MessageBox } from '@repo/ui/message-box'
 import { SimpleForm } from '@repo/ui/simple-form'
 import { type LoginUser } from '../../../lib/user'
-import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
-import visibilityOff from '../../../../public/icons/visibility-off.svg'
-import visibility from '../../../../public/icons/visibility.svg'
 
 const AuthLogin: React.FC = () => {
   const router = useRouter()
@@ -69,8 +66,9 @@ const AuthLogin: React.FC = () => {
         <Image
           alt="datum imagery background"
           className="mx-auto max-h-20"
+          height={114}
           priority
-          src={logoReversed as string}
+          src="logos/logo_orange_icon.svg"
           width={385}
         />
         <div className="flex flex-col mt-8 justify-start">
@@ -95,9 +93,19 @@ const AuthLogin: React.FC = () => {
                 type="button"
               >
                 {showPassword ? (
-                  <Image alt="hide password icon" src={visibilityOff} />
+                  <Image
+                    alt="hide password icon"
+                    height={20}
+                    src="/icons/visibility-off.svg"
+                    width={20}
+                  />
                 ) : (
-                  <Image alt="show password icon" src={visibility} />
+                  <Image
+                    alt="show password icon"
+                    height={20}
+                    src="/icons/visibility.svg"
+                    width={20}
+                  />
                 )}
               </button>
             </div>
