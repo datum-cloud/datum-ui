@@ -15,6 +15,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "dotenv-cli": "latest",
     "eslint": "latest",
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "latest",
