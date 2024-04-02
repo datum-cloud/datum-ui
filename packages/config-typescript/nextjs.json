@@ -22,7 +22,7 @@
 		"resolveJsonModule": true,
 		"strict": true,
 		"target": "es5",
-		"downlevelIteration": true
+		"downlevelIteration": true,
 	},
 	"include": [
 		"src",
