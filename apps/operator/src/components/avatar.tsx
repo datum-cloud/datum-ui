@@ -12,7 +12,7 @@ export const Avatar = () => {
     <Menu as="div" className="relative">
       <Menu.Button className="flex items-center w-8 h-8">
         <span className="sr-only">Open user menu</span>
-        <div className="ui-flex items-center justify-center h-8 w-8 rounded-md bg-orange-300 uppercase font-bold text-lg text-white">
+        <div className="flex items-center justify-center h-8 w-8 rounded-md bg-orange-300 uppercase font-bold text-lg text-white">
           <span className="text-white uppercase leading-8">
             {session.data?.user?.name?.substring(0, 2)}
           </span>

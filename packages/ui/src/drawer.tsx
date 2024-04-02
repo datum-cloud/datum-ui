@@ -83,36 +83,36 @@ export const Drawer = ({ routes, currentPath }: any) => {
       <Transition.Root show={mobileMenuOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="ui-relative lg:ui-hidden ui-z-50 ui-ease-in-out"
+          className="relative lg:hidden z-50 ease-in-out"
           onClose={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           <Transition.Child
             as={Fragment}
-            enter="ui-transition-opacity ui-ease-linear ui-duration-300"
-            enterFrom="ui-opacity-0"
-            enterTo="ui-opacity-100"
-            leave="ui-transition-opacity ui-ease-linear ui-duration-300"
-            leaveFrom="ui-opacity-100"
-            leaveTo="ui-opacity-0"
+            enter="transition-opacity ease-linear duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transition-opacity ease-linear duration-300"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
           >
-            <div className="2xl:ui-hidden ui-fixed ui-inset-0 ui-bg-blackberry-200/70 dark:ui-bg-peat-900/80" />
+            <div className="2xl:hidden fixed inset-0 bg-blackberry-200/70 dark:bg-peat-900/80" />
           </Transition.Child>
 
-          <div className="ui-fixed ui-inset-0 ui-flex">
+          <div className="fixed inset-0 flex">
             <Transition.Child
               as={Fragment}
-              enter="ui-transition ui-ease-in-out ui-duration-300 ui-transform"
-              enterFrom="-ui-translate-x-full"
-              enterTo="ui-translate-x-0"
-              leave="ui-transition ui-ease-in-out ui-duration-300 ui-transform"
-              leaveFrom="ui-translate-x-0"
-              leaveTo="-ui-translate-x-full"
+              enter="transition ease-in-out duration-300 transform"
+              enterFrom="-translate-x-full"
+              enterTo="translate-x-0"
+              leave="transition ease-in-out duration-300 transform"
+              leaveFrom="translate-x-0"
+              leaveTo="-translate-x-full"
             >
               <Dialog.Panel>
-                <div className="!ui-w-72 !ui-h-full !ui-top-16 !ui-inset-y-0 !ui-z-30 !ui-flex !ui-flex-col ui-bg-white dark:ui-bg-peat-800 ui-border-0 ui-border-r ui-border-blackberry-200 dark:ui-border-peat-700">
-                  <div className="ui-flex ui-grow ui-flex-col ui-gap-y-5 ui-overflow-y-auto">
-                    <nav className="ui-flex ui-flex-1 ui-flex-col ui-px-6 ui-py-4 ui-mb-8">
-                      <ul className="ui-flex ui-flex-1 ui-flex-col ui-space-y-1 ui-overflow-y-scroll ui-overflow-x-clip">
+                <div className="!w-72 !h-full !top-16 !inset-y-0 !z-30 !flex !flex-col bg-white dark:bg-peat-800 border-0 border-r border-blackberry-200 dark:border-peat-700">
+                  <div className="flex grow flex-col gap-y-5 overflow-y-auto">
+                    <nav className="flex flex-1 flex-col px-6 py-4 mb-8">
+                      <ul className="flex flex-1 flex-col space-y-1 overflow-y-scroll overflow-x-clip">
                         {routes.map((item: any, idx: number) =>
                           item.name !== '_divider' ? (
                             <li key={idx}>
@@ -121,16 +121,16 @@ export const Drawer = ({ routes, currentPath }: any) => {
                                   key={idx}
                                   className={clsx(
                                     item.current
-                                      ? 'ui-bg-blackberry-50 dark:ui-bg-peat-700'
-                                      : 'hover:ui-bg-blackberry-100 hover:dark:ui-bg-peat-900 hover:dark:ui-text-blackberry-100',
-                                    '!ui-group !ui-flex !ui-items-center !ui-gap-x-3 !ui-rounded-md !ui-p-2 !ui-text-sm !ui-leading-6 !ui-transition-all !ui-ease-in-out',
+                                      ? 'bg-blackberry-50 dark:bg-peat-700'
+                                      : 'hover:bg-blackberry-100 hover:dark:bg-peat-900 hover:dark:text-blackberry-100',
+                                    '!group !flex !items-center !gap-x-3 !rounded-md !p-2 !text-sm !leading-6 !transition-all !ease-in-out',
                                   )}
                                   href={item.href}
                                 >
                                   <Image
                                     alt={`${item.name} icon`}
                                     aria-hidden="true"
-                                    className="!ui-h-4 !ui-w-4 !ui-shrink-0"
+                                    className="!h-4 !w-4 !shrink-0"
                                     src={item.icon}
                                   />
                                   {item.name}
@@ -142,15 +142,15 @@ export const Drawer = ({ routes, currentPath }: any) => {
                                       <Disclosure.Button
                                         className={clsx(
                                           item.current
-                                            ? 'ui-bg-blackberry-50 dark:ui-bg-peat-700'
-                                            : 'hover:ui-bg-blackberry-100 hover:dark:ui-bg-peat-900 hover:ui-dark:text-blackberry-100',
-                                          '!ui-group !ui-flex !ui-w-full !ui-items-center !ui-gap-x-3 !ui-rounded-md !ui-p-2 !ui-text-sm !ui-leading-6 !ui-transition-all !ui-ease-in-out',
+                                            ? 'bg-blackberry-50 dark:bg-peat-700'
+                                            : 'hover:bg-blackberry-100 hover:dark:bg-peat-900 hover:dark:text-blackberry-100',
+                                          '!group !flex !w-full !items-center !gap-x-3 !rounded-md !p-2 !text-sm !leading-6 !transition-all !ease-in-out',
                                         )}
                                       >
                                         <Image
                                           alt={`${item.name} icon`}
                                           aria-hidden="true"
-                                          className="ui-h-auto ui-w-auto"
+                                          className="h-auto w-auto"
                                           src={item.icon}
                                         />
                                         {item.name}
@@ -158,15 +158,15 @@ export const Drawer = ({ routes, currentPath }: any) => {
                                           src={chevronRight}
                                           alt="open close chevron icon"
                                           className={clsx(
-                                            open ? '!ui-rotate-90' : null,
-                                            '!ui-ml-auto !ui-w-3',
+                                            open ? '!rotate-90' : null,
+                                            '!ml-auto !w-3',
                                           )}
                                           aria-hidden="true"
                                         />
                                       </Disclosure.Button>
                                       <Disclosure.Panel
                                         as="ul"
-                                        className="!ui-mt-1 !ui-pl-6"
+                                        className="!mt-1 !pl-6"
                                       >
                                         {item?.children.map(
                                           (child: any, cdx: number) => (
@@ -176,9 +176,9 @@ export const Drawer = ({ routes, currentPath }: any) => {
                                                 href={child.href}
                                                 className={clsx(
                                                   child.current
-                                                    ? 'ui-bg-blackberry-50 dark:ui-bg-peat-700'
-                                                    : 'hover:ui-bg-blackberry-100 hover:dark:ui-bg-peat-900 hover:dark:ui-text-blackberry-100',
-                                                  '!ui-group !ui-flex !ui-items-center !ui-gap-x-3 !ui-rounded-md !ui-p-2 !ui-text-sm !ui-leading-6 !ui-transition-all !ui-ease-in-out',
+                                                    ? 'bg-blackberry-50 dark:bg-peat-700'
+                                                    : 'hover:bg-blackberry-100 hover:dark:bg-peat-900 hover:dark:text-blackberry-100',
+                                                  '!group !flex !items-center !gap-x-3 !rounded-md !p-2 !text-sm !leading-6 !transition-all !ease-in-out',
                                                 )}
                                               >
                                                 {child.name}
@@ -194,7 +194,7 @@ export const Drawer = ({ routes, currentPath }: any) => {
                             </li>
                           ) : (
                             <li key={`${idx}_divider`}>
-                              <div className="!ui-h-0 !ui-border-t !ui-w-72 !ui-border-blackberry-200 dark:!ui-border-peat-700 -!ui-ml-6 !ui-my-6"></div>
+                              <div className="!h-0 !border-t !w-72 !border-blackberry-200 dark:!border-peat-700 -!ml-6 !my-6" />
                             </li>
                           ),
                         )}
@@ -210,18 +210,18 @@ export const Drawer = ({ routes, currentPath }: any) => {
 
       <div
         className={clsx(
-          tabletMenuOpen ? '!ui-w-72' : 'ui-w-16 2xl:ui-w-72',
-          'ui-hidden ui-z-50 lg:ui-flex ui-fixed ui-top-16 ui-h-[calc(100%-4rem)] ui-flex-col ui-bg-white dark:ui-bg-peat-800 ui-border-0 ui-border-r ui-border-blackberry-200 dark:ui-border-peat-700 ui-transition-all ui-ease-in-out',
+          tabletMenuOpen ? '!w-72' : 'w-16 2xl:w-72',
+          'hidden z-50 lg:flex fixed top-16 h-[calc(100%-4rem)] flex-col bg-white dark:bg-peat-800 border-0 border-r border-blackberry-200 dark:border-peat-700 transition-all ease-in-out',
         )}
       >
-        <div className="ui-flex ui-grow ui-flex-col ui-gap-y-5 ui-overflow-y-auto">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto">
           <nav
             className={clsx(
-              tabletMenuOpen ? '!ui-px-6' : null,
-              'ui-flex ui-flex-1 ui-flex-col ui-px-2 2xl:ui-px-6 ui-py-4 ui-mb-8',
+              tabletMenuOpen ? '!px-6' : null,
+              'flex flex-1 flex-col px-2 2xl:px-6 py-4 mb-8',
             )}
           >
-            <ul className="!ui-flex !ui-flex-1 !ui-flex-col !ui-space-y-1 !ui-overflow-y-scroll !ui-overflow-x-clip">
+            <ul className="!flex !flex-1 !flex-col !space-y-1 !overflow-y-scroll !overflow-x-clip">
               {routes.map((item: any, idx: number) =>
                 item.name !== '_divider' ? (
                   <li key={idx}>
@@ -230,23 +230,23 @@ export const Drawer = ({ routes, currentPath }: any) => {
                         key={idx}
                         className={clsx(
                           item.current
-                            ? 'ui-bg-blackberry-50 dark:ui-bg-peat-700'
-                            : 'hover:ui-bg-blackberry-100 hover:dark:ui-bg-peat-900 hover:dark:ui-text-blackberry-100',
-                          tabletMenuOpen ? '!ui-justify-start' : '',
-                          'ui-group ui-flex ui-justify-center 2xl:ui-justify-start !ui-items-center !ui-gap-x-3 !ui-rounded-md !ui-p-2 !ui-text-sm !ui-leading-6!ui-transition-all !ui-ease-in-out',
+                            ? 'bg-blackberry-50 dark:bg-peat-700'
+                            : 'hover:bg-blackberry-100 hover:dark:bg-peat-900 hover:dark:text-blackberry-100',
+                          tabletMenuOpen ? '!justify-start' : '',
+                          'group flex justify-center 2xl:justify-start !items-center !gap-x-3 !rounded-md !p-2 !text-sm !leading-6!transition-all !ease-in-out',
                         )}
                         href={item.href}
                       >
                         <Image
                           alt={`${item.name} icon`}
                           aria-hidden="true"
-                          className="ui-h-4 ui-w-4"
+                          className="h-4 w-4"
                           src={item.icon}
                         />
                         <span
                           className={clsx(
-                            tabletMenuOpen ? '!ui-flex' : null,
-                            'ui-hidden 2xl:ui-inline-flex',
+                            tabletMenuOpen ? '!flex' : null,
+                            'hidden 2xl:inline-flex',
                           )}
                         >
                           {item.name}
@@ -259,22 +259,22 @@ export const Drawer = ({ routes, currentPath }: any) => {
                             <Disclosure.Button
                               className={clsx(
                                 item.current
-                                  ? 'ui-bg-blackberry-50 dark:ui-bg-peat-700'
-                                  : 'hover:ui-bg-blackberry-100 hover:dark:ui-bg-peat-900 hover:dark:ui-text-blackberry-100',
-                                tabletMenuOpen ? '!ui-flex' : null,
-                                'ui-group ui-hidden 2xl:ui-flex !ui-justify-center !ui-items-center !ui-w-full !ui-gap-x-3 !ui-rounded-md !ui-p-2 !ui-text-sm !ui-leading-6 !ui-transition-all !ui-ease-in-out',
+                                  ? 'bg-blackberry-50 dark:bg-peat-700'
+                                  : 'hover:bg-blackberry-100 hover:dark:bg-peat-900 hover:dark:text-blackberry-100',
+                                tabletMenuOpen ? '!flex' : null,
+                                'group hidden 2xl:flex !justify-center !items-center !w-full !gap-x-3 !rounded-md !p-2 !text-sm !leading-6 !transition-all !ease-in-out',
                               )}
                             >
                               <Image
                                 alt={`${item.name} icon`}
                                 aria-hidden="true"
-                                className="ui-h-auto  ui-w-auto"
+                                className="h-auto  w-auto"
                                 src={item.icon}
                               />
                               <span
                                 className={clsx(
-                                  tabletMenuOpen ? '!ui-flex' : null,
-                                  'ui-hidden 2xl:ui-inline-flex',
+                                  tabletMenuOpen ? '!flex' : null,
+                                  'hidden 2xl:inline-flex',
                                 )}
                               >
                                 {item.name}
@@ -283,9 +283,9 @@ export const Drawer = ({ routes, currentPath }: any) => {
                                 src={chevronRight}
                                 alt="open close chevron icon"
                                 className={clsx(
-                                  open ? '!ui-rotate-90' : null,
-                                  tabletMenuOpen ? '!ui-flex' : null,
-                                  'ui-ml-auto ui-w-3 ui-hidden 2xl:ui-flex',
+                                  open ? '!rotate-90' : null,
+                                  tabletMenuOpen ? '!flex' : null,
+                                  'ml-auto w-3 hidden 2xl:flex',
                                 )}
                                 aria-hidden="true"
                               />
@@ -293,26 +293,26 @@ export const Drawer = ({ routes, currentPath }: any) => {
                             <Link
                               className={clsx(
                                 item.current
-                                  ? 'ui-bg-blackberry-50 dark:ui-bg-peat-700'
-                                  : 'hover:!ui-bg-blackberry-100 hover:dark:!ui-bg-peat-900 hover:dark:!ui-text-blackberry-100',
-                                tabletMenuOpen ? '!ui-hidden' : null,
-                                'ui-group ui-flex 2xl:ui-hidden ui-justify-center !ui-gap-x-3 !ui-rounded-md !ui-p-2 !ui-text-sm !ui-leading-6 !ui-transition-all !ui-ease-in-out',
+                                  ? 'bg-blackberry-50 dark:bg-peat-700'
+                                  : 'hover:!bg-blackberry-100 hover:dark:!bg-peat-900 hover:dark:!text-blackberry-100',
+                                tabletMenuOpen ? '!hidden' : null,
+                                'group flex 2xl:hidden justify-center !gap-x-3 !rounded-md !p-2 !text-sm !leading-6 !transition-all !ease-in-out',
                               )}
                               href={item?.children[0].href}
                             >
                               <Image
                                 alt={`${item.name} icon`}
                                 aria-hidden="true"
-                                className="!ui-h-4 !ui-w-4 !ui-shrink-0"
+                                className="!h-4 !w-4 !shrink-0"
                                 src={item.icon}
                               />
                             </Link>
                             <Disclosure.Panel
                               as="ul"
                               className={clsx(
-                                tabletMenuOpen && open ? '!ui-flex' : null,
-                                tabletMenuOpen ? '!ui-flex' : null,
-                                '!ui-flex-col !ui-mt-1 !ui-pl-7 ui-hidden 2xl:ui-flex',
+                                tabletMenuOpen && open ? '!flex' : null,
+                                tabletMenuOpen ? '!flex' : null,
+                                '!flex-col !mt-1 !pl-7 hidden 2xl:flex',
                               )}
                             >
                               {item?.children.map((child: any, cdx: number) => (
@@ -322,9 +322,9 @@ export const Drawer = ({ routes, currentPath }: any) => {
                                     href={child.href}
                                     className={clsx(
                                       child.current
-                                        ? 'ui-bg-blackberry-50 dark:ui-bg-peat-700'
-                                        : 'hover:ui-bg-blackberry-100 hover:dark:ui-bg-peat-900 hover:dark:ui-text-blackberry-100',
-                                      'ui-group ui-flex ui-items-center !ui-gap-x-3 ui-rounded-md ui-p-2 ui-text-sm ui-leading-6 ui-transition-all ui-ease-in-out',
+                                        ? 'bg-blackberry-50 dark:bg-peat-700'
+                                        : 'hover:bg-blackberry-100 hover:dark:bg-peat-900 hover:dark:text-blackberry-100',
+                                      'group flex items-center !gap-x-3 rounded-md p-2 text-sm leading-6 transition-all ease-in-out',
                                     )}
                                   >
                                     {child.name}
@@ -339,7 +339,7 @@ export const Drawer = ({ routes, currentPath }: any) => {
                   </li>
                 ) : (
                   <li key={`${idx}_divider`}>
-                    <div className="!ui-h-0 !ui-border-t !ui-w-72 !ui-border-blackberry-200 dark:!ui-border-peat-700 -!ui-ml-6 !ui-my-6"></div>
+                    <div className="!h-0 !border-t !w-72 !border-blackberry-200 dark:!border-peat-700 -!ml-6 !my-6" />
                   </li>
                 ),
               )}
@@ -350,8 +350,8 @@ export const Drawer = ({ routes, currentPath }: any) => {
 
       <button
         className={clsx(
-          tabletMenuOpen && !isMobile ? '!ui-left-72' : null,
-          `ui-left-0 lg:ui-left-16 2xl:ui-hidden ui-flex !ui-items-center !ui-px-4 !ui-py-3 !ui-min-w-14 !ui-fixed !ui-bottom-0 !ui-rounded-tr ui-bg-white dark:ui-bg-peat-400 !ui-border-t !ui-border-r ui-border-blackberry-100 dark:ui-border-peat-700 !ui-z-50`,
+          tabletMenuOpen && !isMobile ? '!left-72' : null,
+          `left-0 lg:left-16 2xl:hidden flex !items-center !px-4 !py-3 !min-w-14 !fixed !bottom-0 !rounded-tr bg-white dark:bg-peat-400 !border-t !border-r border-blackberry-100 dark:border-peat-700 !z-50`,
         )}
         onClick={() => {
           if (window.innerWidth < 1023) {
@@ -367,7 +367,7 @@ export const Drawer = ({ routes, currentPath }: any) => {
         <Image
           alt="menu icon icon"
           aria-hidden="true"
-          className="!ui-h-4 !ui-w-4 !ui-shrink-0"
+          className="!h-4 !w-4 !shrink-0"
           src={bars}
         />
         <Image
@@ -375,9 +375,9 @@ export const Drawer = ({ routes, currentPath }: any) => {
           aria-hidden="true"
           className={clsx(
             tabletMenuOpen && !isMobile
-              ? '!-ui-rotate-180'
-              : '!ui-rotate-0 2xl:!ui-rotate-180',
-            '!ui-ml-2 !ui-w-4 !ui-transition-all !ui-ease-in-out',
+              ? '!-rotate-180'
+              : '!rotate-0 2xl:!rotate-180',
+            '!ml-2 !w-4 !transition-all !ease-in-out',
           )}
           src={arrowRight}
         />

@@ -9,7 +9,7 @@ export const Button = React.forwardRef<HTMLButtonElement, any>((props, ref) => {
     <button
       {...rest}
       className={clsx(
-        `!ui-px-4 !ui-py-3 !ui-bg-sunglow-900 !ui-rounded-md disabled:ui-opacity-25`,
+        `!px-4 !py-3 !bg-sunglow-900 !rounded-md disabled:opacity-25`,
         className,
       )}
       disabled={loading}

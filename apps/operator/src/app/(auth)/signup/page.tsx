@@ -92,7 +92,7 @@ const AuthSignup: React.FC = () => {
           </SimpleForm>
           <MessageBox
             className={clsx(
-              'p-4 ui-ml-1',
+              'p-4 ml-1',
               errorResponse.message ? '' : 'invisible',
             )}
             message={errorResponse.message}
