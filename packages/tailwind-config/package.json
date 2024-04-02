@@ -7,6 +7,7 @@
   },
   "devDependencies": {
     "tailwindcss": "latest",
-    "@tailwindcss/forms": "latest"
+    "@tailwindcss/forms": "latest",
+    "tailwind-variants": "latest"
   }
 }

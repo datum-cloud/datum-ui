@@ -1,48 +1,49 @@
 {
-	"name": "@repo/ui",
-	"version": "0.0.0",
-	"private": true,
-	"sideEffects": [
-		"**/*.css"
-	],
-	"exports": {
-		"./styles.css": "./dist/index.css",
-		"./alerts": "./src/alerts.tsx",
-		"./button": "./src/button.tsx",
-		"./card": "./src/card.tsx",
-		"./code": "./src/code.tsx",
-		"./drawer": "./src/drawer.tsx",
-		"./global-search": "./src/global-search.tsx",
-		"./text-input": "./src/text-input.tsx",
-		"./simple-form": "./src/simple-form.tsx",
-		"./message-box": "./src/message-box.tsx"
-	},
-	"scripts": {
-		"build": "tailwindcss -i ./src/styles.css -o dist/index.css",
-		"lint": "eslint src/",
-		"dev": "tailwindcss -i ./src/styles.css -o ./dist/index.css --watch",
-		"type-check": "tsc --noEmit"
-	},
-	"peerDependencies": {
-		"react": "latest"
-	},
-	"devDependencies": {
-		"@headlessui/react": "latest",
-		"@repo/eslint-config": "workspace:*",
-		"@repo/tailwind-config": "workspace:*",
-		"@tailwindui/react": "latest",
-		"@tailwindcss/forms": "latest",
-		"@types/node": "latest",
-		"@types/eslint": "latest",
-		"@types/react": "latest",
-		"@types/react-dom": "latest",
-		"autoprefixer": "latest",
-		"clsx": "latest",
-		"eslint": "latest",
-		"postcss": "latest",
-		"react": "latest",
-		"tailwindcss": "latest",
-		"tsup": "latest",
-		"typescript": "latest"
-	}
+  "name": "@repo/ui",
+  "version": "0.0.0",
+  "private": true,
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    "./styles.css": "./dist/index.css",
+    "./alerts": "./src/alerts.tsx",
+    "./button": "./src/button.tsx",
+    "./card": "./src/card.tsx",
+    "./code": "./src/code.tsx",
+    "./drawer": "./src/drawer.tsx",
+    "./global-search": "./src/global-search.tsx",
+    "./text-input": "./src/text-input.tsx",
+    "./simple-form": "./src/simple-form.tsx",
+    "./message-box": "./src/message-box.tsx"
+  },
+  "scripts": {
+    "build": "tailwindcss -i ./src/styles.css -o dist/index.css",
+    "lint": "eslint src/",
+    "dev": "tailwindcss -i ./src/styles.css -o ./dist/index.css --watch",
+    "type-check": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "latest"
+  },
+  "devDependencies": {
+    "@headlessui/react": "latest",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/tailwind-config": "workspace:*",
+    "@tailwindui/react": "latest",
+    "@tailwindcss/forms": "latest",
+    "@types/node": "latest",
+    "@types/eslint": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "autoprefixer": "latest",
+    "clsx": "latest",
+    "eslint": "latest",
+    "postcss": "latest",
+    "react": "latest",
+    "tailwindcss": "latest",
+    "tailwind-variants": "latest",
+    "tsup": "latest",
+    "typescript": "latest"
+  }
 }
