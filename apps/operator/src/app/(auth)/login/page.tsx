@@ -166,7 +166,7 @@ const AuthLogin: React.FC = () => {
             Sign in with Google
           </button>
           <MessageBox
-            className={clsx('p-4 ui-ml-1', showLoginError ? '' : 'invisible')}
+            className={clsx('p-4 ml-1', showLoginError ? '' : 'invisible')}
             message="Could not login. Please try again."
           />
           <div className="flex items-center mt-4">
