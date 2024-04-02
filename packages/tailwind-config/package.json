@@ -1,11 +1,13 @@
 {
-	"name": "@repo/tailwind-config",
-	"version": "0.0.0",
-	"private": true,
-	"exports": {
-		".": "./tailwind.config.ts"
-	},
-	"devDependencies": {
-		"tailwindcss": "latest"
-	}
+  "name": "@repo/tailwind-config",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./tailwind.config.ts"
+  },
+  "devDependencies": {
+    "tailwindcss": "latest",
+    "@tailwindcss/forms": "latest",
+    "tailwind-variants": "latest"
+  }
 }

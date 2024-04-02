@@ -1,19 +1,17 @@
 'use client'
 
-import React, { useState } from 'react'
-import clsx from 'clsx'
+import { useState } from 'react'
+import { clsx } from 'clsx'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { Button } from '@repo/ui/button'
+import { Logo } from '@repo/ui/logo'
 import { TextInput } from '@repo/ui/text-input'
 import { MessageBox } from '@repo/ui/message-box'
 import { SimpleForm } from '@repo/ui/simple-form'
+import { Button } from '@repo/ui/button'
 import { type LoginUser } from '../../../lib/user'
-import logoReversed from '../../../../public/logos/logo_orange_icon.svg'
-import visibilityOff from '../../../../public/icons/visibility-off.svg'
-import visibility from '../../../../public/icons/visibility.svg'
 
 const AuthLogin: React.FC = () => {
   const router = useRouter()
@@ -66,13 +64,9 @@ const AuthLogin: React.FC = () => {
   return (
     <main className="flex flex-col min-h-screen w-full items-center space-between dark:bg-dk-surface-0 bg-surface-0">
       <div className="flex flex-col justify-center mx-auto my-auto w-full p-6 sm:w-1/3 h-full relative ease-in-out">
-        <Image
-          alt="datum imagery background"
-          className="mx-auto max-h-20"
-          priority
-          src={logoReversed as string}
-          width={385}
-        />
+        <div className="mx-auto max-h-20">
+          <Logo width={200} />
+        </div>
         <div className="flex flex-col mt-8 justify-start">
           <SimpleForm
             classNames="space-y-2"
@@ -88,16 +82,26 @@ const AuthLogin: React.FC = () => {
                 type={showPassword ? 'text' : 'password'}
               />
               <button
-                type="button"
                 className="flex justify-around items-center absolute  right-2.5 bottom-2"
                 onClick={() => {
                   setShowPassword(!showPassword)
                 }}
+                type="button"
               >
                 {showPassword ? (
-                  <Image  alt="hide password icon" src={visibilityOff} />
+                  <Image
+                    alt="hide password icon"
+                    height={20}
+                    src="/icons/visibility-off.svg"
+                    width={20}
+                  />
                 ) : (
-                  <Image alt="show password icon" src={visibility} />
+                  <Image
+                    alt="show password icon"
+                    height={20}
+                    src="/icons/visibility.svg"
+                    width={20}
+                  />
                 )}
               </button>
             </div>
@@ -158,7 +162,7 @@ const AuthLogin: React.FC = () => {
             Sign in with Google
           </button>
           <MessageBox
-            className={clsx('p-4 ui-ml-1', showLoginError ? '' : 'invisible')}
+            className={clsx('p-4 ml-1', showLoginError ? '' : 'invisible')}
             message="Could not login. Please try again."
           />
           <div className="flex items-center mt-4">

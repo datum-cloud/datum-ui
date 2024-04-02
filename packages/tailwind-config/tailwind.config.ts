@@ -1,7 +1,8 @@
 import type { Config } from 'tailwindcss'
+import forms from '@tailwindcss/forms'
 
 export const config: Omit<Config, 'content'> = {
-  plugins: [require('@tailwindcss/forms')],
+  plugins: [forms],
   theme: {
     extend: {
       colors: {

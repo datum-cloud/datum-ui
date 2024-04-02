@@ -29,10 +29,10 @@ export const config = {
     Credentials({
       credentials: {},
       async authorize(credentials: any) {
-        let accessToken = ""
-        let refreshToken = ""
+        let accessToken = ''
+        let refreshToken = ''
 
-        // If the request did not come through with the access tokens, take the 
+        // If the request did not come through with the access tokens, take the
         // credentials and use them to get the access token and refresh token
         if (!credentials.accessToken) {
           /**
@@ -53,9 +53,7 @@ export const config = {
           })
 
           if (fData.status !== 200) {
-            console.log('error => ', await fData.text())
-
-            return false
+            throw new Error(await fData.text()) //TODO: Sentry logging
           }
 
           if (fData.ok) {
@@ -65,7 +63,6 @@ export const config = {
             accessToken = data?.access_token
             refreshToken = data?.refresh_token
           }
-
         } else {
           // else these came from the sign in call back and we can use them
           // to proceed
@@ -76,7 +73,7 @@ export const config = {
         // Get user data for sessions
         const uData = await fetch(`${restUrl}/oauth/userinfo`, {
           method: 'GET',
-          headers: { 'Authorization': `Bearer ${accessToken}` },
+          headers: { Authorization: `Bearer ${accessToken}` },
         })
 
         if (uData.ok) {
@@ -86,7 +83,7 @@ export const config = {
             accessToken,
             refreshToken,
             email: data?.email,
-            name: `${data?.first_name} ${data?.last_name}`,
+            name: `${data?.first_name as string} ${data?.last_name as string}`,
             image: data?.avatar_remote_url,
             ...data,
           }
@@ -99,7 +96,7 @@ export const config = {
   callbacks: {
     async signIn({ user, account }) {
       // register user that signed in via oauth provider
-      if (account?.provider !== "credentials") {
+      if (account?.provider !== 'credentials') {
         const oauthUser = {
           externalUserID: account?.providerAccountId,
           name: user.name,
@@ -107,25 +104,25 @@ export const config = {
           image: user.image,
           authProvider: account?.provider,
           accessToken: account?.access_token,
-        };
+        }
 
-        const data = await getTokenFromDatumAPI(oauthUser);
+        const data = await getTokenFromDatumAPI(oauthUser)
 
         // set access token to pull additional data from the API
-        user.accessToken = data?.access_token;
-        user.refreshToken = data?.refresh_token;
+        user.accessToken = data?.access_token
+        user.refreshToken = data?.refresh_token
 
         // Get user data for sessions
         const uData = await fetch(`${restUrl}/oauth/userinfo`, {
           method: 'GET',
-          headers: { 'Authorization': `Bearer ${user.accessToken}` },
+          headers: { Authorization: `Bearer ${user.accessToken}` },
         })
 
         if (uData.ok) {
           const userJson = await uData.json()
 
           user.email = userJson?.email
-          user.name = `${userJson?.first_name} ${userJson?.last_name}`
+          user.name = `${userJson?.first_name as string} ${userJson?.last_name as string}`
           user.image = userJson?.avatar_remote_url
         }
       }
@@ -199,11 +196,13 @@ const getTokenFromDatumAPI = async (reqBody: any) => {
         image: reqBody.image as string,
         authProvider: reqBody.authProvider as string,
         clientToken: reqBody.accessToken as string,
-      })
-    }).then((res) => res.json()).then((data) => data);
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => data)
 
     return response
   } catch (error) {
-    console.log(error);
+    throw new Error() //TODO: Sentry logging
   }
 }
