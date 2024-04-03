@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import './globals.css'
 import '@repo/ui/styles.css'
-import { aime, ftRegola, karelia } from '@/fonts'
+import { aime, ftRegola, karelia } from '../fonts'
 
 export const metadata: Metadata = {
   title: {
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html className="h-full relative" lang="en">
       <body
-        className={`${karelia.variable} ${aime.variable} ${ftRegola.variable} font-sans  w-full h-full dark:text-white dark:bg-peat-900 bg-blackberry-50 text-peat-800`}
+        className={`${karelia.variable} ${aime.variable} ${ftRegola.variable} font-sans  w-full h-full dark:text-white dark:bg-peat-900 bg-blackberry-50 text-peat-800 overscroll-none`}
       >
         <SessionProvider>{children}</SessionProvider>
       </body>

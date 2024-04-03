@@ -9,14 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@repo/ui": "workspace:*",
     "@repo/dally": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "graphql-request": "latest",
+    "lucide-react": "^0.364.0",
     "next": "latest",
+    "next-auth": "beta",
     "react": "latest",
     "react-dom": "latest",
-    "next-auth": "beta",
-    "swr": "latest",
-    "graphql-request": "latest"
+    "swr": "latest"
   },
   "devDependencies": {
     "@headlessui/react": "latest",

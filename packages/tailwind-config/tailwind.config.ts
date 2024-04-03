@@ -8,7 +8,7 @@ export const config: Omit<Config, 'content'> = {
       colors: {
         blackberry: {
           900: '#312847',
-          800: '#433A5B',
+          800: '#443A5B',
           700: '#62587A',
           600: '#72688C',
           500: '#9C94B0',
