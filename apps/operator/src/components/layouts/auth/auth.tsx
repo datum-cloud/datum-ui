@@ -4,6 +4,7 @@ import { X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
+import { Button } from '@repo/ui/button'
 import { DATUM_WEBSITE_URL } from '../../../constants'
 import { authStyles } from './auth.styles'
 
@@ -20,7 +21,10 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
   return (
     <div className={base()}>
-      <div className={content()}>{children}</div>
+      <div className={content()}>
+        <Button>test</Button>
+        {children}
+      </div>
       <div className={bg()}>
         <Image
           src={`/backgrounds/auth/${pageVariant}-bg.png`}
