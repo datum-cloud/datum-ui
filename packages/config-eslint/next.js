@@ -11,7 +11,7 @@ module.exports = {
     '@vercel/style-guide/eslint/next',
     'eslint-config-turbo',
   ].map(require.resolve),
-  plugins: ['eslint-plugin-tsdoc'],
+  plugins: ['eslint-plugin-tsdoc', 'import'],
   parserOptions: {
     project,
   },

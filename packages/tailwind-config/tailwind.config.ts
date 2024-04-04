@@ -5,10 +5,13 @@ export const config: Omit<Config, 'content'> = {
   plugins: [forms],
   theme: {
     extend: {
+      boxShadow: {
+        auth: '0px 8.671px 17.343px -8.671px rgba(0, 0, 0, 0.10)',
+      },
       colors: {
         blackberry: {
           900: '#312847',
-          800: '#433A5B',
+          800: '#443A5B',
           700: '#62587A',
           600: '#72688C',
           500: '#9C94B0',

@@ -27,6 +27,9 @@
   "peerDependencies": {
     "react": "latest"
   },
+	"dependencies": {
+		"@storybook/react": "latest"
+	},
   "devDependencies": {
     "@headlessui/react": "latest",
     "@repo/eslint-config": "workspace:*",
