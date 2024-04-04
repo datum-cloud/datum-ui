@@ -9,7 +9,7 @@ module.exports = {
 		"@vercel/style-guide/eslint/react",
 	].map(require.resolve),
 	plugins: [
-		"eslint-plugin-tsdoc",
+		"eslint-plugin-tsdoc", 'import',
 	],
 	parserOptions: {
 		project,

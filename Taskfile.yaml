@@ -32,3 +32,10 @@ tasks:
     cmds:
       - task: install
       - bun dev --filter={apps/operator}
+
+  dev:storybook:
+    desc: develop storybook
+    cmds:
+      - task: install
+      - bun dev --filter={apps/storybook}
+

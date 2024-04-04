@@ -1,6 +1,6 @@
 import { logoStyles, type LogoVariants } from './logo.styles'
 
-interface LogoProps extends LogoVariants {
+export interface LogoProps extends LogoVariants {
   width?: number
 }
 
@@ -26,3 +26,5 @@ export const Logo = ({ theme, width = 385 }: LogoProps) => {
     </svg>
   )
 }
+
+export { logoStyles };
