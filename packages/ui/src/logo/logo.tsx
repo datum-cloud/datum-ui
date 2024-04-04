@@ -2,10 +2,27 @@ import { logoStyles, type LogoVariants } from './logo.styles'
 
 export interface LogoProps extends LogoVariants {
   width?: number
+  asIcon?: boolean
 }
 
-export const Logo = ({ theme, width = 385 }: LogoProps) => {
+export const Logo = ({ theme, width = 385, asIcon = false }: LogoProps) => {
   const { base, icon, text } = logoStyles({ theme })
+
+  if (asIcon) {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        width={width}
+        viewBox="0 0 63 61"
+      >
+        <path
+          className={icon()}
+          d="M23.451 0c-.902 0-1.637.71-1.637 1.588v15.514c0 .875.733 1.588 1.637 1.588h7.861c3.21 0 6.268 1.216 8.61 3.42 2.357 2.22 3.673 5.152 3.71 8.258.037 3.182-1.214 6.178-3.52 8.439-2.306 2.26-5.382 3.505-8.661 3.505h-.139c-3.203-.036-6.226-1.312-8.515-3.597-2.274-2.27-3.527-5.237-3.527-8.35v-7.622c0-.875-.733-1.588-1.638-1.588H1.637c-.902 0-1.637.71-1.637 1.588v15.514c0 .875.733 1.588 1.637 1.588h12.626c1.697 0 2.791.023 3.693.141 1.198.157 2 .49 2.607 1.075.605.585.945 1.365 1.107 2.527.123.877.146 1.935.146 3.584v12.24c0 .875.733 1.588 1.637 1.588h8c3.592 0 7.119-.585 10.484-1.738 12.542-4.3 20.97-15.858 20.97-28.762S54.478 6.037 41.936 1.738A32.276 32.276 0 0 0 31.453 0h-8.002Z"
+        />
+      </svg>
+    )
+  }
 
   return (
     <svg
@@ -27,4 +44,4 @@ export const Logo = ({ theme, width = 385 }: LogoProps) => {
   )
 }
 
-export { logoStyles };
+export { logoStyles }
