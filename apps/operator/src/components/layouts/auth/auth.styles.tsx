@@ -8,7 +8,7 @@ const authStyles = tv({
     bg: 'absolute h-full w-2/3 top-0 left-0',
     bgImage: 'object-cover h-full z-10',
     content:
-      'relative z-20 bg-white rounded-lg flex flex-col justify-center mx-auto my-auto p-6 sm:w-1/3',
+      'relative z-20 bg-white shadow-auth rounded-lg flex flex-col justify-center mx-auto my-auto p-6 sm:w-1/3',
   },
 })
 

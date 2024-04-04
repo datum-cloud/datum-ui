@@ -64,7 +64,7 @@ const AuthLogin: React.FC = () => {
   return (
     <>
       <div className="mx-auto max-h-20">
-        <Logo theme="light" width={200} />
+        <Logo theme="dark" width={128} />
       </div>
       <div className="flex flex-col mt-8 justify-start">
         <SimpleForm
