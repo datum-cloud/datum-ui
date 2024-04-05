@@ -8,7 +8,7 @@
   "exports": {
     "./styles.css": "./dist/index.css",
     "./alerts": "./src/alerts.tsx",
-    "./button": "./src/button.tsx",
+    "./button": "./src/button/button.tsx",
     "./card": "./src/card.tsx",
     "./code": "./src/code.tsx",
     "./drawer": "./src/drawer.tsx",
@@ -16,7 +16,8 @@
     "./logo": "./src/logo/logo.tsx",
     "./text-input": "./src/text-input.tsx",
     "./simple-form": "./src/simple-form.tsx",
-    "./message-box": "./src/message-box.tsx"
+    "./message-box": "./src/message-box.tsx",
+    "./icons/google": "./src/icons/google.tsx"
   },
   "scripts": {
     "build": "tailwindcss -i ./src/styles.css -o dist/index.css",
@@ -27,9 +28,14 @@
   "peerDependencies": {
     "react": "latest"
   },
-	"dependencies": {
-		"@storybook/react": "latest"
-	},
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.0.2",
+    "@storybook/react": "latest",
+    "class-variance-authority": "^0.7.0",
+    "lucide-react": "^0.364.0",
+    "tailwind-merge": "^2.2.2",
+    "tailwindcss-animate": "^1.0.7"
+  },
   "devDependencies": {
     "@headlessui/react": "latest",
     "@repo/eslint-config": "workspace:*",

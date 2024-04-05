@@ -76,12 +76,8 @@ const AuthSignup: React.FC = () => {
             required
             type="password"
           />
-          <Button
-            className="mr-auto mt-2 w-full"
-            loading={isLoading ? true : undefined}
-            type="submit"
-          >
-            Register
+          <Button className="mr-auto mt-2 w-full" type="submit">
+            {isLoading ? 'loading' : 'Register'}
           </Button>
         </SimpleForm>
         <MessageBox
