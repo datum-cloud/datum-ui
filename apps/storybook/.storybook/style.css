@@ -44,6 +44,8 @@
   --font-karelia: 'karelia', sans-serif;
   --font-ftRegola: 'regola', sans-serif;
   --font-FAMAime: 'famaime', sans-serif;
+  --font-sans: 'Inter';
+  --font-heading: 'CalSans-SemiBold';
 }
 
 body {
