@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import { SessionProvider } from 'next-auth/react'
-import './globals.css'
-import '@repo/ui/styles.css'
 import { aime, ftRegola, karelia } from '../fonts'
+import './globals.css'
 
 export const metadata: Metadata = {
   title: {

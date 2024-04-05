@@ -16,7 +16,8 @@
     "./logo": "./src/logo/logo.tsx",
     "./text-input": "./src/text-input.tsx",
     "./simple-form": "./src/simple-form.tsx",
-    "./message-box": "./src/message-box.tsx"
+    "./message-box": "./src/message-box.tsx",
+    "./icons": "./src/icons/index.ts"
   },
   "scripts": {
     "build": "tailwindcss -i ./src/styles.css -o dist/index.css",
