@@ -6,6 +6,7 @@
     ".": "./tailwind.config.ts"
   },
   "devDependencies": {
+    "postcss-import": "latest",
     "tailwindcss": "latest",
     "@tailwindcss/forms": "latest",
     "tailwind-variants": "latest"

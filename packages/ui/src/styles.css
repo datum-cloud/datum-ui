@@ -1,10 +1,17 @@
 @layer ui_base, ui_components_utils;
 
 @layer ui_base {
-  @tailwind base;
+  @import 'tailwindcss/base';
 }
 
 @layer ui_components_utils {
-  @tailwind components;
-  @tailwind utilities;
+  @import '@radix-ui/themes/styles.css';
+  @import 'tailwindcss/components';
+  @import 'tailwindcss/utilities';
+}
+
+/* Ensures that icons scale with font size */
+.button-icon svg {
+  width: 1rem;
+  height: 1rem;
 }
