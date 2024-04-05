@@ -5,7 +5,6 @@
 }
 
 @layer ui_components_utils {
-  @import '@radix-ui/themes/styles.css';
   @import 'tailwindcss/components';
   @import 'tailwindcss/utilities';
 }
