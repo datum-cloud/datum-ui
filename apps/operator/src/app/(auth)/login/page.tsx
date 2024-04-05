@@ -107,7 +107,7 @@ const AuthLogin: React.FC = () => {
 
           <Button
             className="mr-auto mt-2 w-full"
-            loading={signInLoading ? true : undefined}
+            //loading={signInLoading ? true : undefined}
             type="submit"
           >
             Login
