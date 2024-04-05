@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ArrowRight, ArrowUpRight, InfoIcon } from 'lucide-react'
-import { GoogleIcon } from '../icons'
+import { GoogleIcon } from '../icons/google'
 import { Button, buttonStyles } from './button'
 
 type ButtonVariants = keyof typeof buttonStyles.variants.variant
