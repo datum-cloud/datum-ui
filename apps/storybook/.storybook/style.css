@@ -1,42 +1,42 @@
 @font-face {
   font-family: 'karelia';
   src: url('/fonts/karelia-medium.woff2') format('woff2');
-  weight: '500';
+  font-weight: '500';
   style: 'medium';
 }
 
 @font-face {
   font-family: 'karelia';
   src: url('/fonts/karelia-regular.woff2') format('woff2');
-  weight: '400';
+  font-weight: '400';
   style: 'normal';
 }
 
 @font-face {
   font-family: 'regola';
   src: url('/fonts/regola-neue-regular.woff2') format('woff2');
-  weight: '400';
+  font-weight: '400';
   style: 'normal';
 }
 
 @font-face {
   font-family: 'regola';
   src: url('/fonts/regola-neue-medium.woff2') format('woff2');
-  weight: '500';
+  font-weight: '500';
   style: 'medium';
 }
 
 @font-face {
   font-family: 'regola';
   src: url('/fonts/regola-neue-semibold.woff2') format('woff2');
-  weight: '600';
+  font-weight: '600';
   style: 'semibold';
 }
 
 @font-face {
   font-family: 'famaime';
   src: url('/fonts/famaime-extra-bold.woff2') format('woff2');
-  weight: '800';
+  font-weight: '800';
   style: 'extrabold';
 }
 
