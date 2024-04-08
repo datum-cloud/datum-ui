@@ -3,10 +3,14 @@ import { forwardRef } from 'react'
 import { buttonStyles, type ButtonProps } from './button.styles'
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ asChild = false, className, icon, iconAnimated, ...rest }, ref) => {
+  (
+    { asChild = false, className, icon, iconAnimated, iconPosition, ...rest },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : 'button'
     const { base, iconOuter, iconInner } = buttonStyles({
       iconAnimated,
+      iconPosition,
       ...rest,
     })
     return (
