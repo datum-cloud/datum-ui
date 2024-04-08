@@ -9,10 +9,10 @@ import { TextInput } from '@repo/ui/text-input'
 import { MessageBox } from '@repo/ui/message-box'
 import { Button } from '@repo/ui/button'
 import { Logo } from '@repo/ui/logo'
-import { registerUser } from '../../../lib/user'
-import type { RegisterUser } from '../../../lib/user'
+import { ArrowUpRight } from 'lucide-react'
+import { registerUser, RegisterUser } from '@/lib/user'
 
-const AuthSignup: React.FC = () => {
+export const SignupPage = () => {
   const router = useRouter()
   const [errorResponse, setErrorResponse] = useState({ message: '' })
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -20,7 +20,7 @@ const AuthSignup: React.FC = () => {
   return (
     <>
       <div className="mx-auto max-h-20">
-        <Logo theme="dark" width={128} />
+        <Logo theme="light" width={128} />
       </div>
       <div className="flex flex-col mt-8 justify-start">
         <SimpleForm
@@ -76,8 +76,14 @@ const AuthSignup: React.FC = () => {
             required
             type="password"
           />
-          <Button className="mr-auto mt-2 w-full" type="submit">
-            {isLoading ? 'loading' : 'Register'}
+          <Button
+            className="mr-auto mt-2 w-full"
+            icon={<ArrowUpRight />}
+            size="md"
+            type="submit"
+            iconAnimated
+          >
+            {isLoading ? 'loading' : 'Sign up'}
           </Button>
         </SimpleForm>
         <MessageBox
@@ -96,5 +102,3 @@ const AuthSignup: React.FC = () => {
     </>
   )
 }
-
-export default AuthSignup
