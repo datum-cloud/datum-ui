@@ -4,19 +4,72 @@ import { useState } from 'react'
 import { clsx } from 'clsx'
 import { useRouter } from 'next/navigation'
 import { SimpleForm } from '@repo/ui/simple-form'
-import { TextInput } from '@repo/ui/text-input'
 import { MessageBox } from '@repo/ui/message-box'
 import { Button } from '@repo/ui/button'
 import { ArrowUpRight } from 'lucide-react'
 import { registerUser, type RegisterUser } from '@/lib/user'
+import { GoogleIcon } from '@repo/ui/icons/google'
+import { GithubIcon } from '@repo/ui/icons/github'
+import { signIn } from 'next-auth/react'
+import { signupStyles } from './signup.styles'
+import { Separator } from '@repo/ui/separator'
+import { Input } from '@repo/ui/input'
+import { PasswordInput } from '@repo/ui/password-input'
 
 export const SignupPage = () => {
   const router = useRouter()
   const [errorResponse, setErrorResponse] = useState({ message: '' })
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { separator, buttons } = signupStyles()
+
+  /**
+   * Setup Github Authentication
+   */
+  const github = async () => {
+    await signIn('github', {
+      callbackUrl: '/dashboard',
+    })
+  }
+
+  /**
+   * Setup Google Authentication
+   */
+  const google = async () => {
+    await signIn('google', {
+      callbackUrl: '/dashboard',
+    })
+  }
 
   return (
     <div className="flex flex-col mt-8 justify-start">
+      <div className={buttons()}>
+        <Button
+          variant="outline"
+          size="md"
+          icon={<GoogleIcon />}
+          iconPosition="left"
+          onClick={() => {
+            google()
+          }}
+        >
+          Sign up with Google
+        </Button>
+
+        <Button
+          variant="outline"
+          size="md"
+          icon={<GithubIcon />}
+          iconPosition="left"
+          onClick={() => {
+            github()
+          }}
+        >
+          Sign up with GitHub
+        </Button>
+      </div>
+
+      <Separator label="or" className={separator()} />
+
       <SimpleForm
         classNames="space-y-2"
         onSubmit={async (payload: RegisterUser) => {
@@ -48,23 +101,19 @@ export const SignupPage = () => {
           }
         }}
       >
-        <div className="flex flex-col sm:flex-row gap-2">
-          <TextInput name="first_name" placeholder="First Name" required />
-          <TextInput name="last_name" placeholder="Last Name" required />
-        </div>
-        <TextInput
+        <Input
           name="email"
           placeholder="email@domain.net"
           required
           type="email"
         />
-        <TextInput
+        <PasswordInput
           name="password"
           placeholder="password"
           required
           type="password"
         />
-        <TextInput
+        <PasswordInput
           name="confirmedPassword"
           placeholder="confirm password"
           required

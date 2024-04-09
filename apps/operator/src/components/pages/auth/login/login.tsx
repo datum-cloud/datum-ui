@@ -15,6 +15,8 @@ import { Separator } from '@repo/ui/separator'
 import { loginStyles } from './login.styles'
 import { GoogleIcon } from '@repo/ui/icons/google'
 import { GithubIcon } from '@repo/ui/icons/github'
+import { Input } from '@repo/ui/input'
+import { PasswordInput } from '@repo/ui/password-input'
 
 export const LoginPage = () => {
   const { separator, buttons } = loginStyles()
@@ -102,37 +104,8 @@ export const LoginPage = () => {
             submit(e)
           }}
         >
-          <TextInput name="username" placeholder="email@domain.net" />
-          <div className="flex relative">
-            <TextInput
-              name="password"
-              placeholder="password"
-              type={showPassword ? 'text' : 'password'}
-            />
-            <button
-              className="flex justify-around items-center absolute  right-2.5 bottom-2"
-              onClick={() => {
-                setShowPassword(!showPassword)
-              }}
-              type="button"
-            >
-              {showPassword ? (
-                <Image
-                  alt="hide password icon"
-                  height={20}
-                  src="/icons/visibility-off.svg"
-                  width={20}
-                />
-              ) : (
-                <Image
-                  alt="show password icon"
-                  height={20}
-                  src="/icons/visibility.svg"
-                  width={20}
-                />
-              )}
-            </button>
-          </div>
+          <Input name="username" placeholder="email@domain.net" />
+          <PasswordInput name="password" placeholder="password" />
 
           <Button
             className="mr-auto mt-2 w-full"

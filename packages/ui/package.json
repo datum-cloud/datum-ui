@@ -14,6 +14,8 @@
     "./drawer": "./src/drawer.tsx",
     "./global-search": "./src/global-search.tsx",
     "./logo": "./src/logo/logo.tsx",
+    "./input": "./src/input/input.tsx",
+    "./password-input": "./src/password-input/password-input.tsx",
     "./text-input": "./src/text-input.tsx",
     "./simple-form": "./src/simple-form.tsx",
     "./separator": "./src/separator/separator.tsx",
