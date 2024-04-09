@@ -9,6 +9,7 @@ module.exports = {
     '@vercel/style-guide/eslint/browser',
     '@vercel/style-guide/eslint/react',
     '@vercel/style-guide/eslint/next',
+    'plugin:@typescript-eslint/recommended',
     'eslint-config-turbo',
   ].map(require.resolve),
   plugins: ['eslint-plugin-tsdoc', 'import'],

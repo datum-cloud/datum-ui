@@ -6,6 +6,7 @@
     ".": "./tailwind.config.ts"
   },
   "devDependencies": {
+    "autoprefixer": "latest",
     "postcss-import": "latest",
     "tailwindcss": "latest",
     "@tailwindcss/forms": "latest",

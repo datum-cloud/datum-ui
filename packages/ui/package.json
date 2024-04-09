@@ -14,10 +14,15 @@
     "./drawer": "./src/drawer.tsx",
     "./global-search": "./src/global-search.tsx",
     "./logo": "./src/logo/logo.tsx",
+    "./input": "./src/input/input.tsx",
+    "./password-input": "./src/password-input/password-input.tsx",
     "./text-input": "./src/text-input.tsx",
     "./simple-form": "./src/simple-form.tsx",
+    "./separator": "./src/separator/separator.tsx",
+    "./tabs": "./src/tabs/tabs.tsx",
     "./message-box": "./src/message-box.tsx",
-    "./icons/google": "./src/icons/google.tsx"
+    "./icons/google": "./src/icons/google.tsx",
+    "./icons/github": "./src/icons/github.tsx"
   },
   "scripts": {
     "build": "tailwindcss -i ./src/styles.css -o dist/index.css",
@@ -30,6 +35,7 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-tabs": "latest",
     "@storybook/react": "latest",
     "class-variance-authority": "^0.7.0",
     "lucide-react": "^0.366.0",

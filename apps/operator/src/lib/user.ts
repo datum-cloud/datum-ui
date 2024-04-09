@@ -6,15 +6,13 @@ export interface LoginUser {
 }
 
 export interface RegisterUser {
-  first_name: string
-  last_name: string
   username: string
   password: string
   confirmedPassword?: string
 }
 
 interface HttpResponse<T> extends Response {
-  message?: T;
+  message?: T
 }
 
 export async function registerUser<T>(arg: RegisterUser) {
@@ -26,11 +24,10 @@ export async function registerUser<T>(arg: RegisterUser) {
     body: JSON.stringify(arg),
   })
   try {
-    const fDataMessage = await fData.json();
-    fData.message = fDataMessage.error;
-    return fData;
-  }
-  catch (error) {
+    const fDataMessage = await fData.json()
+    fData.message = fDataMessage.error
+    return fData
+  } catch (error) {
     return { message: 'error' }
   }
 }

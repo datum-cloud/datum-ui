@@ -10,7 +10,7 @@ export const logoStyles = tv({
     theme: {
       light: {
         icon: 'fill-sunglow-900',
-        text: 'fill-blackberry-800',
+        text: 'fill-blackberry-800 dark:fill-blackberry-800',
       },
       dark: {
         icon: 'fill-sunglow-900',
