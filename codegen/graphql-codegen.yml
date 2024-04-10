@@ -38,6 +38,7 @@ generates:
       # If you have a query that you want to use `useSWRInfinite`, list it in Options
       useSWRInfinite:
       - GetAllGroups
+      - GetTemplate
       autogenSWRKey: true
   ./src/schema.ts:
 #    preset: near-operation-file

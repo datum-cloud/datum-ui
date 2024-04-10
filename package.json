@@ -29,5 +29,5 @@
     "apps/*",
     "packages/*"
   ],
-  "dependencies": { "lucide-react": "^0.366.0" }
+  "dependencies": { "@jsonforms/core": "^3.2.1", "@jsonforms/react": "^3.2.1", "@jsonforms/vanilla-renderers": "^3.2.1", "@optum/json-schema-editor": "^2.1.0", "lucide-react": "^0.366.0" }
 }
