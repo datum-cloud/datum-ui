@@ -29,5 +29,5 @@
     "apps/*",
     "packages/*"
   ],
-  "dependencies": { "@jsonforms/core": "^3.2.1", "@jsonforms/react": "^3.2.1", "@jsonforms/vanilla-renderers": "^3.2.1", "@optum/json-schema-editor": "^2.1.0", "lucide-react": "^0.366.0" }
+  "dependencies": { "@jsonforms/core": "^3.2.1", "@jsonforms/react": "^3.2.1", "@jsonforms/vanilla-renderers": "^3.2.1", "@optum/json-schema-editor": "^2.1.0", "@react-pdf/renderer": "^3.4.2", "form-pdf2json": "^0.1.6", "lucide-react": "^0.366.0", "pdfmake": "^0.2.10", "react-to-pdf": "^1.0.1" }
 }

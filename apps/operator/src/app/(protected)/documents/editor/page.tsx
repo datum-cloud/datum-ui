@@ -11,7 +11,12 @@ import { createSdkClient } from '../../../../lib/graphql'
 import { getSdkWithHooks } from '../../../../../../../codegen/src/schema';
 import { useSession } from "next-auth/react";
 import { restUrl } from '@repo/dally/auth'
+import { Button } from '@repo/ui/button';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/tabs'
 
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 const url = restUrl || 'http://localhost:17608/query';
 
 const styleContextValue = {
@@ -93,20 +98,43 @@ const Page: React.FC = () => {
 
 	if (error) return <div>failed to load</div>
 	if (!templateData) return <div>loading...</div>
-
-	console.log(templateData.template.id)
+	const defaultTab = 'form'
 
 	return (
-		< div >
-			<JsonFormsStyleContext.Provider value={styleContextValue}>
-				<JsonForms
-					schema={templateData.template.jsonconfig}
-					data={data}
-					renderers={renderers}
-					cells={vanillaCells}
-					onChange={({ data }) => setData(data)}
-				/>
-			</JsonFormsStyleContext.Provider>
+		<div>
+			<Tabs
+				defaultValue={defaultTab}
+			>
+				<TabsList>
+					<TabsTrigger value="form">Form</TabsTrigger>
+					<TabsTrigger value="schema">Schema</TabsTrigger>
+					<TabsTrigger value="data">Data</TabsTrigger>
+				</TabsList>
+				<TabsContent value="form">
+					<JsonFormsStyleContext.Provider value={styleContextValue}>
+						<JsonForms
+							schema={templateData.template.jsonconfig}
+							data={data}
+							renderers={renderers}
+							cells={vanillaCells}
+							onChange={({ data }) => setData(data)}
+						/>
+					</JsonFormsStyleContext.Provider>
+					<Button
+						onClick={() => {
+							console.log('data', data)
+							pdfMake.createPdf(data).download('datum.pdf')
+						}}>
+						Download PDF
+					</ Button>
+				</TabsContent>
+				<TabsContent value="schema">
+					<pre>{JSON.stringify(templateData.template.jsonconfig, null, 2)}</pre>
+				</TabsContent>
+				<TabsContent value="data">
+					<pre>{JSON.stringify(data, null, 2)}</pre>
+				</TabsContent>
+			</Tabs>
 		</div >
 	)
 
