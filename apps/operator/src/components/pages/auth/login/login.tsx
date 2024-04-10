@@ -4,27 +4,25 @@ import { LoginUser } from '@repo/dally/user'
 import { Button } from '@repo/ui/button'
 import MessageBox from '@repo/ui/message-box'
 import SimpleForm from '@repo/ui/simple-form'
-import TextInput from '@repo/ui/text-input'
-import clsx from 'clsx'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, KeyRoundIcon } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import Image from 'next/image'
 import { Separator } from '@repo/ui/separator'
 import { loginStyles } from './login.styles'
 import { GoogleIcon } from '@repo/ui/icons/google'
 import { GithubIcon } from '@repo/ui/icons/github'
 import { Input } from '@repo/ui/input'
 import { PasswordInput } from '@repo/ui/password-input'
+import { Label } from '@repo/ui/label'
 
 export const LoginPage = () => {
-  const { separator, buttons } = loginStyles()
+  const { separator, buttons, keyIcon, form, input } = loginStyles()
   const router = useRouter()
   const [signInError, setSignInError] = useState(false)
   const [signInLoading, setSignInLoading] = useState(false)
   const showLoginError = !signInLoading && signInError
-  const [showPassword, setShowPassword] = useState(false)
+  const [isPasswordActive, setIsPasswordActive] = useState(false)
 
   /**
    * Submit client-side sign-in function using username and password
@@ -67,6 +65,13 @@ export const LoginPage = () => {
     })
   }
 
+  /**
+   * Setup PassKey Authentication
+   */
+  const passKey = async () => {
+    alert('Coming soon!')
+  }
+
   return (
     <>
       <div className="flex flex-col mt-8 justify-start">
@@ -94,18 +99,45 @@ export const LoginPage = () => {
           >
             Log in with GitHub
           </Button>
+
+          <Button
+            variant="outline"
+            size="md"
+            icon={<KeyRoundIcon className={keyIcon()} />}
+            iconPosition="left"
+            onClick={() => {
+              passKey()
+            }}
+          >
+            Log in with PassKey
+          </Button>
         </div>
 
         <Separator label="or" className={separator()} />
 
         <SimpleForm
-          classNames="space-y-2"
+          classNames={form()}
           onSubmit={(e: any) => {
             submit(e)
           }}
+          onChange={(e: any) => {
+            if (e.username.length > 0) {
+              setIsPasswordActive(true)
+            } else {
+              setIsPasswordActive(false)
+            }
+          }}
         >
-          <Input name="username" placeholder="email@domain.net" />
-          <PasswordInput name="password" placeholder="password" />
+          <div className={input()}>
+            <Label htmlFor="username">Email</Label>
+            <Input name="username" placeholder="email@domain.net" />
+          </div>
+          {isPasswordActive && (
+            <div className={input()}>
+              <Label htmlFor="password">Password</Label>
+              <PasswordInput name="password" placeholder="password" />
+            </div>
+          )}
 
           <Button
             className="mr-auto mt-2 w-full"
@@ -119,7 +151,7 @@ export const LoginPage = () => {
         </SimpleForm>
         {showLoginError && (
           <MessageBox
-            className={clsx('p-4 ml-1', showLoginError ? '' : 'invisible')}
+            className={'p-4 ml-1'}
             message="Could not login. Please try again."
           />
         )}
