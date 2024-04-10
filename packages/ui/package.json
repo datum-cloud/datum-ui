@@ -15,6 +15,7 @@
     "./global-search": "./src/global-search.tsx",
     "./logo": "./src/logo/logo.tsx",
     "./input": "./src/input/input.tsx",
+    "./label": "./src/label/label.tsx",
     "./password-input": "./src/password-input/password-input.tsx",
     "./text-input": "./src/text-input.tsx",
     "./simple-form": "./src/simple-form.tsx",
@@ -36,6 +37,7 @@
   "dependencies": {
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "latest",
+    "@radix-ui/react-label": "latest",
     "@storybook/react": "latest",
     "class-variance-authority": "^0.7.0",
     "lucide-react": "^0.367.0",
