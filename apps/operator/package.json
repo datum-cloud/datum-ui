@@ -9,9 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@jsonforms/react": "^3.2.1",
+    "@jsonforms/vanilla-renderers": "^3.2.1",
     "@repo/dally": "workspace:*",
     "@repo/ui": "workspace:*",
     "graphql-request": "latest",
+    "graphql-tag": "^2.12.6",
     "lucide-react": "latest",
     "next": "latest",
     "next-auth": "beta",

@@ -1,6 +1,3 @@
-#hooks:
-#  afterOneFileWrite:
-#    - prettier --write
 config:
   strict: true
   useTypeImports: true
@@ -46,7 +43,7 @@ generates:
     plugins:
       - typescript # This plugin generates the base TypeScript types, based on your GraphQL schema
       - typescript-operations # This plugin generates TypeScript types based on your GraphQLSchema and your GraphQL operations and fragments. It generates types for your GraphQL documents: Query, Mutation, Subscription and Fragment
-      - typescript-resolvers # This plugin generates TypeScript signature for resolve functions of your GraphQL API. You can use this plugin to generate simple resolvers signature based on your GraphQL types, or you can change its behavior be providing custom model types (mappers)
+      # - typescript-resolvers # This plugin generates TypeScript signature for resolve functions of your GraphQL API. You can use this plugin to generate simple resolvers signature based on your GraphQL types, or you can change its behavior be providing custom model types (mappers)
       - typescript-graphql-request
       - plugin-typescript-swr
       # - typescript-react-query # This plugin generates React-Query Hooks with TypeScript typings
