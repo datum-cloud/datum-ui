@@ -11,6 +11,7 @@
   "dependencies": {
     "@jsonforms/react": "^3.2.1",
     "@jsonforms/vanilla-renderers": "^3.2.1",
+    "@radix-ui/react-accordion": "^1.1.2",
     "@repo/dally": "workspace:*",
     "@repo/ui": "workspace:*",
     "graphql-request": "latest",
@@ -20,7 +21,8 @@
     "next-auth": "beta",
     "react": "latest",
     "react-dom": "latest",
-    "swr": "latest"
+    "swr": "latest",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@headlessui/react": "latest",

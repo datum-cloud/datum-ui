@@ -10,10 +10,10 @@ export const Avatar = () => {
 
   return (
     <Menu as="div" className="relative">
-      <Menu.Button className="flex items-center w-8 h-8">
+      <Menu.Button className="flex items-center w-11 h-11">
         <span className="sr-only">Open user menu</span>
-        <div className="flex items-center justify-center h-8 w-8 rounded-md bg-orange-300 uppercase font-bold text-lg text-white">
-          <span className="text-white uppercase leading-8">
+        <div className="flex items-center justify-center h-11 w-11 rounded-md bg-sunglow-900 uppercase font-bold text-lg text-white">
+          <span className="text-white uppercase leading-11">
             {session.data?.user?.name?.substring(0, 2)}
           </span>
         </div>

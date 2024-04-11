@@ -20,6 +20,10 @@ export const logoStyles = tv({
         icon: 'fill-blackberry-800',
         text: 'fill-blackberry-800',
       },
+      blackberryLight: {
+        icon: 'fill-blackberry-700',
+        text: 'fill-blackberry-700',
+      },
       sunglow: {
         icon: 'fill-sunglow-900',
         text: 'fill-sunglow-900',

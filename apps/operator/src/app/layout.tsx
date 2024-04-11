@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html className="h-full relative" lang="en">
       <body
-        className={`${karelia.variable} ${aime.variable} ${ftRegola.variable} font-sans  w-full h-full dark:text-white dark:bg-peat-900 bg-blackberry-50 text-peat-800 overscroll-none`}
+        className={`${karelia.variable} ${aime.variable} ${ftRegola.variable} font-sans  w-full h-full bg-winter-sky-700 overscroll-none`}
       >
         <SessionProvider>{children}</SessionProvider>
       </body>

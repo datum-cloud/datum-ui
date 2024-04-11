@@ -54,6 +54,7 @@ export const config: Omit<Config, 'content'> = {
         'winter-sky': {
           900: '#E1EBEA',
           800: '#EEF3F2',
+          700: '#F7FAFA',
         },
         'util-green': {
           900: '#014737',
