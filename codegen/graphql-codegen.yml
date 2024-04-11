@@ -1,6 +1,3 @@
-hooks: 
-  afterAllFileWrite: |
-    `sed -i '' "s/import { ClientError } from 'graphql-request\\/dist\\/types';/import { ClientError } from 'graphql-request';/" ./src/schema.ts`
 config:
   strict: true
   useTypeImports: true

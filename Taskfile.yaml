@@ -5,6 +5,11 @@ env:
 
 dotenv: ['.env', '{{.ENV}}/.env']
 
+includes:
+  codegen: 
+    taskfile: ./codegen/Taskfile.yaml
+    dir: ./codegen
+
 tasks:
   build:
     desc: build all apps and package
