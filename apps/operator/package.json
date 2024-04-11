@@ -14,6 +14,7 @@
     "@repo/dally": "workspace:*",
     "@repo/ui": "workspace:*",
     "graphql-request": "latest",
+    "graphql-tag": "^2.12.6",
     "lucide-react": "latest",
     "next": "latest",
     "next-auth": "beta",
