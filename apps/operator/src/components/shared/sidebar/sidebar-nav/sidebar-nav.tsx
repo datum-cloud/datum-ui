@@ -70,8 +70,8 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
     <nav className={nav()}>
       {items.map((item, idx) =>
         isSeparator(item) ? (
-          <div className={separator()}>
-            <Hr key={`${idx}_${item.type}`} />
+          <div key={`${idx}_${item.type}`} className={separator()}>
+            <Hr />
           </div>
         ) : item.isChildren ? (
           <Accordion
