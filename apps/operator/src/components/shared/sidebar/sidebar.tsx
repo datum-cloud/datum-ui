@@ -24,12 +24,14 @@ export default function Sidebar({ className }: SidebarProps) {
     toggle()
     setTimeout(() => setStatus(false), 500)
   }
+
   return (
     <div className={cn(nav(), className)}>
       <div className={expandNav({ isOpen: !isOpen })} onClick={handleToggle}>
         <MenuIcon strokeWidth={3} width={18} />
         <ArrowLeft className={expandNavIcon()} strokeWidth={3} width={18} />
       </div>
+
       <SideNav className={sideNav()} items={NavItems} />
     </div>
   )
