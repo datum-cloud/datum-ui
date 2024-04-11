@@ -3,6 +3,7 @@ import { tv, type VariantProps } from 'tailwind-variants'
 const sidebarStyles = tv({
   slots: {
     nav: 'relative hidden h-screen border-r bg-white text-blackberry-900 border-r-winter-sky-800 pt-24 md:block w-[57px]',
+    navInner: 'relative overflow-scroll ',
     expandNav:
       'absolute z-50 gap-1 flex items-center justify-center bg-white -right-[58px] w-[58px] h-[42px] bottom-0 cursor-pointer rounded-tr-lg border border-winter-sky-900  text-3xl text-blackberry-400',
     expandNavIcon: 'rotate-180',

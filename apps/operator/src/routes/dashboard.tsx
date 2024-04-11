@@ -2,7 +2,6 @@ import {
   AppWindowMacIcon,
   AtSign,
   BarChart3Icon,
-  BookOpenCheck,
   CircleGaugeIcon,
   HandshakeIcon,
   LandmarkIcon,

@@ -37,6 +37,7 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
     expandArrow,
     linkLabel,
     accordionItem,
+    separator,
   } = sidebarNavStyles()
 
   const isSeparator = (item: NavItem | Separator): item is Separator => {
@@ -59,11 +60,19 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
     }
   }, [])
 
+  useEffect(() => {
+    if (!isSidebarOpen) {
+      setOpenItem('')
+    }
+  }, [isSidebarOpen])
+
   return (
     <nav className={nav()}>
       {items.map((item, idx) =>
         isSeparator(item) ? (
-          <Hr key={`${idx}_${item.type}`} />
+          <div className={separator()}>
+            <Hr key={`${idx}_${item.type}`} />
+          </div>
         ) : item.isChildren ? (
           <Accordion
             type="single"

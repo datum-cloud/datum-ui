@@ -3,6 +3,8 @@ import { signIn, useSession } from 'next-auth/react'
 import { Button } from '@repo/ui/button'
 import { Logo } from '@repo/ui/logo'
 import { headerStyles } from './header.styles'
+import Avatar from '@/components/avatar'
+import Alerts from '@repo/ui/alerts'
 
 export default function Header() {
   const { data: sessionData } = useSession()
@@ -18,18 +20,8 @@ export default function Header() {
         </div>
 
         <div className={userNav()}>
-          {sessionData?.user ? (
-            <>user nav</>
-          ) : (
-            <Button
-              size="sm"
-              onClick={() => {
-                void signIn()
-              }}
-            >
-              Sign In
-            </Button>
-          )}
+          <Alerts />
+          <Avatar />
         </div>
       </nav>
     </div>
