@@ -76,7 +76,6 @@ export const config = {
         }
 
         // Set the session cookie for the user
-        console.log('Setting session cookie', `${sessionCookieName}`)
         cookies().set(`${sessionCookieName}`, session)
 
         // Get user data for sessions
