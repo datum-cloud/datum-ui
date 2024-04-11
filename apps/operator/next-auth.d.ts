@@ -7,12 +7,13 @@ declare module 'next-auth' {
   interface Session {
     user: DefaultUser & {
       accessToken: string;
-      refreshToken: string
+      refreshToken: string;
     };
   }
   interface User extends DefaultUser {
     accessToken: string;
     refreshToken: string;
+    session: string;
   }
   interface Profile extends DefaultProfile {
     display_name: string;
