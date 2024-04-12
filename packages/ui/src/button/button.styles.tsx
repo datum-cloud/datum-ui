@@ -28,6 +28,11 @@ export const buttonStyles = tv({
       md: 'h-12 rounded-md text-base px-5',
       lg: 'h-16 px-8 text-lg',
     },
+    full: {
+      true: {
+        base: 'flex w-full',
+      },
+    },
   },
   compoundVariants: [
     {
