@@ -13,6 +13,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from './dropdown-menu'
+import { Switch } from '../switch/switch'
 import { Button } from '../button/button'
 
 const meta: Meta<typeof DropdownMenu> = {
@@ -119,6 +120,11 @@ export const UserMenu: Story = {
               </p>
             </div>
           </DropdownMenuItem>
+          <DropdownMenuSeparator spacing="md" />
+          <div className="px-2 flex space-between text-sm">
+            <p>Dark mode</p>
+            <Switch className="ml-auto" />
+          </div>
           <DropdownMenuSeparator spacing="md" />
           <DropdownMenuItem>
             <Button size="md" variant="outline" full>
