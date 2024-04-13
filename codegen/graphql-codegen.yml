@@ -7,13 +7,11 @@ config:
   exposeFetcher: true # For each generate query hook adds fetcher field with a corresponding GraphQL query using the fetcher. It is useful for queryClient.fetchQuery and queryClient.prefetchQuery
   maybeValue: T | null
   declarationKind: interface
-  avoidOptionals: true
   preResolveTypes: true
   onlyOperationTypes: true
   flattenGeneratedTypes: true
   namingConvention:
     enumValues: keep
-#  noSchemaStitching: false
   scalars:
     DateTime: string
     Date: string
@@ -31,11 +29,6 @@ generates:
     plugins:
       - introspection
     config:
-      minify: true
-      # If you have a query that you want to use `useSWRInfinite`, list it in Options
-      useSWRInfinite:
-      - GetAllGroups
-      autogenSWRKey: true
   ./src/schema.ts:
 #    preset: near-operation-file
 #    presetConfig:
@@ -44,10 +37,10 @@ generates:
       - typescript # This plugin generates the base TypeScript types, based on your GraphQL schema
       - typescript-operations # This plugin generates TypeScript types based on your GraphQLSchema and your GraphQL operations and fragments. It generates types for your GraphQL documents: Query, Mutation, Subscription and Fragment
       # - typescript-resolvers # This plugin generates TypeScript signature for resolve functions of your GraphQL API. You can use this plugin to generate simple resolvers signature based on your GraphQL types, or you can change its behavior be providing custom model types (mappers)
-      - typescript-graphql-request
-      - plugin-typescript-swr
+      # - typescript-graphql-request
+      # - plugin-typescript-swr
       # - typescript-react-query # This plugin generates React-Query Hooks with TypeScript typings
-      # - typescript-urql # This plugin generates urql (https://github.com/FormidableLabs/urql) components and HOC with TypeScript typings
+      - typescript-urql # This plugin generates urql (https://github.com/FormidableLabs/urql) components and HOC with TypeScript typings
       # - typescript-react-apollo
       # - typed-document-node # These plugins generate a ready-to-use TypedDocumentNode (a combination of pre-compiled DocumentNode and the TypeScript signature it represents)
 #      - typescript-mock-data

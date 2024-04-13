@@ -9,7 +9,7 @@ import { useVerifyUser } from '../../../lib/user'
 
 const VerifyUser: React.FC = () => {
   const searchParams = useSearchParams()
-  const token = searchParams.get('token')
+  const token = searchParams?.get('token')
 
   const { isLoading, verified, error } = useVerifyUser(token ?? null)
 
