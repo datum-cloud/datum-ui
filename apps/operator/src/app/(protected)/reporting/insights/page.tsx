@@ -6,29 +6,29 @@ import { PageViews, getPostHogPageViews } from '@/components/pages/protected/rep
 import PageTitle from '../../../../components/page-title'
 
 const Page: React.FC = () => {
-	const [chartData, setCount] = useState<any | null>(null);
+  const [chartData, setCount] = useState<any | null>(null);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const data = await getPostHogPageViews();
-			setCount(data.props.chartData);
-		};
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getPostHogPageViews();
+      setCount(data.props.chartData);
+    };
 
-		fetchData();
-	}, []);
+    fetchData();
+  }, []);
 
-	return (
-		<>
-			<PageTitle
-				title={
-					<>
-						Customer Analytics
-					</>
-				}
-			/>
-			<PageViews chartData={chartData} />
-		</>
-	)
+  return (
+    <>
+      <PageTitle
+        title={
+          <>
+            Customer Analytics
+          </>
+        }
+      />
+      <PageViews chartData={chartData} />
+    </>
+  )
 }
 
 export default Page
