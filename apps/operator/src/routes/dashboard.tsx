@@ -140,6 +140,10 @@ export const NavItems: (NavItem | Separator)[] = [
         title: 'Compliance',
         href: '/reporting/compliance',
       },
+      {
+        title: 'Insights',
+        href: '/reporting/insights',
+      }
     ],
   },
   {
