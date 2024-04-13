@@ -5,6 +5,8 @@ import GithubProvider from 'next-auth/providers/github'
 import GoogleProvider from 'next-auth/providers/google'
 import { restUrl, sessionCookieName } from '@repo/dally/auth'
 import { cookies } from 'next/headers'
+import { jwtDecode } from 'jwt-decode'
+import { JwtPayload } from 'jsonwebtoken';
 
 export const config = {
   theme: {
@@ -169,10 +171,14 @@ export const config = {
        * as that data is memoized in the Node process
        */
       if (session.user) {
+        // parse jwt
+        const decodedToken = jwtDecode(token.accessToken as string) as JwtPayload;
+
         session.user.name = token.name
         session.user.email = token.email
         session.user.accessToken = token.accessToken
         session.user.refreshToken = token.refreshToken
+        session.user.organization = decodedToken?.org
       }
 
       return session
