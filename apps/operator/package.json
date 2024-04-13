@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@headlessui/react": "latest",
+		"@headlessui/tailwindcss":"0.2.0",
     "@next/eslint-plugin-next": "latest",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
@@ -40,6 +41,8 @@
     "postcss": "latest",
     "tailwindcss": "latest",
     "tailwind-variants": "latest",
-    "typescript": "latest"
+		"@tailwindcss/forms": "latest",
+    "typescript": "latest",
+		"@remixicon/react": "latest"
   }
 }

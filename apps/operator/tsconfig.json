@@ -7,8 +7,11 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",
@@ -18,6 +21,8 @@
     ".next/types/**/*.ts",
     "postcss.config.js",
     "../../packages/config-typescript/typings.d.ts"
-  ],
-  "exclude": ["node_modules"]
+, "src/pages/_app.js"  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
