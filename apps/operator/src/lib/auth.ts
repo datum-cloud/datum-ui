@@ -180,6 +180,8 @@ export const config = {
         // parse jwt
         const decodedToken = jwtDecode(token.accessToken as string) as JwtPayload;
 
+        console.log('decodedToken', decodedToken)
+
         session.user.name = token.name
         session.user.email = token.email
         session.user.accessToken = token.accessToken
