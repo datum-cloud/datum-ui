@@ -51,6 +51,9 @@ export const TemplateEditor = ({ id }: { id: string }) => {
   const [templateResult, createTemplateData] = useCreateTemplateMutation()
 
   function saveTemplateData(data: string) {
+    // debugger
+    console.log('session', session?.user)
+
     let schema: {} = JSON.parse(data)
     const variables = {
       input: {
@@ -59,7 +62,7 @@ export const TemplateEditor = ({ id }: { id: string }) => {
         jsonconfig: schema,
         description: templateData.data?.template.description,
         uischema: uischema,
-        ownerID: session?.user?.organization || "",
+        ownerID: session?.user?.organization || "01HVF5QXAK0024V2J48VWF8EHS", // TODO: Add a default organization for now
       }
     };
 

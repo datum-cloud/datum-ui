@@ -7,8 +7,6 @@ export interface LoginUser {
 }
 
 export interface RegisterUser {
-  first_name: string
-  last_name: string
   username: string
   password: string
   confirmedPassword?: string
