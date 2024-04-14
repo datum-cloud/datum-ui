@@ -9,9 +9,7 @@ import {
   vanillaCells,
 } from "@jsonforms/vanilla-renderers";
 import {
-  TemplateDocumentType,
   useCreateDocumentDataMutation,
-  useCreateTemplateMutation,
   useGetTemplateQuery
 } from '../../../../../../../codegen/src/schema';
 import { renderers, styleContextValue } from '@/components/pages/protected/documents/styles'
@@ -37,31 +35,6 @@ export const TemplateEditor = ({ id }: { id: string }) => {
   const variables = { getTemplateId: id || "" }
   const [templateData] = useGetTemplateQuery({ variables })
   const uischema = templateData?.data?.template.uischema || Generate.uiSchema(templateData.data?.template.jsonconfig);
-
-  const [templateResult, createTemplateData] = useCreateTemplateMutation()
-  function saveTemplateData(data: string) {
-    let schema: {} = JSON.parse(data)
-    const variables = {
-      input: {
-        name: templateData.data?.template.name || "",
-        type: TemplateDocumentType.DOCUMENT,
-        jsonconfig: schema,
-        description: templateData.data?.template.description,
-        uischema: uischema,
-        ownerID: session?.user?.organization || "",
-      }
-    };
-
-    createTemplateData(variables).then(result => {
-      // TODO(hannah or sfunk): this should be a toast or something better with error handling
-      if (templateResult.error) {
-        alert(templateResult.error)
-        return
-      }
-
-      alert(templateResult.data?.createTemplate.template.name + ' Saved')
-    });
-  }
 
   // setup the mutation to save the form data
   const [dataResult, createDocumentData] = useCreateDocumentDataMutation()
