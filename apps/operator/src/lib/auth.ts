@@ -78,7 +78,9 @@ export const config = {
         }
 
         // Set the session cookie for the user
+        console.log('setting session cookie: ', sessionCookieName)
         cookies().set(`${sessionCookieName}`, session)
+        console.log('session cookie setL ', session)
 
         // Get user data for sessions
         const uData = await fetch(`${restUrl}/oauth/userinfo`, {
