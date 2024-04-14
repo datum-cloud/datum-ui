@@ -143,7 +143,11 @@ export const NavItems: (NavItem | Separator)[] = [
       {
         title: 'Insights',
         href: '/reporting/insights',
-      }
+      },
+			{
+        title: 'MITB',
+        href: '/reporting/mitb',
+      },
     ],
   },
   {
