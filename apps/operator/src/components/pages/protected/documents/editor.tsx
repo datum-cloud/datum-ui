@@ -55,7 +55,7 @@ export const TemplateEditor = ({ id }: { id: string }) => {
     console.log('schema', schema)
     const variables = {
       input: {
-        name: templateData.data?.template.name + "5" || "",
+        name: templateData.data?.template.name || "",
         type: TemplateDocumentType.DOCUMENT,
         jsonconfig: schema,
         description: templateData.data?.template.description,

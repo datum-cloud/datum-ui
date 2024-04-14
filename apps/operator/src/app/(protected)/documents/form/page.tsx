@@ -10,39 +10,39 @@ import PageTitle from '../../../../components/page-title'
 
 
 const Page: React.FC = () => {
-	const router = useRouter()
+  const router = useRouter()
 
-	const searchParams = useSearchParams()
-	const templateID = searchParams?.get('id') as string
+  const searchParams = useSearchParams()
+  const templateID = searchParams?.get('id') as string
 
-	// navigate back to the template list if no template id is provided
-	if (!templateID) {
-		router.push('/documents/templates')
-		return <div>loading...</div>
-	}
+  // navigate back to the template list if no template id is provided
+  if (!templateID) {
+    router.push('/documents/templates')
+    return <div>loading...</div>
+  }
 
-	const { data: session, status } = useSession();
-	const isSessionLoading = status === 'loading';
+  const { data: session, status } = useSession();
+  const isSessionLoading = status === 'loading';
 
-	// Wait for the session and template data
-	if (isSessionLoading) {
-		return <div>loading...</div>
-	}
+  // Wait for the session and template data
+  if (isSessionLoading) {
+    return <div>loading...</div>
+  }
 
-	const client = createClient(session);
+  const client = createClient(session);
 
-	// lets load the form now
-	return (
-		<>
-			<PageTitle
-				description="Create a Form"
-				title="Form Editor"
-			/>
-			<Provider value={client}>
-				<TemplateEditor id={templateID} />
-			</Provider>
-		</>
-	)
+  // lets load the form now
+  return (
+    <>
+      <PageTitle
+        description="Create a Form"
+        title="Form Editor"
+      />
+      <Provider value={client}>
+        <TemplateEditor id={templateID} />
+      </Provider>
+    </>
+  )
 }
 
 export default Page
