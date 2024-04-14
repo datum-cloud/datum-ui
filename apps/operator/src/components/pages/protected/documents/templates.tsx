@@ -1,6 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, } from 'next/navigation'
+import { useSession } from "next-auth/react";
+import { OrganizationWhereInput } from '../../../../../../../codegen/src/schema';
 import {
   useFilterTemplatesQuery,
   TemplateWhereInput,
@@ -8,11 +10,21 @@ import {
 } from '../../../../../../../codegen/src/schema';
 
 export const TemplateList = () => {
+  // get the session
+  const { data: session, status } = useSession();
+  const isSessionLoading = status === 'loading';
 
-
+  // TODO: This should get changed to the root org once the proper org is set up
+  const orgFilter: OrganizationWhereInput[] = [
+    {
+      id: session?.user?.organization
+    }
+  ];
   const whereFilter: TemplateWhereInput = {
-    type: TemplateDocumentType.ROOTTEMPLATE
+    type: TemplateDocumentType.ROOTTEMPLATE,
+    hasOwnerWith: orgFilter,
   }
+
   const [allTemplates] = useFilterTemplatesQuery({
     variables: { where: whereFilter },
   });
