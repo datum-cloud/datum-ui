@@ -78,9 +78,15 @@ export const config = {
         }
 
         // Set the session cookie for the user
-        console.log('setting session cookie: ', sessionCookieName)
-        cookies().set(`${sessionCookieName}`, session)
-        console.log('session cookie setL ', session)
+        if (process.env.NODE_ENV === 'production') {
+          console.log('setting cookie in production')
+          cookies().set(`${sessionCookieName}`, session, {
+            domain: ".datum.net"
+          })
+          console.log('cookie set:', sessionCookieName)
+        } else {
+          cookies().set(`${sessionCookieName}`, session)
+        }
 
         // Get user data for sessions
         const uData = await fetch(`${restUrl}/oauth/userinfo`, {
