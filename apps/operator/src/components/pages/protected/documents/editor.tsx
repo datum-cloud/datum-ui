@@ -57,7 +57,7 @@ export const TemplateEditor = ({ id }: { id: string }) => {
     let schema: {} = JSON.parse(data)
     const variables = {
       input: {
-        name: templateData.data?.template.name || "",
+        name: templateData.data?.template.name + " Document" || "",
         type: TemplateDocumentType.DOCUMENT,
         jsonconfig: schema,
         description: templateData.data?.template.description,
