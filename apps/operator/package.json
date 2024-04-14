@@ -16,6 +16,8 @@
     "@repo/ui": "workspace:*",
     "@tremor/react": "^3.15.1",
     "@types/jsonwebtoken": "^9.0.6",
+		"@tailwindcss/forms": "latest",
+		"@remixicon/react": "latest",
     "graphql-request": "latest",
     "graphql-tag": "^2.12.6",
     "jwt-decode": "^4.0.0",
@@ -30,6 +32,7 @@
   },
   "devDependencies": {
     "@headlessui/react": "latest",
+		"@headlessui/tailwindcss": "latest",
     "@next/eslint-plugin-next": "latest",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
