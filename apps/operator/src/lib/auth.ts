@@ -79,11 +79,9 @@ export const config = {
 
         // Set the session cookie for the user
         if (process.env.NODE_ENV === 'production') {
-          console.log('setting cookie in production')
           cookies().set(`${sessionCookieName}`, session, {
             domain: ".datum.net"
           })
-          console.log('cookie set:', sessionCookieName)
         } else {
           cookies().set(`${sessionCookieName}`, session)
         }
@@ -181,6 +179,8 @@ export const config = {
       if (session.user) {
         // parse jwt
         const decodedToken = jwtDecode(token.accessToken as string) as JwtPayload;
+
+        console.log('decodedToken', decodedToken)
 
         session.user.name = token.name
         session.user.email = token.email
