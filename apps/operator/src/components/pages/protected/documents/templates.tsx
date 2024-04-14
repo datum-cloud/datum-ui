@@ -36,8 +36,8 @@ export const TemplateList = () => {
 
   return (
     <>
-      <h1>Awesome Template Library</h1>
-      <p>This is an awesome template library. It provides a wide range of templates for various use cases. You can select a template from the dropdown below to bring up a template editor:</p>
+      <p>JSONSchema template library for invoices, quotes, and similar documents would aim to provide a standardized and structured approach to defining document schemas, enabling easier validation, generation, and integration of these documents into various applications and workflows. You can select a template from the dropdown below to bring up a template editor:</p>
+      <br />
       <select onChange={handleSelectChange}>
         <option key="0" value="">
           Select a template

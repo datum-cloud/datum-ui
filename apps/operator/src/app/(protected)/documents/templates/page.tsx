@@ -5,6 +5,7 @@ import { Provider } from 'urql';
 import { TemplateList } from '@/components/pages/protected/documents/templates';
 import { createClient } from "../../../../lib/uqrl";
 import { useSession } from "next-auth/react";
+import PageTitle from '../../../../components/page-title'
 
 const Page: React.FC = () => {
   const { data: session, status } = useSession();
@@ -18,9 +19,15 @@ const Page: React.FC = () => {
   const client = createClient(session);
 
   return (
-    <Provider value={client}>
-      < TemplateList />
-    </Provider>
+    <>
+      <PageTitle
+        description="Template Library"
+        title="Datum provided template library"
+      />
+      <Provider value={client}>
+        < TemplateList />
+      </Provider>
+    </>
   );
 }
 

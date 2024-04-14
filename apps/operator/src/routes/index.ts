@@ -109,6 +109,12 @@ export const routes = [
         href: '/documents/editor',
         current: false,
       },
+      {
+        name: 'Form',
+        description: '',
+        href: '/documents/form',
+        current: false,
+      },
     ],
   },
   { name: divider },

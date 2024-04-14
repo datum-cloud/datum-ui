@@ -29,18 +29,35 @@ export const DocumentList = () => {
 
   const router = useRouter()
 
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSelectChangeForm = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const templateID = event.target.value
+    router.push(`/documents/form?id=${templateID}`)
+  }
+
+  const handleSelectChangeTemplate = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const templateID = event.target.value
     router.push(`/documents/editor?id=${templateID}`)
   }
 
   return (
     <>
-      <h1>Awesome Document Library</h1>
       <p>The organization documents that can be used to create documents such as invoices, quotes, etc.</p>
-      <select onChange={handleSelectChange}>
+      <select onChange={handleSelectChangeForm}>
         <option key="0" value="">
-          Select a document
+          Select...
+        </option>
+        {[allDocuments.data?.templates?.edges?.map((templateEntry) => (
+          <option key={templateEntry?.node?.id} value={templateEntry?.node?.id}>
+            {templateEntry?.node?.name}
+          </option>
+        ))]}
+      </select>
+      <br />
+      <br />
+      <p>Edit an existing document schema</p>
+      <select onChange={handleSelectChangeTemplate}>
+        <option key="0" value="">
+          Select...
         </option>
         {[allDocuments.data?.templates?.edges?.map((templateEntry) => (
           <option key={templateEntry?.node?.id} value={templateEntry?.node?.id}>

@@ -5,6 +5,7 @@ import { Provider } from 'urql';
 import { createClient } from "../../../../lib/uqrl";
 import { useSession } from "next-auth/react";
 import { DocumentList } from '@/components/pages/protected/documents/documents';
+import PageTitle from '../../../../components/page-title'
 
 const Page: React.FC = () => {
   const { data: session, status } = useSession();
@@ -18,9 +19,15 @@ const Page: React.FC = () => {
   const client = createClient(session);
 
   return (
-    <Provider value={client}>
-      < DocumentList />
-    </Provider>
+    <>
+      <PageTitle
+        description="View your documents"
+        title="Document Library"
+      />
+      <Provider value={client}>
+        < DocumentList />
+      </Provider>
+    </>
   );
 }
 

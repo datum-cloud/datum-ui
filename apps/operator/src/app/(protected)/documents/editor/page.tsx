@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { TemplateEditor } from '@/components/pages/protected/documents/editor';
 import { Provider } from 'urql';
 import { createClient } from "../../../../lib/uqrl";
-
+import PageTitle from '../../../../components/page-title'
 
 const Page: React.FC = () => {
   const router = useRouter()
@@ -32,9 +32,15 @@ const Page: React.FC = () => {
 
   // lets load the form now
   return (
-    <Provider value={client}>
-      <TemplateEditor id={templateID} />
-    </Provider>
+    <>
+      <PageTitle
+        description="Document Editor"
+        title="Edit document templates for rendering documents."
+      />
+      <Provider value={client}>
+        <TemplateEditor id={templateID} />
+      </Provider>
+    </>
   )
 }
 

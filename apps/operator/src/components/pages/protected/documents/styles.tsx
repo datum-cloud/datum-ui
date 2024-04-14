@@ -3,59 +3,157 @@ import {
   vanillaRenderers
 } from "@jsonforms/vanilla-renderers";
 
-import { SelectControl, SelectTester } from "./select";
-import { Group, groupTester } from "./group";
-
 export const renderers = [
   ...vanillaRenderers,
   //register custom renderers
-  { tester: SelectTester, renderer: SelectControl },
-  { tester: groupTester, renderer: Group }
 ];
 
 // TODO (hannah): update the styling to match the branding
 export const styleContextValue: StyleContext = {
   styles: [
     {
-      name: "control",
-      classNames: ["my-5"]
+      name: 'control',
+      classNames: ['relative bg-white rounded-lg flex-col  mx-auto my-auto py-2 px-5 w-full max-w-8xl'],
     },
     {
-      name: "control.input",
-      classNames:
-        ["w-full bg-gray-100 rounded border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out font-sans"]
+      name: 'control.trim',
+      classNames: ['trim'],
     },
     {
-      name: "control.select",
-      classNames:
-        ["w-full bg-gray-100 rounded border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out appearance-none"]
+      name: 'control.input',
+      classNames: ["w-full rounded border border-gray-300 mx-auto focus:border-blackberry-500"],
     },
     {
-      name: "control.label",
-      classNames:
-        ["block uppercase tracking-wide text-gray-700 text-xs font-bold pb-4"]
+      name: 'control.select',
+      classNames: ['select'],
+    },
+    {
+      name: 'control.checkbox',
+      classNames: ['checkbox'],
+    },
+    {
+      name: 'control.radio',
+      classNames: ['radio'],
+    },
+    {
+      name: 'control.radio.option',
+      classNames: ['radio-option'],
+    },
+    {
+      name: 'control.radio.input',
+      classNames: ['radio-input'],
+    },
+    {
+      name: 'control.radio.label',
+      classNames: ['radio-label'],
+    },
+    {
+      name: 'control.validation.error',
+      classNames: ['p-4 ml-1'],
+    },
+    {
+      name: 'control.validation',
+      classNames: ['relative'],
+    },
+    {
+      name: 'categorization',
+      classNames: ['categorization'],
+    },
+    {
+      name: 'categorization.master',
+      classNames: ['categorization-master'],
+    },
+    {
+      name: 'categorization.detail',
+      classNames: ['categorization-detail'],
+    },
+    {
+      name: 'category.group',
+      classNames: ['text-2xl'],
+    },
+    {
+      name: 'category.subcategories',
+      classNames: ['category-subcategories'],
+    },
+    {
+      name: 'array.layout',
+      classNames: ['array-layout'],
+    },
+    {
+      name: 'array.children',
+      classNames: ['children'],
     },
     {
       name: "array.button",
-      classNames: ["custom-array-button"]
+      classNames: ["mr-auto mt-2 w-full"]
     },
     {
-      name: "control.validation",
-      classNames: ["text-red-500 font-normal mt-2 text-xs"]
-    },
-    {
-      name: "vertical.layout",
-      classNames:
-        ["block uppercase tracking-wide text-gray-700 text-s font-bold mb-2"]
-    },
-    {
-      name: "group.layout",
-      classNames: ["accordion-item bg-white"]
+      name: 'group.layout',
+      classNames: ['group-layout'],
     },
     {
       name: "group.label",
-      classNames:
-        ["accordion-button relative flex w-full py-4 transition focus:outline-none block uppercase tracking-wide text-gray-700 text-s font-bold pb-4"]
-    }
+      classNames: ["text-2xl"],
+    },
+    {
+      name: 'horizontal.layout',
+      classNames: ['horizontal-layout'],
+    },
+    {
+      name: 'horizontal.layout.item',
+      classNames: ([size]: number[]) => [`horizontal-layout-${size}`],
+    },
+    {
+      name: 'vertical.layout',
+      classNames: ['vertical-layout'],
+    },
+    {
+      name: 'array.table.validation.error',
+      classNames: ['validation_error'],
+    },
+    {
+      name: 'array.table.validation',
+      classNames: ['validation'],
+    },
+    {
+      name: 'array.table',
+      classNames: ['table-auto', 'control'],
+    },
+    {
+      name: 'array.control.validation.error',
+      classNames: ['validation_error'],
+    },
+    {
+      name: 'array.control.validation',
+      classNames: ['validation'],
+    },
+    {
+      name: 'array.control.add',
+      classNames: ['flex flex-col gap-8'],
+    },
+    {
+      name: 'array.child.controls',
+      classNames: ['child-controls'],
+    },
+    {
+      name: 'array.child.controls.up',
+      classNames: ['flex flex-col gap-8'],
+    },
+    {
+      name: 'array.child.controls.down',
+      classNames: ['flex flex-col gap-8'],
+    },
+    {
+      name: 'array.child.controls.delete',
+      classNames: ['flex flex-col gap-8'],
+    },
+    {
+      name: 'array.control',
+      classNames: ['array-control-layout', 'control'],
+    },
+    {
+      name: 'input.description',
+      classNames: ['mx-auto'],
+    },
   ]
 };

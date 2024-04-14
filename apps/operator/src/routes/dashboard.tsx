@@ -62,7 +62,7 @@ export const NavItems: (NavItem | Separator)[] = [
       { title: 'Templates', href: '/documents/templates' },
       { title: 'Documents', href: '/documents/documents' },
       { title: 'Editor', href: '/documents/editor' },
-
+      { title: 'Form', href: '/documents/form' },
     ],
   },
   {
