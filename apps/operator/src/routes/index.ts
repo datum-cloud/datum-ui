@@ -84,6 +84,41 @@ export const routes = [
   },
   { name: divider },
   {
+    name: 'Documents',
+    description: '',
+    href: '/documents/templates',
+    icon: speedometerIcon,
+    current: true,
+    detail: true,
+    children: [
+      {
+        name: 'Templates',
+        description: '',
+        href: '/documents/templates',
+        current: true,
+      },
+      {
+        name: 'Templates',
+        description: '',
+        href: '/documents/documents',
+        current: true,
+      },
+      {
+        name: 'Editor',
+        description: '',
+        href: '/documents/editor',
+        current: false,
+      },
+      {
+        name: 'Form',
+        description: '',
+        href: '/documents/form',
+        current: false,
+      },
+    ],
+  },
+  { name: divider },
+  {
     name: 'Assets',
     description: '',
     href: '/assets',

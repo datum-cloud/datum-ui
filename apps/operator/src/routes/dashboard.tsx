@@ -3,6 +3,7 @@ import {
   AtSign,
   BarChart3Icon,
   CircleGaugeIcon,
+  FileIcon,
   HandshakeIcon,
   LandmarkIcon,
   LayersIcon,
@@ -50,6 +51,18 @@ export const NavItems: (NavItem | Separator)[] = [
     children: [
       { title: 'Users', href: '/customers/users' },
       { title: 'Organizations', href: '/customers/organizations' },
+    ],
+  },
+  {
+    title: 'Documents',
+    href: '/documents',
+    icon: FileIcon,
+    isChildren: true,
+    children: [
+      { title: 'Templates', href: '/documents/templates' },
+      { title: 'Documents', href: '/documents/documents' },
+      { title: 'Editor', href: '/documents/editor' },
+      { title: 'Form', href: '/documents/form' },
     ],
   },
   {

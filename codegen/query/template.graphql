@@ -2,15 +2,11 @@ mutation CreateTemplate($input: CreateTemplateInput!) {
   createTemplate(input: $input) {
     template {
       id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
       name
+      type
       description
       jsonconfig
+      uischema
       owner {
         id
       }
@@ -22,15 +18,11 @@ mutation UpdateTemplate($updateTemplateId: ID!, $input: UpdateTemplateInput!) {
   updateTemplate(id: $updateTemplateId, input: $input) {
     template {
       id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
       name
+      type
       description
       jsonconfig
+      uischema
       owner {
         id
       }
@@ -43,15 +35,29 @@ query GetAllTemplates {
     edges {
       node {
         id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        deletedAt
-        deletedBy
         name
+        type
         description
         jsonconfig
+        uischema
+        owner {
+          id
+        }
+      }
+    }
+  }
+}
+
+query FilterTemplates($where: TemplateWhereInput) {
+  templates(where: $where) {
+    edges {
+      node {
+        id
+        name
+        type
+        description
+        jsonconfig
+        uischema
         owner {
           id
         }
@@ -63,15 +69,11 @@ query GetAllTemplates {
 query GetTemplate($getTemplateId: ID!) {
   template(id: $getTemplateId) {
     id
-    createdAt
-    updatedAt
-    createdBy
-    updatedBy
-    deletedAt
-    deletedBy
+    type
     name
     description
     jsonconfig
+    uischema
     owner {
       id
     }
