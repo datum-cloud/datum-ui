@@ -3,7 +3,7 @@ import { Logo } from '@repo/ui/logo'
 import { headerStyles } from './header.styles'
 import Alerts from '@repo/ui/alerts'
 import { UserMenu } from '@/components/shared/user-menu/user-menu'
-import { useGetAllOrganizationsQuery } from '../../../../../../codegen/src/schema'
+import { useGetAllOrganizationsQuery } from '@repo/codegen/src/schema'
 
 export default function Header() {
   const { header, nav, logoWrapper, mobileSidebar, userNav } = headerStyles()

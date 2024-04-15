@@ -1,7 +1,7 @@
 version: '3'
 
 tasks:
-  codegen: 
+  codegen:
     desc: run generate
     cmds:
       - task: generate
@@ -9,9 +9,9 @@ tasks:
 
   generate:
     desc: run generate
-    cmd: npm run codegen
+    cmd: bun run codegen
 
-  clean: 
+  clean:
     # See https://github.com/dotansimha/graphql-code-generator-community/issues/501
     # TODO: find the right combination of deps to fix this
     desc: clean up badly generated code
