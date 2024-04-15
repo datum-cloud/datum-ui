@@ -1,21 +1,16 @@
 import Link from 'next/link'
-import { Logo } from '@repo/ui/logo'
 import { headerStyles } from './header.styles'
 import Alerts from '@repo/ui/alerts'
 import { UserMenu } from '@/components/shared/user-menu/user-menu'
-import { useGetAllOrganizationsQuery } from '@repo/codegen/src/schema'
+import { WorkspaceSelector } from '../workspace-selector/workspace-selector'
 
 export default function Header() {
-  const { header, nav, logoWrapper, mobileSidebar, userNav } = headerStyles()
-  const [allOrgs] = useGetAllOrganizationsQuery()
-  console.log(allOrgs.data)
+  const { header, nav, mobileSidebar, userNav } = headerStyles()
   return (
     <>
       <div className={header()}>
         <nav className={nav()}>
-          <Link href={'/'} className={logoWrapper()}>
-            <Logo width={115} theme="dark" />
-          </Link>
+          <WorkspaceSelector />
 
           <div className={mobileSidebar()}>
             <>MobileSidebar</>
