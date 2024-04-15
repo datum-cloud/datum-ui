@@ -50,7 +50,9 @@
     "class-variance-authority": "^0.7.0",
     "lucide-react": "^0.367.0",
     "tailwind-merge": "^2.2.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@headlessui/react": "latest",
@@ -60,8 +62,8 @@
     "@tailwindcss/forms": "latest",
     "@types/node": "latest",
     "@types/eslint": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
+    "@types/react": "18.2.78",
+    "@types/react-dom": "18.2.25",
     "autoprefixer": "latest",
     "clsx": "latest",
     "eslint": "latest",
