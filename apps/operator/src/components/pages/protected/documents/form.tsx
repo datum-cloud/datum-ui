@@ -1,19 +1,21 @@
-
 import React, { useRef, useState } from 'react'
-import { useSession } from "next-auth/react";
-import { JsonForms } from "@jsonforms/react";
+import { useSession } from 'next-auth/react'
+import { JsonForms } from '@jsonforms/react'
 import { ArrowUpRight } from 'lucide-react'
-import { Button } from '@repo/ui/button';
+import { Button } from '@repo/ui/button'
 import {
   JsonFormsStyleContext,
   vanillaCells,
-} from "@jsonforms/vanilla-renderers";
+} from '@jsonforms/vanilla-renderers'
 import {
   useCreateDocumentDataMutation,
-  useGetTemplateQuery
-} from '../../../../../../../codegen/src/schema';
-import { renderers, styleContextValue } from '@/components/pages/protected/documents/styles'
-import { Generate } from '@jsonforms/core';
+  useGetTemplateQuery,
+} from '@repo/codegen/src/schema'
+import {
+  renderers,
+  styleContextValue,
+} from '@/components/pages/protected/documents/styles'
+import { Generate } from '@jsonforms/core'
 
 function printPDF() {
   alert('Coming soon!')
@@ -21,29 +23,32 @@ function printPDF() {
 
 export const TemplateEditor = ({ id }: { id: string }) => {
   // get the session
-  const { data: session, status } = useSession();
-  const isSessionLoading = status === 'loading';
+  const { data: session, status } = useSession()
+  const isSessionLoading = status === 'loading'
 
   // setup the state to save the form data
-  const [data, setData] = useState({});
+  const [data, setData] = useState({})
 
   // setup the state to save the jsonschema
-  const [schemaData, setSchemaData] = useState({});
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const [schemaData, setSchemaData] = useState({})
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   // setup the query to get the template data
-  const variables = { getTemplateId: id || "" }
+  const variables = { getTemplateId: id || '' }
   const [templateData] = useGetTemplateQuery({ variables })
-  const uischema = templateData?.data?.template.uischema || Generate.uiSchema(templateData.data?.template.jsonconfig);
+  const uischema =
+    templateData?.data?.template.uischema ||
+    Generate.uiSchema(templateData.data?.template.jsonconfig)
 
   // setup the mutation to save the form data
   const [dataResult, createDocumentData] = useCreateDocumentDataMutation()
   function saveDocumentData() {
     const variables = {
       input: {
-        data: data, templateID: templateData?.data?.template.id || ""
-      }
-    };
+        data: data,
+        templateID: templateData?.data?.template.id || '',
+      },
+    }
 
     createDocumentData(variables)
     alert('Form Data Saved')
@@ -67,7 +72,7 @@ export const TemplateEditor = ({ id }: { id: string }) => {
           renderers={renderers}
           uischema={uischema}
           cells={vanillaCells}
-          validationMode='ValidateAndHide'
+          validationMode="ValidateAndHide"
           onChange={({ data }) => setData(data)}
         />
         <Button
@@ -78,10 +83,10 @@ export const TemplateEditor = ({ id }: { id: string }) => {
           variant="blackberry"
           onClick={() => {
             saveDocumentData()
-          }
-          }>
+          }}
+        >
           Save Form
-        </ Button>
+        </Button>
         &nbsp;&nbsp;&nbsp;
         <Button
           icon={<ArrowUpRight />}
@@ -91,11 +96,11 @@ export const TemplateEditor = ({ id }: { id: string }) => {
           variant="blackberry"
           onClick={() => {
             printPDF()
-          }}>
-
+          }}
+        >
           Print PDF
-        </ Button>
+        </Button>
       </JsonFormsStyleContext.Provider>
-    </ >
+    </>
   )
 }

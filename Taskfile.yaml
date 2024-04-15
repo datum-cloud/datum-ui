@@ -6,9 +6,9 @@ env:
 dotenv: ['.env', '{{.ENV}}/.env']
 
 includes:
-  codegen: 
-    taskfile: ./codegen/Taskfile.yaml
-    dir: ./codegen
+  codegen:
+    taskfile: ./packages/codegen/Taskfile.yaml
+    dir: ./packages/codegen
 
 tasks:
   build:
@@ -43,4 +43,3 @@ tasks:
     cmds:
       - task: install
       - bun dev --filter={apps/storybook}
-
