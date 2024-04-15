@@ -4465,21 +4465,21 @@ export type UpdateTemplateMutation = { __typename?: 'Mutation', updateTemplate: 
 export type GetAllTemplatesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllTemplatesQuery = { __typename?: 'Query', templates: { __typename?: 'TemplateConnection', edges?: Array<{ __typename?: 'TemplateEdge', node?: { __typename?: 'Template', id: string, name: string, type: TemplateDocumentType, description?: string | null, jsonconfig: any, uischema?: any | null, owner: { __typename?: 'Organization', id: string } } | null } | null> | null } };
+export type GetAllTemplatesQuery = { __typename?: 'Query', templates: { __typename?: 'TemplateConnection', edges?: Array<{ __typename?: 'TemplateEdge', node?: { __typename?: 'Template', id: string, name: string, type: TemplateDocumentType, description?: string | null, jsonconfig: any, uischema?: any | null } | null } | null> | null } };
 
 export type FilterTemplatesQueryVariables = Exact<{
   where?: InputMaybe<TemplateWhereInput>;
 }>;
 
 
-export type FilterTemplatesQuery = { __typename?: 'Query', templates: { __typename?: 'TemplateConnection', edges?: Array<{ __typename?: 'TemplateEdge', node?: { __typename?: 'Template', id: string, name: string, type: TemplateDocumentType, description?: string | null, jsonconfig: any, uischema?: any | null, owner: { __typename?: 'Organization', id: string } } | null } | null> | null } };
+export type FilterTemplatesQuery = { __typename?: 'Query', templates: { __typename?: 'TemplateConnection', edges?: Array<{ __typename?: 'TemplateEdge', node?: { __typename?: 'Template', id: string, name: string, type: TemplateDocumentType, description?: string | null, jsonconfig: any, uischema?: any | null } | null } | null> | null } };
 
 export type GetTemplateQueryVariables = Exact<{
   getTemplateId: Scalars['ID']['input'];
 }>;
 
 
-export type GetTemplateQuery = { __typename?: 'Query', template: { __typename?: 'Template', id: string, name: string, type: TemplateDocumentType, description?: string | null, jsonconfig: any, uischema?: any | null, owner: { __typename?: 'Organization', id: string } } };
+export type GetTemplateQuery = { __typename?: 'Query', template: { __typename?: 'Template', id: string, name: string, type: TemplateDocumentType, description?: string | null, jsonconfig: any, uischema?: any | null } };
 
 export type GetUserProfileQueryVariables = Exact<{
   userId: Scalars['ID']['input'];
@@ -4622,9 +4622,6 @@ export const GetAllTemplatesDocument = gql`
         description
         jsonconfig
         uischema
-        owner {
-          id
-        }
       }
     }
   }
@@ -4645,9 +4642,6 @@ export const FilterTemplatesDocument = gql`
         description
         jsonconfig
         uischema
-        owner {
-          id
-        }
       }
     }
   }
@@ -4666,9 +4660,6 @@ export const GetTemplateDocument = gql`
     description
     jsonconfig
     uischema
-    owner {
-      id
-    }
   }
 }
     `;
