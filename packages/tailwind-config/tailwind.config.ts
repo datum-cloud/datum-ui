@@ -7,6 +7,7 @@ export const config: Omit<Config, 'content'> = {
     extend: {
       boxShadow: {
         auth: '0px 8.671px 17.343px -8.671px rgba(0, 0, 0, 0.10)',
+        popover: '0px 8.671px 17.343px -8.671px rgba(0, 0, 0, 0.10)',
       },
       colors: {
         blackberry: {

@@ -1,0 +1,53 @@
+query GetAllOrganizations {
+  organizations {
+    edges {
+      node {
+        id
+        name
+        displayName
+        description
+        personalOrg
+        parent {
+          id
+          name
+        }
+        children {
+          edges {
+            node {
+              id
+              name
+              displayName
+              description
+            }
+          }
+        }
+        members {
+          id
+          role
+          user {
+            id
+            firstName
+            lastName
+          }
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          domains
+          billingContact
+          billingEmail
+          billingPhone
+          billingAddress
+          taxIdentifier
+          tags
+          geoLocation
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}

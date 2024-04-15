@@ -14,8 +14,8 @@
 
 @font-face {
   font-family: 'regola';
-  src: url('/fonts/regola-neue-regular.woff2') format('woff2');
-  font-weight: '400';
+  src: url('/fonts/regola-neue-semibold.woff2') format('woff2');
+  font-weight: '600';
   style: 'normal';
 }
 
@@ -23,14 +23,14 @@
   font-family: 'regola';
   src: url('/fonts/regola-neue-medium.woff2') format('woff2');
   font-weight: '500';
-  style: 'medium';
+  style: 'normal';
 }
 
 @font-face {
   font-family: 'regola';
-  src: url('/fonts/regola-neue-semibold.woff2') format('woff2');
-  font-weight: '600';
-  style: 'semibold';
+  src: url('/fonts/regola-neue-regular.woff2') format('woff2');
+  font-weight: '400';
+  style: 'normal';
 }
 
 @font-face {
@@ -50,4 +50,5 @@
 
 body {
   font-family: var(--font-karelia);
+  -webkit-font-smoothing: antialiased;
 }
