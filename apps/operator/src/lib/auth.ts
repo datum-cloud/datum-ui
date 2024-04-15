@@ -78,15 +78,13 @@ export const config = {
         }
 
         // Set the session cookie for the user
-        // if (process.env.NODE_ENV === 'production') {
-        //   cookies().set(`${sessionCookieName}`, session, {
-        //     domain: ".datum.net"
-        //   })
-        // } else {
-        //   cookies().set(`${sessionCookieName}`, session)
-        // }
-
-        cookies().set(`${sessionCookieName}`, session)
+        if (process.env.NODE_ENV === 'production') {
+          cookies().set(`${sessionCookieName}`, session, {
+            domain: ".datum.net"
+          })
+        } else {
+          cookies().set(`${sessionCookieName}`, session)
+        }
 
         // Get user data for sessions
         const uData = await fetch(`${restUrl}/oauth/userinfo`, {
