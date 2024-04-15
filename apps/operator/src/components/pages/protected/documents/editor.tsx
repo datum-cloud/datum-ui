@@ -7,9 +7,12 @@ import { Button } from '@repo/ui/button';
 import { SimpleForm } from '@repo/ui/simple-form'
 import {
   TemplateDocumentType,
-  useCreateDocumentDataMutation,
   useCreateTemplateMutation,
-  useGetTemplateQuery
+  useGetTemplateQuery,
+  OrganizationWhereInput,
+  TemplateWhereInput,
+  useFilterTemplatesQuery,
+  useUpdateTemplateMutation,
 } from '../../../../../../../codegen/src/schema';
 import { Generate } from '@jsonforms/core';
 
@@ -48,12 +51,27 @@ export const TemplateEditor = ({ id }: { id: string }) => {
     setSchemaData(val);
   };
 
-  const [templateResult, createTemplateData] = useCreateTemplateMutation()
+  const [, createTemplateData] = useCreateTemplateMutation()
+  const [, updateTemplateData] = useUpdateTemplateMutation()
+
+
+  // See if document is already saved
+  const orgFilter: OrganizationWhereInput[] = [
+    {
+      id: session?.user?.organization
+    }
+  ];
+  const whereFilter: TemplateWhereInput = {
+    type: TemplateDocumentType.DOCUMENT,
+    name: templateData.data?.template.name + " Document",
+    hasOwnerWith: orgFilter,
+  }
+
+  const [templateDocument] = useFilterTemplatesQuery({
+    variables: { where: whereFilter },
+  });
 
   function saveTemplateData(data: string) {
-    // debugger
-    console.log('session', session?.user)
-
     let schema: {} = JSON.parse(data)
     const variables = {
       input: {
@@ -62,23 +80,42 @@ export const TemplateEditor = ({ id }: { id: string }) => {
         jsonconfig: schema,
         description: templateData.data?.template.description,
         uischema: uischema,
-        ownerID: session?.user?.organization || "01HVF5QXAK0024V2J48VWF8EHS", // TODO: Add a default organization for now
+        ownerID: session?.user?.organization || "",
       }
     };
 
-    createTemplateData(variables).then(result => {
-      // TODO(hannah or sfunk): this should be a toast or something better with error handling
-      if (result.error) {
-        alert(result.error)
-        return
-      }
+    if (templateDocument.data?.templates.edges?.length == 1) {
+      const updateId = templateDocument.data.templates.edges[0]?.node?.id || ""
+      // template already exists, update it
+      updateTemplateData({ updateTemplateId: updateId, input: { ...variables.input } }).then(result => {
+        // TODO(hannah or sfunk): this should be a toast or something better with error handling
+        if (result.error) {
+          alert(result.error)
+          return
+        }
 
-      if (result.data) {
-        alert('Document Saved')
+        if (result.data) {
+          alert('Document Updated')
 
-        router.push(`/documents/form?id=${result.data?.createTemplate?.template?.id}`)
-      }
-    });
+          router.push(`/documents/form?id=${result.data?.updateTemplate?.template?.id}`)
+        }
+      });
+    } else {
+      createTemplateData(variables).then(result => {
+        // TODO(hannah or sfunk): this should be a toast or something better with error handling
+        if (result.error) {
+          alert(result.error)
+          return
+        }
+
+        if (result.data) {
+          alert('Document Saved')
+
+          router.push(`/documents/form?id=${result.data?.createTemplate?.template?.id}`)
+        }
+      });
+    }
+
   }
 
   // set the default tab
