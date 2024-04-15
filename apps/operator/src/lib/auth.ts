@@ -80,7 +80,10 @@ export const config = {
         // Set the session cookie for the user
         if (process.env.NODE_ENV === 'production') {
           cookies().set(`${sessionCookieName}`, session, {
-            domain: ".datum.net"
+            domain: ".datum.net",
+            httpOnly: true,
+            secure: true,
+            path: "/",
           })
         } else {
           cookies().set(`${sessionCookieName}`, session)
