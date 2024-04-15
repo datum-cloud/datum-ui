@@ -3,6 +3,8 @@
 import { Card, Title, BarChart, AreaChart, Text } from '@tremor/react';
 import { BarList } from '@/components/BarList'
 
+
+
 const data2 = [
   { name: "/home", value: 843 },
   { name: "/imprint", value: 46 },
@@ -11,7 +13,7 @@ const data2 = [
   { name: "/documentation", value: 384 },
 ]
 
-export const BarListExample = () => {
+export const Barlist = () => {
   return <BarList data={data2} />
 }
 
@@ -134,4 +136,3 @@ export default function Chart() {
     </Card>
   );
 }
-

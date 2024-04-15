@@ -7,6 +7,7 @@ import { PageViews, getPostHogPageViews } from '@/components/pages/protected/rep
 import Chart from '@/components/pages/protected/reporting/insights'
 
 
+
 const Page: React.FC = () => {
   const [chartData, setCount] = useState<any | null>(null);
 
@@ -21,6 +22,7 @@ const Page: React.FC = () => {
 
   return (
 			<main className="p-4 md:p-10 mx-auto max-w-7xl">
+				<br></br>
 				<Grid numItemsSm={2} numItemsLg={3} className="gap-6">
 					{data.map((item) => (
 						<Card key={item.category}>
@@ -47,9 +49,9 @@ const Page: React.FC = () => {
 						</Card>
 					))}
 				</Grid>
-				<Chart />
 				<br></br>
 				<PageViews chartData={chartData} />
+				<Chart />
 			</main>
 		);
 	}
