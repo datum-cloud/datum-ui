@@ -4447,6 +4447,11 @@ export type GetAllGroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAllGroupsQuery = { __typename?: 'Query', groups: { __typename?: 'GroupConnection', edges?: Array<{ __typename?: 'GroupEdge', node?: { __typename?: 'Group', id: string, name: string, description?: string | null, displayName: string, logoURL?: string | null, setting: { __typename?: 'GroupSetting', visibility: GroupSettingVisibility, joinPolicy: GroupSettingJoinPolicy, syncToSlack?: boolean | null, syncToGithub?: boolean | null, tags?: Array<string> | null } } | null } | null> | null } };
 
+export type GetAllOrganizationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllOrganizationsQuery = { __typename?: 'Query', organizations: { __typename?: 'OrganizationConnection', edges?: Array<{ __typename?: 'OrganizationEdge', node?: { __typename?: 'Organization', id: string, name: string, displayName: string, description?: string | null, personalOrg?: boolean | null, createdAt?: any | null, updatedAt?: any | null, parent?: { __typename?: 'Organization', id: string, name: string } | null, children: { __typename?: 'OrganizationConnection', edges?: Array<{ __typename?: 'OrganizationEdge', node?: { __typename?: 'Organization', id: string, name: string, displayName: string, description?: string | null } | null } | null> | null }, members?: Array<{ __typename?: 'OrgMembership', id: string, role: OrgMembershipRole, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> | null, setting?: { __typename?: 'OrganizationSetting', id: string, createdAt?: any | null, updatedAt?: any | null, createdBy?: string | null, updatedBy?: string | null, domains?: Array<string> | null, billingContact?: string | null, billingEmail?: string | null, billingPhone?: string | null, billingAddress?: string | null, taxIdentifier?: string | null, tags?: Array<string> | null, geoLocation?: OrganizationSettingRegion | null } | null } | null } | null> | null } };
+
 export type CreateTemplateMutationVariables = Exact<{
   input: CreateTemplateInput;
 }>;
@@ -4568,6 +4573,65 @@ export const GetAllGroupsDocument = gql`
 
 export function useGetAllGroupsQuery(options?: Omit<Urql.UseQueryArgs<GetAllGroupsQueryVariables>, 'query'>) {
   return Urql.useQuery<GetAllGroupsQuery, GetAllGroupsQueryVariables>({ query: GetAllGroupsDocument, ...options });
+};
+export const GetAllOrganizationsDocument = gql`
+    query GetAllOrganizations {
+  organizations {
+    edges {
+      node {
+        id
+        name
+        displayName
+        description
+        personalOrg
+        parent {
+          id
+          name
+        }
+        children {
+          edges {
+            node {
+              id
+              name
+              displayName
+              description
+            }
+          }
+        }
+        members {
+          id
+          role
+          user {
+            id
+            firstName
+            lastName
+          }
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          domains
+          billingContact
+          billingEmail
+          billingPhone
+          billingAddress
+          taxIdentifier
+          tags
+          geoLocation
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+    `;
+
+export function useGetAllOrganizationsQuery(options?: Omit<Urql.UseQueryArgs<GetAllOrganizationsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetAllOrganizationsQuery, GetAllOrganizationsQueryVariables>({ query: GetAllOrganizationsDocument, ...options });
 };
 export const CreateTemplateDocument = gql`
     mutation CreateTemplate($input: CreateTemplateInput!) {

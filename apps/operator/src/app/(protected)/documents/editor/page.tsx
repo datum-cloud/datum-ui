@@ -1,11 +1,9 @@
-'use client';
+'use client'
 
 import React from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useSession } from "next-auth/react";
-import { TemplateEditor } from '@/components/pages/protected/documents/editor';
-import { Provider } from 'urql';
-import { createClient } from "../../../../lib/uqrl";
+import { useSession } from 'next-auth/react'
+import { TemplateEditor } from '@/components/pages/protected/documents/editor'
 import PageTitle from '../../../../components/page-title'
 
 const Page: React.FC = () => {
@@ -20,15 +18,13 @@ const Page: React.FC = () => {
     return <div>loading...</div>
   }
 
-  const { data: session, status } = useSession();
-  const isSessionLoading = status === 'loading';
+  const { status } = useSession()
+  const isSessionLoading = status === 'loading'
 
   // Wait for the session and template data
   if (isSessionLoading) {
     return <div>loading...</div>
   }
-
-  const client = createClient(session);
 
   // lets load the form now
   return (
@@ -37,9 +33,7 @@ const Page: React.FC = () => {
         description="Document Editor"
         title="Edit document templates for rendering documents."
       />
-      <Provider value={client}>
-        <TemplateEditor id={templateID} />
-      </Provider>
+      <TemplateEditor id={templateID} />
     </>
   )
 }
