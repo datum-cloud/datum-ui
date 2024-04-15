@@ -1,12 +1,11 @@
 'use client'
 
-import { ReactNode } from 'react'
 import { Provider as UrqlProvider } from 'urql'
 import { createClient } from '@/lib/urql'
 import { useSession } from 'next-auth/react'
 
 interface ProvidersProps {
-  children: ReactNode
+  children: any
 }
 
 const Providers = ({ children }: ProvidersProps) => {
