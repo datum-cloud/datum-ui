@@ -9,7 +9,7 @@ import bellIcon from './assets/bell.svg'
 
 export const Alerts = () => {
   return (
-    <Menu as="div" className="relative mr-6">
+    <Menu as="div" className="relative ">
       <Menu.Button className="flex items-center w-8 h-8">
         <span className="sr-only">Open alert menu</span>
         <span className="sr-only">View notifications</span>
