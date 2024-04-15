@@ -40,9 +40,6 @@ query GetAllTemplates {
         description
         jsonconfig
         uischema
-        owner {
-          id
-        }
       }
     }
   }
@@ -58,9 +55,6 @@ query FilterTemplates($where: TemplateWhereInput) {
         description
         jsonconfig
         uischema
-        owner {
-          id
-        }
       }
     }
   }
@@ -74,8 +68,5 @@ query GetTemplate($getTemplateId: ID!) {
     description
     jsonconfig
     uischema
-    owner {
-      id
-    }
   }
 }
