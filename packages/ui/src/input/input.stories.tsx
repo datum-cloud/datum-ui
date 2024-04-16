@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Input } from './input'
+import { SearchIcon } from 'lucide-react'
 
 const meta: Meta<typeof Input> = {
   title: 'Input',
@@ -28,6 +29,13 @@ type Story = StoryObj<typeof meta>
 export const WithPlaceholder: Story = {
   args: {
     placeholder: 'Email',
+  },
+}
+
+export const WithIcon: Story = {
+  args: {
+    placeholder: 'Search for a workspace',
+    icon: <SearchIcon width={17} />,
   },
 }
 

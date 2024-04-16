@@ -1,7 +1,7 @@
 'use client'
 
 import { signOut, useSession } from 'next-auth/react'
-import { Avatar, AvatarFallback } from '@repo/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
 import { userMenuStyles } from './user-menu.styles'
 import { Switch } from '@repo/ui/switch'
 import { Button } from '@repo/ui/button'
@@ -33,6 +33,9 @@ export const UserMenu = () => {
       <DropdownMenuTrigger asChild>
         <div className={trigger()}>
           <Avatar>
+            {sessionData?.user?.image && (
+              <AvatarImage src={sessionData?.user?.image} />
+            )}
             <AvatarFallback>
               {sessionData?.user?.name?.substring(0, 2)}
             </AvatarFallback>
@@ -43,17 +46,17 @@ export const UserMenu = () => {
       <DropdownMenuContent>
         <DropdownMenuItem>
           <div>
-            <p>
+            <div>
               <strong>{sessionData?.user.name}</strong>
               <br />
               <div className={email()}>{sessionData?.user.email}</div>
-            </p>
-            <p>
+            </div>
+            <div>
               <Link href="#" className={userSettingsLink()}>
                 User Settings
                 <ArrowRight width={10} />
               </Link>
-            </p>
+            </div>
           </div>
         </DropdownMenuItem>
         <DropdownMenuSeparator spacing="md" />

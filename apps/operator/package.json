@@ -13,6 +13,7 @@
     "@jsonforms/vanilla-renderers": "^3.2.1",
     "@nextui-org/react": "^2.2.10",
     "@radix-ui/react-accordion": "^1.1.2",
+    "@radix-ui/react-popover": "^1.0.7",
     "@repo/dally": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/codegen": "workspace:*",

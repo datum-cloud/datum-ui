@@ -1,22 +1,30 @@
 'use client'
 
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { cn } from '../../lib/utils'
-import { inputStyles } from './input.styles'
+import { inputStyles, type InputVariants } from './input.styles'
 
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+  extends React.InputHTMLAttributes<HTMLInputElement>,
+    InputVariants {
+  icon?: ReactNode
+}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
-    const { input } = inputStyles()
+  ({ className, type, icon, ...props }, ref) => {
+    const { input, inputWrapper, iconWrapper } = inputStyles()
+    const hasIcon = icon ? true : false
+
     return (
-      <input
-        type={type}
-        className={cn(input(), className)}
-        ref={ref}
-        {...props}
-      />
+      <div className={inputWrapper({ hasIcon })}>
+        <input
+          type={type}
+          className={cn(input({ hasIcon }), className)}
+          ref={ref}
+          {...props}
+        />
+        {icon && <div className={iconWrapper()}>{icon}</div>}
+      </div>
     )
   },
 )
