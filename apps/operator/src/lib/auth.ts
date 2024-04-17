@@ -6,7 +6,7 @@ import GoogleProvider from 'next-auth/providers/google'
 import { restUrl, sessionCookieName } from '@repo/dally/auth'
 import { cookies } from 'next/headers'
 import { jwtDecode } from 'jwt-decode'
-import { JwtPayload } from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken'
 
 export const config = {
   theme: {
@@ -80,10 +80,10 @@ export const config = {
         // Set the session cookie for the user
         if (process.env.NODE_ENV === 'production') {
           cookies().set(`${sessionCookieName}`, session, {
-            domain: ".datum.net",
+            domain: '.datum.net',
             httpOnly: true,
             secure: true,
-            path: "/",
+            path: '/',
           })
         } else {
           cookies().set(`${sessionCookieName}`, session)
@@ -140,7 +140,7 @@ export const config = {
 
         if (uData.ok) {
           const userJson = await uData.json()
-
+          console.log(JSON.stringify(userJson, null, 2))
           user.email = userJson?.email
           user.name = `${userJson?.first_name as string} ${userJson?.last_name as string}`
           user.image = userJson?.avatar_remote_url
@@ -181,13 +181,16 @@ export const config = {
        */
       if (session.user) {
         // parse jwt
-        const decodedToken = jwtDecode(token.accessToken as string) as JwtPayload;
+        const decodedToken = jwtDecode(
+          token.accessToken as string,
+        ) as JwtPayload
 
         session.user.name = token.name
         session.user.email = token.email
         session.user.accessToken = token.accessToken
         session.user.refreshToken = token.refreshToken
         session.user.organization = decodedToken?.org
+        session.user.userId = decodedToken?.user_id
       }
 
       return session

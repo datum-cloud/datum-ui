@@ -18,6 +18,8 @@
     "@repo/ui": "workspace:*",
     "@repo/codegen": "workspace:*",
     "@types/jsonwebtoken": "^9.0.6",
+    "@novu/node": "^0.24.1",
+    "@novu/notification-center": "^0.24.1",
     "graphql-request": "latest",
     "graphql-tag": "^2.12.6",
     "jwt-decode": "^4.0.0",
