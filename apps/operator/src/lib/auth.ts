@@ -140,7 +140,6 @@ export const config = {
 
         if (uData.ok) {
           const userJson = await uData.json()
-          console.log(JSON.stringify(userJson, null, 2))
           user.email = userJson?.email
           user.name = `${userJson?.first_name as string} ${userJson?.last_name as string}`
           user.image = userJson?.avatar_remote_url
