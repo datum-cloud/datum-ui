@@ -33,10 +33,16 @@ tasks:
       - bun dev --filter={apps/docs}
 
   dev:operator:
-    desc: develop docs
+    desc: develop operator
     cmds:
       - task: install
       - bun dev --filter={apps/operator}
+
+  dev:web:
+    desc: develop web
+    cmds:
+      - task: install
+      - bun dev --filter={apps/web}
 
   dev:storybook:
     desc: develop storybook
