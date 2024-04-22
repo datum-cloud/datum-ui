@@ -3,7 +3,7 @@ mutation CreateTemplate($input: CreateTemplateInput!) {
     template {
       id
       name
-      type
+      templateType
       description
       jsonconfig
       uischema
@@ -19,7 +19,7 @@ mutation UpdateTemplate($updateTemplateId: ID!, $input: UpdateTemplateInput!) {
     template {
       id
       name
-      type
+      templateType
       description
       jsonconfig
       uischema
@@ -36,7 +36,7 @@ query GetAllTemplates {
       node {
         id
         name
-        type
+        templateType
         description
         jsonconfig
         uischema
@@ -51,7 +51,7 @@ query FilterTemplates($where: TemplateWhereInput) {
       node {
         id
         name
-        type
+        templateType
         description
         jsonconfig
         uischema
@@ -63,7 +63,7 @@ query FilterTemplates($where: TemplateWhereInput) {
 query GetTemplate($getTemplateId: ID!) {
   template(id: $getTemplateId) {
     id
-    type
+    templateType
     name
     description
     jsonconfig

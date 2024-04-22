@@ -10,7 +10,7 @@ import {
 export const DocumentList = () => {
   // setup the query to get the organization document data
   const orgFilter: TemplateWhereInput = {
-    type: TemplateDocumentType.DOCUMENT,
+    templateType: TemplateDocumentType.DOCUMENT,
   }
   const [allDocuments] = useFilterTemplatesQuery({
     variables: { where: orgFilter },

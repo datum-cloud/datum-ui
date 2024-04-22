@@ -1,21 +1,15 @@
 import React, { useRef, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { JsonForms } from '@jsonforms/react'
 import { ArrowUpRight } from 'lucide-react'
 import { Button } from '@repo/ui/button'
-import {
-  JsonFormsStyleContext,
-  vanillaCells,
-} from '@jsonforms/vanilla-renderers'
+import Form from '@rjsf/core'
+import { RJSFSchema, UiSchema } from '@rjsf/utils'
+import validator from '@rjsf/validator-ajv8'
+
 import {
   useCreateDocumentDataMutation,
   useGetTemplateQuery,
 } from '@repo/codegen/src/schema'
-import {
-  renderers,
-  styleContextValue,
-} from '@/components/pages/protected/documents/styles'
-import { Generate } from '@jsonforms/core'
 
 function printPDF() {
   alert('Coming soon!')
@@ -36,9 +30,8 @@ export const TemplateEditor = ({ id }: { id: string }) => {
   // setup the query to get the template data
   const variables = { getTemplateId: id || '' }
   const [templateData] = useGetTemplateQuery({ variables })
-  const uischema =
-    templateData?.data?.template.uischema ||
-    Generate.uiSchema(templateData.data?.template.jsonconfig)
+  const jsonSchema: RJSFSchema = templateData.data?.template.jsonconfig
+  //const uiSchema: UiSchema = templateData.data?.template.uischema
 
   // setup the mutation to save the form data
   const [dataResult, createDocumentData] = useCreateDocumentDataMutation()
@@ -64,17 +57,8 @@ export const TemplateEditor = ({ id }: { id: string }) => {
   }
 
   return (
-    <>
-      <JsonFormsStyleContext.Provider value={styleContextValue}>
-        <JsonForms
-          schema={templateData?.data?.template.jsonconfig}
-          data={data}
-          renderers={renderers}
-          uischema={uischema}
-          cells={vanillaCells}
-          validationMode="ValidateAndHide"
-          onChange={({ data }) => setData(data)}
-        />
+    <Form schema={jsonSchema} validator={validator}>
+      <div>
         <Button
           icon={<ArrowUpRight />}
           iconAnimated
@@ -87,7 +71,6 @@ export const TemplateEditor = ({ id }: { id: string }) => {
         >
           Save Form
         </Button>
-        &nbsp;&nbsp;&nbsp;
         <Button
           icon={<ArrowUpRight />}
           iconAnimated
@@ -100,7 +83,7 @@ export const TemplateEditor = ({ id }: { id: string }) => {
         >
           Print PDF
         </Button>
-      </JsonFormsStyleContext.Provider>
-    </>
+      </div>
+    </Form>
   )
 }

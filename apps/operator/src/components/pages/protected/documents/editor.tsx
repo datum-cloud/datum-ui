@@ -13,7 +13,6 @@ import {
   useFilterTemplatesQuery,
   useUpdateTemplateMutation,
 } from '@repo/codegen/src/schema'
-import { Generate } from '@jsonforms/core'
 
 function isJsonString(str: string) {
   try {
@@ -41,9 +40,7 @@ export const TemplateEditor = ({ id }: { id: string }) => {
   // setup the query to get the template data
   const variables = { getTemplateId: id || '' }
   const [templateData] = useGetTemplateQuery({ variables })
-  const uischema =
-    templateData?.data?.template.uischema ||
-    Generate.uiSchema(templateData.data?.template.jsonconfig)
+  const jsonSchema = templateData.data?.template.jsonconfig
 
   const handleChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = evt.target?.value
@@ -61,7 +58,7 @@ export const TemplateEditor = ({ id }: { id: string }) => {
     },
   ]
   const whereFilter: TemplateWhereInput = {
-    type: TemplateDocumentType.DOCUMENT,
+    templateType: TemplateDocumentType.DOCUMENT,
     name: templateData.data?.template.name + ' Document',
     hasOwnerWith: orgFilter,
   }
@@ -78,7 +75,7 @@ export const TemplateEditor = ({ id }: { id: string }) => {
         type: TemplateDocumentType.DOCUMENT,
         jsonconfig: schema,
         description: templateData.data?.template.description,
-        uischema: uischema,
+        uischema: jsonSchema,
         ownerID: session?.user?.organization || '',
       },
     }
