@@ -72,7 +72,7 @@ export const TemplateEditor = ({ id }: { id: string }) => {
     const variables = {
       input: {
         name: templateData.data?.template.name + ' Document' || '',
-        type: TemplateDocumentType.DOCUMENT,
+        templateType: TemplateDocumentType.DOCUMENT,
         jsonconfig: schema,
         description: templateData.data?.template.description,
         uischema: jsonSchema,
