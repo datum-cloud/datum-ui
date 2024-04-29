@@ -19,6 +19,7 @@
     "./logo": "./src/logo/logo.tsx",
     "./input": "./src/input/input.tsx",
     "./label": "./src/label/label.tsx",
+    "./panel": "./src/panel/panel.tsx",
     "./password-input": "./src/password-input/password-input.tsx",
     "./popover": "./src/popover/popover.tsx",
     "./text-input": "./src/text-input.tsx",

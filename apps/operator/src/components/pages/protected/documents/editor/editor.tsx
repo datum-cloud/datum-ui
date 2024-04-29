@@ -1,9 +1,14 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { ArrowUpRight } from 'lucide-react'
 import { Button } from '@repo/ui/button'
-import { SimpleForm } from '@repo/ui/simple-form'
+import { Panel } from '@repo/ui/panel'
+import Editor from '@monaco-editor/react'
+import { editorStyles } from './editor.styles'
+import validator from '@rjsf/validator-ajv8'
+import Form from '@rjsf/core'
+
 import {
   TemplateDocumentType,
   useCreateTemplateMutation,
@@ -14,38 +19,31 @@ import {
   useUpdateTemplateMutation,
 } from '@repo/codegen/src/schema'
 
-function isJsonString(str: string) {
-  try {
-    var json = JSON.parse(str)
-    return typeof json === 'object'
-  } catch (e) {
-    return false
-  }
+const isJsonString = (str: string): boolean => {
+  const json = JSON.parse(str)
+  return typeof json === 'object'
 }
 
 export const TemplateEditor = ({ id }: { id: string }) => {
   const router = useRouter()
+  const [schemaData, setSchemaData] = useState('')
+  const { columns, column, jsonEditor } = editorStyles()
 
   // get the session
   const { data: session, status } = useSession()
   const isSessionLoading = status === 'loading'
 
-  // setup the state to save the form data
-  const [data, setData] = useState({})
-
   // setup the state to save the jsonschema
-  const [schemaData, setSchemaData] = useState({})
-  const textAreaRef = useRef<HTMLTextAreaElement>(null)
+  const jsonEditorRef = useRef(null)
 
   // setup the query to get the template data
   const variables = { getTemplateId: id || '' }
   const [templateData] = useGetTemplateQuery({ variables })
-  const jsonSchema = templateData.data?.template.jsonconfig
+  const jsonSchema = templateData.data?.template.jsonconfig || {}
 
-  const handleChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const val = evt.target?.value
-
-    setSchemaData(val)
+  // save the updated state
+  const handleEditJsonSchema = (value: string | undefined) => {
+    setSchemaData(value ?? '')
   }
 
   const [, createTemplateData] = useCreateTemplateMutation()
@@ -67,7 +65,17 @@ export const TemplateEditor = ({ id }: { id: string }) => {
     variables: { where: whereFilter },
   })
 
-  function saveTemplateData(data: string) {
+  useEffect(() => {
+    if (jsonSchema) {
+      setSchemaData(JSON.stringify(jsonSchema, null, 2))
+    }
+  }, [templateData])
+
+  const handleEditorDidMount = (editor: any) => {
+    jsonEditorRef.current = editor
+  }
+
+  const saveTemplateData = (data: string) => {
     let schema: {} = JSON.parse(data)
     const variables = {
       input: {
@@ -120,9 +128,6 @@ export const TemplateEditor = ({ id }: { id: string }) => {
     }
   }
 
-  // set the default tab
-  const defaultTab = 'schema'
-
   // Wait for the session and template data
   if (isSessionLoading || templateData.fetching) {
     return <div>loading...</div>
@@ -134,20 +139,35 @@ export const TemplateEditor = ({ id }: { id: string }) => {
 
   return (
     <>
-      <SimpleForm>
-        <textarea
-          name="jsonconfig"
-          className="relative rounded-lg flex-col mx-auto my-auto py-2 px-5 w-full min-h-max"
-          onChange={handleChange}
-          ref={textAreaRef}
-          style={{ height: '100vw' }}
-          defaultValue={JSON.stringify(
-            templateData?.data?.template.jsonconfig,
-            null,
-            2,
-          )}
-        />
-      </SimpleForm>
+      <div className={columns()}>
+        <div className={column()}>
+          <Panel className={jsonEditor()}>
+            <Editor
+              defaultLanguage="json"
+              defaultValue={schemaData}
+              onChange={handleEditJsonSchema}
+              onMount={handleEditorDidMount}
+              options={{
+                codeLens: false,
+                lineNumbers: 'off',
+                renderWhitespace: 'none',
+                scrollBeyondLastLine: false,
+                folding: false,
+                minimap: { enabled: false },
+                overviewRulerBorder: false,
+                scrollbar: {
+                  horizontal: 'hidden',
+                },
+              }}
+            />
+          </Panel>
+        </div>
+        <div className={column()}>
+          <Panel className={jsonEditor()}>
+            <Form schema={JSON.parse(schemaData)} validator={validator} />
+          </Panel>
+        </div>
+      </div>
       <Button
         icon={<ArrowUpRight />}
         iconAnimated
@@ -167,7 +187,6 @@ export const TemplateEditor = ({ id }: { id: string }) => {
       >
         Save Template Schema
       </Button>
-      &nbsp;&nbsp;&nbsp;
       <Button
         icon={<ArrowUpRight />}
         iconAnimated

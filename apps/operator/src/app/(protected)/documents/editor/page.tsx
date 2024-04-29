@@ -3,7 +3,7 @@
 import React from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { TemplateEditor } from '@/components/pages/protected/documents/editor'
+import { TemplateEditor } from '@/components/pages/protected/documents/editor/'
 import PageTitle from '../../../../components/page-title'
 
 const Page: React.FC = () => {

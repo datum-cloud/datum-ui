@@ -35,7 +35,7 @@ export const TemplateList = () => {
   }
 
   // Wait for the session and template data
-  if (allTemplates.fetching) {
+  if (allTemplates.fetching || isSessionLoading) {
     return <div>loading...</div>
   }
 

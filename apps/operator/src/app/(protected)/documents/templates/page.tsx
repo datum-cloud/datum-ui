@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { TemplateList } from '@/components/pages/protected/documents/templates'
+import { TemplateList } from '@/components/pages/protected/documents/templates/'
 import { useSession } from 'next-auth/react'
 import PageTitle from '../../../../components/page-title'
 
