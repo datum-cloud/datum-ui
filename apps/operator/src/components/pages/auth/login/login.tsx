@@ -17,6 +17,7 @@ import { PasswordInput } from '@repo/ui/password-input'
 import { Label } from '@repo/ui/label'
 import { getPasskeyOptions, verifyRegistration } from '@/lib/user'
 import { startRegistration } from '@simplewebauthn/browser'
+import { setSessionCookie } from '@/lib/auth/utils/set-session-cookie'
 
 export const LoginPage = () => {
   const { separator, buttons, keyIcon, form, input } = loginStyles()
@@ -76,11 +77,14 @@ export const LoginPage = () => {
       name: 'Hannah King',
     })
 
+    setSessionCookie(options.session)
+    console.log(options)
+
     const attestationResponse = await startRegistration(options.publicKey)
-    console.log(attestationResponse)
+    //console.log(attestationResponse)
 
     const verificationResult = await verifyRegistration({ attestationResponse })
-    console.log(verificationResult)
+    //console.log(verificationResult)
   }
 
   return (

@@ -1,6 +1,6 @@
-import { restUrl, sessionCookieName } from '@repo/dally/auth'
+import { restUrl } from '@repo/dally/auth'
 import Credentials from 'next-auth/providers/credentials'
-import { cookies } from 'next/headers'
+import { setSessionCookie } from '../utils/set-session-cookie'
 
 // Standard username and password credentials provider
 export const credentialsProvider = Credentials({
@@ -54,16 +54,7 @@ export const credentialsProvider = Credentials({
     }
 
     // Set the session cookie for the user
-    if (process.env.NODE_ENV === 'production') {
-      cookies().set(`${sessionCookieName}`, session, {
-        domain: '.datum.net',
-        httpOnly: true,
-        secure: true,
-        path: '/',
-      })
-    } else {
-      cookies().set(`${sessionCookieName}`, session)
-    }
+    setSessionCookie(session)
 
     // Get user data for sessions
     const uData = await fetch(`${restUrl}/oauth/userinfo`, {

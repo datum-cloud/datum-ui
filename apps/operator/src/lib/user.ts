@@ -67,9 +67,12 @@ export async function getPasskeyOptions<T>(arg: PasskeyOptionsInput) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(arg),
+    credentials: 'include',
   })
+
+  const data = await fData.json()
   try {
-    return await fData.json()
+    return data
   } catch (error) {
     return { message: 'error' }
   }

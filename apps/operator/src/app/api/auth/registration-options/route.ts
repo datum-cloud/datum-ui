@@ -11,14 +11,18 @@ export async function POST(request: Request) {
         'content-type': 'application/json',
       },
       body: JSON.stringify(bodyData),
+      credentials: 'include',
     },
   )
 
+  const data = await fData.json()
+  console.log(JSON.stringify(data, null, 2))
+
   if (fData.ok) {
-    return NextResponse.json(await fData.json(), { status: 200 })
+    return NextResponse.json(data, { status: 200 })
   }
 
   if (fData.status !== 201) {
-    return NextResponse.json(await fData.json(), { status: fData.status })
+    return NextResponse.json(data, { status: fData.status })
   }
 }
