@@ -19,10 +19,16 @@ import { getPasskeyOptions, verifyRegistration } from '@/lib/user'
 import { startRegistration } from '@simplewebauthn/browser'
 import { setSessionCookie } from '@/lib/auth/utils/set-session-cookie'
 
+const TEMP_PASSKEY_EMAIL = 'tempuser@test.com'
+const TEMP_PASSKEY_NAME = 'Temp User'
+
 export const LoginPage = () => {
   const { separator, buttons, keyIcon, form, input } = loginStyles()
   const router = useRouter()
   const [signInError, setSignInError] = useState(false)
+  const [signInErrorMessage, setSignInErrorMessage] = useState(
+    'There was an error. Please try again.',
+  )
   const [signInLoading, setSignInLoading] = useState(false)
   const showLoginError = !signInLoading && signInError
   const [isPasswordActive, setIsPasswordActive] = useState(false)
@@ -71,20 +77,38 @@ export const LoginPage = () => {
   /**
    * Setup PassKey Authentication
    */
-  const registerPassKey = async () => {
-    const options: any = await getPasskeyOptions({
-      email: 'test-passkey-auth@hannahking.com',
-      name: 'Hannah King',
-    })
+  async function registerPassKey() {
+    try {
+      const options = await getPasskeyOptions({
+        email: TEMP_PASSKEY_EMAIL,
+        name: TEMP_PASSKEY_NAME,
+      })
+      setSessionCookie(options.session)
+      const attestationResponse = await startRegistration(options.publicKey)
+      const verificationResult = await verifyRegistration({
+        attestationResponse,
+      })
 
-    setSessionCookie(options.session)
-    console.log(options)
+      if (verificationResult.success) {
+        await signIn('passkey', {
+          callbackUrl: '/dashboard',
+          email: TEMP_PASSKEY_EMAIL,
+          name: TEMP_PASSKEY_NAME,
+          session: verificationResult.session,
+          accessToken: verificationResult.access_token,
+          refreshToken: verificationResult.refresh_token,
+        })
+      }
 
-    const attestationResponse = await startRegistration(options.publicKey)
-    //console.log(attestationResponse)
+      if (!verificationResult.success) {
+        setSignInError(true)
+        setSignInErrorMessage(`Error: ${verificationResult.error}`)
+      }
 
-    const verificationResult = await verifyRegistration({ attestationResponse })
-    //console.log(verificationResult)
+      return verificationResult
+    } catch (error) {
+      setSignInError(true)
+    }
   }
 
   return (
@@ -165,10 +189,7 @@ export const LoginPage = () => {
           </Button>
         </SimpleForm>
         {showLoginError && (
-          <MessageBox
-            className={'p-4 ml-1'}
-            message="Could not login. Please try again."
-          />
+          <MessageBox className={'p-4 ml-1'} message={signInErrorMessage} />
         )}
       </div>
     </>
