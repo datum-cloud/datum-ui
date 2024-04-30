@@ -36,7 +36,7 @@ export const config = {
   callbacks: {
     async signIn({ user, account }) {
       // register user that signed in via oauth provider
-      if (account?.provider !== 'credentials') {
+      if (account?.type !== 'credentials') {
         const oauthUser = {
           externalUserID: account?.providerAccountId,
           name: user.name,

@@ -6,18 +6,10 @@ export const passKeyProvider = Credentials({
   id: 'passkey',
   name: 'passkey',
   credentials: {
-    accessToken: {
-      label: 'Access Token',
-      type: 'text',
-      placeholder: 'Enter your access token',
-    },
-    refreshToken: {
-      label: 'Refresh Token',
-      type: 'text',
-      placeholder: 'Enter your refresh token',
-    },
-    email: { label: 'Email', type: 'email', placeholder: 'Enter your email' },
-    name: { label: 'Name', type: 'text', placeholder: 'Enter your name' },
+    accessToken: {},
+    refreshToken: {},
+    email: {},
+    name: {},
     session: {
       label: 'Session',
       type: 'text',
