@@ -15,8 +15,8 @@
     "next": "latest",
     "nextra": "latest",
     "nextra-theme-docs": "latest",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "swr": "latest"
   },
   "devDependencies": {
@@ -26,8 +26,8 @@
     "@repo/tailwind-config": "workspace:*",
     "@types/eslint": "latest",
     "@types/node": "latest",
-    "@types/react": "18.2.79",
-    "@types/react-dom": "18.2.25",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.0",
     "autoprefixer": "latest",
     "clsx": "latest",
     "eslint": "latest",

@@ -53,8 +53,8 @@
     "lucide-react": "^0.376.0",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
     "@headlessui/react": "latest",
@@ -64,8 +64,8 @@
     "@tailwindcss/forms": "latest",
     "@types/node": "latest",
     "@types/eslint": "latest",
-    "@types/react": "18.2.79",
-    "@types/react-dom": "18.2.25",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.0",
     "autoprefixer": "latest",
     "clsx": "latest",
     "eslint": "latest",
