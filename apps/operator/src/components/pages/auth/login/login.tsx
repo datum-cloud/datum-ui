@@ -15,6 +15,8 @@ import { GithubIcon } from '@repo/ui/icons/github'
 import { Input } from '@repo/ui/input'
 import { PasswordInput } from '@repo/ui/password-input'
 import { Label } from '@repo/ui/label'
+import { getPasskeyOptions, verifyRegistration } from '@/lib/user'
+import { startRegistration } from '@simplewebauthn/browser'
 
 export const LoginPage = () => {
   const { separator, buttons, keyIcon, form, input } = loginStyles()
@@ -68,8 +70,17 @@ export const LoginPage = () => {
   /**
    * Setup PassKey Authentication
    */
-  const passKey = async () => {
-    alert('Coming soon!')
+  const registerPassKey = async () => {
+    const options: any = await getPasskeyOptions({
+      email: 'test-passkey-auth@hannahking.com',
+      name: 'Hannah King',
+    })
+
+    const attestationResponse = await startRegistration(options.publicKey)
+    console.log(attestationResponse)
+
+    const verificationResult = await verifyRegistration({ attestationResponse })
+    console.log(verificationResult)
   }
 
   return (
@@ -106,7 +117,7 @@ export const LoginPage = () => {
             icon={<KeyRoundIcon className={keyIcon()} />}
             iconPosition="left"
             onClick={() => {
-              passKey()
+              registerPassKey()
             }}
           >
             Log in with PassKey

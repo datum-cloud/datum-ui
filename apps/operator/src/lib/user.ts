@@ -11,6 +11,14 @@ export interface RegisterUser {
   confirmedPassword?: string
 }
 
+export interface PasskeyOptionsInput {
+  email: string
+  name: string
+}
+
+export interface RegistrationVerificationInput {
+  attestationResponse: any
+}
 interface HttpResponse<T> extends Response {
   message?: T
 }
@@ -49,5 +57,41 @@ export const useVerifyUser = (arg: string | null) => {
     verified: data,
     isLoading,
     error,
+  }
+}
+
+export async function getPasskeyOptions<T>(arg: PasskeyOptionsInput) {
+  const fData: HttpResponse<T> = await fetch('/api/auth/registration-options', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(arg),
+  })
+  try {
+    return await fData.json()
+  } catch (error) {
+    return { message: 'error' }
+  }
+}
+
+export async function verifyRegistration<T>(
+  arg: RegistrationVerificationInput,
+) {
+  const fData: HttpResponse<T> = await fetch(
+    '/api/auth/registration-verification',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(arg),
+      credentials: 'include',
+    },
+  )
+  try {
+    return await fData.json()
+  } catch (error) {
+    return { message: 'error' }
   }
 }

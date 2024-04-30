@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Novu } from '@novu/node'
-import { auth } from '@/lib/auth'
+import { auth } from '@/lib/auth/auth'
 
 const novu = new Novu(process.env.NOVU_API_KEY!)
 
