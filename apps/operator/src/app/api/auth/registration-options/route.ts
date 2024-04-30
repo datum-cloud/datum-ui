@@ -16,7 +16,6 @@ export async function POST(request: Request) {
   )
 
   const data = await fData.json()
-  console.log(JSON.stringify(data, null, 2))
 
   if (fData.ok) {
     return NextResponse.json(data, { status: 200 })
