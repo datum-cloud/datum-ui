@@ -15,8 +15,8 @@ import { GithubIcon } from '@repo/ui/icons/github'
 import { Input } from '@repo/ui/input'
 import { PasswordInput } from '@repo/ui/password-input'
 import { Label } from '@repo/ui/label'
-import { getPasskeyOptions, verifyRegistration } from '@/lib/user'
-import { startRegistration } from '@simplewebauthn/browser'
+import { getPasskeySignInOptions, verifyAuthentication } from '@/lib/user'
+import { startAuthentication } from '@simplewebauthn/browser'
 import { setSessionCookie } from '@/lib/auth/utils/set-session-cookie'
 
 const TEMP_PASSKEY_EMAIL = 'tempuser@test.com'
@@ -75,18 +75,18 @@ export const LoginPage = () => {
   }
 
   /**
-   * Setup PassKey Authentication
+   * Setup PassKey SignIn
    */
-  async function registerPassKey() {
+  async function passKeySignIn() {
     try {
-      const options = await getPasskeyOptions({
+      const options = await getPasskeySignInOptions({
         email: TEMP_PASSKEY_EMAIL,
-        name: TEMP_PASSKEY_NAME,
       })
       setSessionCookie(options.session)
-      const attestationResponse = await startRegistration(options.publicKey)
-      const verificationResult = await verifyRegistration({
-        attestationResponse,
+
+      const assertionResponse = await startAuthentication(options.publicKey)
+      const verificationResult = await verifyAuthentication({
+        assertionResponse,
       })
 
       if (verificationResult.success) {
@@ -145,7 +145,7 @@ export const LoginPage = () => {
             icon={<KeyRoundIcon className={keyIcon()} />}
             iconPosition="left"
             onClick={() => {
-              registerPassKey()
+              passKeySignIn()
             }}
           >
             Log in with PassKey

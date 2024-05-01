@@ -11,13 +11,21 @@ export interface RegisterUser {
   confirmedPassword?: string
 }
 
-export interface PasskeyOptionsInput {
+export interface PasskeyRegOptionsInput {
   email: string
   name: string
 }
 
+export interface PasskeySignInOptionsInput {
+  email: string
+}
+
 export interface RegistrationVerificationInput {
   attestationResponse: any
+}
+
+export interface AuthVerificationInput {
+  assertionResponse: any
 }
 interface HttpResponse<T> extends Response {
   message?: T
@@ -60,7 +68,7 @@ export const useVerifyUser = (arg: string | null) => {
   }
 }
 
-export async function getPasskeyOptions<T>(arg: PasskeyOptionsInput) {
+export async function getPasskeyRegOptions<T>(arg: PasskeyRegOptionsInput) {
   const fData: HttpResponse<T> = await fetch('/api/auth/registration-options', {
     method: 'POST',
     headers: {
@@ -89,6 +97,45 @@ export async function verifyRegistration<T>(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(arg),
+      credentials: 'include',
+    },
+  )
+  try {
+    return await fData.json()
+  } catch (error) {
+    return { message: 'error' }
+  }
+}
+
+export async function getPasskeySignInOptions<T>(
+  arg: PasskeySignInOptionsInput,
+) {
+  const fData: HttpResponse<T> = await fetch('/api/auth/signin-options', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(arg),
+    credentials: 'include',
+  })
+
+  const data = await fData.json()
+  try {
+    return data
+  } catch (error) {
+    return { message: 'error' }
+  }
+}
+
+export async function verifyAuthentication<T>(arg: AuthVerificationInput) {
+  const fData: HttpResponse<T> = await fetch(
+    '/api/auth/authentication-verification',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(arg.assertionResponse),
       credentials: 'include',
     },
   )

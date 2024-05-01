@@ -10,11 +10,7 @@ export const passKeyProvider = Credentials({
     refreshToken: {},
     email: {},
     name: {},
-    session: {
-      label: 'Session',
-      type: 'text',
-      placeholder: 'Enter your session identifier',
-    },
+    session: {},
   },
   async authorize({
     accessToken,
