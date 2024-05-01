@@ -15,11 +15,20 @@ import { GithubIcon } from '@repo/ui/icons/github'
 import { Input } from '@repo/ui/input'
 import { PasswordInput } from '@repo/ui/password-input'
 import { Label } from '@repo/ui/label'
+import { getPasskeySignInOptions, verifyAuthentication } from '@/lib/user'
+import { startAuthentication } from '@simplewebauthn/browser'
+import { setSessionCookie } from '@/lib/auth/utils/set-session-cookie'
+
+const TEMP_PASSKEY_EMAIL = 'tempuser@test.com'
+const TEMP_PASSKEY_NAME = 'Temp User'
 
 export const LoginPage = () => {
   const { separator, buttons, keyIcon, form, input } = loginStyles()
   const router = useRouter()
   const [signInError, setSignInError] = useState(false)
+  const [signInErrorMessage, setSignInErrorMessage] = useState(
+    'There was an error. Please try again.',
+  )
   const [signInLoading, setSignInLoading] = useState(false)
   const showLoginError = !signInLoading && signInError
   const [isPasswordActive, setIsPasswordActive] = useState(false)
@@ -66,10 +75,40 @@ export const LoginPage = () => {
   }
 
   /**
-   * Setup PassKey Authentication
+   * Setup PassKey SignIn
    */
-  const passKey = async () => {
-    alert('Coming soon!')
+  async function passKeySignIn() {
+    try {
+      const options = await getPasskeySignInOptions({
+        email: TEMP_PASSKEY_EMAIL,
+      })
+      setSessionCookie(options.session)
+
+      const assertionResponse = await startAuthentication(options.publicKey)
+      const verificationResult = await verifyAuthentication({
+        assertionResponse,
+      })
+
+      if (verificationResult.success) {
+        await signIn('passkey', {
+          callbackUrl: '/dashboard',
+          email: TEMP_PASSKEY_EMAIL,
+          name: TEMP_PASSKEY_NAME,
+          session: verificationResult.session,
+          accessToken: verificationResult.access_token,
+          refreshToken: verificationResult.refresh_token,
+        })
+      }
+
+      if (!verificationResult.success) {
+        setSignInError(true)
+        setSignInErrorMessage(`Error: ${verificationResult.error}`)
+      }
+
+      return verificationResult
+    } catch (error) {
+      setSignInError(true)
+    }
   }
 
   return (
@@ -106,7 +145,7 @@ export const LoginPage = () => {
             icon={<KeyRoundIcon className={keyIcon()} />}
             iconPosition="left"
             onClick={() => {
-              passKey()
+              passKeySignIn()
             }}
           >
             Log in with PassKey
@@ -150,10 +189,7 @@ export const LoginPage = () => {
           </Button>
         </SimpleForm>
         {showLoginError && (
-          <MessageBox
-            className={'p-4 ml-1'}
-            message="Could not login. Please try again."
-          />
+          <MessageBox className={'p-4 ml-1'} message={signInErrorMessage} />
         )}
       </div>
     </>

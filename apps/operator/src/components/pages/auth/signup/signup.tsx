@@ -1,13 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { clsx } from 'clsx'
 import { useRouter } from 'next/navigation'
 import { SimpleForm } from '@repo/ui/simple-form'
 import { MessageBox } from '@repo/ui/message-box'
 import { Button } from '@repo/ui/button'
 import { ArrowUpRight, KeyRoundIcon } from 'lucide-react'
-import { registerUser, type RegisterUser } from '@/lib/user'
+import {
+  getPasskeyRegOptions,
+  registerUser,
+  verifyRegistration,
+  type RegisterUser,
+} from '@/lib/user'
 import { GoogleIcon } from '@repo/ui/icons/google'
 import { GithubIcon } from '@repo/ui/icons/github'
 import { signIn } from 'next-auth/react'
@@ -16,11 +20,20 @@ import { Separator } from '@repo/ui/separator'
 import { Input } from '@repo/ui/input'
 import { PasswordInput } from '@repo/ui/password-input'
 import { Label } from '@repo/ui/label'
+import { setSessionCookie } from '@/lib/auth/utils/set-session-cookie'
+import { startRegistration } from '@simplewebauthn/browser'
+
+const TEMP_PASSKEY_EMAIL = 'tempuser@test.com'
+const TEMP_PASSKEY_NAME = 'Temp User'
 
 export const SignupPage = () => {
   const router = useRouter()
-  const [errorResponse, setErrorResponse] = useState({ message: '' })
+  const [signInError, setSignInError] = useState(false)
+  const [registrationErrorMessage, setregistrationErrorMessage] = useState(
+    'There was an error. Please try again.',
+  )
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const showLoginError = !isLoading && signInError
   const [isPasswordActive, setIsPasswordActive] = useState(false)
   const { separator, buttons, keyIcon, form, input } = signupStyles()
 
@@ -43,10 +56,40 @@ export const SignupPage = () => {
   }
 
   /**
-   * Setup PassKey Authentication
+   * Setup PassKey Registration
    */
-  const passKey = async () => {
-    alert('Coming soon!')
+  async function registerPassKey() {
+    try {
+      const options = await getPasskeyRegOptions({
+        email: TEMP_PASSKEY_EMAIL,
+        name: TEMP_PASSKEY_NAME,
+      })
+      setSessionCookie(options.session)
+      const attestationResponse = await startRegistration(options.publicKey)
+      const verificationResult = await verifyRegistration({
+        attestationResponse,
+      })
+
+      if (verificationResult.success) {
+        await signIn('passkey', {
+          callbackUrl: '/dashboard',
+          email: TEMP_PASSKEY_EMAIL,
+          name: TEMP_PASSKEY_NAME,
+          session: verificationResult.session,
+          accessToken: verificationResult.access_token,
+          refreshToken: verificationResult.refresh_token,
+        })
+      }
+
+      if (!verificationResult.success) {
+        setSignInError(true)
+        setregistrationErrorMessage(`Error: ${verificationResult.error}`)
+      }
+
+      return verificationResult
+    } catch (error) {
+      setSignInError(true)
+    }
   }
 
   return (
@@ -81,9 +124,7 @@ export const SignupPage = () => {
           size="md"
           icon={<KeyRoundIcon className={keyIcon()} />}
           iconPosition="left"
-          onClick={() => {
-            passKey()
-          }}
+          onClick={registerPassKey}
         >
           Sign up with PassKey
         </Button>
@@ -111,19 +152,15 @@ export const SignupPage = () => {
               if (res?.ok) {
                 router.push('/verify')
               } else if (res?.message) {
-                setErrorResponse({ message: res.message })
+                setregistrationErrorMessage(res.message)
               } else {
-                setErrorResponse({
-                  message: 'Unknown error. Please try again.',
-                })
+                setregistrationErrorMessage('Unknown error. Please try again.')
               }
             } else {
-              setErrorResponse({ message: 'Passwords do not match' })
+              setregistrationErrorMessage('Passwords do not match')
             }
           } catch (error) {
-            setErrorResponse({
-              message: 'Unknown error. Please try again.',
-            })
+            setregistrationErrorMessage('Unknown error. Please try again.')
           } finally {
             setIsLoading(false)
           }
@@ -147,7 +184,7 @@ export const SignupPage = () => {
                 placeholder="password"
                 required
                 type="password"
-              />{' '}
+              />
             </div>
             <PasswordInput
               name="confirmedPassword"
@@ -167,11 +204,8 @@ export const SignupPage = () => {
           {isLoading ? 'loading' : 'Sign up'}
         </Button>
       </SimpleForm>
-      {errorResponse.message && (
-        <MessageBox
-          className={clsx('p-4 ml-1', errorResponse.message ? '' : 'invisible')}
-          message={errorResponse.message}
-        />
+      {showLoginError && (
+        <MessageBox className={'p-4 ml-1'} message={registrationErrorMessage} />
       )}
     </div>
   )
