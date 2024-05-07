@@ -9,7 +9,6 @@ import {
   LayersIcon,
   ListChecks,
   ScrollText,
-  Settings2Icon,
   SettingsIcon,
   ShapesIcon,
   ShoppingCartIcon,
