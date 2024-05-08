@@ -39,6 +39,7 @@ export const HomePageNewsletter = () => {
     },
   })
 
+  // use the mutation to add a subscriber 
   const subscribeToNewsletter = async (email: string) => {
     addSubscriber({
       input: {
@@ -53,13 +54,10 @@ export const HomePageNewsletter = () => {
     subscribeToNewsletter(email)
   }
 
+  // get the result and error from the mutation
   const [result, addSubscriber] = useCreateSubscriberMutation()
-  console.log(result)
-
   const { data, error } = result
-
   const isLoading = result.fetching
-
 
   return (
     <>

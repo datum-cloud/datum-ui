@@ -1,8 +1,10 @@
 import { Client, cacheExchange, fetchExchange } from 'urql'
 import { gqlUrl } from '@repo/dally/auth'
-import { token } from './token
 
-
+const token = process.env.DATUM_API_WRITE_TOKEN
+if (!token) {
+	throw new Error('Missing DATUM_API_WRITE_TOKEN')
+}
 
 export const createClient = () => new Client({
 	url: gqlUrl,
