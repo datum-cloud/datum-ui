@@ -39,7 +39,7 @@ export const HomePageNewsletter = () => {
     },
   })
 
-  // use the mutation to add a subscriber 
+  // use the mutation to add a subscriber
   const subscribeToNewsletter = async (email: string) => {
     addSubscriber({
       input: {
@@ -57,6 +57,7 @@ export const HomePageNewsletter = () => {
   // get the result and error from the mutation
   const [result, addSubscriber] = useCreateSubscriberMutation()
   const { data, error } = result
+
   const isLoading = result.fetching
 
   return (
@@ -64,7 +65,10 @@ export const HomePageNewsletter = () => {
       {data ? (
         <div className={success()}>
           <MailCheck size={24} className={successIcon()} />
-          <span className={successMessage()}>Thank you for subscribing. Please check your email and click on the super sweet verification link.</span>
+          <span className={successMessage()}>
+            Thank you for subscribing. Please check your email and click on the
+            super sweet verification link.
+          </span>
         </div>
       ) : (
         <Form {...form}>
@@ -92,7 +96,7 @@ export const HomePageNewsletter = () => {
               {isLoading ? 'Loading' : 'Stay in the loop'}
             </Button>
           </form>
-          {error && <div className={errorMessage()}>{error?.graphQLErrors[0].message}</div>}
+          {error && <div className={errorMessage()}>{error.message}</div>}
         </Form>
       )}
     </>
