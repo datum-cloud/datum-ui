@@ -21,7 +21,7 @@ export const TemplateList = () => {
     },
   ]
   const whereFilter: TemplateWhereInput = {
-    type: TemplateDocumentType.ROOTTEMPLATE,
+    templateType: TemplateDocumentType.ROOTTEMPLATE,
     hasOwnerWith: orgFilter,
   }
 
