@@ -13,7 +13,7 @@ import {
   FormMessage,
   Input,
 } from '@/components/ui'
-import { useSubscribeMutation } from '@/hooks/mutations/useSubscribeMutation'
+import { useCreateSubscriberMutation } from '@repo/codegen/src/schema'
 
 import { newsletterStyles } from './HomePage.styles'
 
@@ -31,8 +31,6 @@ export const HomePageNewsletter = () => {
     successMessage,
     successIcon,
   } = newsletterStyles()
-  const { mutate, status, isError, error, data } = useSubscribeMutation()
-  const isLoading = status === 'pending'
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,16 +39,34 @@ export const HomePageNewsletter = () => {
     },
   })
 
-  const onSubmit = ({ email }: z.infer<typeof formSchema>) => {
-    mutate(email)
+  const subscribeToNewsletter = async (email: string) => {
+    addSubscriber({
+      input: {
+        email: email,
+      },
+    }).then((result) => {
+      return result
+    })
   }
+
+  const onSubmit = ({ email }: z.infer<typeof formSchema>) => {
+    subscribeToNewsletter(email)
+  }
+
+  const [result, addSubscriber] = useCreateSubscriberMutation()
+  console.log(result)
+
+  const { data, error } = result
+
+  const isLoading = result.fetching
+
 
   return (
     <>
-      {status === 'success' ? (
+      {data ? (
         <div className={success()}>
           <MailCheck size={24} className={successIcon()} />
-          <span className={successMessage()}>{data.message}</span>
+          <span className={successMessage()}>Thank you for subscribing. Please check your email and click on the super sweet verification link.</span>
         </div>
       ) : (
         <Form {...form}>
@@ -78,7 +94,7 @@ export const HomePageNewsletter = () => {
               {isLoading ? 'Loading' : 'Stay in the loop'}
             </Button>
           </form>
-          {isError && <div className={errorMessage()}>{error.message}</div>}
+          {error && <div className={errorMessage()}>{error?.graphQLErrors[0].message}</div>}
         </Form>
       )}
     </>
