@@ -1,6 +1,5 @@
 import type { NextAuthConfig } from 'next-auth'
 import NextAuth from 'next-auth'
-import GithubProvider from 'next-auth/providers/github'
 import GoogleProvider from 'next-auth/providers/google'
 import { restUrl } from '@repo/dally/auth'
 import { jwtDecode } from 'jwt-decode'
@@ -8,6 +7,7 @@ import { JwtPayload } from 'jsonwebtoken'
 import { credentialsProvider } from './providers/credentials'
 import { passKeyProvider } from './providers/passkey'
 import { getTokenFromDatumAPI } from './utils/get-datum-token'
+import { githubProvider } from './providers/github'
 
 export const config = {
   theme: {
@@ -22,14 +22,11 @@ export const config = {
     strategy: 'jwt',
   },
   providers: [
-    GithubProvider({
-      clientId: process.env.AUTH_GITHUB_ID,
-      clientSecret: process.env.AUTH_GITHUB_SECRET,
-    }),
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
     }),
+    githubProvider,
     credentialsProvider,
     passKeyProvider,
   ],

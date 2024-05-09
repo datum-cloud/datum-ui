@@ -60,9 +60,24 @@ export const LoginPage = () => {
    * Setup Github Authentication
    */
   const github = async () => {
-    await signIn('github', {
-      callbackUrl: '/dashboard',
-    })
+    console.log('github login')
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_REST_URL}/v1/github/login`,
+        {
+          credentials: 'include',
+        },
+      )
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`)
+      }
+
+      console.log('response:', res)
+    } catch (error) {
+      console.error('Error occurred:', error)
+    }
   }
 
   /**
