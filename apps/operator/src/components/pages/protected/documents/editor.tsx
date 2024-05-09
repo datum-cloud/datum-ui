@@ -61,7 +61,7 @@ export const TemplateEditor = ({ id }: { id: string }) => {
     },
   ]
   const whereFilter: TemplateWhereInput = {
-    type: TemplateDocumentType.DOCUMENT,
+    templateType: TemplateDocumentType.DOCUMENT,
     name: templateData.data?.template.name + ' Document',
     hasOwnerWith: orgFilter,
   }
