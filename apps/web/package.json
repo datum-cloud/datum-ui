@@ -42,7 +42,7 @@
     "autoprefixer": "latest",
     "clsx": "latest",
     "eslint": "latest",
-    "next-sanity": "9.0.14",
+    "next-sanity": "9.0.15",
     "postcss": "latest",
     "tailwindcss": "latest",
     "tailwind-variants": "^0.2.1",
