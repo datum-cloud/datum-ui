@@ -8,6 +8,7 @@ import { JwtPayload } from 'jsonwebtoken'
 import { credentialsProvider } from './providers/credentials'
 import { passKeyProvider } from './providers/passkey'
 import { getTokenFromDatumAPI } from './utils/get-datum-token'
+import { setSessionCookie } from './utils/set-session-cookie'
 
 export const config = {
   theme: {
@@ -36,7 +37,7 @@ export const config = {
   callbacks: {
     async signIn({ user, account }) {
       // register user that signed in via oauth provider
-      if (account?.type !== 'credentials') {
+      if (account?.type === 'oauth') {
         const oauthUser = {
           externalUserID: account?.providerAccountId,
           name: user.name,
@@ -58,6 +59,9 @@ export const config = {
           method: 'GET',
           headers: { Authorization: `Bearer ${user.accessToken}` },
         })
+
+        //Save session to cookie
+        setSessionCookie(data?.session)
 
         if (uData.ok) {
           const userJson = await uData.json()
@@ -82,7 +86,7 @@ export const config = {
       }
 
       if (typeof profile !== 'undefined') {
-        token.name = profile.name
+        token.name = profile.name ?? token.name
         token.email = profile.email
       }
 
