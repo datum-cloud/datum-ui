@@ -5972,18 +5972,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "active",
-            "description": "indicates if the subscriber is active or not, active users will have at least one verified contact method",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "createdAt",
             "description": null,
             "type": {
@@ -6044,18 +6032,6 @@
             "deprecationReason": null
           },
           {
-            "name": "ownerID",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "ID",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "phoneNumber",
             "description": "phone number of the subscriber",
             "type": {
@@ -6085,30 +6061,6 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "verifiedEmail",
-            "description": "indicates if the email address has been verified",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "verifiedPhone",
-            "description": "indicates if the phone number has been verified",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
               "ofType": null
             },
             "defaultValue": null,
@@ -57995,17 +57947,17 @@
           },
           {
             "name": "deleteSubscriber",
-            "description": "Delete an existing subscriber",
+            "description": "Delete an existing subscriber by Email",
             "args": [
               {
-                "name": "id",
-                "description": "ID of the subscriber",
+                "name": "email",
+                "description": "Email of the subscriber",
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "ID",
+                    "name": "String",
                     "ofType": null
                   }
                 },
@@ -59061,14 +59013,14 @@
             "description": "Update an existing subscriber",
             "args": [
               {
-                "name": "id",
-                "description": "ID of the subscriber",
+                "name": "email",
+                "description": "Email of the subscriber",
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "ID",
+                    "name": "String",
                     "ofType": null
                   }
                 },
@@ -89858,17 +89810,17 @@
           },
           {
             "name": "subscriber",
-            "description": "Look up subscriber by ID",
+            "description": "Look up subscriber by Email",
             "args": [
               {
-                "name": "id",
-                "description": "ID of the subscriber",
+                "name": "email",
+                "description": "Email of the subscriber",
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "ID",
+                    "name": "String",
                     "ofType": null
                   }
                 },
@@ -91034,9 +90986,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
-              "name": "Organization",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Organization",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -91046,9 +91002,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "ID",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -91225,15 +91185,15 @@
         "description": "Return response for deleteSubscriber mutation",
         "fields": [
           {
-            "name": "deletedID",
-            "description": "Deleted subscriber ID",
+            "name": "email",
+            "description": "Deleted subscriber email",
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -92547,18 +92507,6 @@
             "deprecationReason": null
           },
           {
-            "name": "ownerIDIsNil",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "ownerIDLT",
             "description": null,
             "type": {
@@ -92609,18 +92557,6 @@
                   "ofType": null
                 }
               }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ownerIDNotNil",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -105500,18 +105436,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "active",
-            "description": "indicates if the subscriber is active or not, active users will have at least one verified contact method",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "addEventIDs",
             "description": null,
             "type": {
@@ -105533,18 +105457,6 @@
           },
           {
             "name": "clearEvents",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "clearOwner",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -105604,18 +105516,6 @@
             "deprecationReason": null
           },
           {
-            "name": "ownerID",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "ID",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "phoneNumber",
             "description": "phone number of the subscriber",
             "type": {
@@ -105665,30 +105565,6 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "verifiedEmail",
-            "description": "indicates if the email address has been verified",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "verifiedPhone",
-            "description": "indicates if the phone number has been verified",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
               "ofType": null
             },
             "defaultValue": null,
