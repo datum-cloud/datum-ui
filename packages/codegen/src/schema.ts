@@ -153,10 +153,12 @@ export interface ApiTokenWhereInput {
   ownerIDHasPrefix?: InputMaybe<Scalars['ID']['input']>;
   ownerIDHasSuffix?: InputMaybe<Scalars['ID']['input']>;
   ownerIDIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
   ownerIDLT?: InputMaybe<Scalars['ID']['input']>;
   ownerIDLTE?: InputMaybe<Scalars['ID']['input']>;
   ownerIDNEQ?: InputMaybe<Scalars['ID']['input']>;
   ownerIDNotIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** updated_at field predicates */
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedAtGT?: InputMaybe<Scalars['Time']['input']>;
@@ -200,8 +202,10 @@ export interface CreateApiTokenInput {
   lastUsedAt?: InputMaybe<Scalars['Time']['input']>;
   /** the name associated with the token */
   name: Scalars['String']['input'];
-  ownerID: Scalars['ID']['input'];
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
   scopes?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
 }
@@ -215,6 +219,8 @@ export interface CreateDocumentDataInput {
   createdBy?: InputMaybe<Scalars['String']['input']>;
   /** the json data of the document */
   data: Scalars['JSON']['input'];
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   templateID: Scalars['ID']['input'];
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
@@ -239,7 +245,9 @@ export interface CreateEntitlementInput {
   /** used to store references to external systems, e.g. Stripe */
   externalSubscriptionID?: InputMaybe<Scalars['String']['input']>;
   featureIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
-  ownerID: Scalars['ID']['input'];
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   tier?: InputMaybe<EntitlementTier>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
@@ -266,6 +274,8 @@ export interface CreateEventInput {
   organizationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   personalAccessTokenIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   subscriberIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
   userIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -287,6 +297,8 @@ export interface CreateFeatureInput {
   groupIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   name: Scalars['String']['input'];
   organizationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
   userIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -308,6 +320,8 @@ export interface CreateFileInput {
   groupIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   organizationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   storeKey: Scalars['String']['input'];
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
   userID?: InputMaybe<Scalars['ID']['input']>;
@@ -335,8 +349,10 @@ export interface CreateGroupInput {
   logoURL?: InputMaybe<Scalars['String']['input']>;
   /** the name of the group - must be unique within the organization */
   name: Scalars['String']['input'];
-  ownerID: Scalars['ID']['input'];
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
   settingID: Scalars['ID']['input'];
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
   userIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -417,10 +433,13 @@ export interface CreateIntegrationInput {
   /** the name of the integration - must be unique within the organization */
   name: Scalars['String']['input'];
   oauth2tokenIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
-  ownerID: Scalars['ID']['input'];
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
   secretIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
+  webhookIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
 }
 
 /**
@@ -433,7 +452,7 @@ export interface CreateInviteInput {
   eventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** the expiration date of the invitation token which defaults to 14 days in the future from creation */
   expires: Scalars['Time']['input'];
-  ownerID: Scalars['ID']['input'];
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
   /** the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization */
   recipient: Scalars['String']['input'];
   /** the user who initiated the invitation */
@@ -471,6 +490,8 @@ export interface CreateOauthProviderInput {
   redirectURL: Scalars['String']['input'];
   /** the scopes */
   scopes: Scalars['String']['input'];
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   /** the token url of the provider */
   tokenURL: Scalars['String']['input'];
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
@@ -496,6 +517,8 @@ export interface CreateOhAuthTooTokenInput {
   lastUsed?: InputMaybe<Scalars['Time']['input']>;
   nonce: Scalars['String']['input'];
   scopes?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
 }
 
 /**
@@ -547,6 +570,8 @@ export interface CreateOrganizationInput {
   secretIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   settingID?: InputMaybe<Scalars['ID']['input']>;
   subscriberIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   templateIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
@@ -600,6 +625,8 @@ export interface CreatePersonalAccessTokenInput {
   organizationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   ownerID: Scalars['ID']['input'];
   scopes?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
 }
@@ -614,8 +641,11 @@ export interface CreateSubscriberInput {
   /** email address of the subscriber */
   email: Scalars['String']['input'];
   eventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
   /** phone number of the subscriber */
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
 }
@@ -628,6 +658,8 @@ export interface CreateTfaSettingInput {
   createdAt?: InputMaybe<Scalars['Time']['input']>;
   createdBy?: InputMaybe<Scalars['String']['input']>;
   ownerID?: InputMaybe<Scalars['ID']['input']>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   /** specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app */
   totpAllowed?: InputMaybe<Scalars['Boolean']['input']>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
@@ -648,7 +680,9 @@ export interface CreateTemplateInput {
   jsonconfig: Scalars['JSON']['input'];
   /** the name of the template */
   name: Scalars['String']['input'];
-  ownerID: Scalars['ID']['input'];
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   /** the type of the template, either a provided template or an implementation (document) */
   templateType?: InputMaybe<TemplateDocumentType>;
   /** the uischema for the template to render in the UI */
@@ -679,9 +713,9 @@ export interface CreateUserInput {
   eventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   featureIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   fileIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
-  firstName: Scalars['String']['input'];
+  firstName?: InputMaybe<Scalars['String']['input']>;
   groupIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
-  lastName: Scalars['String']['input'];
+  lastName?: InputMaybe<Scalars['String']['input']>;
   /** the time the user was last seen */
   lastSeen?: InputMaybe<Scalars['Time']['input']>;
   organizationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -694,6 +728,8 @@ export interface CreateUserInput {
   settingID: Scalars['ID']['input'];
   /** the Subject of the user JWT */
   sub?: InputMaybe<Scalars['String']['input']>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   tfaSettingIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
@@ -722,7 +758,7 @@ export interface CreateUserSettingInput {
   status?: InputMaybe<UserSettingUserStatus>;
   /** The time the user was suspended */
   suspendedAt?: InputMaybe<Scalars['Time']['input']>;
-  /** tags associated with the user */
+  /** tags associated with the object */
   tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
@@ -745,6 +781,7 @@ export interface CreateWebhookInput {
   eventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** the number of failures */
   failures?: InputMaybe<Scalars['Int']['input']>;
+  integrationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** the last error message */
   lastError?: InputMaybe<Scalars['String']['input']>;
   /** the last response */
@@ -752,6 +789,8 @@ export interface CreateWebhookInput {
   /** the name of the webhook */
   name: Scalars['String']['input'];
   ownerID?: InputMaybe<Scalars['ID']['input']>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
 }
@@ -4003,10 +4042,12 @@ export interface IntegrationHistoryWhereInput {
   ownerIDHasPrefix?: InputMaybe<Scalars['String']['input']>;
   ownerIDHasSuffix?: InputMaybe<Scalars['String']['input']>;
   ownerIDIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
   ownerIDLT?: InputMaybe<Scalars['String']['input']>;
   ownerIDLTE?: InputMaybe<Scalars['String']['input']>;
   ownerIDNEQ?: InputMaybe<Scalars['String']['input']>;
   ownerIDNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** ref field predicates */
   ref?: InputMaybe<Scalars['String']['input']>;
   refContains?: InputMaybe<Scalars['String']['input']>;
@@ -4138,6 +4179,9 @@ export interface IntegrationWhereInput {
   /** secrets edge predicates */
   hasSecrets?: InputMaybe<Scalars['Boolean']['input']>;
   hasSecretsWith?: InputMaybe<Array<HushWhereInput>>;
+  /** webhooks edge predicates */
+  hasWebhooks?: InputMaybe<Scalars['Boolean']['input']>;
+  hasWebhooksWith?: InputMaybe<Array<WebhookWhereInput>>;
   /** id field predicates */
   id?: InputMaybe<Scalars['ID']['input']>;
   idContainsFold?: InputMaybe<Scalars['ID']['input']>;
@@ -4191,10 +4235,12 @@ export interface IntegrationWhereInput {
   ownerIDHasPrefix?: InputMaybe<Scalars['ID']['input']>;
   ownerIDHasSuffix?: InputMaybe<Scalars['ID']['input']>;
   ownerIDIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
   ownerIDLT?: InputMaybe<Scalars['ID']['input']>;
   ownerIDLTE?: InputMaybe<Scalars['ID']['input']>;
   ownerIDNEQ?: InputMaybe<Scalars['ID']['input']>;
   ownerIDNotIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** updated_at field predicates */
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedAtGT?: InputMaybe<Scalars['Time']['input']>;
@@ -4337,10 +4383,12 @@ export interface InviteWhereInput {
   ownerIDHasPrefix?: InputMaybe<Scalars['ID']['input']>;
   ownerIDHasSuffix?: InputMaybe<Scalars['ID']['input']>;
   ownerIDIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
   ownerIDLT?: InputMaybe<Scalars['ID']['input']>;
   ownerIDLTE?: InputMaybe<Scalars['ID']['input']>;
   ownerIDNEQ?: InputMaybe<Scalars['ID']['input']>;
   ownerIDNotIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** recipient field predicates */
   recipient?: InputMaybe<Scalars['String']['input']>;
   recipientContains?: InputMaybe<Scalars['String']['input']>;
@@ -6488,10 +6536,12 @@ export interface SubscriberWhereInput {
   ownerIDHasPrefix?: InputMaybe<Scalars['ID']['input']>;
   ownerIDHasSuffix?: InputMaybe<Scalars['ID']['input']>;
   ownerIDIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
   ownerIDLT?: InputMaybe<Scalars['ID']['input']>;
   ownerIDLTE?: InputMaybe<Scalars['ID']['input']>;
   ownerIDNEQ?: InputMaybe<Scalars['ID']['input']>;
   ownerIDNotIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** phone_number field predicates */
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
   phoneNumberContains?: InputMaybe<Scalars['String']['input']>;
@@ -7033,9 +7083,12 @@ export interface TemplateWhereInput {
  */
 export interface UpdateApiTokenInput {
   appendScopes?: InputMaybe<Array<Scalars['String']['input']>>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   clearDescription?: InputMaybe<Scalars['Boolean']['input']>;
   clearLastUsedAt?: InputMaybe<Scalars['Boolean']['input']>;
+  clearOwner?: InputMaybe<Scalars['Boolean']['input']>;
   clearScopes?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   /** a description of the token's purpose */
@@ -7045,6 +7098,8 @@ export interface UpdateApiTokenInput {
   name?: InputMaybe<Scalars['String']['input']>;
   ownerID?: InputMaybe<Scalars['ID']['input']>;
   scopes?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
 }
@@ -7054,10 +7109,14 @@ export interface UpdateApiTokenInput {
  * Input was generated by ent.
  */
 export interface UpdateDocumentDataInput {
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   /** the json data of the document */
   data?: InputMaybe<Scalars['JSON']['input']>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   templateID?: InputMaybe<Scalars['ID']['input']>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
@@ -7070,6 +7129,7 @@ export interface UpdateDocumentDataInput {
 export interface UpdateEntitlementInput {
   addEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addFeatureIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   /** whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at */
   cancelled?: InputMaybe<Scalars['Boolean']['input']>;
   clearEvents?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7077,6 +7137,8 @@ export interface UpdateEntitlementInput {
   clearExternalCustomerID?: InputMaybe<Scalars['Boolean']['input']>;
   clearExternalSubscriptionID?: InputMaybe<Scalars['Boolean']['input']>;
   clearFeatures?: InputMaybe<Scalars['Boolean']['input']>;
+  clearOwner?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   /** whether or not the customers entitlement expires - expires_at will show the time */
@@ -7090,6 +7152,8 @@ export interface UpdateEntitlementInput {
   ownerID?: InputMaybe<Scalars['ID']['input']>;
   removeEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeFeatureIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   tier?: InputMaybe<EntitlementTier>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
@@ -7112,6 +7176,7 @@ export interface UpdateEventInput {
   addSubscriberIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addUserIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addWebhookIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   clearCorrelationID?: InputMaybe<Scalars['Boolean']['input']>;
   clearEntitlement?: InputMaybe<Scalars['Boolean']['input']>;
   clearEventID?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7125,6 +7190,7 @@ export interface UpdateEventInput {
   clearOrganization?: InputMaybe<Scalars['Boolean']['input']>;
   clearPersonalAccessToken?: InputMaybe<Scalars['Boolean']['input']>;
   clearSubscriber?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   clearUser?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7145,6 +7211,8 @@ export interface UpdateEventInput {
   removeSubscriberIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeUserIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeWebhookIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
 }
@@ -7159,11 +7227,13 @@ export interface UpdateFeatureInput {
   addGroupIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addOrganizationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addUserIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   clearDescription?: InputMaybe<Scalars['Boolean']['input']>;
   clearEntitlements?: InputMaybe<Scalars['Boolean']['input']>;
   clearEvents?: InputMaybe<Scalars['Boolean']['input']>;
   clearGroups?: InputMaybe<Scalars['Boolean']['input']>;
   clearOrganizations?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   clearUsers?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7175,6 +7245,8 @@ export interface UpdateFeatureInput {
   removeGroupIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeOrganizationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeUserIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
 }
@@ -7187,12 +7259,14 @@ export interface UpdateFileInput {
   addGroupIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addOrganizationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   annotation?: InputMaybe<Scalars['String']['input']>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   category?: InputMaybe<Scalars['String']['input']>;
   clearAnnotation?: InputMaybe<Scalars['Boolean']['input']>;
   clearCategory?: InputMaybe<Scalars['Boolean']['input']>;
   clearFileSize?: InputMaybe<Scalars['Boolean']['input']>;
   clearGroup?: InputMaybe<Scalars['Boolean']['input']>;
   clearOrganization?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   clearUser?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7203,6 +7277,8 @@ export interface UpdateFileInput {
   removeGroupIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeOrganizationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   storeKey?: InputMaybe<Scalars['String']['input']>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
   userID?: InputMaybe<Scalars['ID']['input']>;
@@ -7219,6 +7295,7 @@ export interface UpdateGroupInput {
   addGroupMembers?: InputMaybe<Array<CreateGroupMembershipInput>>;
   addIntegrationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addUserIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   clearDescription?: InputMaybe<Scalars['Boolean']['input']>;
   clearEvents?: InputMaybe<Scalars['Boolean']['input']>;
   clearFeatures?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7226,6 +7303,8 @@ export interface UpdateGroupInput {
   clearGravatarLogoURL?: InputMaybe<Scalars['Boolean']['input']>;
   clearIntegrations?: InputMaybe<Scalars['Boolean']['input']>;
   clearLogoURL?: InputMaybe<Scalars['Boolean']['input']>;
+  clearOwner?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   clearUsers?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7246,6 +7325,8 @@ export interface UpdateGroupInput {
   removeIntegrationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeUserIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   settingID?: InputMaybe<Scalars['ID']['input']>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updateGroupSettings?: InputMaybe<UpdateGroupSettingInput>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
@@ -7329,13 +7410,18 @@ export interface UpdateIntegrationInput {
   addEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addOauth2tokenIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addSecretIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  addWebhookIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   clearDescription?: InputMaybe<Scalars['Boolean']['input']>;
   clearEvents?: InputMaybe<Scalars['Boolean']['input']>;
   clearKind?: InputMaybe<Scalars['Boolean']['input']>;
   clearOauth2tokens?: InputMaybe<Scalars['Boolean']['input']>;
+  clearOwner?: InputMaybe<Scalars['Boolean']['input']>;
   clearSecrets?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
+  clearWebhooks?: InputMaybe<Scalars['Boolean']['input']>;
   /** a description of the integration */
   description?: InputMaybe<Scalars['String']['input']>;
   kind?: InputMaybe<Scalars['String']['input']>;
@@ -7345,6 +7431,9 @@ export interface UpdateIntegrationInput {
   removeEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeOauth2tokenIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeSecretIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  removeWebhookIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
 }
@@ -7356,6 +7445,7 @@ export interface UpdateIntegrationInput {
 export interface UpdateInviteInput {
   addEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   clearEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  clearOwner?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   /** the expiration date of the invitation token which defaults to 14 days in the future from creation */
@@ -7378,11 +7468,13 @@ export interface UpdateInviteInput {
  * Input was generated by ent.
  */
 export interface UpdateOauthProviderInput {
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   /** the auth style, 0: auto detect 1: third party log in 2: log in with username and password */
   authStyle?: InputMaybe<Scalars['Uint']['input']>;
   /** the auth url of the provider */
   authURL?: InputMaybe<Scalars['String']['input']>;
   clearOwner?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   /** the client id for the oauth provider */
@@ -7398,6 +7490,8 @@ export interface UpdateOauthProviderInput {
   redirectURL?: InputMaybe<Scalars['String']['input']>;
   /** the scopes */
   scopes?: InputMaybe<Scalars['String']['input']>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   /** the token url of the provider */
   tokenURL?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
@@ -7414,6 +7508,7 @@ export interface UpdateOhAuthTooTokenInput {
   appendClaimsGroups?: InputMaybe<Array<Scalars['String']['input']>>;
   appendConnectorData?: InputMaybe<Array<Scalars['String']['input']>>;
   appendScopes?: InputMaybe<Array<Scalars['String']['input']>>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   claimsEmail?: InputMaybe<Scalars['String']['input']>;
   claimsEmailVerified?: InputMaybe<Scalars['Boolean']['input']>;
   claimsGroups?: InputMaybe<Array<Scalars['String']['input']>>;
@@ -7425,6 +7520,7 @@ export interface UpdateOhAuthTooTokenInput {
   clearEvents?: InputMaybe<Scalars['Boolean']['input']>;
   clearIntegration?: InputMaybe<Scalars['Boolean']['input']>;
   clearScopes?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clientID?: InputMaybe<Scalars['String']['input']>;
   connectorData?: InputMaybe<Array<Scalars['String']['input']>>;
   connectorID?: InputMaybe<Scalars['String']['input']>;
@@ -7433,6 +7529,8 @@ export interface UpdateOhAuthTooTokenInput {
   removeEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeIntegrationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   scopes?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
 }
 
 /**
@@ -7471,6 +7569,7 @@ export interface UpdateOrganizationInput {
   addTemplateIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addUserIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addWebhookIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   /** URL of the user's remote avatar */
   avatarRemoteURL?: InputMaybe<Scalars['String']['input']>;
   clearAPITokens?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7488,6 +7587,7 @@ export interface UpdateOrganizationInput {
   clearSecrets?: InputMaybe<Scalars['Boolean']['input']>;
   clearSetting?: InputMaybe<Scalars['Boolean']['input']>;
   clearSubscribers?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearTemplates?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7515,6 +7615,8 @@ export interface UpdateOrganizationInput {
   removeUserIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeWebhookIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   settingID?: InputMaybe<Scalars['ID']['input']>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updateOrgSettings?: InputMaybe<UpdateOrganizationSettingInput>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
@@ -7567,11 +7669,13 @@ export interface UpdatePersonalAccessTokenInput {
   addEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addOrganizationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   appendScopes?: InputMaybe<Array<Scalars['String']['input']>>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   clearDescription?: InputMaybe<Scalars['Boolean']['input']>;
   clearEvents?: InputMaybe<Scalars['Boolean']['input']>;
   clearLastUsedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearOrganizations?: InputMaybe<Scalars['Boolean']['input']>;
   clearScopes?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   /** a description of the token's purpose */
@@ -7582,6 +7686,8 @@ export interface UpdatePersonalAccessTokenInput {
   removeEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeOrganizationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   scopes?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
 }
@@ -7592,15 +7698,21 @@ export interface UpdatePersonalAccessTokenInput {
  */
 export interface UpdateSubscriberInput {
   addEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   clearEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  clearOwner?: InputMaybe<Scalars['Boolean']['input']>;
   clearPhoneNumber?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   /** email address of the subscriber */
   email?: InputMaybe<Scalars['String']['input']>;
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
   /** phone number of the subscriber */
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
   removeEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
 }
@@ -7610,11 +7722,15 @@ export interface UpdateSubscriberInput {
  * Input was generated by ent.
  */
 export interface UpdateTfaSettingInput {
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearTotpAllowed?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   /** Whether to regenerate backup codes */
   regenBackupCodes?: InputMaybe<Scalars['Boolean']['input']>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   /** specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app */
   totpAllowed?: InputMaybe<Scalars['Boolean']['input']>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
@@ -7629,8 +7745,11 @@ export interface UpdateTfaSettingInput {
  */
 export interface UpdateTemplateInput {
   addDocumentIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   clearDescription?: InputMaybe<Scalars['Boolean']['input']>;
   clearDocuments?: InputMaybe<Scalars['Boolean']['input']>;
+  clearOwner?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUischema?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7642,6 +7761,8 @@ export interface UpdateTemplateInput {
   name?: InputMaybe<Scalars['String']['input']>;
   ownerID?: InputMaybe<Scalars['ID']['input']>;
   removeDocumentIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   /** the type of the template, either a provided template or an implementation (document) */
   templateType?: InputMaybe<TemplateDocumentType>;
   /** the uischema for the template to render in the UI */
@@ -7665,6 +7786,7 @@ export interface UpdateUserInput {
   addPersonalAccessTokenIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addTfaSettingIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addWebauthnIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   /** auth provider used to register the account */
   authProvider?: InputMaybe<UserAuthProvider>;
   /** The user's local avatar file */
@@ -7680,7 +7802,9 @@ export interface UpdateUserInput {
   clearEvents?: InputMaybe<Scalars['Boolean']['input']>;
   clearFeatures?: InputMaybe<Scalars['Boolean']['input']>;
   clearFiles?: InputMaybe<Scalars['Boolean']['input']>;
+  clearFirstName?: InputMaybe<Scalars['Boolean']['input']>;
   clearGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  clearLastName?: InputMaybe<Scalars['Boolean']['input']>;
   clearLastSeen?: InputMaybe<Scalars['Boolean']['input']>;
   clearOrganizations?: InputMaybe<Scalars['Boolean']['input']>;
   clearPassword?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7688,6 +7812,7 @@ export interface UpdateUserInput {
   clearPersonalAccessTokens?: InputMaybe<Scalars['Boolean']['input']>;
   clearRole?: InputMaybe<Scalars['Boolean']['input']>;
   clearSub?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearTfaSettings?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7716,6 +7841,8 @@ export interface UpdateUserInput {
   settingID?: InputMaybe<Scalars['ID']['input']>;
   /** the Subject of the user JWT */
   sub?: InputMaybe<Scalars['String']['input']>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
 }
@@ -7750,7 +7877,7 @@ export interface UpdateUserSettingInput {
   status?: InputMaybe<UserSettingUserStatus>;
   /** The time the user was suspended */
   suspendedAt?: InputMaybe<Scalars['Time']['input']>;
-  /** tags associated with the user */
+  /** tags associated with the object */
   tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
@@ -7763,12 +7890,16 @@ export interface UpdateUserSettingInput {
  */
 export interface UpdateWebhookInput {
   addEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  addIntegrationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
   clearDescription?: InputMaybe<Scalars['Boolean']['input']>;
   clearEvents?: InputMaybe<Scalars['Boolean']['input']>;
   clearFailures?: InputMaybe<Scalars['Boolean']['input']>;
+  clearIntegrations?: InputMaybe<Scalars['Boolean']['input']>;
   clearLastError?: InputMaybe<Scalars['Boolean']['input']>;
   clearLastResponse?: InputMaybe<Scalars['Boolean']['input']>;
   clearOwner?: InputMaybe<Scalars['Boolean']['input']>;
+  clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   /** a description of the webhook */
@@ -7787,6 +7918,9 @@ export interface UpdateWebhookInput {
   name?: InputMaybe<Scalars['String']['input']>;
   ownerID?: InputMaybe<Scalars['ID']['input']>;
   removeEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  removeIntegrationIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  /** tags associated with the object */
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedBy?: InputMaybe<Scalars['String']['input']>;
 }
@@ -7982,10 +8116,12 @@ export interface UserHistoryWhereInput {
   firstNameHasPrefix?: InputMaybe<Scalars['String']['input']>;
   firstNameHasSuffix?: InputMaybe<Scalars['String']['input']>;
   firstNameIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  firstNameIsNil?: InputMaybe<Scalars['Boolean']['input']>;
   firstNameLT?: InputMaybe<Scalars['String']['input']>;
   firstNameLTE?: InputMaybe<Scalars['String']['input']>;
   firstNameNEQ?: InputMaybe<Scalars['String']['input']>;
   firstNameNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  firstNameNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** history_time field predicates */
   historyTime?: InputMaybe<Scalars['Time']['input']>;
   historyTimeGT?: InputMaybe<Scalars['Time']['input']>;
@@ -8016,10 +8152,12 @@ export interface UserHistoryWhereInput {
   lastNameHasPrefix?: InputMaybe<Scalars['String']['input']>;
   lastNameHasSuffix?: InputMaybe<Scalars['String']['input']>;
   lastNameIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  lastNameIsNil?: InputMaybe<Scalars['Boolean']['input']>;
   lastNameLT?: InputMaybe<Scalars['String']['input']>;
   lastNameLTE?: InputMaybe<Scalars['String']['input']>;
   lastNameNEQ?: InputMaybe<Scalars['String']['input']>;
   lastNameNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  lastNameNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** last_seen field predicates */
   lastSeen?: InputMaybe<Scalars['Time']['input']>;
   lastSeenGT?: InputMaybe<Scalars['Time']['input']>;
@@ -8655,10 +8793,12 @@ export interface UserWhereInput {
   firstNameHasPrefix?: InputMaybe<Scalars['String']['input']>;
   firstNameHasSuffix?: InputMaybe<Scalars['String']['input']>;
   firstNameIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  firstNameIsNil?: InputMaybe<Scalars['Boolean']['input']>;
   firstNameLT?: InputMaybe<Scalars['String']['input']>;
   firstNameLTE?: InputMaybe<Scalars['String']['input']>;
   firstNameNEQ?: InputMaybe<Scalars['String']['input']>;
   firstNameNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  firstNameNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** events edge predicates */
   hasEvents?: InputMaybe<Scalars['Boolean']['input']>;
   hasEventsWith?: InputMaybe<Array<EventWhereInput>>;
@@ -8710,10 +8850,12 @@ export interface UserWhereInput {
   lastNameHasPrefix?: InputMaybe<Scalars['String']['input']>;
   lastNameHasSuffix?: InputMaybe<Scalars['String']['input']>;
   lastNameIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  lastNameIsNil?: InputMaybe<Scalars['Boolean']['input']>;
   lastNameLT?: InputMaybe<Scalars['String']['input']>;
   lastNameLTE?: InputMaybe<Scalars['String']['input']>;
   lastNameNEQ?: InputMaybe<Scalars['String']['input']>;
   lastNameNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  lastNameNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** last_seen field predicates */
   lastSeen?: InputMaybe<Scalars['Time']['input']>;
   lastSeenGT?: InputMaybe<Scalars['Time']['input']>;
@@ -9127,6 +9269,9 @@ export interface WebhookWhereInput {
   /** events edge predicates */
   hasEvents?: InputMaybe<Scalars['Boolean']['input']>;
   hasEventsWith?: InputMaybe<Array<EventWhereInput>>;
+  /** integrations edge predicates */
+  hasIntegrations?: InputMaybe<Scalars['Boolean']['input']>;
+  hasIntegrationsWith?: InputMaybe<Array<IntegrationWhereInput>>;
   /** owner edge predicates */
   hasOwner?: InputMaybe<Scalars['Boolean']['input']>;
   hasOwnerWith?: InputMaybe<Array<OrganizationWhereInput>>;
@@ -9271,7 +9416,7 @@ export type GetAllGroupsQuery = { __typename?: 'Query', groups: { __typename?: '
 export type GetAllOrganizationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllOrganizationsQuery = { __typename?: 'Query', organizations: { __typename?: 'OrganizationConnection', edges?: Array<{ __typename?: 'OrganizationEdge', node?: { __typename?: 'Organization', id: string, name: string, displayName: string, description?: string | null, personalOrg?: boolean | null, createdAt?: any | null, updatedAt?: any | null, parent?: { __typename?: 'Organization', id: string, name: string } | null, children: { __typename?: 'OrganizationConnection', edges?: Array<{ __typename?: 'OrganizationEdge', node?: { __typename?: 'Organization', id: string, name: string, displayName: string, description?: string | null } | null } | null> | null }, members?: Array<{ __typename?: 'OrgMembership', id: string, role: OrgMembershipRole, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> | null, setting?: { __typename?: 'OrganizationSetting', id: string, createdAt?: any | null, updatedAt?: any | null, createdBy?: string | null, updatedBy?: string | null, domains?: Array<string> | null, billingContact?: string | null, billingEmail?: string | null, billingPhone?: string | null, billingAddress?: string | null, taxIdentifier?: string | null, tags?: Array<string> | null, geoLocation?: OrganizationSettingRegion | null } | null } | null } | null> | null } };
+export type GetAllOrganizationsQuery = { __typename?: 'Query', organizations: { __typename?: 'OrganizationConnection', edges?: Array<{ __typename?: 'OrganizationEdge', node?: { __typename?: 'Organization', id: string, name: string, displayName: string, description?: string | null, personalOrg?: boolean | null, createdAt?: any | null, updatedAt?: any | null, parent?: { __typename?: 'Organization', id: string, name: string } | null, children: { __typename?: 'OrganizationConnection', edges?: Array<{ __typename?: 'OrganizationEdge', node?: { __typename?: 'Organization', id: string, name: string, displayName: string, description?: string | null } | null } | null> | null }, members?: Array<{ __typename?: 'OrgMembership', id: string, role: OrgMembershipRole, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null } }> | null, setting?: { __typename?: 'OrganizationSetting', id: string, createdAt?: any | null, updatedAt?: any | null, createdBy?: string | null, updatedBy?: string | null, domains?: Array<string> | null, billingContact?: string | null, billingEmail?: string | null, billingPhone?: string | null, billingAddress?: string | null, taxIdentifier?: string | null, tags?: Array<string> | null, geoLocation?: OrganizationSettingRegion | null } | null } | null } | null> | null } };
 
 export type CreateSubscriberMutationVariables = Exact<{
   input: CreateSubscriberInput;
@@ -9285,7 +9430,7 @@ export type CreateTemplateMutationVariables = Exact<{
 }>;
 
 
-export type CreateTemplateMutation = { __typename?: 'Mutation', createTemplate: { __typename?: 'TemplateCreatePayload', template: { __typename?: 'Template', id: string, name: string, templateType: TemplateDocumentType, description?: string | null, jsonconfig: any, uischema?: any | null, owner: { __typename?: 'Organization', id: string } } } };
+export type CreateTemplateMutation = { __typename?: 'Mutation', createTemplate: { __typename?: 'TemplateCreatePayload', template: { __typename?: 'Template', id: string, name: string, templateType: TemplateDocumentType, description?: string | null, jsonconfig: any, uischema?: any | null, owner?: { __typename?: 'Organization', id: string } | null } } };
 
 export type UpdateTemplateMutationVariables = Exact<{
   updateTemplateId: Scalars['ID']['input'];
@@ -9293,7 +9438,7 @@ export type UpdateTemplateMutationVariables = Exact<{
 }>;
 
 
-export type UpdateTemplateMutation = { __typename?: 'Mutation', updateTemplate: { __typename?: 'TemplateUpdatePayload', template: { __typename?: 'Template', id: string, name: string, templateType: TemplateDocumentType, description?: string | null, jsonconfig: any, uischema?: any | null, owner: { __typename?: 'Organization', id: string } } } };
+export type UpdateTemplateMutation = { __typename?: 'Mutation', updateTemplate: { __typename?: 'TemplateUpdatePayload', template: { __typename?: 'Template', id: string, name: string, templateType: TemplateDocumentType, description?: string | null, jsonconfig: any, uischema?: any | null, owner?: { __typename?: 'Organization', id: string } | null } } };
 
 export type GetAllTemplatesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -9319,7 +9464,7 @@ export type GetUserProfileQueryVariables = Exact<{
 }>;
 
 
-export type GetUserProfileQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, firstName: string, lastName: string, displayName: string, email: string, avatarRemoteURL?: string | null, setting: { __typename?: 'UserSetting', status: UserSettingUserStatus, tags?: Array<string> | null } } };
+export type GetUserProfileQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email: string, avatarRemoteURL?: string | null, setting: { __typename?: 'UserSetting', status: UserSettingUserStatus, tags?: Array<string> | null } } };
 
 
 export const GetDocumentDataDocument = gql`
