@@ -5,7 +5,7 @@ type LogoVariants = keyof typeof logoStyles.variants
 const themes = Object.keys(logoStyles.variants.theme) as LogoVariants[]
 
 const meta: Meta<typeof Logo> = {
-  title: 'Logo',
+  title: 'UI/Logo',
   component: Logo,
   parameters: {
     docs: {

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Tag } from './tag'
 
 const meta: Meta<typeof Tag> = {
-  title: 'Tag',
+  title: 'UI/Tag',
   component: Tag,
   parameters: {
     docs: {

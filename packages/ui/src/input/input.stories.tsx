@@ -3,7 +3,7 @@ import { Input } from './input'
 import { SearchIcon } from 'lucide-react'
 
 const meta: Meta<typeof Input> = {
-  title: 'Input',
+  title: 'Forms/Input',
   component: Input,
   parameters: {
     docs: {
