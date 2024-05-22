@@ -49,3 +49,9 @@ tasks:
     cmds:
       - task: install
       - bun dev --filter={apps/storybook}
+
+  build:web:
+    desc: build web
+    cmds:
+      - task: install
+      - bun run build --filter={apps/web}
