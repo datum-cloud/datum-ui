@@ -38,7 +38,7 @@ export function HomePage({ verification = false }: { verification?: boolean }) {
           <div className={footer()}>
             <Button variant="secondary" asChild>
               <Link href={GITHUB_URL} target="_blank">
-                Get involved on GitHub{' '}
+                Get involved on GitHub
                 <Image
                   src="/icons/github.svg"
                   width={13}
