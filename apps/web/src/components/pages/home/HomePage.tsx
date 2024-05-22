@@ -7,8 +7,9 @@ import { GITHUB_URL } from '@/constants'
 
 import { HomePageNewsletter } from './HomePage.newsletter'
 import { homeStyles } from './HomePage.styles'
+import { HomePageVerification } from './HomePage.verification'
 
-export function HomePage() {
+export function HomePage({ verification = false }: { verification?: boolean }) {
   const {
     base,
     left,
@@ -32,7 +33,7 @@ export function HomePage() {
               Every foundational tool that software companies need for
               hyper-scale, backed by open source.
             </h1>
-            <HomePageNewsletter />
+            {verification ? <HomePageVerification /> : <HomePageNewsletter />}
           </div>
           <div className={footer()}>
             <Button variant="secondary" asChild>
