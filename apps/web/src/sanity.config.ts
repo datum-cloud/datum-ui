@@ -11,8 +11,6 @@ import { apiVersion, dataset, projectId, studioUrl } from '@/sanity/lib/api'
 import { locate } from '@/sanity/plugins/locate'
 import { pageStructure, singletonPlugin } from '@/sanity/plugins/settings'
 import { assistWithPresets } from '@/sanity/plugins/assist'
-import author from '@/sanity/schemas/documents/author'
-import post from '@/sanity/schemas/documents/post'
 import settings from '@/sanity/schemas/singletons/settings'
 
 export default defineConfig({
@@ -20,7 +18,7 @@ export default defineConfig({
   projectId,
   dataset,
   schema: {
-    types: [settings, post, author],
+    types: [settings],
   },
   plugins: [
     presentationTool({
