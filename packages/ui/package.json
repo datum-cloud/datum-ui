@@ -50,6 +50,7 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "latest",
     "@storybook/react": "latest",
+    "@tanstack/react-table": "^8.17.3",
     "class-variance-authority": "^0.7.0",
     "lucide-react": "^0.379.0",
     "react": "18.3.1",
