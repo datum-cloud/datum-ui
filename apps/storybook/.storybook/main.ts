@@ -5,7 +5,6 @@ const config: StorybookConfig = {
     '../src/**/*.mdx',
     {
       directory: '../../../packages/ui/src/**',
-      titlePrefix: 'UI',
       files: '*.stories.*',
     },
   ],

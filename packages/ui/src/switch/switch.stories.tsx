@@ -3,7 +3,7 @@ import { Switch } from './switch'
 import { Button } from '../button/button'
 
 const meta: Meta<typeof Switch> = {
-  title: 'Switch',
+  title: 'UI/Switch',
   component: Switch,
   parameters: {
     docs: {

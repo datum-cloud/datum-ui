@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Kbd } from './kbd'
 
 const meta: Meta<typeof Kbd> = {
-  title: 'Kbd',
+  title: 'UI/Kbd',
   component: Kbd,
   parameters: {
     docs: {

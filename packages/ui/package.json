@@ -43,18 +43,20 @@
   },
   "dependencies": {
     "@radix-ui/react-avatar": "latest",
+    "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-label": "latest",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "latest",
     "@storybook/react": "latest",
+    "@tanstack/react-table": "^8.17.3",
     "class-variance-authority": "^0.7.0",
     "lucide-react": "^0.379.0",
-    "tailwind-merge": "^2.2.2",
-    "tailwindcss-animate": "^1.0.7",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "tailwind-merge": "^2.2.2",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@headlessui/react": "latest",
