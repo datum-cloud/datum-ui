@@ -5,7 +5,7 @@ const config: StorybookConfig = {
     '../src/**/*.mdx',
     {
       directory: '../../../packages/ui/src/**',
-			files: '*.stories.*',
+      files: '*.stories.*',
     },
   ],
   staticDirs: ['../public'],
