@@ -1,119 +1,82 @@
 'use client'
 
 import React from 'react'
-import Image from 'next/image'
 import { useSession } from 'next-auth/react'
-import Link from 'next/link'
-import arrowRight from '../../../../public/icons/arrow-right-dark.svg'
 import PageTitle from '../../../components/page-title'
+import { Grid, GridRow, GridCell } from '@repo/ui/grid'
+import { Panel } from '@repo/ui/panel'
+import { Button } from '@repo/ui/button'
+import { ArrowUpRight } from 'lucide-react'
 
 const DashboardLanding: React.FC = () => {
   const session = useSession()
 
   return (
-    <section className="rounded-md flex flex-col items-center justify-center relative">
-      <PageTitle
-        title={
-          <>
-            <span className="capitalize">{session.data?.user?.name}</span>,
-            welcome back!
-          </>
-        }
-      />
-      <div className="w-full mt-8 h-full grid lg:grid-cols-2 gap-4">
-        <div className="col-span-1 min-h-[294px] flex flex-col items-start justify-center rounded border border-blackberry-100 dark:border-winter-sky-900 px-6 py-4 bg-white dark:bg-white">
-          <div className="flex flex-col items-start xl:flex-row xl:items-center w-full mb-4">
-            <h2 className="text-lg">My Assets</h2>
-            <Link
-              className="flex items-center xl:ml-auto rounded px-2 py-1 border border-blackberry-400 dark:border-winter-sky-900 font-light text-sm hover:bg-white hover:dark:bg-white"
-              href="#"
-            >
-              view all
-              <Image
-                alt="view all assets icon"
-                className="w-3 ml-2"
-                src={arrowRight}
-              />
-            </Link>
-          </div>
-
-          <div className="bg-white dark:bg-white rounded w-full flex-1 animate-pulse" />
-        </div>
-        <div className="col-span-1 min-h-[294px] flex flex-col items-start justify-center rounded border border-blackberry-100 dark:border-winter-sky-900 px-6 py-4 bg-white dark:bg-white">
-          <div className="flex flex-col items-start xl:flex-row xl:items-center w-full mb-4">
-            <h2 className="text-base xl:text-lg">Groups &amp; Users</h2>
-            <Link
-              className="flex items-center xl:ml-auto rounded px-2 py-1 border border-blackberry-400 dark:border-winter-sky-900 font-light text-sm hover:bg-white hover:dark:bg-white"
-              href="#"
-            >
-              view all
-              <Image
-                alt="view all assets icon"
-                className="w-3 ml-2"
-                src={arrowRight}
-              />
-            </Link>
-          </div>
-          <div className="bg-white dark:bg-white rounded w-full flex-1 animate-pulse" />
-        </div>
-        <div className="col-span-1 min-h-[294px] flex flex-col items-start justify-center rounded border border-blackberry-100 dark:border-winter-sky-900 px-6 py-4 bg-white dark:bg-white">
-          <div className="flex flex-col items-start xl:flex-row xl:items-center w-full mb-4">
-            <h2 className="text-lg">Connected Integrations</h2>
-            <Link
-              className="flex items-center xl:ml-auto rounded px-2 py-1 border border-blackberry-400 dark:border-winter-sky-900 font-light text-sm hover:bg-white hover:dark:bg-white"
-              href="#"
-            >
-              view all
-              <Image
-                alt="view all assets icon"
-                className="w-3 ml-2"
-                src={arrowRight}
-              />
-            </Link>
-          </div>
-          <div className="bg-white dark:bg-white rounded w-full flex-1 animate-pulse" />
-        </div>
-        <div className="col-span-1 min-h-[294px] flex flex-col items-start justify-center rounded border border-blackberry-100 dark:border-winter-sky-900 px-6 py-4 bg-white dark:bg-white">
-          <div className="flex flex-col items-start xl:flex-row xl:items-center w-full mb-4">
-            <h2 className="text-lg">Top Active Sessions</h2>
-            <Link
-              className="flex items-center xl:ml-auto rounded px-2 py-1 border border-blackberry-400 dark:border-winter-sky-900 font-light text-sm hover:bg-white hover:dark:bg-white"
-              href="#"
-            >
-              view all
-              <Image
-                alt="view all assets icon"
-                className="w-3 ml-2"
-                src={arrowRight}
-              />
-            </Link>
-          </div>
-          <Link
-            className="flex items-center mb-4 underline underline-offset-2 text-blue-400 dark:text-blue-200"
-            href="#"
-          >
-            Add Integration
-          </Link>
-          <div className="bg-white dark:bg-white rounded w-full flex-1 animate-pulse" />
-        </div>
-        <div className="col-span-1 min-h-[294px] flex flex-col items-start justify-center rounded border border-blackberry-100 dark:border-winter-sky-900 px-6 py-4 bg-white dark:bg-white">
-          <div className="flex flex-col items-start xl:flex-row xl:items-center w-full mb-4">
-            <h2 className="text-lg">My Tasks</h2>
-            <Link
-              className="flex items-center xl:ml-auto rounded px-2 py-1 border border-blackberry-400 dark:border-winter-sky-900 font-light text-sm hover:bg-white hover:dark:bg-white"
-              href="#"
-            >
-              view all
-              <Image
-                alt="view all assets icon"
-                className="w-3 ml-2"
-                src={arrowRight}
-              />
-            </Link>
-          </div>
-          <div className="bg-white dark:bg-white rounded w-full flex-1 animate-pulse" />
-        </div>
-      </div>
+    <section>
+      <PageTitle title={<>Dashboard</>} />
+      <Grid rows={2}>
+        <GridRow columns={2}>
+          <GridCell>
+            <Panel align="center" justify="center" textAlign="center">
+              <h5 className="text-xl font-mono">Set up your integrations</h5>
+              <p className="max-w-[340px]">
+                Maximize the efficiency of your workspace by setting up your
+                Slack and GitHub integrations.
+              </p>
+              <Button
+                onClick={() => {
+                  alert('Coming soon')
+                }}
+                icon={<ArrowUpRight />}
+                size="md"
+                iconAnimated
+              >
+                Integrations
+              </Button>
+            </Panel>
+          </GridCell>
+          <GridCell>
+            <Panel align="center" justify="center" textAlign="center">
+              <h5 className="text-xl font-mono">Configure your workspace</h5>
+              <p className="max-w-[340px]">
+                Define everything from your workspace slug to advanced
+                authentication settings.
+              </p>
+              <Button
+                onClick={() => {
+                  alert('Coming soon')
+                }}
+                icon={<ArrowUpRight />}
+                size="md"
+                iconAnimated
+              >
+                Workspace Settings
+              </Button>
+            </Panel>
+          </GridCell>
+        </GridRow>
+        <GridRow columns={1}>
+          <GridCell>
+            <Panel align="center" justify="center" textAlign="center">
+              <h5 className="text-xl font-mono">Add team members</h5>
+              <p className="max-w-[340px]">
+                Get your team rocking and rolling by inviting your colleagues to
+                join the party.
+              </p>
+              <Button
+                onClick={() => {
+                  alert('Coming soon')
+                }}
+                icon={<ArrowUpRight />}
+                size="md"
+                iconAnimated
+              >
+                Team Management
+              </Button>
+            </Panel>
+          </GridCell>
+        </GridRow>
+      </Grid>
     </section>
   )
 }
