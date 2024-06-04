@@ -13,7 +13,7 @@
     "@sanity/icons": "3.0.0",
     "@sanity/image-url": "1.0.2",
     "@sanity/preview-url-secret": "1.6.17",
-    "@sanity/vision": "3.44.0",
+    "@sanity/vision": "3.45.0",
     "@repo/dally": "workspace:*",
     "@repo/ui": "workspace:*",
     "lucide-react": "latest",
@@ -28,7 +28,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "swr": "latest",
-    "sanity": "3.44.0"
+    "sanity": "3.45.0"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "latest",
