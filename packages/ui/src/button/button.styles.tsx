@@ -12,7 +12,7 @@ export const buttonStyles = tv({
       sunglow: '!bg-sunglow-900 hover:!opacity-90',
       blackberry: '!bg-blackberry-900 hover:!opacity-90',
       outline:
-        'text-blackberry-900 border-blackberry-900 border hover:!opacity-90',
+        'border-blackberry-900 text-blackberry-800 border hover:!opacity-90 dark:border-peat-400 dark:text-white',
       white: {},
     },
     iconPosition: {

@@ -31,7 +31,6 @@ export default function Sidebar({ className }: SidebarProps) {
         <MenuIcon strokeWidth={3} width={18} />
         <ArrowLeft className={expandNavIcon()} strokeWidth={3} width={18} />
       </div>
-
       <SideNav className={sideNav()} items={NavItems} />
     </div>
   )
