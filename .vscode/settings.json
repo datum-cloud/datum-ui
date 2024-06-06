@@ -3,8 +3,11 @@
   "editor.detectIndentation": false,
   "html.format.indentInnerHtml": true,
   "editor.insertSpaces": false,
-  "css.customData": ["./.vscode/.css-data.json"],
+  "css.customData": [".vscode/tailwind.json"],
   "editor.formatOnSave": true,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "css.lint.unknownAtRules": "ignore"
+  "css.lint.unknownAtRules": "ignore",
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
 }

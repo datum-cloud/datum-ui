@@ -53,7 +53,7 @@ export const buttonStyles = tv({
   ],
   defaultVariants: {
     variant: 'sunglow',
-    size: 'lg',
+    size: 'md',
   },
 })
 

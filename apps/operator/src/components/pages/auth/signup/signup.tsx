@@ -42,7 +42,7 @@ export const SignupPage = () => {
    */
   const github = async () => {
     await signIn('github', {
-      callbackUrl: '/dashboard',
+      callbackUrl: '/workspace',
     })
   }
 
@@ -51,7 +51,7 @@ export const SignupPage = () => {
    */
   const google = async () => {
     await signIn('google', {
-      callbackUrl: '/dashboard',
+      callbackUrl: '/workspace',
     })
   }
 
@@ -72,7 +72,7 @@ export const SignupPage = () => {
 
       if (verificationResult.success) {
         await signIn('passkey', {
-          callbackUrl: '/dashboard',
+          callbackUrl: '/workspace',
           email: TEMP_PASSKEY_EMAIL,
           name: TEMP_PASSKEY_NAME,
           session: verificationResult.session,

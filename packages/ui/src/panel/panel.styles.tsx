@@ -3,7 +3,7 @@ import { tv, type VariantProps } from 'tailwind-variants'
 export const panelStyles = tv({
   slots: {
     panel:
-      'flex flex-col border rounded-lg bg-white border-gray-300 p-4 min-h-[400px] dark:bg-peat-900 dark:border-peat-800',
+      'flex flex-col border rounded-lg bg-white border-gray-300 p-9 min-h-[400px] dark:bg-peat-900 dark:border-peat-800',
   },
   variants: {
     gap: {
@@ -42,4 +42,13 @@ export const panelStyles = tv({
   },
 })
 
+export const panelHeaderStyles = tv({
+  slots: {
+    header: 'mb-4 pb-8 border-b border-winter-sky-900 text-blackberry-800',
+    heading: 'text-xl font-semibold',
+    subheading: 'mt-5',
+  },
+})
+
 export type PanelVariants = VariantProps<typeof panelStyles>
+export type PanelHeaderVariants = VariantProps<typeof panelHeaderStyles>

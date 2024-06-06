@@ -45,7 +45,7 @@ export const LoginPage = () => {
         ...payload,
       })
       if (res.ok && !res.error) {
-        router.push('/dashboard')
+        router.push('/workspace')
       } else {
         setSignInLoading(false)
         setSignInError(true)
@@ -61,7 +61,7 @@ export const LoginPage = () => {
    */
   const github = async () => {
     await signIn('github', {
-      callbackUrl: '/dashboard',
+      callbackUrl: '/workspace',
     })
   }
 
@@ -70,7 +70,7 @@ export const LoginPage = () => {
    */
   const google = async () => {
     await signIn('google', {
-      callbackUrl: '/dashboard',
+      callbackUrl: '/workspace',
     })
   }
 
@@ -91,7 +91,7 @@ export const LoginPage = () => {
 
       if (verificationResult.success) {
         await signIn('passkey', {
-          callbackUrl: '/dashboard',
+          callbackUrl: '/workspace',
           email: TEMP_PASSKEY_EMAIL,
           name: TEMP_PASSKEY_NAME,
           session: verificationResult.session,

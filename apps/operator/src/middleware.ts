@@ -34,6 +34,7 @@ export const config = {
     '/billing/:path*',
     '/configuration/:path*',
     '/dashboard/:path*',
+    '/workspace/:path*',
     '/inbox/:path*',
     '/integrations/:path*',
     '/people-and-groups/:path*',
