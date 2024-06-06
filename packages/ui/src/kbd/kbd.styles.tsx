@@ -2,7 +2,7 @@ import { tv, type VariantProps } from 'tailwind-variants'
 
 const kbdStyles = tv({
   slots: {
-    base: 'border-blackberry-800  border w-6 h-6 rounded-md inline-flex justify-center items-center',
+    base: 'border-blackberry-800 border w-6 h-6 rounded-md inline-flex justify-center items-center dark:border-peat-800',
   },
   variants: {
     size: {

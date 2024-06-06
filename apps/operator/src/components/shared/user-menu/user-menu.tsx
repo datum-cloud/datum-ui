@@ -3,7 +3,6 @@
 import { signOut, useSession } from 'next-auth/react'
 import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
 import { userMenuStyles } from './user-menu.styles'
-import { Switch } from '@repo/ui/switch'
 import { Button } from '@repo/ui/button'
 import {
   DropdownMenu,
@@ -12,18 +11,29 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@repo/ui/dropdown-menu'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/ui/select'
 import Link from 'next/link'
 import { ArrowRight, ChevronDown } from 'lucide-react'
 import { Kbd } from '@repo/ui/kbd'
+import { useTheme } from 'next-themes'
 
 export const UserMenu = () => {
+  const { setTheme, theme } = useTheme()
   const { data: sessionData } = useSession()
   const {
     trigger,
     email,
     userSettingsLink,
     themeRow,
-    themeToggle,
+    themeDropdown,
     commandRow,
     commands,
   } = userMenuStyles()
@@ -68,8 +78,19 @@ export const UserMenu = () => {
           </div>
         </div>
         <div className={themeRow()}>
-          <p>Dark mode</p>
-          <Switch className={themeToggle()} />
+          <p>Theme</p>
+          <Select onValueChange={(value) => setTheme(value)} value={theme}>
+            <SelectTrigger className={themeDropdown()}>
+              <SelectValue placeholder="Select theme" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="system">System</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="light">Light</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
         <DropdownMenuSeparator spacing="md" />
         <DropdownMenuItem>
