@@ -13,8 +13,15 @@ import {
 import { cn } from '../../lib/utils'
 import { Label } from '../label/label'
 import { formStyles } from './form.styles'
+import { InfoIcon } from 'lucide-react'
 
-const { formItem, formLabelError, formDescription, formMessage } = formStyles()
+const {
+  formItem,
+  formLabelError,
+  formDescription,
+  formMessage,
+  formMessageIcon,
+} = formStyles()
 
 const Form = FormProvider
 
@@ -161,7 +168,10 @@ const FormMessage = React.forwardRef<
       className={cn(formMessage(), className)}
       {...props}
     >
-      {body}
+      <span className={formMessageIcon()}>
+        <InfoIcon width={16} height={16} />
+      </span>
+      <>{body}</>
     </p>
   )
 })

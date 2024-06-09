@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { aime, ftRegola, karelia } from '../fonts'
 import { SessionProvider } from 'next-auth/react'
+import { Toaster } from '@repo/ui/toaster'
 import Providers from './providers'
 import './globals.css'
 
@@ -24,6 +25,7 @@ export default function RootLayout({
       >
         <SessionProvider>
           <Providers>{children}</Providers>
+          <Toaster />
         </SessionProvider>
       </body>
     </html>
