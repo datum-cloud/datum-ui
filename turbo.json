@@ -4,7 +4,7 @@
     "**/.env.*local",
     "**/.env"
   ],
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": [
         "^build"
