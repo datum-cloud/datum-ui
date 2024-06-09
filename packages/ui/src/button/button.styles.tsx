@@ -3,7 +3,7 @@ import { tv, type VariantProps } from 'tailwind-variants'
 
 export const buttonStyles = tv({
   slots: {
-    base: 'group font-sans text-white inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md leading-none text-sm transition-opacity duration-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blackberry-300 disabled:pointer-events-none disabled:opacity-50',
+    base: 'group font-sans font-semibold text-white inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md leading-none text-sm transition-opacity duration-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blackberry-300 disabled:pointer-events-none disabled:opacity-50',
     iconOuter: 'relative h-4 w-4 overflow-hidden',
     iconInner: 'absolute transition-all duration-500',
   },
@@ -12,7 +12,7 @@ export const buttonStyles = tv({
       sunglow: '!bg-sunglow-900 hover:!opacity-90',
       blackberry: '!bg-blackberry-900 hover:!opacity-90',
       outline:
-        'border-blackberry-900 text-blackberry-800 border hover:!opacity-90 dark:border-peat-400 dark:text-white',
+        'border-blackberry-800 text-blackberry-800 border hover:!opacity-90 dark:border-peat-400 dark:text-white',
       white: {},
     },
     iconPosition: {

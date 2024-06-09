@@ -1,3 +1,9 @@
 @import '@repo/ui/styles.css';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+body {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	@apply text-blackberry-800 dark:text-blackberry-100;
+}

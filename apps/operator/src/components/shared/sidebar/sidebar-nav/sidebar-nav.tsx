@@ -13,7 +13,6 @@ import {
 } from '@/components/shared/sidebar/sidebar-accordion/sidebar-accordion'
 import { useEffect, useState } from 'react'
 import { cn } from '@repo/ui/lib/utils'
-import { ChevronDownIcon } from 'lucide-react'
 import { Separator as Hr } from '@repo/ui/separator'
 import { sidebarNavStyles } from './sidebar-nav.styles'
 
@@ -34,7 +33,6 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
     icon,
     accordionTrigger,
     link,
-    expandArrow,
     linkLabel,
     accordionItem,
     separator,
@@ -87,8 +85,6 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
                 <div className={cn(linkLabel(), !isSidebarOpen && className)}>
                   {item.title}
                 </div>
-
-                {isSidebarOpen && <ChevronDownIcon className={expandArrow()} />}
               </AccordionTrigger>
               <AccordionContent>
                 {item.children?.map((child) => (
