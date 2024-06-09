@@ -23,7 +23,6 @@ import {
   useGetAllOrganizationsQuery,
 } from '@repo/codegen/src/schema'
 import { useGqlError } from '@/hooks/useGqlError'
-import { useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 
 const formSchema = z.object({
@@ -42,8 +41,6 @@ const formSchema = z.object({
 
 export const CreateWorkspaceForm = () => {
   const { toast } = useToast()
-  const session = useSession()
-	console.log(session?.data?.user.organization)
   const [allOrgs] = useGetAllOrganizationsQuery()
   const numOrgs = allOrgs.data?.organizations?.edges?.length ?? 0
   const [result, addOrganization] = useCreateOrganizationMutation()

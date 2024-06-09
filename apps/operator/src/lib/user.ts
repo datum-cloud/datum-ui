@@ -31,6 +31,10 @@ interface HttpResponse<T> extends Response {
   message?: T
 }
 
+export interface SwitchWorkspace {
+  target_organization_id: string
+}
+
 export async function registerUser<T>(arg: RegisterUser) {
   const fData: HttpResponse<T> = await fetch('/api/auth/register', {
     method: 'POST',
@@ -141,6 +145,24 @@ export async function verifyAuthentication<T>(arg: AuthVerificationInput) {
   )
   try {
     return await fData.json()
+  } catch (error) {
+    return { message: 'error' }
+  }
+}
+
+export async function switchWorkspace<T>(arg: SwitchWorkspace) {
+  const fData: HttpResponse<T> = await fetch('/api/auth/switch-workspace', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(arg),
+    credentials: 'include',
+  })
+  try {
+    const fDataMessage = await fData.json()
+    fData.message = fDataMessage.error
+    return fData
   } catch (error) {
     return { message: 'error' }
   }
