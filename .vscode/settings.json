@@ -9,5 +9,11 @@
   "css.lint.unknownAtRules": "ignore",
   "files.associations": {
     "*.css": "tailwindcss"
-  }
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ]
 }
