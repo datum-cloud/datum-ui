@@ -162,7 +162,7 @@ export async function switchWorkspace<T>(arg: SwitchWorkspace) {
   try {
     const fDataMessage = await fData.json()
     fData.message = fDataMessage.error
-    return fData
+    return fDataMessage
   } catch (error) {
     return { message: 'error' }
   }

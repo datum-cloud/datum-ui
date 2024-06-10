@@ -7,3 +7,7 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 	@apply text-blackberry-800 dark:text-blackberry-100;
 }
+
+p {
+	@apply text-blackberry-800/90
+}

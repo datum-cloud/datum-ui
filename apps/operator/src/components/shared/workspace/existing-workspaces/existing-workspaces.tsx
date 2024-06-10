@@ -5,8 +5,11 @@ import { Avatar, AvatarFallback } from '@repo/ui/avatar'
 import { Button } from '@repo/ui/button'
 import { Tag } from '@repo/ui/tag'
 import { switchWorkspace } from '@/lib/user'
+import { useSession } from 'next-auth/react'
 
 export const ExistingWorkspaces = () => {
+  const { data: sessionData, update: updateSession } = useSession()
+  const currentOrg = sessionData?.user.organization
   const { container, orgWrapper, orgInfo, orgSelect, orgTitle } =
     existingWorkspacesStyles()
   const [{ data, fetching, error }] = useGetAllOrganizationsQuery()
@@ -23,8 +26,17 @@ export const ExistingWorkspaces = () => {
 
   const handleWorkspaceSwitch = async (orgId?: string) => {
     if (orgId) {
-      const workspaceSwitcher = await switchWorkspace({
+      const response = await switchWorkspace({
         target_organization_id: orgId,
+      })
+
+      await updateSession({
+        session: response.session,
+        accessToken: response.access_token,
+        refreshToken: response.refresh_token,
+        user: {
+          organization: orgId,
+        },
       })
     }
   }
@@ -49,15 +61,17 @@ export const ExistingWorkspaces = () => {
                 <div className={orgTitle()}>{org?.node?.displayName}</div>
                 <Tag>{role}</Tag>
               </div>
-              <div className={orgSelect()}>
-                <Button
-                  variant="sunglow"
-                  size="md"
-                  onClick={() => handleWorkspaceSwitch(org?.node?.id)}
-                >
-                  Select
-                </Button>
-              </div>
+              {currentOrg !== org?.node?.id && (
+                <div className={orgSelect()}>
+                  <Button
+                    variant="sunglow"
+                    size="md"
+                    onClick={() => handleWorkspaceSwitch(org?.node?.id)}
+                  >
+                    Select
+                  </Button>
+                </div>
+              )}
             </div>
           )
         })}

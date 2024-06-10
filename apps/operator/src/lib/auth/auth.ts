@@ -73,7 +73,7 @@ export const config = {
 
       return true
     },
-    jwt({ token, user, account, profile }) {
+    jwt({ token, user, account, profile, trigger, session }) {
       /* 
       set tokens on user
       */
@@ -88,6 +88,15 @@ export const config = {
       if (typeof profile !== 'undefined') {
         token.name = profile.name ?? token.name
         token.email = profile.email
+      }
+
+      if (
+        trigger === 'update' &&
+        session?.refreshToken &&
+        session?.accessToken
+      ) {
+        token.accessToken = session.accessToken
+        token.refreshToken = session.refreshToken
       }
 
       return token

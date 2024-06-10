@@ -11,8 +11,12 @@ import { Avatar, AvatarFallback } from '@repo/ui/avatar'
 import { Input } from '@repo/ui/input'
 import { Tag } from '@repo/ui/tag'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
+import { switchWorkspace } from '@/lib/user'
 
 export const WorkspaceSelector = () => {
+  const { data: sessionData, update: updateSession } = useSession()
+  const currentOrgId = sessionData?.user.organization
   const [workspaceSearch, setWorkspaceSearch] = useState('')
   const [allOrgs] = useGetAllOrganizationsQuery()
 
@@ -41,11 +45,33 @@ export const WorkspaceSelector = () => {
   const orgs = allOrgs.data.organizations.edges || []
   const filteredOrgs = orgs
     .filter((org) => {
-      return org?.node?.name
-        .toLowerCase()
-        .includes(workspaceSearch.toLowerCase())
+      return (
+        org?.node?.name.toLowerCase().includes(workspaceSearch.toLowerCase()) &&
+        org?.node?.id !== currentOrgId
+      )
     })
     .slice(0, 4)
+
+  const activeOrg = orgs
+    .filter((org) => org?.node?.id === currentOrgId)
+    .map((org) => org?.node)[0]
+
+  const handleWorkspaceSwitch = async (orgId?: string) => {
+    if (orgId) {
+      const response = await switchWorkspace({
+        target_organization_id: orgId,
+      })
+
+      await updateSession({
+        session: response.session,
+        accessToken: response.access_token,
+        refreshToken: response.refresh_token,
+        user: {
+          organization: orgId,
+        },
+      })
+    }
+  }
 
   if (orgs.length === 1) {
     return (
@@ -63,7 +89,7 @@ export const WorkspaceSelector = () => {
         <Popover>
           <PopoverTrigger>
             <div className={workspaceDropdown()}>
-              <span>{orgs && orgs[0]?.node?.displayName}</span>
+              <span>{activeOrg?.displayName}</span>
               <ChevronDown width={18} strokeWidth={2} />
             </div>
           </PopoverTrigger>
@@ -99,7 +125,7 @@ export const WorkspaceSelector = () => {
                     <Button
                       variant="sunglow"
                       size="md"
-                      onClick={() => alert('Switch in progress')}
+                      onClick={() => handleWorkspaceSwitch(org?.node?.id)}
                     >
                       Select
                     </Button>

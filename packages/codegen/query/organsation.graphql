@@ -3,6 +3,7 @@ query GetAllOrganizations {
     edges {
       node {
         id
+        mappingID
         name
         displayName
         description
