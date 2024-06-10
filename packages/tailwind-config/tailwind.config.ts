@@ -5,9 +5,26 @@ export const config: Omit<Config, 'content'> = {
   plugins: [forms],
   theme: {
     extend: {
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+      },
       boxShadow: {
         auth: '0px 8.671px 17.343px -8.671px rgba(0, 0, 0, 0.10)',
         popover: '0px 8.671px 17.343px -8.671px rgba(0, 0, 0, 0.10)',
+      },
+      letterSpacing: {
+        tighter: '-0.01rem',
       },
       colors: {
         blackberry: {

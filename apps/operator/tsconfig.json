@@ -7,9 +7,7 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "strictNullChecks": true
   },
@@ -22,7 +20,5 @@
     "postcss.config.js",
     "../../packages/config-typescript/typings.d.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules", "dist", "build", "coverage", ".next", ".turbo"]
 }

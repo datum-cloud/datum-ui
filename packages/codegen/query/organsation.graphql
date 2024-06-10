@@ -3,6 +3,7 @@ query GetAllOrganizations {
     edges {
       node {
         id
+        mappingID
         name
         displayName
         description
@@ -48,6 +49,14 @@ query GetAllOrganizations {
         createdAt
         updatedAt
       }
+    }
+  }
+}
+
+mutation CreateOrganization($input: CreateOrganizationInput!) {
+  createOrganization(input: $input) {
+    organization {
+      id
     }
   }
 }

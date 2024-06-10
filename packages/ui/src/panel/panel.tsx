@@ -1,10 +1,21 @@
 import React, { ReactNode } from 'react'
 import { cn } from '../../lib/utils'
-import { panelStyles, type PanelVariants } from './panel.styles'
+import {
+  panelHeaderStyles,
+  panelStyles,
+  type PanelVariants,
+  type PanelHeaderVariants,
+} from './panel.styles'
 
 interface PanelProps extends PanelVariants {
   className?: string
   children: ReactNode
+}
+
+interface PanelHeaderProps extends PanelHeaderVariants {
+  className?: string
+  heading: React.ReactNode
+  subheading?: React.ReactNode
 }
 
 const Panel: React.FC<PanelProps> = ({
@@ -19,4 +30,18 @@ const Panel: React.FC<PanelProps> = ({
   return <div className={cn(styles.panel(), className)}>{children}</div>
 }
 
-export { Panel }
+const PanelHeader: React.FC<PanelHeaderProps> = ({
+  className,
+  heading,
+  subheading,
+}) => {
+  const styles = panelHeaderStyles()
+  return (
+    <div className={cn(styles.header(), className)}>
+      <h2 className={styles.heading()}>{heading}</h2>
+      {subheading && <p className={styles.subheading()}>{subheading}</p>}
+    </div>
+  )
+}
+
+export { Panel, PanelHeader }

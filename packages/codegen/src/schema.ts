@@ -29,6 +29,7 @@ export interface Scalars {
   Time: { input: any; output: any; }
   /** The builtin Uint type */
   Uint: { input: any; output: any; }
+  Upload: { input: File; output: File; }
 }
 
 /**
@@ -9418,6 +9419,13 @@ export type GetAllOrganizationsQueryVariables = Exact<{ [key: string]: never; }>
 
 export type GetAllOrganizationsQuery = { __typename?: 'Query', organizations: { __typename?: 'OrganizationConnection', edges?: Array<{ __typename?: 'OrganizationEdge', node?: { __typename?: 'Organization', id: string, name: string, displayName: string, description?: string | null, personalOrg?: boolean | null, createdAt?: any | null, updatedAt?: any | null, parent?: { __typename?: 'Organization', id: string, name: string } | null, children: { __typename?: 'OrganizationConnection', edges?: Array<{ __typename?: 'OrganizationEdge', node?: { __typename?: 'Organization', id: string, name: string, displayName: string, description?: string | null } | null } | null> | null }, members?: Array<{ __typename?: 'OrgMembership', id: string, role: OrgMembershipRole, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null } }> | null, setting?: { __typename?: 'OrganizationSetting', id: string, createdAt?: any | null, updatedAt?: any | null, createdBy?: string | null, updatedBy?: string | null, domains?: Array<string> | null, billingContact?: string | null, billingEmail?: string | null, billingPhone?: string | null, billingAddress?: string | null, taxIdentifier?: string | null, tags?: Array<string> | null, geoLocation?: OrganizationSettingRegion | null } | null } | null } | null> | null } };
 
+export type CreateOrganizationMutationVariables = Exact<{
+  input: CreateOrganizationInput;
+}>;
+
+
+export type CreateOrganizationMutation = { __typename?: 'Mutation', createOrganization: { __typename?: 'OrganizationCreatePayload', organization: { __typename?: 'Organization', id: string } } };
+
 export type CreateSubscriberMutationVariables = Exact<{
   input: CreateSubscriberInput;
 }>;
@@ -9605,6 +9613,19 @@ export const GetAllOrganizationsDocument = gql`
 
 export function useGetAllOrganizationsQuery(options?: Omit<Urql.UseQueryArgs<GetAllOrganizationsQueryVariables>, 'query'>) {
   return Urql.useQuery<GetAllOrganizationsQuery, GetAllOrganizationsQueryVariables>({ query: GetAllOrganizationsDocument, ...options });
+};
+export const CreateOrganizationDocument = gql`
+    mutation CreateOrganization($input: CreateOrganizationInput!) {
+  createOrganization(input: $input) {
+    organization {
+      id
+    }
+  }
+}
+    `;
+
+export function useCreateOrganizationMutation() {
+  return Urql.useMutation<CreateOrganizationMutation, CreateOrganizationMutationVariables>(CreateOrganizationDocument);
 };
 export const CreateSubscriberDocument = gql`
     mutation CreateSubscriber($input: CreateSubscriberInput!) {

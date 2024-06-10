@@ -8,7 +8,7 @@ const Landing = () => {
   const router = useRouter()
 
   useEffect(() => {
-    router.push('/dashboard')
+    router.push('/workspace')
   }, [router])
 
   return (

@@ -39,6 +39,12 @@ export const WithIcon: Story = {
   },
 }
 
+export const WithPrefix: Story = {
+  args: {
+    prefix: 'https://',
+  },
+}
+
 export const Disabled: Story = {
   args: {
     disabled: true,

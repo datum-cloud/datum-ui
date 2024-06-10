@@ -16,7 +16,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@repo/ui/select'
@@ -57,14 +56,13 @@ export const UserMenu = () => {
         <DropdownMenuItem>
           <div>
             <div>
-              <strong>{sessionData?.user.name}</strong>
+              {sessionData?.user.name}
               <br />
               <div className={email()}>{sessionData?.user.email}</div>
             </div>
             <div>
               <Link href="#" className={userSettingsLink()}>
                 User Settings
-                <ArrowRight width={10} />
               </Link>
             </div>
           </div>
@@ -77,6 +75,7 @@ export const UserMenu = () => {
             <Kbd text="K" size="small" />
           </div>
         </div>
+        <DropdownMenuSeparator spacing="md" />
         <div className={themeRow()}>
           <p>Theme</p>
           <Select onValueChange={(value) => setTheme(value)} value={theme}>
@@ -92,6 +91,15 @@ export const UserMenu = () => {
             </SelectContent>
           </Select>
         </div>
+        <DropdownMenuSeparator spacing="md" />
+        <DropdownMenuItem>
+          <div>
+            <Link href="/workspace" className={userSettingsLink()}>
+              My workspaces
+            </Link>
+          </div>
+        </DropdownMenuItem>
+
         <DropdownMenuSeparator spacing="md" />
         <DropdownMenuItem>
           <Button

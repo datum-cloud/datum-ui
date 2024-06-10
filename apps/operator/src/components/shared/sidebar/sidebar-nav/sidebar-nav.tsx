@@ -13,7 +13,6 @@ import {
 } from '@/components/shared/sidebar/sidebar-accordion/sidebar-accordion'
 import { useEffect, useState } from 'react'
 import { cn } from '@repo/ui/lib/utils'
-import { ChevronDownIcon } from 'lucide-react'
 import { Separator as Hr } from '@repo/ui/separator'
 import { sidebarNavStyles } from './sidebar-nav.styles'
 
@@ -26,15 +25,14 @@ interface SideNavProps {
 export function SideNav({ items, setOpen, className }: SideNavProps) {
   const path = usePathname()
   const { isOpen: isSidebarOpen, toggle: toggleOpen } = useSidebar()
-  const [openItem, setOpenItem] = useState('')
-  const [lastOpenItem, setLastOpenItem] = useState('')
+  const [openItems, setOpenItems] = useState<string[]>([])
+  const [lastOpenItems, setLastOpenItems] = useState<string[]>([])
 
   const {
     nav,
     icon,
     accordionTrigger,
     link,
-    expandArrow,
     linkLabel,
     accordionItem,
     separator,
@@ -44,8 +42,8 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
     return (item as Separator).type === 'separator'
   }
 
-  const handleValueChange = (value: string) => {
-    setOpenItem(value)
+  const handleValueChange = (value: string[]) => {
+    setOpenItems(value)
     if (!isSidebarOpen) {
       toggleOpen()
     }
@@ -53,16 +51,16 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
 
   useEffect(() => {
     if (isSidebarOpen) {
-      setOpenItem(lastOpenItem)
+      setOpenItems(lastOpenItems)
     } else {
-      setLastOpenItem(openItem)
-      setOpenItem('')
+      setLastOpenItems(openItems)
+      setOpenItems([])
     }
-  }, [])
+  }, [isSidebarOpen])
 
   useEffect(() => {
     if (!isSidebarOpen) {
-      setOpenItem('')
+      setOpenItems([])
     }
   }, [isSidebarOpen])
 
@@ -75,10 +73,9 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
           </div>
         ) : item.isChildren ? (
           <Accordion
-            type="single"
-            collapsible
+            type="multiple"
             key={item.title}
-            value={openItem}
+            value={openItems}
             onValueChange={handleValueChange}
           >
             <AccordionItem value={item.title} className={accordionItem()}>
@@ -87,8 +84,6 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
                 <div className={cn(linkLabel(), !isSidebarOpen && className)}>
                   {item.title}
                 </div>
-
-                {isSidebarOpen && <ChevronDownIcon className={expandArrow()} />}
               </AccordionTrigger>
               <AccordionContent>
                 {item.children?.map((child) => (

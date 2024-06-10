@@ -19,7 +19,7 @@ const VerifyUser: React.FC = () => {
       const refreshToken = verified?.refresh_token
 
       signIn('credentials', {
-        callbackUrl: '/dashboard',
+        callbackUrl: '/workspace',
         accessToken,
         refreshToken,
       })

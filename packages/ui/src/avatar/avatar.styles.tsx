@@ -8,6 +8,13 @@ export const avatarStyles = tv({
     avatarFallBack:
       'uppercase flex h-full w-full items-center justify-center rounded-md bg-sunglow-900 text-white',
   },
+  variants: {
+    size: {
+      large: {
+        avatarImageWrap: 'h-14 w-14',
+      },
+    },
+  },
 })
 
 export type AvatarVariants = VariantProps<typeof avatarStyles>
