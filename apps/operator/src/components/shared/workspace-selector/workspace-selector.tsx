@@ -5,7 +5,8 @@ import { workspaceSelectorStyles } from './workspace-selector.styles'
 import { useGetAllOrganizationsQuery } from '@repo/codegen/src/schema'
 import { Logo } from '@repo/ui/logo'
 import { Button } from '@repo/ui/button'
-import { ArrowRight, ChevronDown, SearchIcon } from 'lucide-react'
+import { ArrowRight, SearchIcon } from 'lucide-react'
+import { ChevronDown } from '@repo/ui/icons/chevron-down'
 import { Popover, PopoverContent, PopoverTrigger } from '@repo/ui/popover'
 import { Avatar, AvatarFallback } from '@repo/ui/avatar'
 import { Input } from '@repo/ui/input'
@@ -90,7 +91,7 @@ export const WorkspaceSelector = () => {
           <PopoverTrigger>
             <div className={workspaceDropdown()}>
               <span>{activeOrg?.displayName}</span>
-              <ChevronDown width={18} strokeWidth={2} />
+              <ChevronDown />
             </div>
           </PopoverTrigger>
           <PopoverContent align="start" className={popoverContent()}>

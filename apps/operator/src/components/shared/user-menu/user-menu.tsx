@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@repo/ui/select'
 import Link from 'next/link'
-import { ArrowRight, ChevronDown } from 'lucide-react'
+import { ChevronDown } from '@repo/ui/icons/chevron-down'
 import { Kbd } from '@repo/ui/kbd'
 import { useTheme } from 'next-themes'
 
@@ -49,7 +49,7 @@ export const UserMenu = () => {
               {sessionData?.user?.name?.substring(0, 2)}
             </AvatarFallback>
           </Avatar>
-          <ChevronDown width={10} />
+          <ChevronDown />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

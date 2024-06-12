@@ -25,6 +25,7 @@ export const config: Omit<Config, 'content'> = {
       },
       letterSpacing: {
         tighter: '-0.01rem',
+        heading: '-0.038rem',
       },
       colors: {
         blackberry: {

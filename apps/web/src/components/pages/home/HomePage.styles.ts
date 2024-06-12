@@ -8,7 +8,7 @@ const homeStyles = tv({
     leftInner:
       'relative gap-9 md:gap-0 md:max-w-xl flex flex-col justify-between px-6',
     rightImage: 'object-cover',
-    heading: 'text-2xl leading-snug md:text-4xl',
+    heading: '',
     footer: 'hidden md:block',
     githubMobile: 'z-auto block absolute top-0 right-8 md:hidden',
   },

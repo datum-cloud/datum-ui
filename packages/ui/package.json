@@ -37,6 +37,7 @@
     "./message-box": "./src/message-box.tsx",
     "./icons/google": "./src/icons/google.tsx",
     "./icons/github": "./src/icons/github.tsx",
+    "./icons/chevron-down": "./src/icons/chevron-down.tsx",
     "./lib/utils": "./lib/utils.ts"
   },
   "scripts": {
