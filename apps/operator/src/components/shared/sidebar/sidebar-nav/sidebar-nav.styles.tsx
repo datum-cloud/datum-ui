@@ -11,6 +11,8 @@ const sidebarNavStyles = tv({
     link: 'font-sans px-4 py-2 group relative flex h-[2.2rem] justify-start items-center dark:text-peat-400',
     accordionItem: 'border-none ',
     separator: '!my-4',
+    heading:
+      'text-sunglow-900 font-mono px-4 py-2 uppercase font-bold tracking-[0.42px] text-sm',
   },
   variants: {
     isCurrent: {

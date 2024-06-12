@@ -11,3 +11,8 @@ export interface NavItem {
 export interface Separator {
   type: 'separator'
 }
+
+export interface NavHeading {
+  type: 'heading'
+  heading: string
+}
