@@ -65,6 +65,7 @@ export const config = {
 
         if (uData.ok) {
           const userJson = await uData.json()
+
           user.email = userJson?.email
           user.name = `${userJson?.first_name as string} ${userJson?.last_name as string}`
           user.image = userJson?.avatar_remote_url
@@ -101,7 +102,7 @@ export const config = {
 
       return token
     },
-    session: ({ session, token }) => {
+    session({ session, token }) {
       /**
        * Here we can persist data into the client-side
        * session object that is used to read data
@@ -128,7 +129,11 @@ export const config = {
 
       return session
     },
+    async redirect({ baseUrl }) {
+      return baseUrl
+    },
   },
+  debug: true,
 } satisfies NextAuthConfig
 
 /**
