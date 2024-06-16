@@ -133,7 +133,6 @@ export const config = {
       return baseUrl
     },
   },
-  debug: true,
 } satisfies NextAuthConfig
 
 /**
