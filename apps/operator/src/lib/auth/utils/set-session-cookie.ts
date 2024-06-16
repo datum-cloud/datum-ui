@@ -8,7 +8,7 @@ export const setSessionCookie = (session: string): void => {
 
   if (process.env.NODE_ENV === 'production') {
     cookies().set(`${sessionCookieName}`, session, {
-      domain: 'api.datum.net',
+      domain: '.datum.net',
       httpOnly: true,
       secure: true,
       path: '/',
