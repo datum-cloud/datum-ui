@@ -17,7 +17,12 @@ const DashboardLanding: React.FC = () => {
       <Grid rows={2}>
         <GridRow columns={2}>
           <GridCell>
-            <Panel align="center" justify="center" textAlign="center">
+            <Panel
+              align="center"
+              justify="center"
+              textAlign="center"
+              className="min-h-[400px]"
+            >
               <h5 className="text-xl font-mono">Set up your integrations</h5>
               <p className="max-w-[340px]">
                 Maximize the efficiency of your workspace by setting up your
@@ -36,7 +41,12 @@ const DashboardLanding: React.FC = () => {
             </Panel>
           </GridCell>
           <GridCell>
-            <Panel align="center" justify="center" textAlign="center">
+            <Panel
+              align="center"
+              justify="center"
+              textAlign="center"
+              className="min-h-[400px]"
+            >
               <h5 className="text-xl font-mono">Configure your workspace</h5>
               <p className="max-w-[340px]">
                 Define everything from your workspace slug to advanced
@@ -57,7 +67,12 @@ const DashboardLanding: React.FC = () => {
         </GridRow>
         <GridRow columns={1}>
           <GridCell>
-            <Panel align="center" justify="center" textAlign="center">
+            <Panel
+              align="center"
+              justify="center"
+              textAlign="center"
+              className="min-h-[400px]"
+            >
               <h5 className="text-xl font-mono">Add team members</h5>
               <p className="max-w-[340px]">
                 Get your team rocking and rolling by inviting your colleagues to

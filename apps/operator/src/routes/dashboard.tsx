@@ -2,6 +2,7 @@ import {
   AppWindowMacIcon,
   AtSign,
   BarChart3Icon,
+  BellIcon,
   CircleGaugeIcon,
   FileIcon,
   HandshakeIcon,
@@ -16,9 +17,9 @@ import {
   UserRoundCogIcon,
   Users,
 } from 'lucide-react'
-import { type NavItem, type Separator } from '@/types'
+import { NavHeading, type NavItem, type Separator } from '@/types'
 
-export const NavItems: (NavItem | Separator)[] = [
+export const NavItems: (NavItem | Separator | NavHeading)[] = [
   {
     title: 'Home',
     href: '/dashboard',
@@ -281,5 +282,39 @@ export const NavItems: (NavItem | Separator)[] = [
         href: '/developers/startup-program',
       },
     ],
+  },
+]
+
+export const PersonalNavItems: (NavItem | Separator | NavHeading)[] = [
+  {
+    type: 'heading',
+    heading: 'Workspaces',
+  },
+  {
+    title: 'My workspaces',
+    href: '/workspace',
+    icon: LayersIcon,
+  },
+  {
+    type: 'separator',
+  },
+  {
+    type: 'heading',
+    heading: 'User settings',
+  },
+  {
+    title: 'My profile',
+    href: '/profile',
+    icon: Users,
+  },
+  {
+    title: 'Notifications',
+    href: '/notifications',
+    icon: BellIcon,
+  },
+  {
+    title: 'Security',
+    href: '/security',
+    icon: LandmarkIcon,
   },
 ]

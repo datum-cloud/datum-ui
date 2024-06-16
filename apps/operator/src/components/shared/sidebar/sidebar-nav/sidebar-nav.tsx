@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 
-import { type NavItem, type Separator } from '@/types'
+import { NavHeading, type NavItem, type Separator } from '@/types'
 import { usePathname } from 'next/navigation'
 import { useSidebar } from '@/hooks/useSidebar'
 
@@ -17,7 +17,7 @@ import { Separator as Hr } from '@repo/ui/separator'
 import { sidebarNavStyles } from './sidebar-nav.styles'
 
 interface SideNavProps {
-  items: (NavItem | Separator)[]
+  items: (NavItem | Separator | NavHeading)[]
   setOpen?: (open: boolean) => void
   className?: string
 }
@@ -36,10 +36,19 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
     linkLabel,
     accordionItem,
     separator,
+    heading,
   } = sidebarNavStyles()
 
-  const isSeparator = (item: NavItem | Separator): item is Separator => {
+  const isSeparator = (
+    item: NavItem | Separator | NavHeading,
+  ): item is Separator => {
     return (item as Separator).type === 'separator'
+  }
+
+  const isNavHeading = (
+    item: NavItem | Separator | NavHeading,
+  ): item is NavHeading => {
+    return (item as NavHeading).type === 'heading'
   }
 
   const handleValueChange = (value: string[]) => {
@@ -70,6 +79,10 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
         isSeparator(item) ? (
           <div key={`${idx}_${item.type}`} className={separator()}>
             <Hr />
+          </div>
+        ) : isNavHeading(item) ? (
+          <div key={`${idx}_${item.type}`} className={heading()}>
+            {item.heading}
           </div>
         ) : item.isChildren ? (
           <Accordion

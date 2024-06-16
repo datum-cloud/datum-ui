@@ -6,7 +6,7 @@ const workspaceSelectorStyles = tv({
     container: 'flex content-center gap-4',
     workspaceLabel:
       'text-sunglow-900 uppercase font-mono text-xs font-semibold tracking-wide',
-    workspaceDropdown: 'flex items-center gap-1 text-lg cursor-pointer',
+    workspaceDropdown: 'flex items-center gap-[6px] text-lg cursor-pointer',
     dropdownContent: 'p-0',
     allWorkspacesLink:
       'flex items-center gap-2 text-sunglow-900 py-5 px-6 border-t border-winter-sky-900',
