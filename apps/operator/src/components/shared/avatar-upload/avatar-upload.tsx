@@ -101,6 +101,7 @@ const AvatarUpload = ({ className }: AvatarUploadProps) => {
       closeModal()
       toast({
         title: 'Avatar saved succesfully',
+        variant: 'success',
       })
     }
   }

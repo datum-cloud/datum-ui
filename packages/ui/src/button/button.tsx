@@ -13,6 +13,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       iconAnimated,
       iconPosition,
       variant,
+      full,
       ...rest
     },
     ref,
@@ -29,6 +30,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       iconAnimated,
       iconPosition,
       variant,
+      full,
       ...rest,
     })
 
