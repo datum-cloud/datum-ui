@@ -91,7 +91,7 @@ const WorkspaceNameForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input {...field} />
+                    <Input variant="medium" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

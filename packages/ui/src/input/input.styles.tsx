@@ -21,6 +21,11 @@ export const inputStyles = tv({
         input: '',
       },
     },
+    variant: {
+      medium: {
+        input: 'w-[280px] max-w-full',
+      },
+    },
   },
 })
 

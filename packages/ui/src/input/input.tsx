@@ -22,8 +22,10 @@ interface InputRowProps extends InputRowVariants {
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, icon, prefix, ...props }, ref) => {
-    const { input, inputWrapper, iconWrapper, prefixWrapper } = inputStyles()
+  ({ className, type, icon, prefix, variant, ...props }, ref) => {
+    const { input, inputWrapper, iconWrapper, prefixWrapper } = inputStyles({
+      variant,
+    })
     const hasIcon = Boolean(icon)
     const hasPrefix = Boolean(prefix)
     const prefixRef = useRef<HTMLDivElement>(null)

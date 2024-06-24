@@ -87,7 +87,7 @@ const WorkspaceEmailForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input type="email" {...field} />
+                    <Input variant="medium" type="email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

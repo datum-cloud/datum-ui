@@ -2,7 +2,7 @@ import { tv, type VariantProps } from 'tailwind-variants'
 
 export const formStyles = tv({
   slots: {
-    formItem: 'space-y-2 flex-1',
+    formItem: 'space-y-2',
     formLabelError: '',
     formDescription: 'text-sm text-slate-500 dark:text-slate-400',
     formMessageIcon: 'text-util-red-400',
