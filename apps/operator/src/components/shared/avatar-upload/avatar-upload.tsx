@@ -22,12 +22,14 @@ import { Button } from '@repo/ui/button'
 import Cropper, { Area, Point } from 'react-easy-crop'
 import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
 import getCroppedImg from './utils/getCroppedImage'
+import { useToast } from '@repo/ui/use-toast'
 
 interface AvatarUploadProps extends AvatarUploadVariants {
   className?: string
 }
 
 const AvatarUpload = ({ className }: AvatarUploadProps) => {
+  const { toast } = useToast()
   const { data: sessionData } = useSession()
   const currentOrgId = sessionData?.user.organization
   const [allOrgs] = useGetAllOrganizationsQuery()
@@ -97,6 +99,9 @@ const AvatarUpload = ({ className }: AvatarUploadProps) => {
       )
       setAvatarUrl(croppedImageUrl)
       closeModal()
+      toast({
+        title: 'Avatar saved succesfully',
+      })
     }
   }
 

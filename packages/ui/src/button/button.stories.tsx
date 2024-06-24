@@ -132,3 +132,17 @@ export const BrandIcon: Story = {
     variant: 'outline',
   },
 }
+
+export const Loading: Story = {
+  name: 'In a loading state',
+  args: {
+    loading: true,
+  },
+}
+
+export const Success: Story = {
+  name: 'In a success state',
+  args: {
+    variant: 'success',
+  },
+}

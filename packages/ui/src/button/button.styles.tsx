@@ -3,9 +3,13 @@ import { tv, type VariantProps } from 'tailwind-variants'
 
 export const buttonStyles = tv({
   slots: {
-    base: 'group font-sans font-semibold text-white inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md leading-none text-sm transition-opacity duration-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blackberry-300 disabled:pointer-events-none disabled:opacity-50',
+    base: 'relative group font-sans font-semibold text-white inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md leading-none text-sm transition-all duration-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blackberry-300 disabled:pointer-events-none disabled:opacity-50',
     iconOuter: 'relative h-4 w-4 overflow-hidden',
     iconInner: 'absolute transition-all duration-500',
+    loadingWrapper:
+      'absolute top-1/2 left-1/2  transform -translate-x-1/2 -translate-y-1/2',
+    loadingIcon: 'animate-spin !h-6 !w-6',
+    loadingText: 'opacity-0',
   },
   variants: {
     variant: {
@@ -14,6 +18,7 @@ export const buttonStyles = tv({
       outline:
         'border-blackberry-800 text-blackberry-800 border hover:!opacity-90 dark:border-peat-400 dark:text-white',
       white: {},
+      success: 'flex-row-reverse !bg-util-green-500 hover:!opacity-90',
     },
     iconPosition: {
       left: 'flex-row-reverse',
@@ -50,6 +55,11 @@ export const buttonStyles = tv({
       size: 'sm',
       class: 'text-white',
     },
+    {
+      variant: 'success',
+      size: 'sm',
+      class: 'text-white',
+    },
   ],
   defaultVariants: {
     variant: 'sunglow',
@@ -66,4 +76,5 @@ export interface ButtonProps
     ButtonVariants {
   asChild?: boolean
   icon?: ReactNode
+  loading?: boolean
 }

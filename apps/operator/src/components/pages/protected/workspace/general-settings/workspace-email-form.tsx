@@ -17,9 +17,11 @@ import {
 } from '@repo/ui/form'
 import { z } from 'zod'
 import { Button } from '@repo/ui/button'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { RESET_SUCCESS_STATE_MS } from '@/constants'
 
 const WorkspaceEmailForm = () => {
+  const [isSuccess, setIsSuccess] = useState(false)
   const [{ fetching: isSubmitting }, updateOrganisation] =
     useUpdateOrganizationMutation()
   const { data: sessionData } = useSession()
@@ -57,11 +59,21 @@ const WorkspaceEmailForm = () => {
         },
       },
     })
+    setIsSuccess(true)
   }
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     updateWorkspace({ email: data.email })
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      const timer = setTimeout(() => {
+        setIsSuccess(false)
+      }, RESET_SUCCESS_STATE_MS)
+      return () => clearTimeout(timer)
+    }
+  }, [isSuccess])
 
   return (
     <Panel>
@@ -81,7 +93,13 @@ const WorkspaceEmailForm = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit">{isSubmitting ? 'Saving' : 'Save'}</Button>
+            <Button
+              variant={isSuccess ? 'success' : 'sunglow'}
+              type="submit"
+              loading={isSubmitting}
+            >
+              {isSubmitting ? 'Saving' : isSuccess ? 'Saved' : 'Save'}
+            </Button>
           </InputRow>
         </form>
       </Form>
