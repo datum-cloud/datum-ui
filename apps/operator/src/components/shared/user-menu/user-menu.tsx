@@ -84,7 +84,7 @@ export const UserMenu = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="system">System</SelectItem>
+                <SelectItem value="system">Default</SelectItem>
                 <SelectItem value="dark">Dark</SelectItem>
                 <SelectItem value="light">Light</SelectItem>
               </SelectGroup>

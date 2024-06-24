@@ -34,8 +34,9 @@ const PanelHeader: React.FC<PanelHeaderProps> = ({
   className,
   heading,
   subheading,
+  noBorder,
 }) => {
-  const styles = panelHeaderStyles()
+  const styles = panelHeaderStyles({ noBorder })
   return (
     <div className={cn(styles.header(), className)}>
       <h2 className={styles.heading()}>{heading}</h2>

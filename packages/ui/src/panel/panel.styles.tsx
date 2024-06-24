@@ -44,9 +44,22 @@ export const panelStyles = tv({
 
 export const panelHeaderStyles = tv({
   slots: {
-    header: 'mb-4 pb-8 border-b border-winter-sky-900',
+    header: 'mb-4 pb-8',
     heading: 'text-xl font-semibold',
     subheading: 'mt-5',
+  },
+  variants: {
+    noBorder: {
+      true: {
+        header: 'border-none pb-0 mb-0',
+      },
+      false: {
+        header: 'border-b border-winter-sky-900',
+      },
+    },
+  },
+  defaultVariants: {
+    noBorder: false,
   },
 })
 

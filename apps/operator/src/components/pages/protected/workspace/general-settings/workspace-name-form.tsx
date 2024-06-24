@@ -1,0 +1,96 @@
+'use client'
+import {
+  useGetAllOrganizationsQuery,
+  useUpdateOrganizationMutation,
+} from '@repo/codegen/src/schema'
+import { Input, InputRow } from '@repo/ui/input'
+import { Panel, PanelHeader } from '@repo/ui/panel'
+import { useSession } from 'next-auth/react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  Form,
+  FormItem,
+  FormField,
+  FormControl,
+  FormMessage,
+} from '@repo/ui/form'
+import { z } from 'zod'
+import { Button } from '@repo/ui/button'
+import { useEffect } from 'react'
+
+const WorkspaceNameForm = () => {
+  const [{ fetching: isSubmitting }, updateOrganisation] =
+    useUpdateOrganizationMutation()
+  const { data: sessionData } = useSession()
+  const currentOrgId = sessionData?.user.organization
+  const [allOrgs] = useGetAllOrganizationsQuery()
+  const currentWorkspace = allOrgs.data?.organizations.edges?.filter(
+    (org) => org?.node?.id === currentOrgId,
+  )[0]?.node
+
+  const formSchema = z.object({
+    displayName: z.string().min(2, {
+      message: 'Display name must be at least 2 characters',
+    }),
+  })
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      displayName: '',
+    },
+  })
+
+  useEffect(() => {
+    if (currentWorkspace) {
+      form.reset({
+        displayName: currentWorkspace.displayName,
+      })
+    }
+  }, [currentWorkspace, form])
+
+  const updateWorkspace = async ({ displayName }: { displayName: string }) => {
+    await updateOrganisation({
+      updateOrganizationId: currentOrgId,
+      input: {
+        displayName: displayName,
+      },
+    })
+  }
+
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    updateWorkspace({ displayName: data.displayName })
+  }
+
+  return (
+    <Panel>
+      <PanelHeader
+        heading="Workspace name"
+        subheading="This is your team's visible name within Datum. For example, the name of your company or department."
+        noBorder
+      />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <InputRow>
+            <FormField
+              control={form.control}
+              name="displayName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">{isSubmitting ? 'Saving' : 'Save'}</Button>
+          </InputRow>
+        </form>
+      </Form>
+    </Panel>
+  )
+}
+
+export { WorkspaceNameForm }

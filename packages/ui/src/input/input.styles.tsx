@@ -24,4 +24,11 @@ export const inputStyles = tv({
   },
 })
 
+export const inputRowStyles = tv({
+  slots: {
+    wrapper: 'flex gap-6',
+  },
+})
+
 export type InputVariants = VariantProps<typeof inputStyles>
+export type InputRowVariants = VariantProps<typeof inputRowStyles>
