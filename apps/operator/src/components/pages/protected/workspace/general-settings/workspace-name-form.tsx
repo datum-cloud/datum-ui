@@ -79,7 +79,7 @@ const WorkspaceNameForm = () => {
     <Panel>
       <PanelHeader
         heading="Workspace name"
-        subheading="This is your team's visible name within Datum. For example, the name of your company or department."
+        subheading="This is the name of your workspace, which will hold your data and other configuration. This would typically be the name of the company you work for or represent."
         noBorder
       />
       <Form {...form}>
