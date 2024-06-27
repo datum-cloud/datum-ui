@@ -100,7 +100,7 @@ const AvatarUpload = ({ className }: AvatarUploadProps) => {
       setAvatarUrl(croppedImageUrl)
       closeModal()
       toast({
-        title: 'Avatar saved succesfully',
+        title: 'Avatar updated successfully',
         variant: 'success',
       })
     }
