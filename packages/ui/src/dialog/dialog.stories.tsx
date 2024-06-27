@@ -35,7 +35,7 @@ const meta: Meta<typeof Dialog> = {
           <DialogHeader>
             <DialogTitle>Are you absolutely sure?</DialogTitle>
             <DialogDescription>
-              This action cannot be undone. This will permanently delete your
+              This action cannot be undone. Your workspace and associated records will be deleted.
               account and remove your data from our servers.
             </DialogDescription>
           </DialogHeader>
