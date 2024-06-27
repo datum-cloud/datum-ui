@@ -6,6 +6,7 @@ import { Button } from '@repo/ui/button'
 import { Tag } from '@repo/ui/tag'
 import { switchWorkspace } from '@/lib/user'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 export const ExistingWorkspaces = () => {
   const { data: sessionData, update: updateSession } = useSession()
@@ -13,12 +14,14 @@ export const ExistingWorkspaces = () => {
   const { container, orgWrapper, orgInfo, orgSelect, orgTitle } =
     existingWorkspacesStyles()
   const [{ data, fetching, error }] = useGetAllOrganizationsQuery()
+  const { push } = useRouter()
 
   if (!data || fetching || error) {
     return null
   }
 
-  const orgs = data.organizations.edges || []
+  const orgs =
+    data.organizations.edges?.filter((org) => !org?.node?.personalOrg) || []
 
   if (orgs.length === 0) {
     return null
@@ -38,6 +41,8 @@ export const ExistingWorkspaces = () => {
           organization: orgId,
         },
       })
+
+      push('/dashboard')
     }
   }
 

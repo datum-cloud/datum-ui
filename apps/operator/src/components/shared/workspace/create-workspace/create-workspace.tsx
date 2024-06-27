@@ -3,7 +3,6 @@
 import { createWorkspaceStyles } from './create-workspace.styles'
 import { Panel, PanelHeader } from '@repo/ui/panel'
 import { useToast } from '@repo/ui/use-toast'
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import {
@@ -17,6 +16,7 @@ import {
 import { Info } from '@repo/ui/info'
 import { Input } from '@repo/ui/input'
 import { Button } from '@repo/ui/button'
+import { useRouter } from 'next/navigation'
 import { z } from 'zod'
 import {
   useCreateOrganizationMutation,
@@ -40,6 +40,7 @@ const formSchema = z.object({
 })
 
 export const CreateWorkspaceForm = () => {
+  const { push } = useRouter()
   const { toast } = useToast()
   const [allOrgs] = useGetAllOrganizationsQuery()
   const numOrgs = allOrgs.data?.organizations?.edges?.length ?? 0
@@ -65,12 +66,13 @@ export const CreateWorkspaceForm = () => {
     name: string
     displayName?: string
   }) => {
-    await addOrganization({
+    const response = await addOrganization({
       input: {
         name: name,
         displayName: displayName,
       },
     })
+    response.data && push('/dashboard')
   }
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
@@ -79,9 +81,10 @@ export const CreateWorkspaceForm = () => {
 
   useEffect(() => {
     if (errorMessages.length > 0) {
-      // toast({
-      //   title: errorMessages.join('\n'),
-      // })
+      toast({
+        title: errorMessages.join('\n'),
+        variant: 'destructive',
+      })
     }
   }, [errorMessages])
 
