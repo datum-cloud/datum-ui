@@ -220,6 +220,7 @@ export interface CreateDocumentDataInput {
   createdBy?: InputMaybe<Scalars['String']['input']>;
   /** the json data of the document */
   data: Scalars['JSON']['input'];
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
   /** tags associated with the object */
   tags?: InputMaybe<Array<Scalars['String']['input']>>;
   templateID: Scalars['ID']['input'];
@@ -554,6 +555,7 @@ export interface CreateOrganizationInput {
   description?: InputMaybe<Scalars['String']['input']>;
   /** The organization's displayed 'friendly' name */
   displayName?: InputMaybe<Scalars['String']['input']>;
+  documentdatumIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   entitlementIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   eventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   featureIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -890,6 +892,22 @@ export interface DocumentDataHistoryWhereInput {
   operationNEQ?: InputMaybe<DocumentDataHistoryOpType>;
   operationNotIn?: InputMaybe<Array<DocumentDataHistoryOpType>>;
   or?: InputMaybe<Array<DocumentDataHistoryWhereInput>>;
+  /** owner_id field predicates */
+  ownerID?: InputMaybe<Scalars['String']['input']>;
+  ownerIDContains?: InputMaybe<Scalars['String']['input']>;
+  ownerIDContainsFold?: InputMaybe<Scalars['String']['input']>;
+  ownerIDEqualFold?: InputMaybe<Scalars['String']['input']>;
+  ownerIDGT?: InputMaybe<Scalars['String']['input']>;
+  ownerIDGTE?: InputMaybe<Scalars['String']['input']>;
+  ownerIDHasPrefix?: InputMaybe<Scalars['String']['input']>;
+  ownerIDHasSuffix?: InputMaybe<Scalars['String']['input']>;
+  ownerIDIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
+  ownerIDLT?: InputMaybe<Scalars['String']['input']>;
+  ownerIDLTE?: InputMaybe<Scalars['String']['input']>;
+  ownerIDNEQ?: InputMaybe<Scalars['String']['input']>;
+  ownerIDNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** ref field predicates */
   ref?: InputMaybe<Scalars['String']['input']>;
   refContains?: InputMaybe<Scalars['String']['input']>;
@@ -1009,6 +1027,9 @@ export interface DocumentDataWhereInput {
   deletedByNEQ?: InputMaybe<Scalars['String']['input']>;
   deletedByNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
   deletedByNotNil?: InputMaybe<Scalars['Boolean']['input']>;
+  /** owner edge predicates */
+  hasOwner?: InputMaybe<Scalars['Boolean']['input']>;
+  hasOwnerWith?: InputMaybe<Array<OrganizationWhereInput>>;
   /** template edge predicates */
   hasTemplate?: InputMaybe<Scalars['Boolean']['input']>;
   hasTemplateWith?: InputMaybe<Array<TemplateWhereInput>>;
@@ -1025,6 +1046,22 @@ export interface DocumentDataWhereInput {
   idNotIn?: InputMaybe<Array<Scalars['ID']['input']>>;
   not?: InputMaybe<DocumentDataWhereInput>;
   or?: InputMaybe<Array<DocumentDataWhereInput>>;
+  /** owner_id field predicates */
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDContains?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDContainsFold?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDEqualFold?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDGT?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDGTE?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDHasPrefix?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDHasSuffix?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
+  ownerIDLT?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDLTE?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDNEQ?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDNotIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** template_id field predicates */
   templateID?: InputMaybe<Scalars['ID']['input']>;
   templateIDContains?: InputMaybe<Scalars['ID']['input']>;
@@ -1218,6 +1255,22 @@ export interface EntitlementHistoryWhereInput {
   operationNEQ?: InputMaybe<EntitlementHistoryOpType>;
   operationNotIn?: InputMaybe<Array<EntitlementHistoryOpType>>;
   or?: InputMaybe<Array<EntitlementHistoryWhereInput>>;
+  /** owner_id field predicates */
+  ownerID?: InputMaybe<Scalars['String']['input']>;
+  ownerIDContains?: InputMaybe<Scalars['String']['input']>;
+  ownerIDContainsFold?: InputMaybe<Scalars['String']['input']>;
+  ownerIDEqualFold?: InputMaybe<Scalars['String']['input']>;
+  ownerIDGT?: InputMaybe<Scalars['String']['input']>;
+  ownerIDGTE?: InputMaybe<Scalars['String']['input']>;
+  ownerIDHasPrefix?: InputMaybe<Scalars['String']['input']>;
+  ownerIDHasSuffix?: InputMaybe<Scalars['String']['input']>;
+  ownerIDIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
+  ownerIDLT?: InputMaybe<Scalars['String']['input']>;
+  ownerIDLTE?: InputMaybe<Scalars['String']['input']>;
+  ownerIDNEQ?: InputMaybe<Scalars['String']['input']>;
+  ownerIDNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** ref field predicates */
   ref?: InputMaybe<Scalars['String']['input']>;
   refContains?: InputMaybe<Scalars['String']['input']>;
@@ -1406,6 +1459,22 @@ export interface EntitlementWhereInput {
   idNotIn?: InputMaybe<Array<Scalars['ID']['input']>>;
   not?: InputMaybe<EntitlementWhereInput>;
   or?: InputMaybe<Array<EntitlementWhereInput>>;
+  /** owner_id field predicates */
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDContains?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDContainsFold?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDEqualFold?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDGT?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDGTE?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDHasPrefix?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDHasSuffix?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
+  ownerIDLT?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDLTE?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDNEQ?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDNotIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** tier field predicates */
   tier?: InputMaybe<EntitlementTier>;
   tierIn?: InputMaybe<Array<EntitlementTier>>;
@@ -2673,6 +2742,22 @@ export interface GroupHistoryWhereInput {
   operationNEQ?: InputMaybe<GroupHistoryOpType>;
   operationNotIn?: InputMaybe<Array<GroupHistoryOpType>>;
   or?: InputMaybe<Array<GroupHistoryWhereInput>>;
+  /** owner_id field predicates */
+  ownerID?: InputMaybe<Scalars['String']['input']>;
+  ownerIDContains?: InputMaybe<Scalars['String']['input']>;
+  ownerIDContainsFold?: InputMaybe<Scalars['String']['input']>;
+  ownerIDEqualFold?: InputMaybe<Scalars['String']['input']>;
+  ownerIDGT?: InputMaybe<Scalars['String']['input']>;
+  ownerIDGTE?: InputMaybe<Scalars['String']['input']>;
+  ownerIDHasPrefix?: InputMaybe<Scalars['String']['input']>;
+  ownerIDHasSuffix?: InputMaybe<Scalars['String']['input']>;
+  ownerIDIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
+  ownerIDLT?: InputMaybe<Scalars['String']['input']>;
+  ownerIDLTE?: InputMaybe<Scalars['String']['input']>;
+  ownerIDNEQ?: InputMaybe<Scalars['String']['input']>;
+  ownerIDNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** ref field predicates */
   ref?: InputMaybe<Scalars['String']['input']>;
   refContains?: InputMaybe<Scalars['String']['input']>;
@@ -3496,6 +3581,22 @@ export interface GroupWhereInput {
   nameNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
   not?: InputMaybe<GroupWhereInput>;
   or?: InputMaybe<Array<GroupWhereInput>>;
+  /** owner_id field predicates */
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDContains?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDContainsFold?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDEqualFold?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDGT?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDGTE?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDHasPrefix?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDHasSuffix?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
+  ownerIDLT?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDLTE?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDNEQ?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDNotIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** updated_at field predicates */
   updatedAt?: InputMaybe<Scalars['Time']['input']>;
   updatedAtGT?: InputMaybe<Scalars['Time']['input']>;
@@ -4639,6 +4740,22 @@ export interface OauthProviderHistoryWhereInput {
   operationNEQ?: InputMaybe<OauthProviderHistoryOpType>;
   operationNotIn?: InputMaybe<Array<OauthProviderHistoryOpType>>;
   or?: InputMaybe<Array<OauthProviderHistoryWhereInput>>;
+  /** owner_id field predicates */
+  ownerID?: InputMaybe<Scalars['String']['input']>;
+  ownerIDContains?: InputMaybe<Scalars['String']['input']>;
+  ownerIDContainsFold?: InputMaybe<Scalars['String']['input']>;
+  ownerIDEqualFold?: InputMaybe<Scalars['String']['input']>;
+  ownerIDGT?: InputMaybe<Scalars['String']['input']>;
+  ownerIDGTE?: InputMaybe<Scalars['String']['input']>;
+  ownerIDHasPrefix?: InputMaybe<Scalars['String']['input']>;
+  ownerIDHasSuffix?: InputMaybe<Scalars['String']['input']>;
+  ownerIDIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
+  ownerIDLT?: InputMaybe<Scalars['String']['input']>;
+  ownerIDLTE?: InputMaybe<Scalars['String']['input']>;
+  ownerIDNEQ?: InputMaybe<Scalars['String']['input']>;
+  ownerIDNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** redirect_url field predicates */
   redirectURL?: InputMaybe<Scalars['String']['input']>;
   redirectURLContains?: InputMaybe<Scalars['String']['input']>;
@@ -4881,6 +4998,22 @@ export interface OauthProviderWhereInput {
   nameNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
   not?: InputMaybe<OauthProviderWhereInput>;
   or?: InputMaybe<Array<OauthProviderWhereInput>>;
+  /** owner_id field predicates */
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDContains?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDContainsFold?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDEqualFold?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDGT?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDGTE?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDHasPrefix?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDHasSuffix?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
+  ownerIDLT?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDLTE?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDNEQ?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDNotIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** redirect_url field predicates */
   redirectURL?: InputMaybe<Scalars['String']['input']>;
   redirectURLContains?: InputMaybe<Scalars['String']['input']>;
@@ -6172,6 +6305,9 @@ export interface OrganizationWhereInput {
   /** children edge predicates */
   hasChildren?: InputMaybe<Scalars['Boolean']['input']>;
   hasChildrenWith?: InputMaybe<Array<OrganizationWhereInput>>;
+  /** documentdata edge predicates */
+  hasDocumentdata?: InputMaybe<Scalars['Boolean']['input']>;
+  hasDocumentdataWith?: InputMaybe<Array<DocumentDataWhereInput>>;
   /** entitlements edge predicates */
   hasEntitlements?: InputMaybe<Scalars['Boolean']['input']>;
   hasEntitlementsWith?: InputMaybe<Array<EntitlementWhereInput>>;
@@ -6872,6 +7008,22 @@ export interface TemplateHistoryWhereInput {
   operationNEQ?: InputMaybe<TemplateHistoryOpType>;
   operationNotIn?: InputMaybe<Array<TemplateHistoryOpType>>;
   or?: InputMaybe<Array<TemplateHistoryWhereInput>>;
+  /** owner_id field predicates */
+  ownerID?: InputMaybe<Scalars['String']['input']>;
+  ownerIDContains?: InputMaybe<Scalars['String']['input']>;
+  ownerIDContainsFold?: InputMaybe<Scalars['String']['input']>;
+  ownerIDEqualFold?: InputMaybe<Scalars['String']['input']>;
+  ownerIDGT?: InputMaybe<Scalars['String']['input']>;
+  ownerIDGTE?: InputMaybe<Scalars['String']['input']>;
+  ownerIDHasPrefix?: InputMaybe<Scalars['String']['input']>;
+  ownerIDHasSuffix?: InputMaybe<Scalars['String']['input']>;
+  ownerIDIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
+  ownerIDLT?: InputMaybe<Scalars['String']['input']>;
+  ownerIDLTE?: InputMaybe<Scalars['String']['input']>;
+  ownerIDNEQ?: InputMaybe<Scalars['String']['input']>;
+  ownerIDNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** ref field predicates */
   ref?: InputMaybe<Scalars['String']['input']>;
   refContains?: InputMaybe<Scalars['String']['input']>;
@@ -7044,6 +7196,22 @@ export interface TemplateWhereInput {
   nameNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
   not?: InputMaybe<TemplateWhereInput>;
   or?: InputMaybe<Array<TemplateWhereInput>>;
+  /** owner_id field predicates */
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDContains?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDContainsFold?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDEqualFold?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDGT?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDGTE?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDHasPrefix?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDHasSuffix?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
+  ownerIDLT?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDLTE?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDNEQ?: InputMaybe<Scalars['ID']['input']>;
+  ownerIDNotIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  ownerIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** template_type field predicates */
   templateType?: InputMaybe<TemplateDocumentType>;
   templateTypeIn?: InputMaybe<Array<TemplateDocumentType>>;
@@ -7111,11 +7279,13 @@ export interface UpdateApiTokenInput {
  */
 export interface UpdateDocumentDataInput {
   appendTags?: InputMaybe<Array<Scalars['String']['input']>>;
+  clearOwner?: InputMaybe<Scalars['Boolean']['input']>;
   clearTags?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedAt?: InputMaybe<Scalars['Boolean']['input']>;
   clearUpdatedBy?: InputMaybe<Scalars['Boolean']['input']>;
   /** the json data of the document */
   data?: InputMaybe<Scalars['JSON']['input']>;
+  ownerID?: InputMaybe<Scalars['ID']['input']>;
   /** tags associated with the object */
   tags?: InputMaybe<Array<Scalars['String']['input']>>;
   templateID?: InputMaybe<Scalars['ID']['input']>;
@@ -7555,6 +7725,7 @@ export interface UpdateOrgMembershipInput {
  */
 export interface UpdateOrganizationInput {
   addAPITokenIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  addDocumentdatumIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addEntitlementIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   addFeatureIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -7576,6 +7747,7 @@ export interface UpdateOrganizationInput {
   clearAPITokens?: InputMaybe<Scalars['Boolean']['input']>;
   clearAvatarRemoteURL?: InputMaybe<Scalars['Boolean']['input']>;
   clearDescription?: InputMaybe<Scalars['Boolean']['input']>;
+  clearDocumentdata?: InputMaybe<Scalars['Boolean']['input']>;
   clearEntitlements?: InputMaybe<Scalars['Boolean']['input']>;
   clearEvents?: InputMaybe<Scalars['Boolean']['input']>;
   clearFeatures?: InputMaybe<Scalars['Boolean']['input']>;
@@ -7601,6 +7773,7 @@ export interface UpdateOrganizationInput {
   /** the name of the organization */
   name?: InputMaybe<Scalars['String']['input']>;
   removeAPITokenIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
+  removeDocumentdatumIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeEntitlementIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeEventIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   removeFeatureIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -9417,7 +9590,7 @@ export type GetAllGroupsQuery = { __typename?: 'Query', groups: { __typename?: '
 export type GetAllOrganizationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllOrganizationsQuery = { __typename?: 'Query', organizations: { __typename?: 'OrganizationConnection', edges?: Array<{ __typename?: 'OrganizationEdge', node?: { __typename?: 'Organization', id: string, name: string, displayName: string, description?: string | null, personalOrg?: boolean | null, createdAt?: any | null, updatedAt?: any | null, parent?: { __typename?: 'Organization', id: string, name: string } | null, children: { __typename?: 'OrganizationConnection', edges?: Array<{ __typename?: 'OrganizationEdge', node?: { __typename?: 'Organization', id: string, name: string, displayName: string, description?: string | null } | null } | null> | null }, members?: Array<{ __typename?: 'OrgMembership', id: string, role: OrgMembershipRole, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null } }> | null, setting?: { __typename?: 'OrganizationSetting', id: string, createdAt?: any | null, updatedAt?: any | null, createdBy?: string | null, updatedBy?: string | null, domains?: Array<string> | null, billingContact?: string | null, billingEmail?: string | null, billingPhone?: string | null, billingAddress?: string | null, taxIdentifier?: string | null, tags?: Array<string> | null, geoLocation?: OrganizationSettingRegion | null } | null } | null } | null> | null } };
+export type GetAllOrganizationsQuery = { __typename?: 'Query', organizations: { __typename?: 'OrganizationConnection', edges?: Array<{ __typename?: 'OrganizationEdge', node?: { __typename?: 'Organization', id: string, name: string, displayName: string, avatarRemoteURL?: string | null, description?: string | null, personalOrg?: boolean | null, createdAt?: any | null, updatedAt?: any | null, parent?: { __typename?: 'Organization', id: string, name: string } | null, children: { __typename?: 'OrganizationConnection', edges?: Array<{ __typename?: 'OrganizationEdge', node?: { __typename?: 'Organization', id: string, name: string, displayName: string, description?: string | null } | null } | null> | null }, members?: Array<{ __typename?: 'OrgMembership', id: string, role: OrgMembershipRole, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null } }> | null, setting?: { __typename?: 'OrganizationSetting', id: string, createdAt?: any | null, updatedAt?: any | null, createdBy?: string | null, updatedBy?: string | null, domains?: Array<string> | null, billingContact?: string | null, billingEmail?: string | null, billingPhone?: string | null, billingAddress?: string | null, taxIdentifier?: string | null, tags?: Array<string> | null, geoLocation?: OrganizationSettingRegion | null } | null } | null } | null> | null } };
 
 export type CreateOrganizationMutationVariables = Exact<{
   input: CreateOrganizationInput;
@@ -9425,6 +9598,14 @@ export type CreateOrganizationMutationVariables = Exact<{
 
 
 export type CreateOrganizationMutation = { __typename?: 'Mutation', createOrganization: { __typename?: 'OrganizationCreatePayload', organization: { __typename?: 'Organization', id: string } } };
+
+export type UpdateOrganizationMutationVariables = Exact<{
+  updateOrganizationId: Scalars['ID']['input'];
+  input: UpdateOrganizationInput;
+}>;
+
+
+export type UpdateOrganizationMutation = { __typename?: 'Mutation', updateOrganization: { __typename?: 'OrganizationUpdatePayload', organization: { __typename?: 'Organization', id: string } } };
 
 export type CreateSubscriberMutationVariables = Exact<{
   input: CreateSubscriberInput;
@@ -9563,6 +9744,7 @@ export const GetAllOrganizationsDocument = gql`
         id
         name
         displayName
+        avatarRemoteURL
         description
         personalOrg
         parent {
@@ -9626,6 +9808,19 @@ export const CreateOrganizationDocument = gql`
 
 export function useCreateOrganizationMutation() {
   return Urql.useMutation<CreateOrganizationMutation, CreateOrganizationMutationVariables>(CreateOrganizationDocument);
+};
+export const UpdateOrganizationDocument = gql`
+    mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizationInput!) {
+  updateOrganization(id: $updateOrganizationId, input: $input) {
+    organization {
+      id
+    }
+  }
+}
+    `;
+
+export function useUpdateOrganizationMutation() {
+  return Urql.useMutation<UpdateOrganizationMutation, UpdateOrganizationMutationVariables>(UpdateOrganizationDocument);
 };
 export const CreateSubscriberDocument = gql`
     mutation CreateSubscriber($input: CreateSubscriberInput!) {

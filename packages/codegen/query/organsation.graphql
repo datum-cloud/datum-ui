@@ -3,9 +3,9 @@ query GetAllOrganizations {
     edges {
       node {
         id
-        mappingID
         name
         displayName
+        avatarRemoteURL
         description
         personalOrg
         parent {
@@ -55,6 +55,17 @@ query GetAllOrganizations {
 
 mutation CreateOrganization($input: CreateOrganizationInput!) {
   createOrganization(input: $input) {
+    organization {
+      id
+    }
+  }
+}
+
+mutation UpdateOrganization(
+  $updateOrganizationId: ID!
+  $input: UpdateOrganizationInput!
+) {
+  updateOrganization(id: $updateOrganizationId, input: $input) {
     organization {
       id
     }

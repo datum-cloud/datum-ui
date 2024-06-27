@@ -2,7 +2,12 @@
 
 import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import { cn } from '../../lib/utils'
-import { inputStyles, type InputVariants } from './input.styles'
+import {
+  inputRowStyles,
+  InputRowVariants,
+  inputStyles,
+  type InputVariants,
+} from './input.styles'
 
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'prefix'>,
@@ -11,9 +16,16 @@ export interface InputProps
   prefix?: ReactNode
 }
 
+interface InputRowProps extends InputRowVariants {
+  className?: string
+  children: ReactNode
+}
+
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, icon, prefix, ...props }, ref) => {
-    const { input, inputWrapper, iconWrapper, prefixWrapper } = inputStyles()
+  ({ className, type, icon, prefix, variant, ...props }, ref) => {
+    const { input, inputWrapper, iconWrapper, prefixWrapper } = inputStyles({
+      variant,
+    })
     const hasIcon = Boolean(icon)
     const hasPrefix = Boolean(prefix)
     const prefixRef = useRef<HTMLDivElement>(null)
@@ -46,4 +58,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 )
 Input.displayName = 'Input'
 
-export { Input }
+const InputRow: React.FC<InputRowProps> = ({ children, className }) => {
+  const styles = inputRowStyles()
+  return <div className={cn(styles.wrapper(), className)}>{children}</div>
+}
+
+export { Input, InputRow }

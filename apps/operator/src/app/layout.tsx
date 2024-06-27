@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode
 }): JSX.Element {
   return (
-    <html className="h-full relative" lang="en">
+    <html className="h-full relative" lang="en" suppressHydrationWarning>
       <body
         className={`${karelia.variable} ${aime.variable} ${ftRegola.variable} font-sans w-full h-full bg-winter-sky-700 overscroll-none dark:bg-peat-900`}
       >

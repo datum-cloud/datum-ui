@@ -21,7 +21,19 @@ export const inputStyles = tv({
         input: '',
       },
     },
+    variant: {
+      medium: {
+        input: 'w-[280px] max-w-full',
+      },
+    },
+  },
+})
+
+export const inputRowStyles = tv({
+  slots: {
+    wrapper: 'flex gap-6',
   },
 })
 
 export type InputVariants = VariantProps<typeof inputStyles>
+export type InputRowVariants = VariantProps<typeof inputRowStyles>
