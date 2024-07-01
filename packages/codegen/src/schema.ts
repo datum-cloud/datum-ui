@@ -10303,7 +10303,7 @@ export type GetOrganizationInvitesQueryVariables = Exact<{
 }>;
 
 
-export type GetOrganizationInvitesQuery = { __typename?: 'Query', organization: { __typename?: 'Organization', invites?: Array<{ __typename?: 'Invite', id: string, recipient: string, status: InviteInviteStatus, createdAt?: any | null, role: InviteRole }> | null } };
+export type GetOrganizationInvitesQuery = { __typename?: 'Query', organization: { __typename?: 'Organization', invites?: Array<{ __typename?: 'Invite', id: string, recipient: string, status: InviteInviteStatus, createdAt?: any | null, expires?: any | null, role: InviteRole, events?: Array<{ __typename?: 'Event', id: string, eventType: string, invite?: Array<{ __typename?: 'Invite', expires?: any | null }> | null }> | null }> | null } };
 
 export type CreateOrganizationMutationVariables = Exact<{
   input: CreateOrganizationInput;
@@ -10326,6 +10326,13 @@ export type CreateBulkInviteMutationVariables = Exact<{
 
 
 export type CreateBulkInviteMutation = { __typename?: 'Mutation', createBulkInvite: { __typename?: 'InviteBulkCreatePayload', invites?: Array<{ __typename?: 'Invite', id: string }> | null } };
+
+export type DeleteOrganizationInviteMutationVariables = Exact<{
+  deleteInviteId: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteOrganizationInviteMutation = { __typename?: 'Mutation', deleteInvite: { __typename?: 'InviteDeletePayload', deletedID: string } };
 
 export type CreateSubscriberMutationVariables = Exact<{
   input: CreateSubscriberInput;
@@ -10544,7 +10551,16 @@ export const GetOrganizationInvitesDocument = gql`
       recipient
       status
       createdAt
+      expires
       role
+      events {
+        id
+        eventType
+        invite {
+          expires
+        }
+      }
+      expires
     }
   }
 }
@@ -10591,6 +10607,17 @@ export const CreateBulkInviteDocument = gql`
 
 export function useCreateBulkInviteMutation() {
   return Urql.useMutation<CreateBulkInviteMutation, CreateBulkInviteMutationVariables>(CreateBulkInviteDocument);
+};
+export const DeleteOrganizationInviteDocument = gql`
+    mutation DeleteOrganizationInvite($deleteInviteId: ID!) {
+  deleteInvite(id: $deleteInviteId) {
+    deletedID
+  }
+}
+    `;
+
+export function useDeleteOrganizationInviteMutation() {
+  return Urql.useMutation<DeleteOrganizationInviteMutation, DeleteOrganizationInviteMutationVariables>(DeleteOrganizationInviteDocument);
 };
 export const CreateSubscriberDocument = gql`
     mutation CreateSubscriber($input: CreateSubscriberInput!) {

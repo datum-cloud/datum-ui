@@ -9,6 +9,8 @@ import { credentialsProvider } from './providers/credentials'
 import { passKeyProvider } from './providers/passkey'
 import { getTokenFromDatumAPI } from './utils/get-datum-token'
 import { setSessionCookie } from './utils/set-session-cookie'
+import { cookies } from 'next/headers'
+import { sessionCookieName } from '@repo/dally/auth'
 
 export const config = {
   theme: {
@@ -34,6 +36,13 @@ export const config = {
     credentialsProvider,
     passKeyProvider,
   ],
+  events: {
+    async signOut() {
+      if (sessionCookieName) {
+        cookies().delete(sessionCookieName)
+      }
+    },
+  },
   callbacks: {
     async signIn({ user, account }) {
       // register user that signed in via oauth provider

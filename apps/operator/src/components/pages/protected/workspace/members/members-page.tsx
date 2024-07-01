@@ -10,6 +10,7 @@ import {
   GetOrganizationInvitesQueryVariables,
   useGetOrganizationInvitesQuery,
 } from '@repo/codegen/src/schema'
+import { MembersTable } from './members-table'
 
 const MembersPage: React.FC = () => {
   const { wrapper, inviteCount, inviteRow } = pageStyles()
@@ -21,6 +22,7 @@ const MembersPage: React.FC = () => {
   }
   const [{ data }] = useGetOrganizationInvitesQuery({
     variables,
+    pause: !session,
   })
 
   const numInvites = Array.isArray(data?.organization?.invites)
@@ -47,7 +49,7 @@ const MembersPage: React.FC = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="members">
-          <>test</>
+          <MembersTable />
         </TabsContent>
         <TabsContent value="invites">
           <div className={wrapper()}>

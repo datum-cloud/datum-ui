@@ -59,7 +59,6 @@ export const columns: ColumnDef<Payment>[] = [
     id: 'name',
     accessorKey: 'name.lastname',
     cell: ({ row }) => {
-      console.log(row.original)
       return (
         <div className="flex gap-2">
           <div>

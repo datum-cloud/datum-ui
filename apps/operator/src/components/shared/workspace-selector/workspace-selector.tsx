@@ -19,7 +19,7 @@ export const WorkspaceSelector = () => {
   const { data: sessionData, update: updateSession } = useSession()
   const currentOrgId = sessionData?.user.organization
   const [workspaceSearch, setWorkspaceSearch] = useState('')
-  const [allOrgs] = useGetAllOrganizationsQuery()
+  const [allOrgs] = useGetAllOrganizationsQuery({ pause: !sessionData })
 
   const {
     container,

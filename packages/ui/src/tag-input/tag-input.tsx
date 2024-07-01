@@ -10,6 +10,7 @@ const TagInput = forwardRef<HTMLDivElement, TagInputProps>(
     return (
       <EmblorTagInput
         {...props}
+        delimiterList={[' ', ',', 'Enter']}
         inputRef={ref}
         styleClasses={{
           tag: {

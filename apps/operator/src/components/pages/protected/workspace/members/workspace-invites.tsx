@@ -11,6 +11,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { useSession } from 'next-auth/react'
 import { Tag } from '@repo/ui/tag'
 import { format } from 'date-fns'
+import { InviteActions } from './actions/invite-actions'
 
 type Invite = {
   __typename?: 'Invite' | undefined
@@ -21,13 +22,14 @@ type Invite = {
   role: InviteRole
 }
 
-const WorkspaceInvites = () => {
+export const WorkspaceInvites = () => {
   const { data: session } = useSession()
   const variables: GetOrganizationInvitesQueryVariables = {
     organizationId: session?.user.organization ?? '',
   }
-  const [{ data, fetching, error }] = useGetOrganizationInvitesQuery({
+  const [{ data, fetching, error }, refetch] = useGetOrganizationInvitesQuery({
     variables,
+    pause: !session,
   })
 
   if (fetching) return <p>Loading...</p>
@@ -76,9 +78,17 @@ const WorkspaceInvites = () => {
       accessorKey: 'role',
       header: 'Role',
     },
+    {
+      accessorKey: 'id',
+      header: '',
+      cell: ({ cell }) => (
+        <InviteActions
+          inviteId={cell.getValue() as string}
+          refetchInvites={refetch}
+        />
+      ),
+    },
   ]
 
   return <DataTable columns={columns} data={invites} />
 }
-
-export { WorkspaceInvites }

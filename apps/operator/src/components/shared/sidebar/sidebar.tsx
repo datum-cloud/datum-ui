@@ -18,7 +18,7 @@ export default function Sidebar({ className }: SidebarProps) {
   const { isOpen, toggle } = useSidebar()
   const [status, setStatus] = useState(false)
   const currentOrgId = session?.user.organization
-  const [allOrgs] = useGetAllOrganizationsQuery()
+  const [allOrgs] = useGetAllOrganizationsQuery({ pause: !session })
   const orgs = allOrgs.data?.organizations.edges || []
 
   const activeOrg = orgs

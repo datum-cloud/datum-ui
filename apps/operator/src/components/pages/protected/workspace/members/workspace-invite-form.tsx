@@ -85,7 +85,6 @@ const WorkspaceInviteForm = () => {
         title: 'Invites sent successfully',
         variant: 'success',
       })
-    console.log(response)
   }
 
   const errorMessage =

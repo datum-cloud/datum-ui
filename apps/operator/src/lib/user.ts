@@ -72,6 +72,34 @@ export const useVerifyUser = (arg: string | null) => {
   }
 }
 
+export const useAcceptWorkspaceInvite = (arg: string | null) => {
+  const { data, isLoading, error } = useSWR(
+    arg ? `/api/auth/invite?token=${arg}` : null,
+    async (url) => {
+      return (
+        await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        })
+      ).json()
+    },
+    {
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
+      refreshInterval: 0,
+      revalidateIfStale: false,
+    },
+  )
+  return {
+    verified: data,
+    isLoading,
+    error,
+  }
+}
+
 export async function getPasskeyRegOptions<T>(arg: PasskeyRegOptionsInput) {
   const fData: HttpResponse<T> = await fetch('/api/auth/registration-options', {
     method: 'POST',

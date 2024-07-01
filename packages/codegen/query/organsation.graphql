@@ -75,7 +75,16 @@ query GetOrganizationInvites($organizationId: ID!) {
       recipient
       status
       createdAt
+      expires
       role
+      events {
+        id
+        eventType
+        invite {
+          expires
+        }
+      }
+      expires
     }
   }
 }
@@ -104,5 +113,11 @@ mutation CreateBulkInvite($input: [CreateInviteInput!]) {
     invites {
       id
     }
+  }
+}
+
+mutation DeleteOrganizationInvite($deleteInviteId: ID!) {
+  deleteInvite(id: $deleteInviteId) {
+    deletedID
   }
 }
