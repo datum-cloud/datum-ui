@@ -60,9 +60,14 @@ query GetOrganizationMembers($organizationId: ID!) {
       createdAt
       role
       user {
+        id
         firstName
         lastName
         authProvider
+        avatarRemoteURL
+        email
+        role
+        createdAt
       }
     }
   }

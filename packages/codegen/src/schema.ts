@@ -10296,7 +10296,7 @@ export type GetOrganizationMembersQueryVariables = Exact<{
 }>;
 
 
-export type GetOrganizationMembersQuery = { __typename?: 'Query', organization: { __typename?: 'Organization', members?: Array<{ __typename?: 'OrgMembership', id: string, createdAt?: any | null, role: OrgMembershipRole, user: { __typename?: 'User', firstName?: string | null, lastName?: string | null, authProvider: UserAuthProvider } }> | null } };
+export type GetOrganizationMembersQuery = { __typename?: 'Query', organization: { __typename?: 'Organization', members?: Array<{ __typename?: 'OrgMembership', id: string, createdAt?: any | null, role: OrgMembershipRole, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, authProvider: UserAuthProvider, avatarRemoteURL?: string | null, email: string, role?: UserRole | null, createdAt?: any | null } }> | null } };
 
 export type GetOrganizationInvitesQueryVariables = Exact<{
   organizationId: Scalars['ID']['input'];
@@ -10531,9 +10531,14 @@ export const GetOrganizationMembersDocument = gql`
       createdAt
       role
       user {
+        id
         firstName
         lastName
         authProvider
+        avatarRemoteURL
+        email
+        role
+        createdAt
       }
     }
   }
