@@ -10303,7 +10303,7 @@ export type GetOrganizationInvitesQueryVariables = Exact<{
 }>;
 
 
-export type GetOrganizationInvitesQuery = { __typename?: 'Query', organization: { __typename?: 'Organization', invites?: Array<{ __typename?: 'Invite', id: string, recipient: string, status: InviteInviteStatus, createdAt?: any | null, expires?: any | null, role: InviteRole, events?: Array<{ __typename?: 'Event', id: string, eventType: string, invite?: Array<{ __typename?: 'Invite', expires?: any | null }> | null }> | null }> | null } };
+export type GetOrganizationInvitesQuery = { __typename?: 'Query', organization: { __typename?: 'Organization', invites?: Array<{ __typename?: 'Invite', id: string, recipient: string, status: InviteInviteStatus, createdAt?: any | null, expires?: any | null, role: InviteRole }> | null } };
 
 export type CreateOrganizationMutationVariables = Exact<{
   input: CreateOrganizationInput;
@@ -10558,13 +10558,6 @@ export const GetOrganizationInvitesDocument = gql`
       createdAt
       expires
       role
-      events {
-        id
-        eventType
-        invite {
-          expires
-        }
-      }
       expires
     }
   }
