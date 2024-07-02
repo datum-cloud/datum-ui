@@ -115,11 +115,6 @@ const SelectItem = React.forwardRef<
       className={cn(styles.item(), className)}
       {...props}
     >
-      <span className={cn(styles.itemIndicator())}>
-        <SelectPrimitive.ItemIndicator>
-          <Check className="h-4 w-4" />
-        </SelectPrimitive.ItemIndicator>
-      </span>
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
     </SelectPrimitive.Item>
   )

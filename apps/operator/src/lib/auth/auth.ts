@@ -9,6 +9,10 @@ import { credentialsProvider } from './providers/credentials'
 import { passKeyProvider } from './providers/passkey'
 import { getTokenFromDatumAPI } from './utils/get-datum-token'
 import { setSessionCookie } from './utils/set-session-cookie'
+import { cookies } from 'next/headers'
+import { sessionCookieName } from '@repo/dally/auth'
+
+const isDevelopment = process.env.NODE_ENV === 'development'
 
 export const config = {
   theme: {
@@ -26,14 +30,23 @@ export const config = {
     GithubProvider({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
+      checks: isDevelopment ? ['none'] : undefined,
     }),
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      checks: isDevelopment ? ['none'] : undefined,
     }),
     credentialsProvider,
     passKeyProvider,
   ],
+  events: {
+    async signOut() {
+      if (sessionCookieName) {
+        cookies().delete(sessionCookieName)
+      }
+    },
+  },
   callbacks: {
     async signIn({ user, account }) {
       // register user that signed in via oauth provider

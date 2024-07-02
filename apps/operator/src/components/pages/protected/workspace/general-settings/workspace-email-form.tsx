@@ -26,7 +26,7 @@ const WorkspaceEmailForm = () => {
     useUpdateOrganizationMutation()
   const { data: sessionData } = useSession()
   const currentOrgId = sessionData?.user.organization
-  const [allOrgs] = useGetAllOrganizationsQuery()
+  const [allOrgs] = useGetAllOrganizationsQuery({ pause: !sessionData })
   const currentWorkspace = allOrgs.data?.organizations.edges?.filter(
     (org) => org?.node?.id === currentOrgId,
   )[0]?.node

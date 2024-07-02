@@ -53,6 +53,40 @@ query GetAllOrganizations {
   }
 }
 
+query GetOrganizationMembers($organizationId: ID!) {
+  organization(id: $organizationId) {
+    members {
+      id
+      createdAt
+      role
+      user {
+        id
+        firstName
+        lastName
+        authProvider
+        avatarRemoteURL
+        email
+        role
+        createdAt
+      }
+    }
+  }
+}
+
+query GetOrganizationInvites($organizationId: ID!) {
+  organization(id: $organizationId) {
+    invites {
+      id
+      recipient
+      status
+      createdAt
+      expires
+      role
+      expires
+    }
+  }
+}
+
 mutation CreateOrganization($input: CreateOrganizationInput!) {
   createOrganization(input: $input) {
     organization {
@@ -69,5 +103,19 @@ mutation UpdateOrganization(
     organization {
       id
     }
+  }
+}
+
+mutation CreateBulkInvite($input: [CreateInviteInput!]) {
+  createBulkInvite(input: $input) {
+    invites {
+      id
+    }
+  }
+}
+
+mutation DeleteOrganizationInvite($deleteInviteId: ID!) {
+  deleteInvite(id: $deleteInviteId) {
+    deletedID
   }
 }

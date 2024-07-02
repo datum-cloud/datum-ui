@@ -155,14 +155,27 @@ const FormMessage = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
   const { error, formMessageId } = useFormField()
-  const body = error ? String(error?.message) : children
+
+  let body
+  if (error) {
+    if (Array.isArray(error)) {
+      const uniqueMessages = Array.from(
+        new Set(error.map((err) => err.message)),
+      )
+      body = uniqueMessages.map((msg, index) => <div key={index}>{msg}</div>)
+    } else {
+      body = String(error?.message)
+    }
+  } else {
+    body = children
+  }
 
   if (!body) {
     return null
   }
 
   return (
-    <p
+    <div
       ref={ref}
       id={formMessageId}
       className={cn(formMessage(), className)}
@@ -172,7 +185,7 @@ const FormMessage = React.forwardRef<
         <InfoIcon width={16} height={16} />
       </span>
       <>{body}</>
-    </p>
+    </div>
   )
 })
 FormMessage.displayName = 'FormMessage'

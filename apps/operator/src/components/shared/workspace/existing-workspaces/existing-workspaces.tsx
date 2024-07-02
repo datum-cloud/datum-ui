@@ -13,7 +13,9 @@ export const ExistingWorkspaces = () => {
   const currentOrg = sessionData?.user.organization
   const { container, orgWrapper, orgInfo, orgSelect, orgTitle } =
     existingWorkspacesStyles()
-  const [{ data, fetching, error }] = useGetAllOrganizationsQuery()
+  const [{ data, fetching, error }] = useGetAllOrganizationsQuery({
+    pause: !sessionData,
+  })
   const { push } = useRouter()
 
   if (!data || fetching || error) {

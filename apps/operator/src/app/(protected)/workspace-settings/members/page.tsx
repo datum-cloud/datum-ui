@@ -1,8 +1,18 @@
-import React from 'react'
-import PageTitle from '@/components/page-title'
+import { PageHeading } from '@repo/ui/page-heading'
+import type { Metadata } from 'next/types'
+import MembersPage from '@/components/pages/protected/workspace/members/members-page'
+
+export const metadata: Metadata = {
+  title: 'Workspace settings',
+}
 
 const Page: React.FC = () => {
-  return <PageTitle title="Workspace settings - Members" description="" />
+  return (
+    <>
+      <PageHeading eyebrow="Workspace settings" heading="Members" />
+      <MembersPage />
+    </>
+  )
 }
 
 export default Page

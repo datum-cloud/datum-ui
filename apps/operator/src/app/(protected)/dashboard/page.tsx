@@ -7,9 +7,11 @@ import { Grid, GridRow, GridCell } from '@repo/ui/grid'
 import { Panel } from '@repo/ui/panel'
 import { Button } from '@repo/ui/button'
 import { ArrowUpRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 const DashboardLanding: React.FC = () => {
   const session = useSession()
+  const { push } = useRouter()
 
   return (
     <section>
@@ -54,7 +56,7 @@ const DashboardLanding: React.FC = () => {
               </p>
               <Button
                 onClick={() => {
-                  alert('Coming soon')
+                  push('/workspace-settings/general-settings')
                 }}
                 icon={<ArrowUpRight />}
                 size="md"
@@ -80,7 +82,7 @@ const DashboardLanding: React.FC = () => {
               </p>
               <Button
                 onClick={() => {
-                  alert('Coming soon')
+                  push('/workspace-settings/members')
                 }}
                 icon={<ArrowUpRight />}
                 size="md"

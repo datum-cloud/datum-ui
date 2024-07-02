@@ -1,6 +1,6 @@
 'use client'
 
-import { Provider as UrqlProvider } from 'urql'
+import { Provider as GraphqlProvider } from 'urql'
 import { createClient } from '@/lib/urql'
 import { useSession } from 'next-auth/react'
 import { ThemeProvider } from '@/providers/theme'
@@ -20,7 +20,7 @@ const Providers = ({ children }: ProvidersProps) => {
       enableSystem
       disableTransitionOnChange
     >
-      <UrqlProvider value={client}>{children}</UrqlProvider>
+      <GraphqlProvider value={client}>{children}</GraphqlProvider>
     </ThemeProvider>
   )
 }
