@@ -41,7 +41,6 @@ export const MembersTable = ({ setActiveTab }: MembersTableProps) => {
   const [filteredMembers, setFilteredMembers] = useState<Member[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [copiedText, copyToClipboard] = useCopyToClipboard()
-  const hasCopiedText = Boolean(copiedText)
   const { toast } = useToast()
 
   const variables: GetOrganizationMembersQueryVariables = {
@@ -54,13 +53,13 @@ export const MembersTable = ({ setActiveTab }: MembersTableProps) => {
   })
 
   useEffect(() => {
-    if (hasCopiedText) {
+    if (copiedText) {
       toast({
         title: 'Copied to clipboard',
         variant: 'success',
       })
     }
-  }, [hasCopiedText])
+  }, [copiedText])
 
   useEffect(() => {
     if (data?.organization?.members) {
