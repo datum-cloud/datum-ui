@@ -12,6 +12,8 @@ import { setSessionCookie } from './utils/set-session-cookie'
 import { cookies } from 'next/headers'
 import { sessionCookieName } from '@repo/dally/auth'
 
+const isDevelopment = process.env.NODE_ENV === 'development'
+
 export const config = {
   theme: {
     logo: '/logos/logo_orange_icon.svg',
@@ -28,10 +30,12 @@ export const config = {
     GithubProvider({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
+      checks: isDevelopment ? ['none'] : undefined,
     }),
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      checks: isDevelopment ? ['none'] : undefined,
     }),
     credentialsProvider,
     passKeyProvider,
