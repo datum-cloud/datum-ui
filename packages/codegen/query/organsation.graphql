@@ -82,13 +82,6 @@ query GetOrganizationInvites($organizationId: ID!) {
       createdAt
       expires
       role
-      events {
-        id
-        eventType
-        invite {
-          expires
-        }
-      }
       expires
     }
   }
