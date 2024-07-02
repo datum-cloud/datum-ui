@@ -10,6 +10,9 @@ export const avatarStyles = tv({
   },
   variants: {
     size: {
+      medium: {
+        avatarImageWrap: 'h-[34px] w-[34px]',
+      },
       large: {
         avatarImageWrap: 'h-14 w-14',
       },

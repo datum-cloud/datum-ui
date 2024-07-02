@@ -15,7 +15,7 @@ import { MembersTable } from './members-table'
 const MembersPage: React.FC = () => {
   const { wrapper, inviteCount, inviteRow } = pageStyles()
   const defaultTab = 'members'
-  const [_activeTab, setActiveTab] = useState(defaultTab)
+  const [activeTab, setActiveTab] = useState(defaultTab)
   const { data: session } = useSession()
   const variables: GetOrganizationInvitesQueryVariables = {
     organizationId: session?.user.organization ?? '',
@@ -32,7 +32,7 @@ const MembersPage: React.FC = () => {
     <>
       <Tabs
         variant="solid"
-        defaultValue={defaultTab}
+        value={activeTab}
         onValueChange={(value) => {
           setActiveTab(value)
         }}
@@ -49,7 +49,7 @@ const MembersPage: React.FC = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="members">
-          <MembersTable />
+          <MembersTable setActiveTab={setActiveTab} />
         </TabsContent>
         <TabsContent value="invites">
           <div className={wrapper()}>

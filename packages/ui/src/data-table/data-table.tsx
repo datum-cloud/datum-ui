@@ -68,6 +68,9 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
     },
+    defaultColumn: {
+      size: 0,
+    },
   })
 
   return (
@@ -122,11 +125,10 @@ export function DataTable<TData, TValue>({
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
+                const columnWidth =
+                  header.getSize() === 20 ? 'auto' : `${header.getSize()}px`
                 return (
-                  <TableHead
-                    key={header.id}
-                    //style={{ width: `${header.getSize()}px` }}
-                  >
+                  <TableHead key={header.id} style={{ width: columnWidth }}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
