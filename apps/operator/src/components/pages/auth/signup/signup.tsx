@@ -183,14 +183,12 @@ export const SignupPage = () => {
                 name="password"
                 placeholder="password"
                 required
-                type="password"
               />
             </div>
             <PasswordInput
               name="confirmedPassword"
               placeholder="confirm password"
               required
-              type="password"
             />
           </>
         )}
