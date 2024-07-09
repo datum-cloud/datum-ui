@@ -28,13 +28,10 @@ export default auth((req) => {
   var hasSessionCookie = true
 
   if (sessionCookieName) {
-    console.log("getting session cookie", sessionCookieName)
     const sessionData = cookies().get(sessionCookieName)
-    console.log("got session cookie", sessionData)
 
     // if the session cookie is not present, redirect to sign in
     if (sessionData == null || sessionData.value == "") {
-      console.log("no session cookie, will redirect to login")
       hasSessionCookie = false
     }
   }
