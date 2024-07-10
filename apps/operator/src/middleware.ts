@@ -25,7 +25,7 @@ export default auth((req) => {
    * continue on, otherwise redirect them to the login page
    */
 
-  var hasSessionCookie = true
+  let hasSessionCookie = true
 
   if (sessionCookieName) {
     const sessionData = cookies().get(sessionCookieName)
