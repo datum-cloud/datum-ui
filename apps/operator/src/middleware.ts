@@ -5,6 +5,8 @@
 
 import { NextResponse } from 'next/server'
 import { auth } from './lib/auth/auth'
+import { cookies } from 'next/headers'
+import { sessionCookieName } from '@repo/dally/auth'
 
 export default auth((req) => {
   /**
@@ -19,10 +21,22 @@ export default auth((req) => {
    * in the config below.
    *
    * For this example we are just checking that the request
-   * has a valid user attached and if so let the user
+   * has a valid user attached and session cookie and if so let the user
    * continue on, otherwise redirect them to the login page
    */
-  if (req.auth?.user) return NextResponse.next()
+
+  let hasSessionCookie = true
+
+  if (sessionCookieName) {
+    const sessionData = cookies().get(sessionCookieName)
+
+    // if the session cookie is not present, redirect to sign in
+    if (sessionData == null || sessionData.value == "") {
+      hasSessionCookie = false
+    }
+  }
+
+  if (req.auth?.user && hasSessionCookie) return NextResponse.next()
 
   return NextResponse.redirect(new URL('/login', req.url))
 })
