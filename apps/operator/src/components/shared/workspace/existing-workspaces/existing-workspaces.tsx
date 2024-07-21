@@ -35,14 +35,17 @@ export const ExistingWorkspaces = () => {
         target_organization_id: orgId,
       })
 
-      await updateSession({
-        session: response.session,
-        accessToken: response.access_token,
-        refreshToken: response.refresh_token,
-        user: {
-          organization: orgId,
-        },
-      })
+      if (sessionData && response) {
+        await updateSession({
+          ...response.session,
+          user: {
+            ...sessionData.user,
+            accessToken: response.access_token,
+            organization: orgId,
+            refreshToken: response.refresh_token,
+          },
+        })
+      }
 
       push('/dashboard')
     }

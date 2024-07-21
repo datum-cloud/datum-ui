@@ -66,7 +66,6 @@ export const config = {
         user.accessToken = data?.access_token
         user.refreshToken = data?.refresh_token
         user.session = data?.session
-
         // Get user data for sessions
         const uData = await fetch(`${restUrl}/oauth/userinfo`, {
           method: 'GET',
@@ -104,13 +103,8 @@ export const config = {
         token.email = profile.email
       }
 
-      if (
-        trigger === 'update' &&
-        session?.refreshToken &&
-        session?.accessToken
-      ) {
-        token.accessToken = session.accessToken
-        token.refreshToken = session.refreshToken
+      if (trigger === 'update') {
+        return { ...token, ...session.user }
       }
 
       return token

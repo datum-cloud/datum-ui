@@ -119,3 +119,9 @@ mutation DeleteOrganizationInvite($deleteInviteId: ID!) {
     deletedID
   }
 }
+
+mutation DeleteOrganization($deleteOrganizationId: ID!) {
+  deleteOrganization(id: $deleteOrganizationId) {
+    deletedID
+  }
+}
