@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@sanity/assist": "3.0.4",
+    "@sanity/assist": "3.0.5",
     "@sanity/icons": "3.2.0",
     "@sanity/image-url": "1.0.2",
     "@sanity/preview-url-secret": "1.6.17",
