@@ -4,13 +4,24 @@ import { Panel, PanelHeader } from '@repo/ui/panel'
 import { useSession } from 'next-auth/react'
 
 import { Button } from '@repo/ui/button'
-import { useEffect, useState } from 'react'
-import { RESET_SUCCESS_STATE_MS } from '@/constants'
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from '@repo/ui/alert-dialog'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@repo/ui/use-toast'
 
 const WorkspaceDelete = () => {
-  const [isSuccess, setIsSuccess] = useState(false)
+  const { toast } = useToast()
   const { push } = useRouter()
+
   const [{ fetching: isSubmitting }, deleteOrganisation] =
     useDeleteOrganizationMutation()
   const { data: sessionData, update } = useSession()
@@ -32,36 +43,48 @@ const WorkspaceDelete = () => {
         },
       })
     }
-    setIsSuccess(true)
-    response.data && push('/workspace')
+    toast({
+      title: 'Workspace successfully deleted',
+      variant: 'success',
+    })
+    push('/workspace')
   }
 
-  useEffect(() => {
-    if (isSuccess) {
-      const timer = setTimeout(() => {
-        setIsSuccess(false)
-        push('/workspace')
-      }, RESET_SUCCESS_STATE_MS)
-      return () => clearTimeout(timer)
-    }
-  }, [isSuccess])
-
   return (
-    <Panel>
-      <PanelHeader heading="Delete workspace" noBorder />
-      <Button
-        variant={isSuccess ? 'success' : 'redOutline'}
-        type="button"
-        onClick={clickHandler}
-        loading={isSubmitting}
-      >
-        {isSubmitting
-          ? 'Deleting'
-          : isSuccess
-            ? 'Workspace deleted'
-            : 'Delete this workspace'}
-      </Button>
-    </Panel>
+    <>
+      <Panel>
+        <PanelHeader heading="Delete workspace" noBorder />
+        <Panel align="start" destructive>
+          <p className="red">Deleting your workspace is irreversible.</p>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="redOutline" type="button" loading={isSubmitting}>
+                Delete this workspace
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your workspace and remove your data from our servers.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel asChild>
+                  <Button variant="outline">Cancel</Button>
+                </AlertDialogCancel>
+                <AlertDialogAction asChild>
+                  <Button variant="sunglow" onClick={clickHandler}>
+                    Delete workspace
+                  </Button>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </Panel>
+      </Panel>{' '}
+    </>
   )
 }
 

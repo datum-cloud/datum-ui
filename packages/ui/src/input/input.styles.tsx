@@ -31,7 +31,7 @@ export const inputStyles = tv({
 
 export const inputRowStyles = tv({
   slots: {
-    wrapper: 'flex gap-6',
+    wrapper: 'flex gap-6 items-end',
   },
 })
 

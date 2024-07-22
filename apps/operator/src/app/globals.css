@@ -18,3 +18,7 @@ h5 {
 p {
   @apply text-blackberry-800/90 dark:text-blackberry-100;
 }
+
+p.red {
+  @apply text-util-red-500;
+}

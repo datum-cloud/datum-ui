@@ -1,6 +1,6 @@
 'use client'
 
-import React, { forwardRef } from 'react'
+import { forwardRef } from 'react'
 import { TagInput as EmblorTagInput, type TagInputProps } from 'emblor'
 import { tagInputStyles } from './tag-input.styles'
 

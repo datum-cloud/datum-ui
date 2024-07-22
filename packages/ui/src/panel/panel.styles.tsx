@@ -4,6 +4,9 @@ export const panelStyles = tv({
   slots: {
     panel:
       'flex flex-col border w-full rounded-lg bg-white border-winter-sky-900 p-9 dark:bg-peat-900 dark:border-peat-800',
+    icon: '',
+    iconRow: 'flex gap-6',
+    contentColumn: 'flex-1 flex flex-col gap-5',
   },
   variants: {
     gap: {
@@ -32,6 +35,12 @@ export const panelStyles = tv({
       left: { panel: 'text-left' },
       right: { panel: 'text-right' },
       center: { panel: 'text-center' },
+    },
+    destructive: {
+      true: {
+        panel:
+          'bg-util-red-100 text-red-500 border-none dark:bg-util-red-100 dark:border-none',
+      },
     },
   },
   defaultVariants: {
