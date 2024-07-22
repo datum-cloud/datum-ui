@@ -5,6 +5,7 @@ import { Panel, PanelHeader } from '@repo/ui/panel'
 import { useToast } from '@repo/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { useSession } from 'next-auth/react'
 import {
   Form,
   FormItem,
@@ -42,6 +43,7 @@ const formSchema = z.object({
 export const CreateWorkspaceForm = () => {
   const { push } = useRouter()
   const { toast } = useToast()
+  const { data: session, update } = useSession()
   const [allOrgs] = useGetAllOrganizationsQuery()
   const numOrgs = allOrgs.data?.organizations?.edges?.length ?? 0
   const [result, addOrganization] = useCreateOrganizationMutation()
@@ -66,13 +68,34 @@ export const CreateWorkspaceForm = () => {
     name: string
     displayName?: string
   }) => {
-    const response = await addOrganization({
-      input: {
-        name: name,
-        displayName: displayName,
-      },
-    })
-    response.data && push('/dashboard')
+    try {
+      const response = await addOrganization({
+        input: {
+          name: name,
+          displayName: displayName,
+        },
+      })
+
+      if (response.extensions && session) {
+        await update({
+          ...session,
+          user: {
+            ...session.user,
+            accessToken: response.extensions.auth.access_token,
+            organization: response.extensions.auth.authorized_organization,
+            refreshToken: response.extensions.auth.refresh_token,
+          },
+        })
+      }
+
+      response.data && push('/dashboard')
+    } catch (error) {
+      console.error('Error creating workspace:', error)
+      toast({
+        title: 'Failed to create workspace. Please try again.',
+        variant: 'destructive',
+      })
+    }
   }
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {

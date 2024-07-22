@@ -16,7 +16,9 @@ export const buttonStyles = tv({
       sunglow: '!bg-sunglow-900 hover:!opacity-90',
       blackberry: '!bg-blackberry-900 hover:!opacity-90',
       outline:
-        'border-blackberry-800 text-blackberry-800 border hover:!opacity-90 dark:border-peat-400 dark:text-white',
+        'border-blackberry-800 text-blackberry-800 border hover:!opacity-90',
+      redOutline:
+        'border-util-red-500 text-util-red-500 border bg-white hover:!opacity-90 dark:border-util-red-500 dark:text-util-red-500',
       white: {},
       success: 'flex-row-reverse !bg-util-green-500 hover:!opacity-90',
     },
@@ -69,7 +71,7 @@ export const buttonStyles = tv({
 
 //TODO: Important is needed here for backgrounds due to https://github.com/tailwindlabs/tailwindcss/issues/12734
 
-type ButtonVariants = VariantProps<typeof buttonStyles>
+export type ButtonVariants = VariantProps<typeof buttonStyles>
 
 export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,

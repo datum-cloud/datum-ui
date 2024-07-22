@@ -13,3 +13,10 @@ query GetUserProfile($userId: ID!) {
   }
 }
 
+mutation updateUserName($updateUserId: ID!, $input: UpdateUserInput!) {
+  updateUser(id: $updateUserId, input: $input) {
+    user {
+      id
+    }
+  }
+}

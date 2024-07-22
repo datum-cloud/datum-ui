@@ -53,17 +53,19 @@ export const UserMenu = () => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem>
+        <DropdownMenuItem asChild>
           <div>
             <div>
-              {sessionData?.user.name}
-              <br />
-              <div className={email()}>{sessionData?.user.email}</div>
-            </div>
-            <div>
-              <Link href="#" className={userSettingsLink()}>
-                User Settings
-              </Link>
+              <div>
+                {sessionData?.user.name}
+                <br />
+                <div className={email()}>{sessionData?.user.email}</div>
+              </div>
+              <div>
+                <Link href="/profile" className={userSettingsLink()}>
+                  User Settings
+                </Link>
+              </div>
             </div>
           </div>
         </DropdownMenuItem>

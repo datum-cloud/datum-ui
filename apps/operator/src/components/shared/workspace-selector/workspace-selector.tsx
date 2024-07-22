@@ -36,11 +36,7 @@ export const WorkspaceSelector = () => {
   } = workspaceSelectorStyles()
 
   if (!allOrgs.data || allOrgs.fetching || allOrgs.error) {
-    return (
-      <Link href={'/'} className={logoWrapper()}>
-        <Logo width={115} theme="dark" />
-      </Link>
-    )
+    return <div></div>
   }
 
   const orgs = allOrgs.data.organizations.edges || []
@@ -63,14 +59,17 @@ export const WorkspaceSelector = () => {
         target_organization_id: orgId,
       })
 
-      await updateSession({
-        session: response.session,
-        accessToken: response.access_token,
-        refreshToken: response.refresh_token,
-        user: {
-          organization: orgId,
-        },
-      })
+      if (sessionData && response) {
+        await updateSession({
+          ...response.session,
+          user: {
+            ...sessionData.user,
+            accessToken: response.access_token,
+            organization: orgId,
+            refreshToken: response.refresh_token,
+          },
+        })
+      }
     }
   }
 

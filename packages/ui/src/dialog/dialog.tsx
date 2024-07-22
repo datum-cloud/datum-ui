@@ -15,16 +15,7 @@ const DialogPortal = DialogPrimitive.Portal
 
 const DialogClose = DialogPrimitive.Close
 
-const {
-  overlay,
-  content,
-  close,
-  closeIcon,
-  header,
-  footer,
-  title,
-  description,
-} = dialogStyles()
+const { overlay, content, header, footer, title, description } = dialogStyles()
 
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
