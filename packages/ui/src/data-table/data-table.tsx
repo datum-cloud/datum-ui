@@ -37,6 +37,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   showFilter?: boolean
   showVisibility?: boolean
+  noResultsText?: string
 }
 
 export function DataTable<TData, TValue>({
@@ -44,6 +45,7 @@ export function DataTable<TData, TValue>({
   data,
   showFilter = false,
   showVisibility = false,
+  noResultsText = 'No results',
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -157,7 +159,7 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                {noResultsText}
               </TableCell>
             </TableRow>
           )}

@@ -73,16 +73,17 @@ query GetOrganizationMembers($organizationId: ID!) {
   }
 }
 
-query GetOrganizationInvites($organizationId: ID!) {
-  organization(id: $organizationId) {
-    invites {
-      id
-      recipient
-      status
-      createdAt
-      expires
-      role
-      expires
+query GetInvites {
+  invites {
+    edges {
+      node {
+        id
+        recipient
+        status
+        createdAt
+        expires
+        role
+      }
     }
   }
 }

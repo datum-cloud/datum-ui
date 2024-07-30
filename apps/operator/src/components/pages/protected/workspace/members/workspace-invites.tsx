@@ -1,10 +1,9 @@
 'use client'
 
 import {
-  GetOrganizationInvitesQueryVariables,
-  useGetOrganizationInvitesQuery,
   InviteInviteStatus,
   InviteRole,
+  useGetInvitesQuery,
 } from '@repo/codegen/src/schema'
 import { DataTable } from '@repo/ui/data-table'
 import { ColumnDef } from '@tanstack/react-table'
@@ -13,7 +12,7 @@ import { Tag } from '@repo/ui/tag'
 import { format } from 'date-fns'
 import { InviteActions } from './actions/invite-actions'
 
-type Invite = {
+type InviteNode = {
   __typename?: 'Invite' | undefined
   id: string
   recipient: string
@@ -22,21 +21,29 @@ type Invite = {
   role: InviteRole
 }
 
+type InviteEdge = {
+  __typename?: 'InviteEdge' | undefined
+  node?: InviteNode | null
+}
+
 export const WorkspaceInvites = () => {
   const { data: session } = useSession()
-  const variables: GetOrganizationInvitesQueryVariables = {
-    organizationId: session?.user.organization ?? '',
-  }
-  const [{ data, fetching, error }, refetch] = useGetOrganizationInvitesQuery({
-    variables,
+
+  const [{ data, fetching, error }, refetch] = useGetInvitesQuery({
     pause: !session,
   })
 
   if (fetching) return <p>Loading...</p>
-  if (error) return null
+  if (error || !data) return null
 
-  const invites: Invite[] = data?.organization?.invites ?? []
-  const columns: ColumnDef<Invite>[] = [
+  const invites: InviteNode[] =
+    data.invites.edges
+      ?.filter(
+        (edge): edge is InviteEdge => edge !== null && edge.node !== null,
+      )
+      .map((edge) => edge.node as InviteNode) || []
+
+  const columns: ColumnDef<InviteNode>[] = [
     {
       accessorKey: 'recipient',
       header: 'Invited user',
@@ -90,5 +97,11 @@ export const WorkspaceInvites = () => {
     },
   ]
 
-  return <DataTable columns={columns} data={invites} />
+  return (
+    <DataTable
+      columns={columns}
+      data={invites}
+      noResultsText="No invites found"
+    />
+  )
 }
