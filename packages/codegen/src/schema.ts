@@ -11695,12 +11695,10 @@ export type GetOrganizationMembersQueryVariables = Exact<{
 
 export type GetOrganizationMembersQuery = { __typename?: 'Query', organization: { __typename?: 'Organization', members?: Array<{ __typename?: 'OrgMembership', id: string, createdAt?: any | null, role: OrgMembershipRole, user: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, authProvider: UserAuthProvider, avatarRemoteURL?: string | null, email: string, role?: UserRole | null, createdAt?: any | null } }> | null } };
 
-export type GetOrganizationInvitesQueryVariables = Exact<{
-  organizationId: Scalars['ID']['input'];
-}>;
+export type GetInvitesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetOrganizationInvitesQuery = { __typename?: 'Query', organization: { __typename?: 'Organization', invites?: Array<{ __typename?: 'Invite', id: string, recipient: string, status: InviteInviteStatus, createdAt?: any | null, expires?: any | null, role: InviteRole }> | null } };
+export type GetInvitesQuery = { __typename?: 'Query', invites: { __typename?: 'InviteConnection', edges?: Array<{ __typename?: 'InviteEdge', node?: { __typename?: 'Invite', id: string, recipient: string, status: InviteInviteStatus, createdAt?: any | null, expires?: any | null, role: InviteRole } | null } | null> | null } };
 
 export type CreateOrganizationMutationVariables = Exact<{
   input: CreateOrganizationInput;
@@ -11960,24 +11958,25 @@ export const GetOrganizationMembersDocument = gql`
 export function useGetOrganizationMembersQuery(options: Omit<Urql.UseQueryArgs<GetOrganizationMembersQueryVariables>, 'query'>) {
   return Urql.useQuery<GetOrganizationMembersQuery, GetOrganizationMembersQueryVariables>({ query: GetOrganizationMembersDocument, ...options });
 };
-export const GetOrganizationInvitesDocument = gql`
-    query GetOrganizationInvites($organizationId: ID!) {
-  organization(id: $organizationId) {
-    invites {
-      id
-      recipient
-      status
-      createdAt
-      expires
-      role
-      expires
+export const GetInvitesDocument = gql`
+    query GetInvites {
+  invites {
+    edges {
+      node {
+        id
+        recipient
+        status
+        createdAt
+        expires
+        role
+      }
     }
   }
 }
     `;
 
-export function useGetOrganizationInvitesQuery(options: Omit<Urql.UseQueryArgs<GetOrganizationInvitesQueryVariables>, 'query'>) {
-  return Urql.useQuery<GetOrganizationInvitesQuery, GetOrganizationInvitesQueryVariables>({ query: GetOrganizationInvitesDocument, ...options });
+export function useGetInvitesQuery(options?: Omit<Urql.UseQueryArgs<GetInvitesQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetInvitesQuery, GetInvitesQueryVariables>({ query: GetInvitesDocument, ...options });
 };
 export const CreateOrganizationDocument = gql`
     mutation CreateOrganization($input: CreateOrganizationInput!) {

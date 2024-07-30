@@ -6,10 +6,7 @@ import { WorkspaceInvites } from '@/components/pages/protected/workspace/members
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/tabs'
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
-import {
-  GetOrganizationInvitesQueryVariables,
-  useGetOrganizationInvitesQuery,
-} from '@repo/codegen/src/schema'
+import { useGetInvitesQuery } from '@repo/codegen/src/schema'
 import { MembersTable } from './members-table'
 
 const MembersPage: React.FC = () => {
@@ -17,17 +14,14 @@ const MembersPage: React.FC = () => {
   const defaultTab = 'members'
   const [activeTab, setActiveTab] = useState(defaultTab)
   const { data: session } = useSession()
-  const variables: GetOrganizationInvitesQueryVariables = {
-    organizationId: session?.user.organization ?? '',
-  }
-  const [{ data }] = useGetOrganizationInvitesQuery({
-    variables,
+  const [{ data }] = useGetInvitesQuery({
     pause: !session,
   })
 
-  const numInvites = Array.isArray(data?.organization?.invites)
-    ? data?.organization?.invites.length
+  const numInvites = Array.isArray(data?.invites.edges)
+    ? data?.invites.edges.length
     : 0
+
   return (
     <>
       <Tabs

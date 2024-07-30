@@ -67,6 +67,7 @@ const WorkspaceInviteForm = () => {
 
   const [emails, setEmails] = useState<Tag[]>([])
   const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null)
+  const [currentValue, setCurrentValue] = useState('')
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const inviteInput: InputMaybe<
@@ -82,9 +83,10 @@ const WorkspaceInviteForm = () => {
 
     response.data &&
       toast({
-        title: 'Invites sent successfully',
+        title: `Invite${emails.length > 1 ? 's' : ''} sent successfully`,
         variant: 'success',
       })
+    setEmails([])
   }
 
   const errorMessage =
@@ -100,6 +102,19 @@ const WorkspaceInviteForm = () => {
       })
     }
   }, [errorMessages])
+
+  const isValidEmail = (email: string) => {
+    return /\S+@\S+\.\S+/.test(email)
+  }
+
+  const handleBlur = () => {
+    if (isValidEmail(currentValue)) {
+      const newTag = { id: currentValue, text: currentValue }
+      setEmails((prev) => [...prev, newTag])
+      setValue('emails', [...emails.map((tag) => tag.text), currentValue])
+      setCurrentValue('')
+    }
+  }
 
   return (
     <Panel>
@@ -126,6 +141,11 @@ const WorkspaceInviteForm = () => {
                     }}
                     activeTagIndex={activeTagIndex}
                     setActiveTagIndex={setActiveTagIndex}
+                    inputProps={{ value: currentValue }}
+                    onInputChange={(newValue: string) =>
+                      setCurrentValue(newValue)
+                    }
+                    onBlur={handleBlur}
                   />
                 </FormControl>
                 {errorMessage && <FormMessage>{errorMessage}</FormMessage>}

@@ -2,21 +2,37 @@
 
 import { useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { signIn } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { Logo } from '@repo/ui/logo'
+import { useRouter } from 'next/navigation'
 import { useAcceptWorkspaceInvite } from '../../../lib/user'
 
 const AcceptInvite: React.FC = () => {
   const searchParams = useSearchParams()
+  const { data: session, update } = useSession()
+  const { push } = useRouter()
   const token = searchParams?.get('token')
 
   const { isLoading, verified, error } = useAcceptWorkspaceInvite(token ?? null)
 
   useEffect(() => {
-    if (verified) {
-      const accessToken = verified?.access_token
-      const refreshToken = verified?.refresh_token
+    const updateSession = async () => {
+      if (verified && session) {
+        await update({
+          ...session,
+          user: {
+            ...session.user,
+            accessToken: verified?.access_token,
+            refreshToken: verified?.refresh_token,
+            organization: verified?.joined_org_id,
+          },
+        })
+
+        push('/dashboard')
+      }
     }
+
+    updateSession()
   }, [verified, error])
 
   return (

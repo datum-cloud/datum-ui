@@ -1,7 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { auth } from '../../../../lib/auth/auth'
-import { sessionCookieName } from '@repo/dally/auth'
-import { cookies as getCookies } from 'next/headers'
 import { setSessionCookie } from '@/lib/auth/utils/set-session-cookie'
 
 export async function GET(request: NextRequest) {
