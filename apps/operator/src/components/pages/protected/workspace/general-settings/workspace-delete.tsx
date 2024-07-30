@@ -22,13 +22,13 @@ const WorkspaceDelete = () => {
   const { toast } = useToast()
   const { push } = useRouter()
 
-  const [{ fetching: isSubmitting }, deleteOrganisation] =
+  const [{ fetching: isSubmitting }, deleteOrganization] =
     useDeleteOrganizationMutation()
   const { data: sessionData, update } = useSession()
   const currentOrgId = sessionData?.user.organization
 
   const clickHandler = async () => {
-    const response = await deleteOrganisation({
+    const response = await deleteOrganization({
       deleteOrganizationId: currentOrgId,
     })
 

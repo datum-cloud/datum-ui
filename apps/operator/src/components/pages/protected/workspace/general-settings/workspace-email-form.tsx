@@ -22,7 +22,7 @@ import { RESET_SUCCESS_STATE_MS } from '@/constants'
 
 const WorkspaceEmailForm = () => {
   const [isSuccess, setIsSuccess] = useState(false)
-  const [{ fetching: isSubmitting }, updateOrganisation] =
+  const [{ fetching: isSubmitting }, updateOrganization] =
     useUpdateOrganizationMutation()
   const { data: sessionData } = useSession()
   const currentOrgId = sessionData?.user.organization
@@ -51,7 +51,7 @@ const WorkspaceEmailForm = () => {
   }, [currentWorkspace, form])
 
   const updateWorkspace = async ({ email }: { email: string }) => {
-    await updateOrganisation({
+    await updateOrganization({
       updateOrganizationId: currentOrgId,
       input: {
         updateOrgSettings: {
