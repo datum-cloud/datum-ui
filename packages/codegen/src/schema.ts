@@ -189,6 +189,15 @@ export interface ApiTokenWhereInput {
   updatedByNotNil?: InputMaybe<Scalars['Boolean']['input']>;
 }
 
+export interface AuditLogWhereInput {
+  after?: InputMaybe<Scalars['Time']['input']>;
+  before?: InputMaybe<Scalars['Time']['input']>;
+  operation?: InputMaybe<Scalars['String']['input']>;
+  refID?: InputMaybe<Scalars['ID']['input']>;
+  table?: InputMaybe<Scalars['ID']['input']>;
+  updatedBy?: InputMaybe<Scalars['ID']['input']>;
+}
+
 /** ContactHistoryOpType is enum for the field operation */
 export enum ContactHistoryOpType {
   DELETE = 'DELETE',
