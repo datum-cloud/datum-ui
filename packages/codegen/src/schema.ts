@@ -11786,6 +11786,25 @@ export type GetTemplateQueryVariables = Exact<{
 
 export type GetTemplateQuery = { __typename?: 'Query', template: { __typename?: 'Template', id: string, name: string, templateType: TemplateDocumentType, description?: string | null, jsonconfig: any, uischema?: any | null } };
 
+export type CreatePersonalAccessTokenMutationVariables = Exact<{
+  input: CreatePersonalAccessTokenInput;
+}>;
+
+
+export type CreatePersonalAccessTokenMutation = { __typename?: 'Mutation', createPersonalAccessToken: { __typename?: 'PersonalAccessTokenCreatePayload', personalAccessToken: { __typename?: 'PersonalAccessToken', token: string } } };
+
+export type GetPersonalAccessTokensQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPersonalAccessTokensQuery = { __typename?: 'Query', personalAccessTokens: { __typename?: 'PersonalAccessTokenConnection', edges?: Array<{ __typename?: 'PersonalAccessTokenEdge', node?: { __typename?: 'PersonalAccessToken', id: string, name: string, description?: string | null, expiresAt: any } | null } | null> | null } };
+
+export type DeletePersonalAccessTokenMutationVariables = Exact<{
+  deletePersonalAccessTokenId: Scalars['ID']['input'];
+}>;
+
+
+export type DeletePersonalAccessTokenMutation = { __typename?: 'Mutation', deletePersonalAccessToken: { __typename?: 'PersonalAccessTokenDeletePayload', deletedID: string } };
+
 export type GetUserProfileQueryVariables = Exact<{
   userId: Scalars['ID']['input'];
 }>;
@@ -12158,6 +12177,48 @@ export const GetTemplateDocument = gql`
 
 export function useGetTemplateQuery(options: Omit<Urql.UseQueryArgs<GetTemplateQueryVariables>, 'query'>) {
   return Urql.useQuery<GetTemplateQuery, GetTemplateQueryVariables>({ query: GetTemplateDocument, ...options });
+};
+export const CreatePersonalAccessTokenDocument = gql`
+    mutation CreatePersonalAccessToken($input: CreatePersonalAccessTokenInput!) {
+  createPersonalAccessToken(input: $input) {
+    personalAccessToken {
+      token
+    }
+  }
+}
+    `;
+
+export function useCreatePersonalAccessTokenMutation() {
+  return Urql.useMutation<CreatePersonalAccessTokenMutation, CreatePersonalAccessTokenMutationVariables>(CreatePersonalAccessTokenDocument);
+};
+export const GetPersonalAccessTokensDocument = gql`
+    query GetPersonalAccessTokens {
+  personalAccessTokens {
+    edges {
+      node {
+        id
+        name
+        description
+        expiresAt
+      }
+    }
+  }
+}
+    `;
+
+export function useGetPersonalAccessTokensQuery(options?: Omit<Urql.UseQueryArgs<GetPersonalAccessTokensQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetPersonalAccessTokensQuery, GetPersonalAccessTokensQueryVariables>({ query: GetPersonalAccessTokensDocument, ...options });
+};
+export const DeletePersonalAccessTokenDocument = gql`
+    mutation DeletePersonalAccessToken($deletePersonalAccessTokenId: ID!) {
+  deletePersonalAccessToken(id: $deletePersonalAccessTokenId) {
+    deletedID
+  }
+}
+    `;
+
+export function useDeletePersonalAccessTokenMutation() {
+  return Urql.useMutation<DeletePersonalAccessTokenMutation, DeletePersonalAccessTokenMutationVariables>(DeletePersonalAccessTokenDocument);
 };
 export const GetUserProfileDocument = gql`
     query GetUserProfile($userId: ID!) {

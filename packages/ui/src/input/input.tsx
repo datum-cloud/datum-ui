@@ -14,6 +14,7 @@ export interface InputProps
     InputVariants {
   icon?: ReactNode
   prefix?: ReactNode
+  onIconClick?: () => void
 }
 
 interface InputRowProps extends InputRowVariants {
@@ -22,7 +23,7 @@ interface InputRowProps extends InputRowVariants {
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, icon, prefix, variant, ...props }, ref) => {
+  ({ className, type, icon, prefix, variant, onIconClick, ...props }, ref) => {
     const { input, inputWrapper, iconWrapper, prefixWrapper } = inputStyles({
       variant,
     })
@@ -51,7 +52,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
           style={{ paddingLeft: hasPrefix ? prefixWidth + 12 : undefined }}
         />
-        {icon && <div className={iconWrapper()}>{icon}</div>}
+        {icon && (
+          <div
+            className={iconWrapper()}
+            onClick={onIconClick}
+            style={{ cursor: onIconClick ? 'pointer' : 'default' }}
+          >
+            {icon}
+          </div>
+        )}
       </div>
     )
   },
