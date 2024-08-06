@@ -155,8 +155,7 @@ const PersonalAccessTokenForm = () => {
                       <Input {...field} value={field.value || ''} />
                     </FormControl>
                     <Info>
-                      A unique name for this token. May be visible to token
-                      owners.
+                      A name for this token. May be visible to token owners.
                     </Info>
                     {errors.name && (
                       <FormMessage>{errors.name.message}</FormMessage>
