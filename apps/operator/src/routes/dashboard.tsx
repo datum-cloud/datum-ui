@@ -188,6 +188,10 @@ export const NavItems: (NavItem | Separator | NavHeading)[] = [
         title: 'Billing & Usage',
         href: '/workspace-settings/billing-usage',
       },
+      {
+        title: 'Developers',
+        href: '/workspace-settings/developers',
+      },
     ],
   },
   {

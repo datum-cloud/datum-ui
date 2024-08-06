@@ -15,7 +15,16 @@ const DialogPortal = DialogPrimitive.Portal
 
 const DialogClose = DialogPrimitive.Close
 
-const { overlay, content, header, footer, title, description } = dialogStyles()
+const {
+  overlay,
+  content,
+  header,
+  footer,
+  title,
+  description,
+  close,
+  closeIcon,
+} = dialogStyles()
 
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
@@ -41,10 +50,10 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      {/* <DialogPrimitive.Close className={cn(close(), className)}>
+      <DialogPrimitive.Close className={cn(close(), className)}>
         <X className={cn(closeIcon(), className)} />
         <span className="sr-only">Close</span>
-      </DialogPrimitive.Close> */}
+      </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </DialogPortal>
 ))
