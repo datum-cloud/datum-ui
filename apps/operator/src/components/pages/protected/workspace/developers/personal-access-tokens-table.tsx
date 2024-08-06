@@ -47,8 +47,10 @@ export const PersonalAccessTokenTable = () => {
     {
       accessorKey: 'expiresAt',
       header: 'Expires',
-      cell: ({ cell }) =>
-        format(new Date(cell.getValue() as string), 'd MMM yyyy'),
+      cell: ({ cell }) => {
+        const value = cell.getValue() as string | null
+        return value ? format(new Date(value), 'd MMM yyyy') : 'Never'
+      },
     },
     {
       accessorKey: 'id',

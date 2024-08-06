@@ -10,6 +10,7 @@ export const buttonStyles = tv({
       'absolute top-1/2 left-1/2  transform -translate-x-1/2 -translate-y-1/2',
     loadingIcon: 'animate-spin !h-6 !w-6',
     loadingText: 'opacity-0',
+    childWrapper: '',
   },
   variants: {
     variant: {
@@ -17,6 +18,8 @@ export const buttonStyles = tv({
       blackberry: '!bg-blackberry-900 hover:!opacity-90',
       outline:
         'border-blackberry-800 text-blackberry-800 border hover:!opacity-90',
+      outlineLight:
+        'border-blackberry-500 text-blackberry-800 border hover:!opacity-90',
       redOutline:
         'border-util-red-500 text-util-red-500 border bg-white hover:!opacity-90 dark:border-util-red-500 dark:text-util-red-500',
       white: {},
@@ -38,6 +41,11 @@ export const buttonStyles = tv({
     full: {
       true: {
         base: 'flex w-full',
+      },
+    },
+    childFull: {
+      true: {
+        childWrapper: 'flex w-full',
       },
     },
   },
