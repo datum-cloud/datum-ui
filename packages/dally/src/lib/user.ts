@@ -1,4 +1,3 @@
-import useSWR from 'swr'
 import { restUrl } from '../index.ts'
 
 export interface LoginUser {

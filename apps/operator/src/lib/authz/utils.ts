@@ -1,4 +1,5 @@
-import useSWR from "swr";
+import { datumRootUrl } from "@repo/dally/auth";
+import { Session } from "next-auth";
 
 // high level relation names
 export const canViewRelation = "can_view";
@@ -26,77 +27,72 @@ export type CheckTuple = {
   relation: string
 }
 
-// userHasWorkspaceEditPermissions checks if the current user has edit permissions for the workspace
-export const userHasWorkspaceEditPermissions = () => {
-  const { data, isLoading, error } = useSWR(
-    `/api/authz/can-edit`,
-    async (url) => {
-      return (
-        await fetch(url, {
-          method: 'GET',
-        })
-      ).json()
-    },
+export const checkPermissions = async (session: Session, relation: string) => {
+  // get the current user's organization and access token for authorization
+  const accessToken = session?.user?.accessToken
+  const currentOrgId = session?.user.organization
+
+  const headers: HeadersInit = {
+    'content-type': 'application/json',
+    Authorization: `Bearer ${accessToken}`,
+  }
+
+  // create the payload for the check
+  const payload: CheckTuple = {
+    relation: relation,
+    objectType: organizationObject,
+    objectId: currentOrgId,
+  };
+
+  const fData = await fetch(
+    `${datumRootUrl}/v1/check-access`,
     {
-      revalidateOnFocus: false,
-      revalidateOnMount: true,
-      refreshInterval: 0,
-      revalidateIfStale: false,
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(payload),
+      credentials: 'include',
     },
   )
-  return {
-    data: data,
-    isLoading,
-    error,
+
+  const data = await fData.json()
+
+  if (fData.ok) {
+    return data.allowed as boolean
   }
+
+  return false
+}
+
+// userHasWorkspaceEditPermissions checks if the current user has edit permissions for the workspace
+export const userHasWorkspaceEditPermissions = async (session: Session | null) => {
+  if (!session) {
+    return false
+  }
+
+  const data = await checkPermissions(session, canEditRelation)
+
+
+  return data
 }
 
 // userHasWorkspaceDeletePermissions checks if the current user has delete permissions for the workspace
-export const userHasWorkspaceDeletePermissions = () => {
-  const { data, isLoading, error } = useSWR(
-    `/api/authz/can-delete`,
-    async (url) => {
-      return (
-        await fetch(url, {
-          method: 'GET',
-        })
-      ).json()
-    },
-    {
-      revalidateOnFocus: false,
-      revalidateOnMount: true,
-      refreshInterval: 0,
-      revalidateIfStale: false,
-    },
-  )
-  return {
-    data: data,
-    isLoading,
-    error,
+export const userHasWorkspaceDeletePermissions = async (session: Session | null) => {
+  if (!session) {
+    return false
   }
+
+  const data = await checkPermissions(session, canDeleteRelation)
+
+  return data
 }
 
 // useCanInviteAdmins checks if the current user has permissions to invite admins
-export const userCanInviteAdmins = () => {
-  const { data, isLoading, error } = useSWR(
-    `/api/authz/invite-admin`,
-    async (url) => {
-      return (
-        await fetch(url, {
-          method: 'GET',
-        })
-      ).json()
-    },
-    {
-      revalidateOnFocus: false,
-      revalidateOnMount: true,
-      refreshInterval: 0,
-      revalidateIfStale: false,
-    },
-  )
-  return {
-    data: data,
-    isLoading,
-    error,
+export const userCanInviteAdmins = async (session: Session | null) => {
+  if (!session) {
+    return false
   }
+
+  const data = await checkPermissions(session, canDeleteRelation)
+
+  return data
 }
