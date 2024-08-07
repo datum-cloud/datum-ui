@@ -1,6 +1,5 @@
 import { OpenFgaClient } from "@openfga/sdk";
 
-
 export type FGACheckTuple = {
 	user: string,
 	object: string,
@@ -13,11 +12,18 @@ export type FGAListTuple = {
 	type: string
 }
 
-export function newFgaClient(fgaUrl: string, fgaStoreId: string, fgaAuthorizationModelId: string) {
+export type ClientConfig = {
+	fgaUrl: string,
+	fgaStoreId: string,
+	fgaAuthorizationModelId: string
+}
+
+// newFgaClient creates a new OpenFgaClient instance with the given configuration
+export function newFgaClient(config: ClientConfig) {
 	return new OpenFgaClient({
-		apiUrl: fgaUrl,
-		storeId: fgaStoreId,
-		authorizationModelId: fgaAuthorizationModelId,
+		apiUrl: config.fgaUrl,
+		storeId: config.fgaStoreId,
+		authorizationModelId: config.fgaAuthorizationModelId,
 		// TODO: add credentials setup
 		// credentials: {
 		// 	method: CredentialsMethod.ClientCredentials,
@@ -31,7 +37,7 @@ export function newFgaClient(fgaUrl: string, fgaStoreId: string, fgaAuthorizatio
 	});
 }
 
-
+// checkTuple checks if a user has access to a specific object in a relation
 export async function checkTuple(client: OpenFgaClient, payload: FGACheckTuple) {
 	const { user, object, relation } = payload;
 
@@ -44,6 +50,7 @@ export async function checkTuple(client: OpenFgaClient, payload: FGACheckTuple) 
 	return result;
 }
 
+// listAllTuples lists all objects in a relation
 export async function listAllTuples(client: OpenFgaClient, payload: FGAListTuple) {
 	const { user, relation, type } = payload;
 

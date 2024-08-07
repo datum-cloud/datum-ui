@@ -1,5 +1,3 @@
-import { Session } from "next-auth";
-import { checkTuple, FGACheckTuple } from "./client";
 import useSWR from "swr";
 
 // high level relation names

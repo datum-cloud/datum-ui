@@ -3,26 +3,12 @@ import { checkTuple, FGACheckTuple, newFgaClient } from "@/lib/authz/client"
 import { inviteAdminsRelation } from "@/lib/authz/utils"
 import { fgaAuthorizationModelId, fgaStoreId, fgaUrl } from "@repo/dally/auth"
 import { NextResponse } from "next/server"
+import { checkPermissions } from "../utils"
 
 export async function GET() {
-  const session = await auth()
+  const fetchedData = await checkPermissions(inviteAdminsRelation)
 
-  // get the current user's organization and user id
-  const currentOrgId = session?.user.organization
-  const currentUserId = session?.user.userId
-
-  // create the payload for the check
-  const payload: FGACheckTuple = {
-    user: `user:${currentUserId}`,
-    relation: inviteAdminsRelation,
-    object: `organization:${currentOrgId}`,
-  };
-
-  const client = newFgaClient(fgaUrl, fgaStoreId, fgaAuthorizationModelId)
-
-  const fetchedData = await checkTuple(client, payload);
-
-  if (fetchedData && fetchedData.allowed) {
+  if (fetchedData) {
     return NextResponse.json(fetchedData, { status: 200 })
   }
 
