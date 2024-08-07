@@ -1,30 +1,47 @@
 import { auth } from "@/lib/auth/auth";
-import { checkTuple, FGACheckTuple, newFgaClient } from "@/lib/authz/client";
-import { canEditRelation } from "@/lib/authz/utils";
-import { fgaAuthorizationModelId, fgaStoreId, fgaUrl } from "@repo/dally/auth";
+import { CheckTuple, organizationObject } from "@/lib/authz/utils";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function checkPermissions(relation: string) {
+export async function checkPermissions(request: NextRequest, relation: string) {
+  const cookies = request.headers.get('cookie')
+
   const session = await auth()
 
-  // get the current user's organization and user id
+  // get the current user's organization and access token for authorization
+  const accessToken = session?.user?.accessToken
   const currentOrgId = session?.user.organization
-  const currentUserId = session?.user.userId
 
-  // create the payload for the check
-  const payload: FGACheckTuple = {
-    user: `user:${currentUserId}`,
-    relation: relation,
-    object: `organization:${currentOrgId}`,
-  };
-
-  const clientConfig = {
-    fgaUrl: fgaUrl,
-    fgaStoreId: fgaStoreId,
-    fgaAuthorizationModelId: fgaAuthorizationModelId
+  const headers: HeadersInit = {
+    'content-type': 'application/json',
+    Authorization: `Bearer ${accessToken}`,
+  }
+  if (cookies) {
+    headers['cookie'] = cookies
   }
 
-  const client = newFgaClient(clientConfig)
-  const fetchedData = await checkTuple(client, payload);
+  // create the payload for the check
+  const payload: CheckTuple = {
+    relation: relation,
+    objectType: organizationObject,
+    objectId: currentOrgId,
+  };
 
-  return fetchedData;
+  const fData = await fetch(
+    `${process.env.API_REST_URL}/v1/check-access`,
+    {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(payload),
+      credentials: 'include',
+    },
+  )
+
+  const data = await fData.json()
+
+  if (fData.ok) {
+    return NextResponse.json(data, { status: 200 })
+  }
+
+  return NextResponse.json(data, { status: fData.status })
+
 }
