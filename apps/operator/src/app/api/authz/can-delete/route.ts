@@ -1,9 +1,9 @@
-import { canEditRelation } from "@/lib/authz/utils"
+import { canDeleteRelation } from "@/lib/authz/utils"
 import { NextResponse } from "next/server"
 import { checkPermissions } from "../utils"
 
 export async function GET() {
-  const fetchedData = await checkPermissions(canEditRelation)
+  const fetchedData = await checkPermissions(canDeleteRelation)
 
   if (fetchedData) {
     return NextResponse.json(fetchedData, { status: 200 })
