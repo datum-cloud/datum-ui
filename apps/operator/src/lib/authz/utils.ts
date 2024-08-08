@@ -58,7 +58,7 @@ export const checkPermissions = async (session: Session | null, relation: string
   };
 
   const { data, isLoading, error } = useSWR(
-    `${datumAPIUrl}/v1/check-access`,
+    `${datumAPIUrl}/v1/account/access`,
     async (url) => {
       return (
         await fetch(
