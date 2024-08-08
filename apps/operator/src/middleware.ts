@@ -49,11 +49,13 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - public/backgrounds (background images)
+     * - public/icons (images)
      * and the following unprotected pages:
      * - login (login page)
      * - verify (verify page)
      * - invite (invite verify page)
      */
-    '\/((?!api|[_next\/static]|[_next\/image]|favicon.ico|login|verify|invite).*)',
+    '\/((?!api|[_next\/static]|[_next\/image]|favicon.ico|backgrounds|backgrounds\/|icons|icons\/|login|verify|invite).*)',
   ],
 }
