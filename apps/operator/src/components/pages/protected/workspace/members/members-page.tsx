@@ -19,6 +19,9 @@ const MembersPage: React.FC = async () => {
     pause: !session,
   })
 
+  // Check if the user can invite admins or only members
+  const { data: inviteAdminPermissions, error } = await userCanInviteAdmins(session)
+
   const numInvites = Array.isArray(data?.invites.edges)
     ? data?.invites.edges.length
     : 0
@@ -48,7 +51,7 @@ const MembersPage: React.FC = async () => {
         </TabsContent>
         <TabsContent value="invites">
           <div className={wrapper()}>
-            <WorkspaceInviteForm />
+            <WorkspaceInviteForm inviteAdmins={inviteAdminPermissions?.allowed} />
             <WorkspaceInvites />
           </div>
         </TabsContent>

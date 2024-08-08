@@ -45,23 +45,13 @@ const formSchema = z.object({
 
 type FormData = zInfer<typeof formSchema>
 
-const WorkspaceInviteForm = () => {
+const WorkspaceInviteForm = ({ inviteAdmins }: { inviteAdmins: boolean }) => {
   const { buttonRow, roleRow } = workspaceInviteStyles()
   const { toast } = useToast()
 
   const [result, inviteMembers] = useCreateBulkInviteMutation()
   const { error, fetching } = result
   const { errorMessages } = useGqlError(error)
-
-  // Check if the user can invite admins or only members
-  const { data: session } = useSession()
-  const { data: inviteAdminPermissions, error: inviteError } = userCanInviteAdmins(session)
-
-  // If the user has permissions to invite admins, set allowAdmin to true, otherwise default to false
-  let allowAdmin = false
-  if (!inviteError && inviteAdminPermissions && inviteAdminPermissions.allowed) {
-    allowAdmin = true
-  }
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -187,7 +177,7 @@ const WorkspaceInviteForm = () => {
                             .reverse()
                             .filter(([key]) => !key.includes('USER'))
                             .filter(([key]) => {
-                              if (!allowAdmin) {
+                              if (!inviteAdmins) {
                                 return !key.includes('ADMIN');
                               }
 
