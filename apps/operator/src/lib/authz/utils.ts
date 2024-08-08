@@ -1,5 +1,6 @@
 import { datumRootUrl } from "@repo/dally/auth";
 import { Session } from "next-auth";
+import useSWR from "swr";
 
 // high level relation names
 export const canViewRelation = "can_view";
@@ -27,7 +28,7 @@ export type CheckTuple = {
   relation: string
 }
 
-export const checkPermissions = async (session: Session, relation: string) => {
+export const checkPermissions = async (session: Session | null, relation: string) => {
   // get the current user's organization and access token for authorization
   const accessToken = session?.user?.accessToken
   const currentOrgId = session?.user.organization
@@ -44,55 +45,45 @@ export const checkPermissions = async (session: Session, relation: string) => {
     objectId: currentOrgId,
   };
 
-  const fData = await fetch(
+  const { data, isLoading, error } = useSWR(
     `${datumRootUrl}/v1/check-access`,
+    async (url) => {
+      return (
+        await fetch(
+          url,
+          {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(payload),
+            credentials: 'include',
+          })
+      ).json()
+    },
     {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify(payload),
-      credentials: 'include',
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
+      refreshInterval: 0,
+      revalidateIfStale: false,
     },
   )
-
-  const data = await fData.json()
-
-  if (fData.ok) {
-    return data.allowed as boolean
+  return {
+    data,
+    isLoading,
+    error,
   }
-
-  return false
 }
 
 // userHasWorkspaceEditPermissions checks if the current user has edit permissions for the workspace
 export const userHasWorkspaceEditPermissions = async (session: Session | null) => {
-  if (!session) {
-    return false
-  }
-
-  const data = await checkPermissions(session, canEditRelation)
-
-
-  return data
+  return checkPermissions(session, canEditRelation)
 }
 
 // userHasWorkspaceDeletePermissions checks if the current user has delete permissions for the workspace
 export const userHasWorkspaceDeletePermissions = async (session: Session | null) => {
-  if (!session) {
-    return false
-  }
-
-  const data = await checkPermissions(session, canDeleteRelation)
-
-  return data
+  return checkPermissions(session, canDeleteRelation)
 }
 
 // useCanInviteAdmins checks if the current user has permissions to invite admins
 export const userCanInviteAdmins = async (session: Session | null) => {
-  if (!session) {
-    return false
-  }
-
-  const data = await checkPermissions(session, canInviteAdminsRelation)
-
-  return data
+  return checkPermissions(session, canInviteAdminsRelation)
 }

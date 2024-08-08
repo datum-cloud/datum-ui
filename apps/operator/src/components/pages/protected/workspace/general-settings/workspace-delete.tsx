@@ -28,9 +28,11 @@ const WorkspaceDelete = async () => {
   const { data: sessionData, update } = useSession()
   const currentOrgId = sessionData?.user.organization
 
-  const canDelete = await userHasWorkspaceDeletePermissions(sessionData)
+  // Check if the user has permission to delete the workspace
+  const { data, error } = await userHasWorkspaceDeletePermissions(sessionData)
 
-  if (!canDelete) {
+  // If the user does not have permission to delete the workspace, return null
+  if (error || !data || !data?.allowed) {
     return null
   }
 
