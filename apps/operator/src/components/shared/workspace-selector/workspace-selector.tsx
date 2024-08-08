@@ -44,10 +44,13 @@ export const WorkspaceSelector = () => {
     .filter((org) => {
       return (
         org?.node?.name.toLowerCase().includes(workspaceSearch.toLowerCase()) &&
-        org?.node?.id !== currentOrgId
+        org?.node?.id !== currentOrgId &&
+        !org?.node?.personalOrg
       )
     })
     .slice(0, 4)
+
+  const nonPersonalOrgs = orgs.filter((org) => !org?.node?.personalOrg)
 
   const activeOrg = orgs
     .filter((org) => org?.node?.id === currentOrgId)
@@ -73,7 +76,8 @@ export const WorkspaceSelector = () => {
     }
   }
 
-  if (orgs.length === 1) {
+  // if there is only one non-personal workspace, show the logo instead of the dropdown
+  if (nonPersonalOrgs.length <= 1) {
     return (
       <Link href={'/'} className={logoWrapper()}>
         <Logo width={115} theme="dark" />
@@ -135,7 +139,7 @@ export const WorkspaceSelector = () => {
             })}
             <div>
               <Link href="/workspace" className={allWorkspacesLink()}>
-                View all {orgs.length} workspaces
+                View all {orgs.length - 1} workspaces
                 <ArrowRight width={10} />
               </Link>
             </div>
