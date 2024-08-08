@@ -44,7 +44,8 @@ export const WorkspaceSelector = () => {
     .filter((org) => {
       return (
         org?.node?.name.toLowerCase().includes(workspaceSearch.toLowerCase()) &&
-        org?.node?.id !== currentOrgId
+        org?.node?.id !== currentOrgId &&
+        org?.node?.personalOrg === false
       )
     })
     .slice(0, 4)
@@ -73,7 +74,9 @@ export const WorkspaceSelector = () => {
     }
   }
 
-  if (orgs.length === 1) {
+  // If there are only 2 workspaces, we don't need to show the dropdown
+  // because one of them is the personal workspace and the other is the current workspace
+  if (orgs.length <= 2) {
     return (
       <Link href={'/'} className={logoWrapper()}>
         <Logo width={115} theme="dark" />
@@ -135,7 +138,7 @@ export const WorkspaceSelector = () => {
             })}
             <div>
               <Link href="/workspace" className={allWorkspacesLink()}>
-                View all {orgs.length} workspaces
+                View all {orgs.length - 1} workspaces
                 <ArrowRight width={10} />
               </Link>
             </div>
