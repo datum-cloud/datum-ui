@@ -50,6 +50,8 @@ export const WorkspaceSelector = () => {
     })
     .slice(0, 4)
 
+  const nonPersonalOrgs = orgs.filter((org) => !org?.node?.personalOrg)
+
   const activeOrg = orgs
     .filter((org) => org?.node?.id === currentOrgId)
     .map((org) => org?.node)[0]
@@ -74,9 +76,8 @@ export const WorkspaceSelector = () => {
     }
   }
 
-  // If there are only 2 workspaces, we don't need to show the dropdown
-  // because one of them is the personal workspace and the other is the current workspace
-  if (orgs.length <= 2) {
+  // if there is only one non-personal workspace, show the logo instead of the dropdown
+  if (nonPersonalOrgs.length <= 1) {
     return (
       <Link href={'/'} className={logoWrapper()}>
         <Logo width={115} theme="dark" />
