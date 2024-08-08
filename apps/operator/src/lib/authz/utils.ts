@@ -8,7 +8,7 @@ export const canDeleteRelation = "can_delete";
 export const accessRelation = "access";
 
 // fine grained relation names
-export const inviteAdminsRelation = "can_invite_admins";
+export const canInviteAdminsRelation = "can_invite_admins";
 export const inviteMembersRelation = "can_invite_members";
 export const auditLogViewRelation = "audit_log_viewer";
 
@@ -92,7 +92,7 @@ export const userCanInviteAdmins = async (session: Session | null) => {
     return false
   }
 
-  const data = await checkPermissions(session, canDeleteRelation)
+  const data = await checkPermissions(session, canInviteAdminsRelation)
 
   return data
 }
