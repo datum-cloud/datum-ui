@@ -1,4 +1,4 @@
-import { datumRootUrl } from "@repo/dally/auth";
+import { datumAPIUrl } from "@repo/dally/auth";
 import { Session } from "next-auth";
 import useSWR from "swr";
 
@@ -46,7 +46,7 @@ export const checkPermissions = async (session: Session | null, relation: string
   };
 
   const { data, isLoading, error } = useSWR(
-    `${datumRootUrl}/v1/check-access`,
+    `${datumAPIUrl}/v1/check-access`,
     async (url) => {
       return (
         await fetch(
