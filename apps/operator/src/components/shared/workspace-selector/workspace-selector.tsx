@@ -45,7 +45,7 @@ export const WorkspaceSelector = () => {
       return (
         org?.node?.name.toLowerCase().includes(workspaceSearch.toLowerCase()) &&
         org?.node?.id !== currentOrgId &&
-        org?.node?.personalOrg === false
+        !org?.node?.personalOrg
       )
     })
     .slice(0, 4)
