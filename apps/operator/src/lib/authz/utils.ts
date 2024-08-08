@@ -2,32 +2,44 @@ import { datumAPIUrl } from "@repo/dally/auth";
 import { Session } from "next-auth";
 import useSWR from "swr";
 
+
 // high level relation names
 export const canViewRelation = "can_view";
 export const canEditRelation = "can_edit";
 export const canDeleteRelation = "can_delete";
 export const accessRelation = "access";
 
-// fine grained relation names
+
+// fine grained relation names used in the check access endpoint
 export const canInviteAdminsRelation = "can_invite_admins";
 export const inviteMembersRelation = "can_invite_members";
 export const auditLogViewRelation = "audit_log_viewer";
 
-// object types 
+
+// object types used in the check access endpoint
 export const organizationObject = "organization";
 export const groupObject = "group";
 export const featureObject = "feature";
 
-// CheckTuple includes the payload required for the check access endpoint
-// @objectId: the id of the object being checked, usually the organization id
-// @objectType: the type of the object being checked, usually organization
-// @relation: the relation being checked 
+/*
+* CheckTuple includes the payload required for the check access endpoint
+*
+* @objectId: the id of the object being checked, usually the organization id
+* @objectType: the type of the object being checked, usually organization
+* @relation: the relation being checked 
+*/
 export type CheckTuple = {
   objectId: string,
   objectType: string
   relation: string
 }
 
+/* 
+* Returns if the current user has access to the specified relation
+* @param session: the current user's session
+* @param relation: the relation to check
+* 
+*/
 export const checkPermissions = async (session: Session | null, relation: string) => {
   // get the current user's organization and access token for authorization
   const accessToken = session?.user?.accessToken
@@ -73,17 +85,26 @@ export const checkPermissions = async (session: Session | null, relation: string
   }
 }
 
-// userHasWorkspaceEditPermissions checks if the current user has edit permissions for the workspace
+/*
+* Returns if the current user has access to the specified relation
+* @param session: the current user's session
+*/
 export const userHasWorkspaceEditPermissions = async (session: Session | null) => {
   return checkPermissions(session, canEditRelation)
 }
 
-// userHasWorkspaceDeletePermissions checks if the current user has delete permissions for the workspace
+/*
+* Returns if the current user has delete permissions for the workspace
+* @param session: the current user's session
+*/
 export const userHasWorkspaceDeletePermissions = async (session: Session | null) => {
   return checkPermissions(session, canDeleteRelation)
 }
 
-// useCanInviteAdmins checks if the current user has permissions to invite admins
+/*
+* Returns if the current user has permissions to invite admins
+* @param session: the current user's session
+*/
 export const userCanInviteAdmins = async (session: Session | null) => {
   return checkPermissions(session, canInviteAdminsRelation)
 }
