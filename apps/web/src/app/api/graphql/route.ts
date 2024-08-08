@@ -1,4 +1,4 @@
-import { gqlUrl } from '@repo/dally/auth'
+import { datumGQLUrl } from '@repo/dally/auth'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     })
   }
 
-  const graphqlResponse = await fetch(gqlUrl, {
+  const graphqlResponse = await fetch(datumGQLUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

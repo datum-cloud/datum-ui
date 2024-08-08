@@ -17,8 +17,9 @@ import {
 } from '@repo/ui/alert-dialog'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@repo/ui/use-toast'
+import { userHasWorkspaceDeletePermissions } from '@/lib/authz/utils'
 
-const WorkspaceDelete = () => {
+const WorkspaceDelete = async () => {
   const { toast } = useToast()
   const { push } = useRouter()
 
@@ -26,6 +27,14 @@ const WorkspaceDelete = () => {
     useDeleteOrganizationMutation()
   const { data: sessionData, update } = useSession()
   const currentOrgId = sessionData?.user.organization
+
+  // Check if the user has permission to delete the workspace
+  const { data, error } = await userHasWorkspaceDeletePermissions(sessionData)
+
+  // If the user does not have permission to delete the workspace, return null
+  if (error || !data || !data?.allowed) {
+    return null
+  }
 
   const clickHandler = async () => {
     const response = await deleteOrganization({

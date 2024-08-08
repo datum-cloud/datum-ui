@@ -1,9 +1,7 @@
 'use client'
 import {
   GetUserProfileQueryVariables,
-  useGetAllOrganizationsQuery,
   useGetUserProfileQuery,
-  useUpdateOrganizationMutation,
   useUpdateUserNameMutation,
 } from '@repo/codegen/src/schema'
 import { Input, InputRow } from '@repo/ui/input'

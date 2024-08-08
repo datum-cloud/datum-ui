@@ -31,6 +31,8 @@ import {
   useCreateBulkInviteMutation,
 } from '@repo/codegen/src/schema'
 import { useGqlError } from '@/hooks/useGqlError'
+import { userCanInviteAdmins } from '@/lib/authz/utils'
+import { useSession } from 'next-auth/react'
 
 const formSchema = z.object({
   emails: z.array(z.string().email({ message: 'Invalid email address' })),
@@ -43,7 +45,7 @@ const formSchema = z.object({
 
 type FormData = zInfer<typeof formSchema>
 
-const WorkspaceInviteForm = () => {
+const WorkspaceInviteForm = ({ inviteAdmins }: { inviteAdmins: boolean }) => {
   const { buttonRow, roleRow } = workspaceInviteStyles()
   const { toast } = useToast()
 
@@ -68,6 +70,7 @@ const WorkspaceInviteForm = () => {
   const [emails, setEmails] = useState<Tag[]>([])
   const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null)
   const [currentValue, setCurrentValue] = useState('')
+
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const inviteInput: InputMaybe<
@@ -172,13 +175,21 @@ const WorkspaceInviteForm = () => {
                         <SelectContent>
                           {Object.entries(InviteRole)
                             .reverse()
-                            .filter(([key, value]) => !key.includes('USER'))
+                            .filter(([key]) => !key.includes('USER'))
+                            .filter(([key]) => {
+                              if (!inviteAdmins) {
+                                return !key.includes('ADMIN');
+                              }
+
+                              return true;
+                            })
                             .map(([key, value], i) => (
                               <SelectItem key={i} value={value}>
                                 {key[0].toUpperCase() +
                                   key.slice(1).toLowerCase()}
                               </SelectItem>
-                            ))}
+                            ))
+                          }
                         </SelectContent>
                       </Select>
                     </FormControl>
