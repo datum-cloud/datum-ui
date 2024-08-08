@@ -43,18 +43,17 @@ export default auth((req) => {
 
 export const config = {
   matcher: [
-    '/',
-    '/assets/:path*',
-    '/billing/:path*',
-    '/configuration/:path*',
-    '/dashboard/:path*',
-    '/workspace/:path*',
-    '/inbox/:path*',
-    '/integrations/:path*',
-    '/people-and-groups/:path*',
-    '/products/:path*',
-    '/revenue/:path*',
-    '/sustainability/:path*',
-    '/tasks-and-mentions/:path*',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * and the following unprotected pages:
+     * - login (login page)
+     * - verify (verify page)
+     * - invite (invite verify page)
+     */
+    '\/((?!api|_next\/static|_next\/image|favicon.ico|login|verify|invite).*)',
   ],
 }
