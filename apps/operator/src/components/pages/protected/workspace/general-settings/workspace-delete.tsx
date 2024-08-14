@@ -18,6 +18,8 @@ import {
 import { useRouter } from 'next/navigation'
 import { useToast } from '@repo/ui/use-toast'
 import { userHasWorkspaceDeletePermissions } from '@/lib/authz/utils'
+import { useGetOrganizationNameByIdQuery } from '@repo/codegen/src/schema'
+
 
 const WorkspaceDelete = async () => {
   const { toast } = useToast()
@@ -28,11 +30,14 @@ const WorkspaceDelete = async () => {
   const { data: sessionData, update } = useSession()
   const currentOrgId = sessionData?.user.organization
 
+  const variables = { organizationId: currentOrgId || '' }
+  const [org] = useGetOrganizationNameByIdQuery({ variables })
+
   // Check if the user has permission to delete the workspace
   const { data, error } = await userHasWorkspaceDeletePermissions(sessionData)
 
   // If the user does not have permission to delete the workspace, return null
-  if (error || !data || !data?.allowed) {
+  if (error || !data?.allowed) {
     return null
   }
 
@@ -76,7 +81,7 @@ const WorkspaceDelete = async () => {
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
                   This action cannot be undone. This will permanently delete
-                  your workspace and remove your data from our servers.
+                  your workspace <b>({org.data?.organization?.displayName})</b> and remove your data from our servers.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
