@@ -1,6 +1,8 @@
 {
   "private": true,
   "scripts": {
+    "preinstall": "node -e \"const ua=process.env.npm_config_user_agent||''; if(!ua.includes('pnpm')){console.error('This repo uses pnpm. Install with: corepack enable && pnpm install'); process.exit(1)}\"",
+    "shadcn:add": "pnpm --filter @repo/shadcn ui:add",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
@@ -11,11 +13,15 @@
     "release": "turbo run build --filter=docs^... && changeset publish",
     "preview-storybook": "turbo run preview-storybook"
   },
-  "devDependencies": {
-    "@changesets/cli": "^2.27.1",
-    "prettier": "^3.2.5",
-    "turbo": "^2.7.5"
+  "engines": {
+    "node": ">=24 <25"
   },
-  "packageManager": "pnpm@8.15.6",
+  "devDependencies": {
+    "@changesets/cli": "^2.29.8",
+    "prettier": "^3.8.1",
+    "turbo": "^2.7.5",
+    "typescript": "5.9.3"
+  },
+  "packageManager": "pnpm@10.28.1",
   "name": "design-system"
 }

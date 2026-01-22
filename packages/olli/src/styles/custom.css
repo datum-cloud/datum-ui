@@ -1,0 +1,27 @@
+/**
+ * Application-specific custom styles
+ * UI component styles are now in datum-ui/styles/animations.css
+ */
+
+/* Activity Log Styles */
+.activity-log-user {
+  font-weight: 600;
+}
+
+.activity-log-resource {
+  text-transform: capitalize;
+}
+
+.activity-log-resource-name,
+.activity-log-error-message,
+.activity-log-namespace {
+  font-weight: 600;
+}
+
+.recharts-wrapper .recharts-legend-wrapper {
+  z-index: 0;
+}
+
+.recharts-wrapper .recharts-tooltip-wrapper {
+  z-index: 1;
+}
