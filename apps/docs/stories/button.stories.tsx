@@ -5,8 +5,33 @@ const meta: Meta<typeof Button> = {
   component: Button,
   argTypes: {
     type: {
-      control: { type: "radio" },
-      options: ["button", "submit", "reset"],
+      control: { type: "select" },
+      options: [
+        "primary",
+        "secondary",
+        "tertiary",
+        "quaternary",
+        "warning",
+        "danger",
+        "success",
+      ],
+    },
+    theme: {
+      control: { type: "select" },
+      options: ["solid", "light", "outline", "borderless", "link"],
+    },
+    size: {
+      control: { type: "select" },
+      options: ["xs", "small", "default", "large", "icon", "link"],
+    },
+    block: {
+      control: { type: "boolean" },
+    },
+    loading: {
+      control: { type: "boolean" },
+    },
+    disabled: {
+      control: { type: "boolean" },
     },
   },
 };
@@ -15,26 +40,98 @@ export default meta;
 
 type Story = StoryObj<typeof Button>;
 
-/*
- *👇 Render functions are a framework specific feature to allow you control on how the component renders.
- * See https://storybook.js.org/docs/react/api/csf
- * to learn how to use render functions.
- */
 export const Primary: Story = {
-  render: (props) => (
-    <Button
-      {...props}
-      onClick={(): void => {
-        // eslint-disable-next-line no-alert -- alert for demo
-        alert("Hello from Turborepo!");
-      }}
-    >
-      Hello
-    </Button>
-  ),
-  name: "Button",
   args: {
-    children: "Hello",
+    children: "Primary Button",
     type: "primary",
+    theme: "solid",
   },
+};
+
+export const Secondary: Story = {
+  args: {
+    children: "Secondary Button",
+    type: "secondary",
+    theme: "solid",
+  },
+};
+
+export const Outline: Story = {
+  args: {
+    children: "Outline Button",
+    type: "primary",
+    theme: "outline",
+  },
+};
+
+export const Danger: Story = {
+  args: {
+    children: "Danger Button",
+    type: "danger",
+    theme: "solid",
+  },
+};
+
+export const Loading: Story = {
+  args: {
+    children: "Loading...",
+    type: "primary",
+    theme: "solid",
+    loading: true,
+  },
+};
+
+export const AllTypes: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-3">
+      <Button type="primary">Primary</Button>
+      <Button type="secondary">Secondary</Button>
+      <Button type="tertiary">Tertiary</Button>
+      <Button type="quaternary">Quaternary</Button>
+      <Button type="warning">Warning</Button>
+      <Button type="danger">Danger</Button>
+      <Button type="success">Success</Button>
+    </div>
+  ),
+};
+
+export const AllThemes: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-3">
+      <Button type="primary" theme="solid">
+        Solid
+      </Button>
+      <Button type="primary" theme="light">
+        Light
+      </Button>
+      <Button type="primary" theme="outline">
+        Outline
+      </Button>
+      <Button type="primary" theme="borderless">
+        Borderless
+      </Button>
+      <Button type="primary" theme="link">
+        Link
+      </Button>
+    </div>
+  ),
+};
+
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex items-center gap-3">
+      <Button type="primary" size="xs">
+        Extra Small
+      </Button>
+      <Button type="primary" size="small">
+        Small
+      </Button>
+      <Button type="primary" size="default">
+        Default
+      </Button>
+      <Button type="primary" size="large">
+        Large
+      </Button>
+    </div>
+  ),
 };

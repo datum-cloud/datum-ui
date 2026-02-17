@@ -1,35 +1,31 @@
-import { dirname, join, resolve } from "path";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import tailwindcss from "@tailwindcss/vite";
 
-function getAbsolutePath(value) {
-  return dirname(require.resolve(join(value, "package.json")));
-}
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const config = {
   stories: ["../stories/*.stories.tsx", "../stories/**/*.stories.tsx"],
-  addons: [
-    getAbsolutePath("@storybook/addon-links"),
-    getAbsolutePath("@storybook/addon-essentials"),
-  ],
   framework: {
-    name: getAbsolutePath("@storybook/react-vite"),
+    name: "@storybook/react-vite",
     options: {},
   },
 
-  core: {},
-
-  async viteFinal(config, { configType }) {
-    // customize the Vite config here
+  async viteFinal(config) {
+    config.plugins = [...(config.plugins || []), tailwindcss()];
     return {
       ...config,
-      define: { "process.env": {} },
       resolve: {
+        ...config.resolve,
         alias: [
+          ...(Array.isArray(config.resolve?.alias) ? config.resolve.alias : []),
           {
-            find: "ui",
-            replacement: resolve(__dirname, "../../../packages/ui/"),
+            find: /^@olli\/ui$/,
+            replacement: path.resolve(__dirname, "../../../packages/olli/src/index.ts"),
           },
         ],
       },
+      define: { "process.env": {} },
     };
   },
 
