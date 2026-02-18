@@ -7,13 +7,13 @@
 @custom-variant dark (&:is(.dark *));
 
 /* Import Figma design tokens */
-@import "@olli/ui/styles/tokens/figma-tokens.css";
+@import "@datum-cloud/datum-ui/styles/tokens/figma-tokens.css";
 
 /* Import shadcn base styles */
 @import "@repo/shadcn/style.css";
 
 /* Import theme */
-@import "@olli/ui/styles/themes/alpha.css";
+@import "@datum-cloud/datum-ui/styles/themes/alpha.css";
 
 /* Import custom styles */
-@import "@olli/ui/styles/custom.css";
+@import "@datum-cloud/datum-ui/styles/custom.css";
