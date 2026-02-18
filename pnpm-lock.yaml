@@ -23,9 +23,9 @@ importers:
 
   apps/docs:
     dependencies:
-      '@datum-cloud/olli':
+      '@datum-cloud/datum-ui':
         specifier: workspace:*
-        version: link:../../packages/olli
+        version: link:../../packages/datum-ui
       '@radix-ui/react-tooltip':
         specifier: ^1.2.8
         version: 1.2.8(@types/react-dom@19.2.3(@types/react@19.2.9))(@types/react@19.2.9)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -85,25 +85,7 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.2)
 
-  packages/eslint-config:
-    devDependencies:
-      '@vercel/style-guide':
-        specifier: ^5.2.0
-        version: 5.2.0(eslint@8.57.1)(prettier@3.8.1)(typescript@5.9.3)
-      eslint-config-turbo:
-        specifier: ^2.0.0
-        version: 2.7.5(eslint@8.57.1)(turbo@2.7.5)
-      eslint-plugin-mdx:
-        specifier: ^3.1.5
-        version: 3.6.2(eslint@8.57.1)
-      eslint-plugin-only-warn:
-        specifier: ^1.1.0
-        version: 1.1.0
-      eslint-plugin-storybook:
-        specifier: ^0.8.0
-        version: 0.8.0(eslint@8.57.1)(typescript@5.9.3)
-
-  packages/olli:
+  packages/datum-ui:
     dependencies:
       '@radix-ui/react-dialog':
         specifier: ^1.1.15
@@ -184,6 +166,24 @@ importers:
       typescript:
         specifier: 5.9.3
         version: 5.9.3
+
+  packages/eslint-config:
+    devDependencies:
+      '@vercel/style-guide':
+        specifier: ^5.2.0
+        version: 5.2.0(eslint@8.57.1)(prettier@3.8.1)(typescript@5.9.3)
+      eslint-config-turbo:
+        specifier: ^2.0.0
+        version: 2.7.5(eslint@8.57.1)(turbo@2.7.5)
+      eslint-plugin-mdx:
+        specifier: ^3.1.5
+        version: 3.6.2(eslint@8.57.1)
+      eslint-plugin-only-warn:
+        specifier: ^1.1.0
+        version: 1.1.0
+      eslint-plugin-storybook:
+        specifier: ^0.8.0
+        version: 0.8.0(eslint@8.57.1)(typescript@5.9.3)
 
   packages/shadcn:
     dependencies:

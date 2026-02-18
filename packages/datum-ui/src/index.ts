@@ -2,6 +2,5 @@
 export * from "./button";
 export * from "./icons";
 
-// Utilities and hooks
+// Utilities
 export * from "./lib";
-export * from "./hooks";

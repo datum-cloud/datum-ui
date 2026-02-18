@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button, Icon } from "@datum-cloud/olli";
+import { Button, Icon } from "@datum-cloud/datum-ui";
 import {
   Search,
   Plus,

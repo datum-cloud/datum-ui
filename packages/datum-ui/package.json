@@ -1,5 +1,5 @@
 {
-  "name": "@datum-cloud/olli",
+  "name": "@datum-cloud/datum-ui",
   "version": "0.1.0",
   "sideEffects": [
     "**/*.css"

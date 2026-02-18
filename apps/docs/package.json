@@ -11,7 +11,7 @@
     "lint": "eslint ./stories/*.stories.tsx --max-warnings 0"
   },
   "dependencies": {
-    "@datum-cloud/olli": "workspace:*",
+    "@datum-cloud/datum-ui": "workspace:*",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@repo/shadcn": "workspace:*",
     "lucide-react": "^0.556.0",
