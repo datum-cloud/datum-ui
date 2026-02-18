@@ -1,5 +1,31 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "@olli/ui";
+import { Button, Icon } from "@datum-cloud/olli";
+import {
+  Search,
+  Plus,
+  Trash2,
+  Settings,
+  ChevronRight,
+  Download,
+  Upload,
+  Edit,
+  Copy,
+  Check,
+} from "lucide-react";
+
+const iconMap: Record<string, React.ReactNode> = {
+  None: undefined,
+  Search: <Icon icon={Search} />,
+  Plus: <Icon icon={Plus} />,
+  Trash: <Icon icon={Trash2} />,
+  Settings: <Icon icon={Settings} />,
+  ChevronRight: <Icon icon={ChevronRight} />,
+  Download: <Icon icon={Download} />,
+  Upload: <Icon icon={Upload} />,
+  Edit: <Icon icon={Edit} />,
+  Copy: <Icon icon={Copy} />,
+  Check: <Icon icon={Check} />,
+};
 
 const meta: Meta<typeof Button> = {
   component: Button,
@@ -32,6 +58,20 @@ const meta: Meta<typeof Button> = {
     },
     disabled: {
       control: { type: "boolean" },
+    },
+    icon: {
+      control: { type: "select" },
+      options: Object.keys(iconMap),
+      mapping: iconMap,
+    },
+    loadingIcon: {
+      control: { type: "select" },
+      options: Object.keys(iconMap),
+      mapping: iconMap,
+    },
+    iconPosition: {
+      control: { type: "radio" },
+      options: ["left", "right"],
     },
   },
 };

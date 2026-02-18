@@ -23,7 +23,7 @@ importers:
 
   apps/docs:
     dependencies:
-      '@olli/ui':
+      '@datum-cloud/olli':
         specifier: workspace:*
         version: link:../../packages/olli
       '@radix-ui/react-tooltip':
@@ -32,6 +32,9 @@ importers:
       '@repo/shadcn':
         specifier: workspace:*
         version: link:../../packages/shadcn
+      lucide-react:
+        specifier: ^0.556.0
+        version: 0.556.0(react@19.2.3)
       react:
         specifier: ^19.2.1
         version: 19.2.3
@@ -129,9 +132,6 @@ importers:
       nprogress:
         specifier: ^0.2.0
         version: 0.2.0
-      react:
-        specifier: ^19.2.3
-        version: 19.2.3
       react-router:
         specifier: ^7.0.0
         version: 7.13.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -175,6 +175,9 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.7.2
         version: 0.7.2(prettier-plugin-organize-imports@4.3.0(prettier@3.8.1)(typescript@5.9.3))(prettier@3.8.1)
+      react:
+        specifier: ^19.2.3
+        version: 19.2.3
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(typescript@5.9.3)(yaml@2.8.2)
