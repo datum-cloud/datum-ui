@@ -345,5 +345,5 @@ If migrating from other button components:
 import { Button } from '@/components/button/button-enhanced';
 
 // New
-import { Button } from '@datum-ui/button';
+import { Button } from '@datum-cloud/datum-ui';
 ```

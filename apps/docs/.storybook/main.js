@@ -20,8 +20,8 @@ const config = {
         alias: [
           ...(Array.isArray(config.resolve?.alias) ? config.resolve.alias : []),
           {
-            find: /^@olli\/ui$/,
-            replacement: path.resolve(__dirname, "../../../packages/olli/src/index.ts"),
+            find: /^@datum-cloud\/datum-ui$/,
+            replacement: path.resolve(__dirname, "../../../packages/datum-ui/src/index.ts"),
           },
         ],
       },
