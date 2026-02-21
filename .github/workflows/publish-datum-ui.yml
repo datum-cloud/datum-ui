@@ -37,6 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write  # needed to push the version bump commit and tag
+      id-token: write  # needed for npm trusted publishing (OIDC)
 
     steps:
       - name: Checkout
@@ -50,7 +51,6 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-          # Configures ~/.npmrc with //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
@@ -102,9 +102,7 @@ jobs:
 
       - name: Publish to npm
         working-directory: packages/datum-ui
-        run: pnpm publish --no-git-checks --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+        run: pnpm publish --no-git-checks --access public --provenance
 
       - name: Summary
         run: |
