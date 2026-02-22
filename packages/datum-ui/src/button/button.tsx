@@ -271,8 +271,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       return (
         loadingIcon || (
           <SpinnerIcon
-            size={size === 'small' ? 'xs' : size === 'large' ? 'sm' : 'md'}
             aria-hidden="true"
+            size={size === 'small' ? 'xs' : size === 'large' ? 'sm' : 'md'}
           />
         )
       );
@@ -290,8 +290,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         className={cn(buttonVariants({ type, theme, size, block }), getIconOnlyClass(), className)}
-        ref={ref}
         disabled={isDisabled}
+        ref={ref}
         type={htmlType}
         {...props}>
         {/* For icon-only buttons: show loading OR icon, not both */}

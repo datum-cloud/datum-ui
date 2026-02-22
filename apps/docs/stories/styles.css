@@ -1,10 +1,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@source "../../../packages/olli/src";
+@source "../../../packages/datum-ui/src";
 @source "../../../packages/shadcn";
 
 @custom-variant dark (&:is(.dark *));
+
+/* Import fonts */
+@import "@datum-cloud/datum-ui/styles/fonts.css";
 
 /* Import Figma design tokens */
 @import "@datum-cloud/datum-ui/styles/tokens/figma-tokens.css";
