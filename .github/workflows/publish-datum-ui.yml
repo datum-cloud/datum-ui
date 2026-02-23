@@ -12,6 +12,10 @@ concurrency:
 jobs:
   publish-datum-ui:
     uses: datum-cloud/actions/.github/workflows/publish-npm-package.yaml@main
+    permissions:
+      contents: write  # needed to push the version bump commit and tag
+      id-token: write  # needed for npm trusted publishing (OIDC)
+
     with:
       package-name: "@datum-cloud/datum-ui"
       package-path: packages/datum-ui
