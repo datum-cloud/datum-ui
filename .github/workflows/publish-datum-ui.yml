@@ -1,0 +1,17 @@
+name: Publish datum-ui
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish-datum-ui:
+    uses: datum-cloud/actions/.github/workflows/publish-npm-package.yaml@main
+    with:
+      package-name: "@datum-cloud/datum-ui"
+      package-path: packages/datum-ui
