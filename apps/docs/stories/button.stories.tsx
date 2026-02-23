@@ -96,6 +96,22 @@ export const Secondary: Story = {
   },
 };
 
+export const Tertiary: Story = {
+  args: {
+    children: "Tertiary Button",
+    type: "tertiary",
+    theme: "solid",
+  },
+};
+
+export const Quaternary: Story = {
+  args: {
+    children: "Quaternary Button",
+    type: "quarternary",
+    theme: "solid",
+  },
+};
+
 export const Outline: Story = {
   args: {
     children: "Outline Button",
@@ -104,10 +120,26 @@ export const Outline: Story = {
   },
 };
 
+export const Warning: Story = {
+  args: {
+    children: "Warning Button",
+    type: "warning",
+    theme: "solid",
+  },
+};
+
 export const Danger: Story = {
   args: {
     children: "Danger Button",
     type: "danger",
+    theme: "solid",
+  },
+};
+
+export const Success: Story = {
+  args: {
+    children: "Success Button",
+    type: "success",
     theme: "solid",
   },
 };
@@ -132,25 +164,25 @@ export const AllTypes: Story = {
       <Button type="danger">Danger</Button>
       <Button type="success">Success</Button>
     </div>
-  ),
+  )
 };
 
 export const AllThemes: Story = {
-  render: () => (
+  render: (args) => (
     <div className="flex flex-wrap gap-3">
-      <Button type="primary" theme="solid">
+      <Button theme="solid" {...args}>
         Solid
       </Button>
-      <Button type="primary" theme="light">
+      <Button  theme="light" {...args}>
         Light
       </Button>
-      <Button type="primary" theme="outline">
+      <Button  theme="outline" {...args}>
         Outline
       </Button>
-      <Button type="primary" theme="borderless">
+      <Button  theme="borderless" {...args}>
         Borderless
       </Button>
-      <Button type="primary" theme="link">
+      <Button  theme="link" {...args}>
         Link
       </Button>
     </div>

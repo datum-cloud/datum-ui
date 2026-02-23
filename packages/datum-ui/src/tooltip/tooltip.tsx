@@ -1,0 +1,84 @@
+import * as TooltipPrimitiveRadix from '@radix-ui/react-tooltip';
+import { cn } from '@repo/shadcn/lib/utils';
+import { Tooltip as TooltipPrimitive, TooltipTrigger } from '@repo/shadcn/ui/tooltip';
+import { type ReactNode } from 'react';
+
+export interface TooltipProps {
+  message: string | ReactNode;
+  children: ReactNode;
+  delayDuration?: number;
+  side?: 'top' | 'right' | 'bottom' | 'left';
+  align?: 'start' | 'center' | 'end';
+  sideOffset?: number;
+  hidden?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  contentClassName?: string;
+  arrowClassName?: string;
+}
+
+const TooltipContent = ({
+  className,
+  arrowClassName,
+  sideOffset = 0,
+  children,
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitiveRadix.Content> & {
+  arrowClassName?: string;
+}) => {
+  return (
+    <TooltipPrimitiveRadix.Portal>
+      <TooltipPrimitiveRadix.Content
+        data-slot="tooltip-content"
+        sideOffset={sideOffset}
+        className={cn(
+          'tooltip-content',
+          'bg-secondary text-secondary-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-fit rounded-md px-3 py-1.5 text-xs text-balance',
+          className
+        )}
+        {...props}>
+        {children}
+        <TooltipPrimitiveRadix.Arrow
+          className={cn(
+            'fill-secondary -my-px border-none drop-shadow-[0_1px_0_secondary]',
+            arrowClassName
+          )}
+          width={12}
+          height={7}
+          aria-hidden="true"
+        />
+      </TooltipPrimitiveRadix.Content>
+    </TooltipPrimitiveRadix.Portal>
+  );
+};
+
+const Tooltip = ({
+  message,
+  children,
+  delayDuration = 200,
+  side,
+  align,
+  sideOffset,
+  hidden,
+  open,
+  onOpenChange,
+  contentClassName,
+  arrowClassName,
+}: TooltipProps) => {
+  return (
+    <TooltipPrimitive delayDuration={delayDuration} open={open} onOpenChange={onOpenChange}>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent
+        side={side}
+        align={align}
+        sideOffset={sideOffset}
+        hidden={hidden}
+        className={contentClassName}
+        arrowClassName={arrowClassName}>
+        <span>{message}</span>
+      </TooltipContent>
+    </TooltipPrimitive>
+  );
+};
+
+export { Tooltip, TooltipContent };
