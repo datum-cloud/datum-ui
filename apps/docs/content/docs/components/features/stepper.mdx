@@ -1,0 +1,129 @@
+---
+title: Stepper
+description: A multi-step form navigation component with horizontal, vertical, and circle variants.
+---
+
+## Overview
+
+Stepper provides a step-by-step navigation UI for multi-step forms and wizards. It is built on [@stepperize/react](https://stepperize.vercel.app/) and supports three layout variants: horizontal, vertical, and circle. Each step can display a title, description, and panel content, with automatic state tracking (active, completed, inactive).
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@stepperize/react @radix-ui/react-slot
+```
+
+## Setup
+
+Define your steps using `defineStepper`, which returns a scoped provider and hook:
+
+```tsx
+import { defineStepper } from '@datum-cloud/datum-ui'
+
+const { Stepper, useStepper, steps } = defineStepper(
+  { id: 'general', title: 'General', description: 'Basic information' },
+  { id: 'config', title: 'Configuration', description: 'Set up your service' },
+  { id: 'review', title: 'Review', description: 'Confirm and deploy' }
+)
+```
+
+## Usage
+
+```tsx
+<Stepper.Provider variant="horizontal">
+  {({ methods }) => (
+    <>
+      <Stepper.Navigation>
+        {steps.map((step) => (
+          <Stepper.Step key={step.id} of={step.id}>
+            <Stepper.Title>{step.title}</Stepper.Title>
+            <Stepper.Description>{step.description}</Stepper.Description>
+          </Stepper.Step>
+        ))}
+      </Stepper.Navigation>
+
+      {steps.map((step) => (
+        <Stepper.Panel key={step.id}>
+          <div className="p-4">Content for {step.title}</div>
+        </Stepper.Panel>
+      ))}
+
+      <Stepper.Controls>
+        <Button
+          type="secondary"
+          theme="outline"
+          onClick={methods.prev}
+          disabled={methods.isFirst}
+        >
+          Previous
+        </Button>
+        <Button type="primary" onClick={methods.next} disabled={methods.isLast}>
+          Next
+        </Button>
+      </Stepper.Controls>
+    </>
+  )}
+</Stepper.Provider>
+```
+
+## Examples
+
+### Vertical Layout
+
+```tsx
+<Stepper.Provider variant="vertical">
+  {({ methods }) => (
+    <Stepper.Navigation>
+      {steps.map((step) => (
+        <Stepper.Step key={step.id} of={step.id}>
+          <Stepper.Title>{step.title}</Stepper.Title>
+          <Stepper.Description>{step.description}</Stepper.Description>
+          <div className="p-4">Step panel content</div>
+        </Stepper.Step>
+      ))}
+    </Stepper.Navigation>
+  )}
+</Stepper.Provider>
+```
+
+### Circle Indicator
+
+Set `variant="circle"` to show a circular progress ring with the current step count instead of individual step indicators.
+
+## Props
+
+### Stepper.Provider
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'horizontal' \| 'vertical' \| 'circle'` | `'horizontal'` | Layout variant |
+| `labelOrientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Label placement relative to step indicator |
+| `tracking` | `boolean` | `false` | Auto-scroll the active panel into view |
+| `initialStep` | `string` | -- | Initial active step ID |
+
+### Stepper.Step
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `of` | `string` | -- | Step ID this element corresponds to |
+| `icon` | `ReactNode` | -- | Custom icon replacing the step number |
+| `disabled` | `boolean` | `false` | Disable navigation to this step |
+
+### useStepper()
+
+The `useStepper` hook provides navigation methods:
+
+| Method | Description |
+|--------|-------------|
+| `next()` | Move to the next step |
+| `prev()` | Move to the previous step |
+| `goTo(id)` | Jump to a specific step |
+| `isFirst` | Whether the current step is the first |
+| `isLast` | Whether the current step is the last |
+| `state.current` | The current step object |
+
+### Sub-components
+
+`Stepper.Navigation`, `Stepper.Title`, `Stepper.Description`, `Stepper.Panel`, and `Stepper.Controls` are compositional wrappers for layout and accessibility.

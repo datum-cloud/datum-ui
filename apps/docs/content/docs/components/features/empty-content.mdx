@@ -1,0 +1,141 @@
+---
+title: EmptyContent
+description: Display a friendly empty state with optional actions when no data is available.
+---
+
+import { EmptyContent } from '@/components/ui'
+
+## Overview
+
+EmptyContent provides a branded empty state placeholder with decorative illustrations, a greeting message, optional subtitle, and action buttons. Use it inside tables, lists, or pages to guide users when there is no data to display.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Usage
+
+<ComponentPreview name="Basic EmptyContent">
+  <EmptyContent title="no items yet." />
+</ComponentPreview>
+
+```tsx
+import { EmptyContent } from '@datum-cloud/datum-ui'
+
+<EmptyContent title="no items yet." />
+```
+
+## Examples
+
+### With Subtitle and Action
+
+<ComponentPreview name="EmptyContent With Action">
+  <EmptyContent
+    title="no projects found."
+    subtitle="Create your first project to get started."
+    actions={[
+      {
+        type: 'link',
+        label: 'Create Project',
+        to: '#',
+      },
+    ]}
+  />
+</ComponentPreview>
+
+```tsx
+<EmptyContent
+  title="no projects found."
+  subtitle="Create your first project to get started."
+  actions={[
+    {
+      type: 'button',
+      label: 'Create Project',
+      onClick: () => console.log('Create clicked'),
+    },
+  ]}
+/>
+```
+
+### Personalized Greeting
+
+Use the `userName` prop to personalize the greeting message.
+
+<ComponentPreview name="EmptyContent Personalized">
+  <EmptyContent
+    title="no results."
+    subtitle="Try adjusting your search criteria."
+    userName="Alice"
+  />
+</ComponentPreview>
+
+```tsx
+<EmptyContent
+  title="no results."
+  subtitle="Try adjusting your search criteria."
+  userName="Alice"
+/>
+```
+
+### Variants and Sizes
+
+<ComponentPreview name="EmptyContent Variants">
+  <div className="flex flex-col gap-4">
+    <EmptyContent title="default border." variant="default" size="sm" />
+    <EmptyContent title="dashed border." variant="dashed" size="sm" />
+  </div>
+</ComponentPreview>
+
+```tsx
+<EmptyContent title="default border." variant="default" size="sm" />
+<EmptyContent title="dashed border." variant="dashed" size="sm" />
+```
+
+### Link Actions
+
+Actions can render as links or external links instead of buttons.
+
+```tsx
+<EmptyContent
+  title="no documentation yet."
+  actions={[
+    {
+      type: 'link',
+      label: 'View Docs',
+      to: '/docs',
+    },
+    {
+      type: 'external-link',
+      label: 'GitHub',
+      to: 'https://github.com/datum-cloud',
+    },
+  ]}
+/>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | `'No data found'` | Main message (appended to greeting) |
+| `subtitle` | `string` | -- | Secondary description text |
+| `variant` | `'default' \| 'dashed' \| 'minimal'` | `'default'` | Border style |
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Container and text size |
+| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | Layout direction |
+| `spacing` | `'compact' \| 'normal' \| 'relaxed'` | `'normal'` | Action button spacing |
+| `actions` | `EmptyContentAction[]` | `[]` | Action buttons or links |
+| `userName` | `string` | `'there'` | Name used in greeting (e.g. "Hey Alice, ...") |
+| `linkComponent` | `React.ElementType` | `'a'` | Custom link component (e.g. React Router's `Link`) |
+| `className` | `string` | -- | Additional CSS class |
+
+### EmptyContentAction
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `type` | `'button' \| 'link' \| 'external-link'` | -- | Action type |
+| `label` | `string` | -- | Button or link text |
+| `onClick` | `() => void` | -- | Click handler (for `button` type) |
+| `to` | `string` | -- | URL (for `link` and `external-link` types) |
+| `variant` | `'default' \| 'destructive' \| 'outline'` | -- | Button style variant |
+| `icon` | `ReactNode` | -- | Icon element |
+| `iconPosition` | `'start' \| 'end'` | `'start'` | Icon placement |

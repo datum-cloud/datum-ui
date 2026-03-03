@@ -1,208 +1,218 @@
-# Turborepo Design System Starter
+<p align="center">
+  <img
+    width="64px"
+    src="assets/logo.png"
+    style="border: 1px solid #e5e7eb; border-radius: 0.5rem;"
+  />
 
-This is a community-maintained example. If you experience a problem, please submit a pull request with a fix. GitHub Issues will be closed.
+  <h1 align="center">Datum UI</h1>
 
-This guide explains how to use a React design system starter powered by:
+  <p align="center">
+    Datum Cloud Design System & Component Library
+  </p>
+</p>
 
-- 🏎 [Turborepo](https://turborepo.dev) — High-performance build system for Monorepos
-- 🚀 [React](https://reactjs.org/) — JavaScript library for user interfaces
-- 🛠 [Tsup](https://github.com/egoist/tsup) — TypeScript bundler powered by esbuild
-- 📖 [Storybook](https://storybook.js.org/) — UI component environment powered by Vite
+---
 
-As well as a few others tools preconfigured:
+## About
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-- [Changesets](https://github.com/changesets/changesets) for managing versioning and changelogs
-- [GitHub Actions](https://github.com/changesets/action) for fully automated package publishing
+Datum UI is Datum Cloud's design system and React component library. It provides themed, composable components built on [shadcn/ui](https://ui.shadcn.com), [Radix UI](https://www.radix-ui.com), and [Tailwind CSS v4](https://tailwindcss.com) with a Figma-driven design token pipeline.
 
-## Using this example
+### Key Features
 
-Run the following command:
+- **50+ Components** — Buttons, forms, data tables, dialogs, maps, typography, navigation, and more
+- **Two-Layer Architecture** — shadcn/Radix primitives (base) + Datum-customized components (features)
+- **Compound Form System** — Built on Conform.js and Zod with validation, field arrays, and multi-step support
+- **Interactive Maps** — SSR-safe Leaflet integration with drawing tools, layers, clustering, and fullscreen
+- **Task Queue** — Background task engine with progress UI, retry logic, and summary dialogs
+- **Design Token Pipeline** — Figma tokens → purpose tokens → theme classes
+- **Dark Mode** — Built-in theme provider with system preference detection
+- **TypeScript** — Fully typed with exported types for all components
 
-```sh
-npx create-turbo@latest -e design-system
+### Built With
+
+- **React 19** — Latest React with server component support
+- **Tailwind CSS v4** — Utility-first CSS framework
+- **Radix UI** — Accessible, unstyled primitives
+- **shadcn/ui** — Component foundation layer
+- **CVA** — Class-variance-authority for variant-based component APIs
+- **Conform.js + Zod** — Form state management and schema validation
+
+---
+
+## Monorepo Structure
+
+```
+packages/
+  datum-ui/        # Component library (@datum-cloud/datum-ui)
+  shadcn/          # shadcn/ui primitives (@repo/shadcn)
+  config/          # Shared config (TypeScript, Tailwind, ESLint)
+apps/
+  docs/            # Fumadocs documentation site
+  storybook/       # Storybook component explorer
 ```
 
-### Useful Commands
+| Package | Description | npm |
+|---|---|---|
+| `@datum-cloud/datum-ui` | Published component library | [![npm](https://img.shields.io/npm/v/@datum-cloud/datum-ui)](https://www.npmjs.com/package/@datum-cloud/datum-ui) |
+| `@repo/shadcn` | Internal shadcn/ui primitives | — |
+| `@repo/config` | Shared TypeScript, Tailwind, and ESLint config | — |
 
-- `pnpm build` - Build all packages, including the Storybook site
-- `pnpm dev` - Run all packages locally and preview with Storybook
-- `pnpm lint` - Lint all packages
-- `pnpm changeset` - Generate a changeset
-- `pnpm clean` - Clean up all `node_modules` and `dist` folders (runs each package's clean script)
+---
 
-## Turborepo
+## Prerequisites
 
-[Turborepo](https://turborepo.dev) is a high-performance build system for JavaScript and TypeScript codebases. It was designed after the workflows used by massive software engineering organizations to ship code at scale. Turborepo abstracts the complex configuration needed for monorepos and provides fast, incremental builds with zero-configuration remote caching.
+- **Node.js >= 24** — Required for ESM module resolution with pnpm's strict dependency linking
+- **pnpm >= 10** — Monorepo package manager
 
-Using Turborepo simplifies managing your design system monorepo, as you can have a single lint, build, test, and release process for all packages. [Learn more](https://vercel.com/blog/monorepos-are-changing-how-teams-build-software) about how monorepos improve your development workflow.
-
-## Apps & Packages
-
-This Turborepo includes the following packages and applications:
-
-- `apps/docs`: Component documentation site with Storybook
-- `packages/ui`: Core React components
-- `packages/typescript-config`: Shared `tsconfig.json`s used throughout the Turborepo
-- `packages/eslint-config`: ESLint preset
-
-Each package and app is 100% [TypeScript](https://www.typescriptlang.org/). Workspaces enables us to "hoist" dependencies that are shared between packages to the root `package.json`. This means smaller `node_modules` folders and a better local dev experience. To install a dependency for the entire monorepo, use the `-w` workspaces flag with `pnpm add`.
-
-This example sets up your `.gitignore` to exclude all generated files, other folders like `node_modules` used to store your dependencies.
-
-### Compilation
-
-To make the ui library code work across all browsers, we need to compile the raw TypeScript and React code to plain JavaScript. We can accomplish this with `tsup`, which uses `esbuild` to greatly improve performance.
-
-Running `pnpm build` from the root of the Turborepo will run the `build` command defined in each package's `package.json` file. Turborepo runs each `build` in parallel and caches & hashes the output to speed up future builds.
-
-For `@acme/ui`, the `build` command is equivalent to the following:
+## Quick Start (Development)
 
 ```bash
-tsup src/*.tsx --format esm,cjs --dts --external react
+# Clone and install
+git clone https://github.com/datum-cloud/datum-ui.git
+cd datum-ui
+pnpm install
+
+# Start Storybook (component explorer)
+pnpm --filter @repo/storybook dev
+
+# Start documentation site
+pnpm --filter @repo/docs dev
+
+# Build the component library
+pnpm --filter @datum-cloud/datum-ui build
+
+# Run all checks
+pnpm --filter @datum-cloud/datum-ui typecheck
+pnpm --filter @datum-cloud/datum-ui lint
+pnpm --filter @datum-cloud/datum-ui test
 ```
 
-`tsup` compiles all of the components in the design system individually, into both ES Modules and CommonJS formats as well as their TypeScript types. The `package.json` for `@acme/ui` then instructs the consumer to select the correct format:
+> **Note:** Apps auto-build `@datum-cloud/datum-ui` before starting via a `predev` script.
 
-```json:ui/package.json
-{
-  "name": "@acme/ui",
-  "version": "0.0.0",
-  "sideEffects": false,
-  "exports":{
-    "./button": {
-      "types": "./src/button.tsx",
-      "import": "./dist/button.mjs",
-      "require": "./dist/button.js"
-    }
-  }
-}
-```
+---
 
-Run `pnpm build` to confirm compilation is working correctly. You should see a folder `ui/dist` which contains the compiled output.
+## Usage (Consumers)
+
+Install the package:
 
 ```bash
-ui
-└── dist
-    ├── button.d.ts  <-- Types
-    ├── button.js    <-- CommonJS version
-    ├── button.mjs   <-- ES Modules version
-    └── button.d.mts   <-- ES Modules version with Types
+npm install @datum-cloud/datum-ui
+# or
+yarn add @datum-cloud/datum-ui
+# or
+pnpm add @datum-cloud/datum-ui
+# or
+bun add @datum-cloud/datum-ui
 ```
 
-## Components
+Wrap your app with `DatumProvider` and import styles:
 
-Each file inside of `ui/src` is a component inside our design system. For example:
+```tsx
+import { DatumProvider, Button, Input } from '@datum-cloud/datum-ui'
+import '@datum-cloud/datum-ui/styles'
 
-```tsx:ui/src/Button.tsx
-import * as React from 'react';
-
-export interface ButtonProps {
-  children: React.ReactNode;
-}
-
-export function Button(props: ButtonProps) {
-  return <button>{props.children}</button>;
-}
-
-Button.displayName = 'Button';
-```
-
-When adding a new file, ensure that its specifier is defined in `package.json` file:
-
-```json:ui/package.json
-{
-  "name": "@acme/ui",
-  "version": "0.0.0",
-  "sideEffects": false,
-  "exports":{
-    "./button": {
-      "types": "./src/button.tsx",
-      "import": "./dist/button.mjs",
-      "require": "./dist/button.js"
-    }
-    // Add new component exports here
-  }
+function App() {
+  return (
+    <DatumProvider>
+      <Input placeholder="Enter your name" />
+      <Button type="primary" theme="solid">
+        Submit
+      </Button>
+    </DatumProvider>
+  )
 }
 ```
 
-## Storybook
+### Entry Points
 
-Storybook provides us with an interactive UI playground for our components. This allows us to preview our components in the browser and instantly see changes when developing locally. This example preconfigures Storybook to:
+| Import Path | Description |
+|---|---|
+| `@datum-cloud/datum-ui` | All components, hooks, providers, and utilities |
+| `@datum-cloud/datum-ui/components` | Components only (base + features) |
+| `@datum-cloud/datum-ui/providers` | `DatumProvider` |
+| `@datum-cloud/datum-ui/hooks` | `useCopyToClipboard`, `useDebounce` |
+| `@datum-cloud/datum-ui/icons` | `CloseIcon`, `IconWrapper`, `SpinnerIcon` |
+| `@datum-cloud/datum-ui/utils` | `cn` (className merge utility) |
+| `@datum-cloud/datum-ui/styles` | Global CSS (fonts, tokens, component styles) |
 
-- Use Vite to bundle stories instantly (in milliseconds)
-- Automatically find any stories inside the `stories/` folder
-- Support using module path aliases like `@acme/ui` for imports
-- Write MDX for component documentation pages
+### Peer Dependencies
 
-For example, here's the included Story for our `Button` component:
+All peer dependencies are **optional** — install only what you use.
 
-```js:apps/docs/stories/button.stories.mdx
-import { Button } from '@acme/ui/button';
-import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
-
-<Meta title="Components/Button" component={Button} />
-
-# Button
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget consectetur tempor, nisl nunc egestas nisi, euismod aliquam nisl nunc euismod.
-
-## Props
-
-<Props of={Box} />
-
-## Examples
-
-<Preview>
-  <Story name="Default">
-    <Button>Hello</Button>
-  </Story>
-</Preview>
-```
-
-This example includes a few helpful Storybook scripts:
-
-- `pnpm dev`: Starts Storybook in dev mode with hot reloading at `localhost:6006`
-- `pnpm build`: Builds the Storybook UI and generates the static HTML files
-- `pnpm preview-storybook`: Starts a local server to view the generated Storybook UI
-
-## Versioning & Publishing Packages
-
-This example uses [Changesets](https://github.com/changesets/changesets) to manage versions, create changelogs, and publish to npm. It's preconfigured so you can start publishing packages immediately.
-
-You'll need to create an `NPM_TOKEN` and `GITHUB_TOKEN` and add it to your GitHub repository settings to enable access to npm. It's also worth installing the [Changesets bot](https://github.com/apps/changeset-bot) on your repository.
-
-### Generating the Changelog
-
-To generate your changelog, run `pnpm changeset` locally:
-
-1. **Which packages would you like to include?** – This shows which packages and changed and which have remained the same. By default, no packages are included. Press `space` to select the packages you want to include in the `changeset`.
-1. **Which packages should have a major bump?** – Press `space` to select the packages you want to bump versions for.
-1. If doing the first major version, confirm you want to release.
-1. Write a summary for the changes.
-1. Confirm the changeset looks as expected.
-1. A new Markdown file will be created in the `changeset` folder with the summary and a list of the packages included.
-
-### Releasing
-
-When you push your code to GitHub, the [GitHub Action](https://github.com/changesets/action) will run the `release` script defined in the root `package.json`:
+> Replace `npm install` with `yarn add`, `pnpm add`, or `bun add` for your package manager.
 
 ```bash
-turbo run build --filter=docs^... && changeset publish
+# Core (required)
+npm install react react-dom
+
+# Forms
+npm install @conform-to/react @conform-to/zod zod
+
+# Maps
+npm install leaflet react-leaflet leaflet-draw leaflet.fullscreen leaflet.markercluster react-leaflet-markercluster
+
+# Charts
+npm install recharts
+
+# Date pickers
+npm install react-day-picker date-fns date-fns-tz
+
+# Animations
+npm install motion
 ```
 
-Turborepo runs the `build` script for all publishable packages (excluding docs) and publishes the packages to npm. By default, this example includes `acme` as the npm organization. To change this, do the following:
+See the full peer dependency list in the [package README](packages/datum-ui/README.md).
 
-- Rename folders in `packages/*` to replace `acme` with your desired scope
-- Search and replace `acme` with your desired scope
-- Re-run `pnpm install`
+---
 
-To publish packages to a private npm organization scope, **remove** the following from each of the `package.json`'s
+## Component Overview
 
-```diff
-- "publishConfig": {
--  "access": "public"
-- },
+### Base Components (30)
+
+Thin wrappers around shadcn/Radix primitives with Datum styling.
+
+`Alert` · `Badge` · `Breadcrumb` · `Button` · `ButtonGroup` · `Calendar` · `Card` · `Chart` · `Checkbox` · `Collapsible` · `Command` · `Dialog` · `HoverCard` · `Input` · `InputGroup` · `Label` · `Map` · `PlaceAutocomplete` · `Popover` · `RadioGroup` · `Select` · `Separator` · `Sheet` · `Skeleton` · `Spinner` · `Switch` · `Table` · `Tabs` · `Textarea` · `Tooltip` · `Typography` · `VisuallyHidden`
+
+### Feature Components (18)
+
+Complex, fully-customized components with significant business logic.
+
+`Autocomplete` · `AvatarStack` · `CalendarDatePicker` · `Dropdown` · `Dropzone` · `EmptyContent` · `FileInputButton` · `Form` · `Grid` · `InputNumber` · `InputWithAddons` · `LoaderOverlay` · `MoreActions` · `NProgress` · `PageTitle` · `Sidebar` · `Stepper` · `TagInput` · `TaskQueue` · `TimeRangePicker` · `Toast`
+
+For the complete component API with props, sub-components, and usage examples, see the [package README](packages/datum-ui/README.md).
+
+---
+
+## Documentation
+
+- **[Package README](packages/datum-ui/README.md)** — Full component catalog, API reference, and usage examples
+- **[Documentation Site](apps/docs/)** — Component docs, guides, and live previews
+- **[Storybook](apps/storybook/)** — Interactive component explorer
+
+---
+
+## Contributing
+
+```bash
+# 1. Create a feature branch
+git checkout -b feat/my-feature
+
+# 2. Make changes and verify
+pnpm --filter @datum-cloud/datum-ui build
+pnpm --filter @datum-cloud/datum-ui typecheck
+pnpm --filter @datum-cloud/datum-ui lint
+pnpm --filter @datum-cloud/datum-ui test
+
+# 3. Add a changeset
+pnpm changeset
+
+# 4. Commit and push
+git add .
+git commit -m "feat: description of changes"
+git push -u origin feat/my-feature
 ```
+
+## License
+
+MIT

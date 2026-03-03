@@ -1,0 +1,60 @@
+---
+title: Label
+description: An accessible text label for form controls, built on Radix UI Label.
+---
+
+import { Label, Input } from '@/components/ui'
+
+## Overview
+
+The `Label` component renders an accessible `<label>` element that pairs with form inputs. It automatically handles disabled states and provides consistent typography across your application.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-label
+```
+
+## Usage
+
+<ComponentPreview name="Basic Label">
+  <Label>Email address</Label>
+</ComponentPreview>
+
+```tsx
+import { Label } from '@datum-cloud/datum-ui'
+
+<Label>Email address</Label>
+```
+
+## Examples
+
+### With Input
+
+Pair a `Label` with an `Input` using matching `htmlFor` and `id` attributes.
+
+<ComponentPreview name="Label with Input">
+  <div className="grid w-full max-w-sm items-center gap-1.5">
+    <Label htmlFor="email">Email</Label>
+    <Input id="email" type="email" placeholder="you@example.com" />
+  </div>
+</ComponentPreview>
+
+```tsx
+<div className="grid w-full max-w-sm items-center gap-1.5">
+  <Label htmlFor="email">Email</Label>
+  <Input id="email" type="email" placeholder="you@example.com" />
+</div>
+```
+
+## Props
+
+The `Label` component accepts all props from Radix UI's `Label.Root`.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `htmlFor` | `string` | -- | The `id` of the associated form control |
+| `className` | `string` | -- | Additional CSS classes |
+| `children` | `ReactNode` | -- | Label text content |

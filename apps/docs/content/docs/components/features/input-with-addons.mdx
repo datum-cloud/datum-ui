@@ -1,0 +1,77 @@
+---
+title: InputWithAddons
+description: A text input with optional leading and trailing addon slots for icons or text.
+---
+
+import { InputWithAddons } from '@/components/ui'
+import { Link, Mail, Search } from 'lucide-react'
+
+## Overview
+
+The `InputWithAddons` component extends the standard input with leading and trailing addon slots. Use it to place icons, labels, or suffixes alongside the input field while maintaining a unified focus ring around the entire group.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Usage
+
+<ComponentPreview name="Basic InputWithAddons">
+  <div className="w-72">
+    <InputWithAddons leading={<Search size={16} />} placeholder="Search..." />
+  </div>
+</ComponentPreview>
+
+```tsx
+import { InputWithAddons } from '@datum-cloud/datum-ui'
+import { Search } from 'lucide-react'
+
+<InputWithAddons leading={<Search size={16} />} placeholder="Search..." />
+```
+
+## Examples
+
+### With Trailing Addon
+
+<ComponentPreview name="InputWithAddons Trailing">
+  <div className="w-72">
+    <InputWithAddons trailing={<Mail size={16} />} placeholder="you@example.com" />
+  </div>
+</ComponentPreview>
+
+```tsx
+<InputWithAddons trailing={<Mail size={16} />} placeholder="you@example.com" />
+```
+
+### With Both Addons
+
+<ComponentPreview name="InputWithAddons Both">
+  <div className="w-72">
+    <InputWithAddons
+      leading={<Link size={16} />}
+      trailing={<span className="text-xs text-muted-foreground">.com</span>}
+      placeholder="your-website"
+    />
+  </div>
+</ComponentPreview>
+
+```tsx
+<InputWithAddons
+  leading={<Link size={16} />}
+  trailing={<span className="text-xs text-muted-foreground">.com</span>}
+  placeholder="your-website"
+/>
+```
+
+## Props
+
+The `InputWithAddons` component accepts all standard HTML `<input>` attributes plus the following.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `leading` | `ReactNode` | -- | Content rendered before the input (e.g., icon) |
+| `trailing` | `ReactNode` | -- | Content rendered after the input (e.g., suffix text) |
+| `containerClassName` | `string` | -- | CSS classes for the outer wrapper |
+| `placeholder` | `string` | -- | Placeholder text |
+| `disabled` | `boolean` | `false` | Disables the input |
+| `className` | `string` | -- | CSS classes for the inner `<input>` element |

@@ -1,0 +1,103 @@
+---
+title: CalendarDatePicker
+description: A date range picker with presets, month/year selectors, and constraint support.
+---
+
+import { CalendarDatePicker } from '@/components/ui'
+
+## Overview
+
+The `CalendarDatePicker` component combines a trigger button, popover calendar, and date-range presets into a complete date picking experience. It supports single-date or dual-month range selection, date constraints (min/max, disable future/past), maximum range limits, and custom or default presets like "This Week", "Last Month", etc.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+react-day-picker date-fns date-fns-tz @radix-ui/react-popover
+```
+
+## Usage
+
+```tsx
+import { CalendarDatePicker } from '@datum-cloud/datum-ui'
+import { useState } from 'react'
+
+const [date, setDate] = useState({ from: new Date(), to: new Date() })
+
+<CalendarDatePicker
+  date={date}
+  onDateSelect={(range) => {
+    if (range) setDate(range)
+  }}
+  variant="outline"
+  placeholder="Pick a date"
+/>
+```
+
+## Examples
+
+### Date Range (Two Months)
+
+```tsx
+const today = new Date()
+const [date, setDate] = useState({
+  from: startOfYear(today),
+  to: endOfYear(today),
+})
+
+<CalendarDatePicker
+  date={date}
+  onDateSelect={(range) => {
+    if (range) setDate(range)
+  }}
+  numberOfMonths={2}
+  variant="outline"
+  placeholder="Select date range"
+/>
+```
+
+### Disable Future Dates
+
+```tsx
+<CalendarDatePicker
+  date={date}
+  onDateSelect={setDate}
+  disableFuture
+  variant="outline"
+/>
+```
+
+### Close on Select
+
+By default the picker stays open until the user clicks "Apply". Pass `closeOnSelect` to auto-close on selection.
+
+```tsx
+<CalendarDatePicker
+  date={date}
+  onDateSelect={setDate}
+  closeOnSelect
+  variant="outline"
+/>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `date` | `{ from?: Date, to?: Date }` | -- | Current date range |
+| `onDateSelect` | `(range: { from: Date, to: Date } \| undefined) => void` | -- | Callback when range changes |
+| `numberOfMonths` | `1 \| 2` | `2` | Number of calendar months shown |
+| `closeOnSelect` | `boolean` | `false` | Close popover on selection instead of requiring "Apply" |
+| `placeholder` | `string` | `'Pick a date'` | Trigger button placeholder |
+| `variant` | `'default' \| 'outline' \| 'secondary' \| 'ghost' \| 'destructive' \| 'link'` | `'default'` | Trigger button visual variant |
+| `disableFuture` | `boolean` | `false` | Prevent selecting dates after today |
+| `disablePast` | `boolean` | `false` | Prevent selecting dates before today |
+| `minDate` | `Date` | -- | Earliest selectable date |
+| `maxDate` | `Date` | -- | Latest selectable date |
+| `maxRange` | `number` | -- | Maximum days between start and end |
+| `yearsRange` | `number` | `10` | Number of years in the year selector |
+| `excludePresets` | `string[]` | -- | Preset keys to hide (e.g., `['lastYear']`) |
+| `customPresets` | `DateRangePreset[]` | -- | Replace default presets entirely |
+| `className` | `string` | -- | Additional CSS classes for the calendar |
+| `triggerClassName` | `string` | -- | Additional CSS classes for the trigger button |

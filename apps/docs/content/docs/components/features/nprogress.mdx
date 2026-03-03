@@ -1,0 +1,86 @@
+---
+title: NProgress
+description: A slim page-transition progress bar displayed at the top of the viewport.
+---
+
+## Overview
+
+NProgress provides a slim, animated progress bar at the top of the page during route transitions. It wraps the [nprogress](https://ricostacruz.com/nprogress/) library with a debounced start (150 ms delay to avoid flashing on fast navigations) and custom Datum styling via CSS.
+
+This is not a visual React component -- it is a set of utility functions you call during navigation lifecycle events.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+nprogress
+```
+
+## Setup
+
+Import the NProgress CSS in your root stylesheet:
+
+```css
+@import '@datum-cloud/datum-ui/nprogress.css';
+```
+
+Then configure NProgress once at app startup:
+
+```tsx
+import { configureProgress } from '@datum-cloud/datum-ui'
+
+// Call once, e.g. in your root loader or layout
+configureProgress()
+```
+
+## Usage
+
+Call `startProgress` when a navigation begins and `stopProgress` when it completes:
+
+```tsx
+import { startProgress, stopProgress } from '@datum-cloud/datum-ui'
+
+// In a Remix app (root.tsx):
+export default function App() {
+  const navigation = useNavigation()
+
+  useEffect(() => {
+    if (navigation.state === 'loading') {
+      startProgress()
+    } else {
+      stopProgress()
+    }
+  }, [navigation.state])
+
+  return <Outlet />
+}
+```
+
+## API
+
+### configureProgress()
+
+Configures NProgress with Datum defaults:
+- `showSpinner: false` -- hides the built-in spinner
+- `trickleSpeed: 100` -- controls trickle animation speed
+
+Call this once at application startup.
+
+### startProgress()
+
+Starts the progress bar after a 150 ms debounce. If `stopProgress` is called before the debounce fires, no bar is shown. This prevents flashing on fast page loads.
+
+### stopProgress()
+
+Immediately completes the progress bar animation and clears any pending debounce timer.
+
+## Styling
+
+The default CSS targets the `#nprogress .bar` element with `background: var(--primary)`, ensuring the bar color follows your theme. Override this in your CSS to customize:
+
+```css
+#nprogress .bar {
+  background: var(--your-custom-color);
+}
+```

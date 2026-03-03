@@ -1,0 +1,59 @@
+---
+title: Theming
+description: Customize datum-ui's visual appearance with design tokens and themes.
+---
+
+## Design Token Architecture
+
+datum-ui uses a three-layer token system:
+
+1. **Figma tokens** — raw color values exported from Figma (e.g., `--glacier-mist-700`, `--midnight-fjord`)
+2. **Purpose tokens** — semantic aliases used by components (e.g., `--background`, `--primary`, `--border`)
+3. **Theme classes** — map Figma tokens to purpose tokens (e.g., `.theme-alpha`)
+
+## Applying a Theme
+
+`DatumProvider` applies the theme class automatically on `<html>`. By default it uses the `alpha` theme style. You can change it via the `themeStyle` prop:
+
+```tsx
+<DatumProvider themeStyle="alpha">{children}</DatumProvider>
+```
+
+## Available Tokens
+
+### Base Colors
+
+| Token | Light | Description |
+|-------|-------|-------------|
+| `--background` | Glacier Mist 700 | Page background |
+| `--foreground` | Midnight Fjord | Primary text |
+| `--primary` | Canyon Clay | Interactive elements, links |
+| `--border` | Glacier Mist 900 | Borders and dividers |
+| `--muted` | Gray 95.9% | Subdued backgrounds |
+
+### Component-Specific
+
+| Token | Description |
+|-------|-------------|
+| `--input-background` | Input field background |
+| `--input-border` | Input field border |
+| `--input-focus-border` | Input focus state border |
+| `--table-accent` | Table row accent |
+| `--badge-primary` | Badge primary color |
+
+## Dark Mode
+
+datum-ui supports dark mode via the `.dark` class. `DatumProvider` handles theme switching with a built-in theme provider that supports system preference detection, localStorage persistence, and CSS transition control.
+
+```tsx
+import { useTheme } from '@datum-cloud/datum-ui'
+
+function ThemeToggle() {
+  const { resolvedTheme, setTheme } = useTheme()
+  return (
+    <button onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}>
+      Toggle Theme
+    </button>
+  )
+}
+```

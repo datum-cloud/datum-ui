@@ -1,0 +1,47 @@
+---
+title: Providers
+description: Configure DatumProvider for theming, tooltips, and global context.
+---
+
+## DatumProvider
+
+All datum-ui components must be wrapped in `DatumProvider`. It provides:
+
+- **Theme management** with built-in theme provider (light/dark/system)
+- **Design tokens and styles** loaded automatically via CSS import
+
+## Basic Usage
+
+```tsx
+import { DatumProvider } from '@datum-cloud/datum-ui'
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <DatumProvider>{children}</DatumProvider>
+      </body>
+    </html>
+  )
+}
+```
+
+## Theme Hook
+
+Access and control the current theme:
+
+```tsx
+import { useTheme } from '@datum-cloud/datum-ui'
+
+function MyComponent() {
+  const { theme, setTheme, resolvedTheme } = useTheme()
+
+  return (
+    <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+      <option value="system">System</option>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+  )
+}
+```

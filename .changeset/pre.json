@@ -1,0 +1,16 @@
+{
+  "mode": "pre",
+  "tag": "alpha",
+  "initialVersions": {
+    "@repo/docs": "0.0.0",
+    "@repo/storybook": "0.0.0",
+    "@repo/config": "0.0.0",
+    "@datum-cloud/datum-ui": "0.1.0",
+    "@repo/shadcn": "0.0.0"
+  },
+  "changesets": [
+    "peer-deps-docs",
+    "rare-dancers-itch",
+    "typography-map-docs"
+  ]
+}

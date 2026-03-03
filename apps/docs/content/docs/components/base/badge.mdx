@@ -1,0 +1,234 @@
+---
+title: Badge
+description: A flexible badge component for displaying labels, status indicators, and tags with multiple type and theme variants.
+---
+
+import { Badge } from '@/components/ui'
+
+## Overview
+
+Badge is a lightweight inline element used to display short labels, status indicators, categories, or tags. It supports nine semantic types and three visual themes, making it adaptable for a wide range of use cases such as status flags, counters, and categorization labels.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Usage
+
+<ComponentPreview name="Basic Badge">
+  <Badge>Badge</Badge>
+</ComponentPreview>
+
+```tsx
+import { Badge } from '@datum-cloud/datum-ui'
+
+<Badge>Badge</Badge>
+```
+
+## Examples
+
+### Types
+
+The `type` prop controls the semantic color of the badge. Each type maps to a distinct color defined by design tokens.
+
+<ComponentPreview name="Badge Types">
+  <div className="flex flex-wrap items-center gap-3">
+    <Badge type="primary">Primary</Badge>
+    <Badge type="secondary">Secondary</Badge>
+    <Badge type="tertiary">Tertiary</Badge>
+    <Badge type="quaternary">Quaternary</Badge>
+    <Badge type="info">Info</Badge>
+    <Badge type="warning">Warning</Badge>
+    <Badge type="danger">Danger</Badge>
+    <Badge type="success">Success</Badge>
+    <Badge type="muted">Muted</Badge>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Badge type="primary">Primary</Badge>
+<Badge type="secondary">Secondary</Badge>
+<Badge type="tertiary">Tertiary</Badge>
+<Badge type="quaternary">Quaternary</Badge>
+<Badge type="info">Info</Badge>
+<Badge type="warning">Warning</Badge>
+<Badge type="danger">Danger</Badge>
+<Badge type="success">Success</Badge>
+<Badge type="muted">Muted</Badge>
+```
+
+### Themes
+
+The `theme` prop controls the visual style of the badge. Choose between a filled background, a bordered outline, or a subtle tinted appearance.
+
+<ComponentPreview name="Badge Themes">
+  <div className="flex flex-wrap items-center gap-3">
+    <Badge type="primary" theme="solid">Solid</Badge>
+    <Badge type="primary" theme="outline">Outline</Badge>
+    <Badge type="primary" theme="light">Light</Badge>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Badge type="primary" theme="solid">Solid</Badge>
+<Badge type="primary" theme="outline">Outline</Badge>
+<Badge type="primary" theme="light">Light</Badge>
+```
+
+### Type and Theme Combinations
+
+Every type can be combined with every theme. Here is a grid showing all combinations.
+
+<ComponentPreview name="Badge Type Theme Grid">
+  <div className="flex flex-col gap-4">
+    <div className="flex flex-wrap items-center gap-3">
+      <Badge type="primary" theme="solid">Primary Solid</Badge>
+      <Badge type="primary" theme="outline">Primary Outline</Badge>
+      <Badge type="primary" theme="light">Primary Light</Badge>
+    </div>
+    <div className="flex flex-wrap items-center gap-3">
+      <Badge type="secondary" theme="solid">Secondary Solid</Badge>
+      <Badge type="secondary" theme="outline">Secondary Outline</Badge>
+      <Badge type="secondary" theme="light">Secondary Light</Badge>
+    </div>
+    <div className="flex flex-wrap items-center gap-3">
+      <Badge type="success" theme="solid">Success Solid</Badge>
+      <Badge type="success" theme="outline">Success Outline</Badge>
+      <Badge type="success" theme="light">Success Light</Badge>
+    </div>
+    <div className="flex flex-wrap items-center gap-3">
+      <Badge type="danger" theme="solid">Danger Solid</Badge>
+      <Badge type="danger" theme="outline">Danger Outline</Badge>
+      <Badge type="danger" theme="light">Danger Light</Badge>
+    </div>
+    <div className="flex flex-wrap items-center gap-3">
+      <Badge type="warning" theme="solid">Warning Solid</Badge>
+      <Badge type="warning" theme="outline">Warning Outline</Badge>
+      <Badge type="warning" theme="light">Warning Light</Badge>
+    </div>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Badge type="primary" theme="solid">Primary Solid</Badge>
+<Badge type="primary" theme="outline">Primary Outline</Badge>
+<Badge type="primary" theme="light">Primary Light</Badge>
+
+<Badge type="secondary" theme="solid">Secondary Solid</Badge>
+<Badge type="secondary" theme="outline">Secondary Outline</Badge>
+<Badge type="secondary" theme="light">Secondary Light</Badge>
+
+<Badge type="success" theme="solid">Success Solid</Badge>
+<Badge type="success" theme="outline">Success Outline</Badge>
+<Badge type="success" theme="light">Success Light</Badge>
+
+<Badge type="danger" theme="solid">Danger Solid</Badge>
+<Badge type="danger" theme="outline">Danger Outline</Badge>
+<Badge type="danger" theme="light">Danger Light</Badge>
+
+<Badge type="warning" theme="solid">Warning Solid</Badge>
+<Badge type="warning" theme="outline">Warning Outline</Badge>
+<Badge type="warning" theme="light">Warning Light</Badge>
+```
+
+### Status Indicators
+
+Badges work well as status indicators in lists, tables, or cards.
+
+<ComponentPreview name="Status Indicators">
+  <div className="flex flex-wrap items-center gap-3">
+    <Badge type="success" theme="light">Active</Badge>
+    <Badge type="warning" theme="light">Pending</Badge>
+    <Badge type="danger" theme="light">Failed</Badge>
+    <Badge type="info" theme="light">In Progress</Badge>
+    <Badge type="muted" theme="light">Archived</Badge>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Badge type="success" theme="light">Active</Badge>
+<Badge type="warning" theme="light">Pending</Badge>
+<Badge type="danger" theme="light">Failed</Badge>
+<Badge type="info" theme="light">In Progress</Badge>
+<Badge type="muted" theme="light">Archived</Badge>
+```
+
+### With Icons
+
+Since Badge renders as a `div` with `inline-flex`, you can include icons alongside text by adding a `gap` class.
+
+<ComponentPreview name="Badge with Icons">
+  <div className="flex flex-wrap items-center gap-3">
+    <Badge type="success" theme="light" className="gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Verified
+    </Badge>
+    <Badge type="danger" theme="light" className="gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      Rejected
+    </Badge>
+    <Badge type="warning" theme="light" className="gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Caution
+    </Badge>
+  </div>
+</ComponentPreview>
+
+```tsx
+import { CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
+
+<Badge type="success" theme="light" className="gap-1">
+  <CheckCircle className="h-3 w-3" />
+  Verified
+</Badge>
+<Badge type="danger" theme="light" className="gap-1">
+  <XCircle className="h-3 w-3" />
+  Rejected
+</Badge>
+<Badge type="warning" theme="light" className="gap-1">
+  <AlertTriangle className="h-3 w-3" />
+  Caution
+</Badge>
+```
+
+### Custom Styling
+
+Pass additional Tailwind classes via the `className` prop to customize padding, borders, shadows, or any other styling.
+
+<ComponentPreview name="Custom Styled Badges">
+  <div className="flex flex-wrap items-center gap-3">
+    <Badge type="primary" className="px-4 py-1">Larger Padding</Badge>
+    <Badge type="secondary" theme="outline" className="border-2">Thicker Border</Badge>
+    <Badge type="success" className="shadow-md">With Shadow</Badge>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Badge type="primary" className="px-4 py-1">Larger Padding</Badge>
+<Badge type="secondary" theme="outline" className="border-2">Thicker Border</Badge>
+<Badge type="success" className="shadow-md">With Shadow</Badge>
+```
+
+## Props
+
+### Badge
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `'primary' \| 'secondary' \| 'tertiary' \| 'quaternary' \| 'info' \| 'warning' \| 'danger' \| 'success' \| 'muted'` | `'muted'` | Semantic color type of the badge |
+| `theme` | `'solid' \| 'outline' \| 'light'` | `'solid'` | Visual style theme of the badge |
+| `className` | `string` | - | Additional CSS classes to apply |
+| `children` | `React.ReactNode` | - | Badge content |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | All standard HTML div attributes |
+
+### badgeVariants
+
+The `badgeVariants` utility is also exported for use cases where you need badge styling without the Badge component wrapper.
+
+```tsx
+import { badgeVariants } from '@datum-cloud/datum-ui'
+
+<div className={badgeVariants({ type: 'success', theme: 'light' })}>
+  Custom Element
+</div>
+```

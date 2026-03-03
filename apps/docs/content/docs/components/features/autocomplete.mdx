@@ -1,0 +1,144 @@
+---
+title: Autocomplete
+description: A searchable select component with support for groups, virtualization, and creatable options.
+---
+
+import { Autocomplete } from '@/components/ui'
+
+## Overview
+
+The `Autocomplete` component is a form-agnostic combobox built on Popover and Command (cmdk). It supports flat and grouped options, optional virtualization for large lists, custom rendering, async external search, and creatable (user-defined) values.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-popover @tanstack/react-virtual cmdk
+```
+
+## Usage
+
+<ComponentPreview name="Basic Autocomplete">
+  <div className="w-72">
+    <Autocomplete
+      options={[
+        { value: 'us', label: 'United States' },
+        { value: 'uk', label: 'United Kingdom' },
+        { value: 'ca', label: 'Canada' },
+        { value: 'de', label: 'Germany' },
+        { value: 'fr', label: 'France' },
+      ]}
+      placeholder="Select a country..."
+    />
+  </div>
+</ComponentPreview>
+
+```tsx
+import { Autocomplete } from '@datum-cloud/datum-ui'
+
+const countries = [
+  { value: 'us', label: 'United States' },
+  { value: 'uk', label: 'United Kingdom' },
+  { value: 'ca', label: 'Canada' },
+  { value: 'de', label: 'Germany' },
+  { value: 'fr', label: 'France' },
+]
+
+const [value, setValue] = useState<string | undefined>()
+
+<Autocomplete
+  options={countries}
+  value={value}
+  onValueChange={setValue}
+  placeholder="Select a country..."
+/>
+```
+
+## Examples
+
+### With Groups
+
+Pass an array of `{ label, options }` objects to render grouped options with headings.
+
+```tsx
+const grouped = [
+  {
+    label: 'North America',
+    options: [
+      { value: 'us', label: 'United States' },
+      { value: 'ca', label: 'Canada' },
+    ],
+  },
+  {
+    label: 'Europe',
+    options: [
+      { value: 'uk', label: 'United Kingdom' },
+      { value: 'de', label: 'Germany' },
+    ],
+  },
+]
+
+<Autocomplete options={grouped} placeholder="Select a country..." />
+```
+
+### Creatable
+
+Allow users to enter custom values not in the options list.
+
+```tsx
+<Autocomplete
+  options={countries}
+  creatable
+  placeholder="Select or create..."
+  emptyContent="Type to create a new option"
+/>
+```
+
+### Loading / Async Search
+
+Provide `onSearchChange` to handle external filtering and `loading` for the loading state.
+
+```tsx
+<Autocomplete
+  options={results ?? []}
+  onSearchChange={setSearch}
+  loading={isLoading}
+  placeholder="Search users..."
+/>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `options` | `AutocompleteOption[] \| AutocompleteGroup[]` | -- | Flat or grouped options |
+| `value` | `string` | -- | Controlled selected value |
+| `onValueChange` | `(value: string) => void` | -- | Callback when selection changes |
+| `placeholder` | `string` | `'Select...'` | Trigger placeholder text |
+| `searchPlaceholder` | `string` | `'Search...'` | Search input placeholder |
+| `disableSearch` | `boolean` | `false` | Hide the search input |
+| `onSearchChange` | `(value: string) => void` | -- | External search handler (disables built-in filtering) |
+| `creatable` | `boolean` | `false` | Allow custom values |
+| `creatableLabel` | `(value: string) => ReactNode` | -- | Custom render for the creatable item |
+| `virtualize` | `boolean` | `false` | Enable virtualization for large lists |
+| `itemSize` | `number` | `36` | Item height in px for the virtualizer |
+| `loading` | `boolean` | `false` | Show loading state |
+| `disabled` | `boolean` | `false` | Disable the component |
+| `emptyContent` | `ReactNode` | `'No results found'` | Content when no options match |
+| `footer` | `ReactNode` | -- | Footer below the options list |
+| `renderOption` | `(option, isSelected) => ReactNode` | -- | Custom option renderer |
+| `renderValue` | `(option) => ReactNode` | -- | Custom trigger value renderer |
+| `name` | `string` | -- | Hidden input name (for plain HTML forms) |
+| `className` | `string` | -- | Root wrapper classes |
+| `triggerClassName` | `string` | -- | Trigger button classes |
+| `contentClassName` | `string` | -- | Popover content classes |
+
+### AutocompleteOption
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `value` | `string` | Unique identifier |
+| `label` | `string` | Display text |
+| `description` | `string` | Optional secondary text |
+| `disabled` | `boolean` | Disable selection |

@@ -1,0 +1,74 @@
+---
+title: Spinner
+description: An animated circular loading indicator with configurable size and color.
+---
+
+import { SpinnerIcon } from '@/components/ui'
+
+## Overview
+
+SpinnerIcon renders an animated SVG spinner with a track circle and a spinning arc indicator. It is used inside buttons during loading states and as standalone loading indicators. The component supports ten size presets and customizable track/indicator colors.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Usage
+
+<ComponentPreview name="Basic Spinner">
+  <SpinnerIcon />
+</ComponentPreview>
+
+```tsx
+import { SpinnerIcon } from '@datum-cloud/datum-ui'
+
+<SpinnerIcon />
+```
+
+## Examples
+
+### Sizes
+
+<ComponentPreview name="Spinner Sizes">
+  <div className="flex items-center gap-4">
+    <SpinnerIcon size="xs" />
+    <SpinnerIcon size="sm" />
+    <SpinnerIcon size="md" />
+    <SpinnerIcon size="lg" />
+    <SpinnerIcon size="xl" />
+    <SpinnerIcon size="2xl" />
+  </div>
+</ComponentPreview>
+
+```tsx
+<SpinnerIcon size="xs" />
+<SpinnerIcon size="sm" />
+<SpinnerIcon size="md" />
+<SpinnerIcon size="lg" />
+<SpinnerIcon size="xl" />
+<SpinnerIcon size="2xl" />
+```
+
+### Custom Colors
+
+<ComponentPreview name="Custom Spinner Colors">
+  <div className="flex items-center gap-4">
+    <SpinnerIcon size="lg" indicatorClassName="text-green-500" trackClassName="text-green-200" />
+    <SpinnerIcon size="lg" indicatorClassName="text-red-500" trackClassName="text-red-200" />
+    <SpinnerIcon size="lg" indicatorClassName="text-blue-500" trackClassName="text-blue-200" />
+  </div>
+</ComponentPreview>
+
+```tsx
+<SpinnerIcon indicatorClassName="text-green-500" trackClassName="text-green-200" />
+<SpinnerIcon indicatorClassName="text-red-500" trackClassName="text-red-200" />
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| '3xl' \| '4xl' \| '5xl' \| '6xl' \| '7xl' \| '8xl' \| '9xl'` | `'md'` | Spinner size |
+| `trackClassName` | `string` | `'text-border'` | Tailwind color class for the background circle |
+| `indicatorClassName` | `string` | `'text-primary'` | Tailwind color class for the spinning arc |
+| `className` | `string` | -- | Additional CSS classes |

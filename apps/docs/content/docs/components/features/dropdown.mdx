@@ -1,0 +1,116 @@
+---
+title: Dropdown Menu
+description: A floating menu of actions triggered by a button press.
+---
+
+import { Button } from '@/components/ui'
+
+## Overview
+
+DropdownMenu displays a list of actions or options in a floating panel, triggered by a button or other interactive element. It is built on Radix UI's DropdownMenu primitive and supports items, checkbox items, radio items, sub-menus, labels, separators, and keyboard shortcuts.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-dropdown-menu
+```
+
+## Usage
+
+```tsx
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
+  DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel
+} from '@datum-cloud/datum-ui'
+
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button type="secondary" theme="outline">Options</Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="end">
+    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem>Edit</DropdownMenuItem>
+    <DropdownMenuItem>Duplicate</DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+```
+
+## Examples
+
+### With Icons and Shortcuts
+
+```tsx
+import { Pencil, Copy, Trash2 } from 'lucide-react'
+
+<DropdownMenuContent>
+  <DropdownMenuItem>
+    <Pencil className="size-4" />
+    Edit
+    <DropdownMenuShortcut>Ctrl+E</DropdownMenuShortcut>
+  </DropdownMenuItem>
+  <DropdownMenuItem>
+    <Copy className="size-4" />
+    Duplicate
+    <DropdownMenuShortcut>Ctrl+D</DropdownMenuShortcut>
+  </DropdownMenuItem>
+  <DropdownMenuSeparator />
+  <DropdownMenuItem className="text-destructive">
+    <Trash2 className="size-4" />
+    Delete
+  </DropdownMenuItem>
+</DropdownMenuContent>
+```
+
+### Checkbox Items
+
+```tsx
+<DropdownMenuContent>
+  <DropdownMenuCheckboxItem checked={showStatus} onCheckedChange={setShowStatus}>
+    Show Status Column
+  </DropdownMenuCheckboxItem>
+  <DropdownMenuCheckboxItem checked={showTags} onCheckedChange={setShowTags}>
+    Show Tags Column
+  </DropdownMenuCheckboxItem>
+</DropdownMenuContent>
+```
+
+### Sub-menu
+
+```tsx
+<DropdownMenuContent>
+  <DropdownMenuSub>
+    <DropdownMenuSubTrigger>Move to</DropdownMenuSubTrigger>
+    <DropdownMenuSubContent>
+      <DropdownMenuItem>Staging</DropdownMenuItem>
+      <DropdownMenuItem>Production</DropdownMenuItem>
+    </DropdownMenuSubContent>
+  </DropdownMenuSub>
+</DropdownMenuContent>
+```
+
+## Props
+
+### DropdownMenuContent
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `align` | `'start' \| 'center' \| 'end'` | `'center'` | Horizontal alignment relative to trigger |
+| `sideOffset` | `number` | `4` | Distance from the trigger in pixels |
+| `className` | `string` | -- | Additional CSS classes |
+
+### DropdownMenuItem
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `inset` | `boolean` | `false` | Add left padding to align with items that have icons |
+| `disabled` | `boolean` | `false` | Prevent interaction |
+| `onSelect` | `(event: Event) => void` | -- | Callback when the item is selected |
+
+### Sub-components
+
+`DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuLabel`, `DropdownMenuSeparator`, `DropdownMenuShortcut`, `DropdownMenuGroup`, `DropdownMenuSub`, `DropdownMenuSubTrigger`, `DropdownMenuSubContent`, `DropdownMenuCheckboxItem`, `DropdownMenuRadioGroup`, and `DropdownMenuRadioItem` are all available.

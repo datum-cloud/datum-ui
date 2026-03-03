@@ -1,0 +1,117 @@
+---
+title: Loader Overlay
+description: A full-area loading overlay with spinner and optional message, rendered on top of content.
+---
+
+import { LoaderOverlay } from '@/components/ui'
+
+## Overview
+
+LoaderOverlay renders a semi-transparent backdrop with a spinner and optional message over its parent container. Place it inside a relatively positioned element to cover that area with a loading state, useful for sections that are fetching data or processing actions.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Usage
+
+<ComponentPreview name="Basic LoaderOverlay">
+  <div className="relative h-32 w-full rounded-lg border">
+    <LoaderOverlay message="Loading..." />
+  </div>
+</ComponentPreview>
+
+```tsx
+import { LoaderOverlay } from '@datum-cloud/datum-ui'
+
+<div className="relative h-32 w-full rounded-lg border">
+  <LoaderOverlay message="Loading..." />
+</div>
+```
+
+## Examples
+
+### Without Message
+
+The overlay can be used without a message, showing only the spinner.
+
+<ComponentPreview name="LoaderOverlay No Message">
+  <div className="relative h-32 w-full rounded-lg border">
+    <LoaderOverlay />
+  </div>
+</ComponentPreview>
+
+```tsx
+<div className="relative">
+  <LoaderOverlay />
+</div>
+```
+
+### Over Content
+
+Place the overlay inside a container with existing content to show a loading state while preserving the underlying layout.
+
+<ComponentPreview name="LoaderOverlay With Content">
+  <div className="relative h-64 w-full rounded-lg border p-6">
+    <h3 className="text-lg font-medium">Dashboard</h3>
+    <p className="text-muted-foreground mt-2 text-sm">
+      This content is behind the loading overlay.
+    </p>
+    <div className="mt-4 grid grid-cols-3 gap-4">
+      <div className="h-20 rounded bg-gray-100" />
+      <div className="h-20 rounded bg-gray-100" />
+      <div className="h-20 rounded bg-gray-100" />
+    </div>
+    <LoaderOverlay message="Fetching data..." />
+  </div>
+</ComponentPreview>
+
+```tsx
+<div className="relative h-64 w-full rounded-lg border p-6">
+  <h3 className="text-lg font-medium">Dashboard</h3>
+  <p className="text-muted-foreground mt-2 text-sm">
+    This content is behind the loading overlay.
+  </p>
+  <div className="mt-4 grid grid-cols-3 gap-4">
+    <div className="h-20 rounded bg-gray-100" />
+    <div className="h-20 rounded bg-gray-100" />
+    <div className="h-20 rounded bg-gray-100" />
+  </div>
+  <LoaderOverlay message="Fetching data..." />
+</div>
+```
+
+### Custom Message Node
+
+The `message` prop accepts a `ReactNode`, so you can pass custom markup instead of a plain string.
+
+<ComponentPreview name="LoaderOverlay Custom Message">
+  <div className="relative h-32 w-full rounded-lg border">
+    <LoaderOverlay
+      message={
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-sm font-semibold">Please wait</span>
+          <span className="text-muted-foreground text-xs">Processing your request...</span>
+        </div>
+      }
+    />
+  </div>
+</ComponentPreview>
+
+```tsx
+<LoaderOverlay
+  message={
+    <div className="flex flex-col items-center gap-1">
+      <span className="text-sm font-semibold">Please wait</span>
+      <span className="text-muted-foreground text-xs">Processing your request...</span>
+    </div>
+  }
+/>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `message` | `string \| React.ReactNode` | -- | Text or custom content displayed next to the spinner |
+| `className` | `string` | -- | Additional CSS classes for the overlay container |

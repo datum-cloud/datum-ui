@@ -1,0 +1,267 @@
+---
+title: Map
+description: Interactive map component built on React Leaflet.
+---
+
+## Overview
+
+The `Map` component is a compound component built on [React Leaflet](https://react-leaflet.js.org/). It provides theme-aware tile layers (auto-switching between light and dark), markers with popups and tooltips, shapes (circles, polygons, polylines, rectangles), a layer control system, drawing tools, marker clustering, fullscreen mode, geolocation, and a search control.
+
+All sub-components must be rendered inside `<Map>` — they use React Leaflet's internal map context.
+
+## Dependencies
+
+```package-install
+leaflet react-leaflet leaflet-draw leaflet.fullscreen leaflet.markercluster react-leaflet-markercluster
+```
+
+## Usage
+
+```tsx
+import { Map, MapTileLayer, MapZoomControl, MapMarker } from '@datum-cloud/datum-ui'
+
+<Map center={[51.505, -0.09]} zoom={13} className="h-[500px] w-full">
+  <MapTileLayer />
+  <MapZoomControl />
+  <MapMarker position={[51.505, -0.09]} />
+</Map>
+```
+
+## Examples
+
+### With Markers, Popups, and Tooltips
+
+```tsx
+import {
+  Map, MapTileLayer, MapZoomControl,
+  MapMarker, MapPopup, MapTooltip,
+} from '@datum-cloud/datum-ui'
+
+<Map center={[51.505, -0.09]} zoom={13} className="h-[500px] w-full">
+  <MapTileLayer />
+  <MapZoomControl />
+
+  <MapMarker position={[51.505, -0.09]}>
+    <MapPopup>
+      <p className="font-medium">London HQ</p>
+      <p className="text-muted-foreground text-sm">Main office location</p>
+    </MapPopup>
+    <MapTooltip side="top">London HQ</MapTooltip>
+  </MapMarker>
+
+  <MapMarker position={[51.51, -0.1]}>
+    <MapPopup>
+      <p className="font-medium">Secondary Office</p>
+    </MapPopup>
+  </MapMarker>
+</Map>
+```
+
+### With Layers Control
+
+Use `MapLayers` to wrap the map children and `MapLayersControl` to toggle between tile layers and overlay groups.
+
+```tsx
+import {
+  Map, MapTileLayer, MapZoomControl,
+  MapLayers, MapLayersControl, MapLayerGroup,
+  MapMarker, MapCircle,
+} from '@datum-cloud/datum-ui'
+
+<Map center={[51.505, -0.09]} zoom={13} className="h-[500px] w-full">
+  <MapLayers defaultLayerGroups={['Offices']}>
+    <MapTileLayer name="Light" />
+    <MapTileLayer
+      name="Satellite"
+      url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+      attribution="&copy; Esri"
+    />
+    <MapLayersControl />
+    <MapZoomControl />
+
+    <MapLayerGroup name="Offices">
+      <MapMarker position={[51.505, -0.09]} />
+    </MapLayerGroup>
+
+    <MapLayerGroup name="Zones">
+      <MapCircle center={[51.505, -0.09]} radius={500} />
+    </MapLayerGroup>
+  </MapLayers>
+</Map>
+```
+
+### With Drawing Tools
+
+```tsx
+import {
+  Map, MapTileLayer, MapZoomControl,
+  MapDrawControl, MapDrawMarker, MapDrawPolyline,
+  MapDrawCircle, MapDrawPolygon, MapDrawRectangle,
+  MapDrawEdit, MapDrawDelete, MapDrawUndo,
+} from '@datum-cloud/datum-ui'
+
+<Map center={[51.505, -0.09]} zoom={13} className="h-[500px] w-full">
+  <MapTileLayer />
+  <MapZoomControl />
+  <MapDrawControl onLayersChange={(layers) => console.log(layers)}>
+    <MapDrawMarker />
+    <MapDrawPolyline />
+    <MapDrawCircle />
+    <MapDrawRectangle />
+    <MapDrawPolygon />
+    <MapDrawEdit />
+    <MapDrawDelete />
+    <MapDrawUndo />
+  </MapDrawControl>
+</Map>
+```
+
+### With Shapes
+
+```tsx
+import {
+  Map, MapTileLayer, MapZoomControl,
+  MapCircle, MapPolygon, MapPolyline, MapRectangle,
+} from '@datum-cloud/datum-ui'
+
+<Map center={[51.505, -0.09]} zoom={13} className="h-[500px] w-full">
+  <MapTileLayer />
+  <MapZoomControl />
+  <MapCircle center={[51.505, -0.09]} radius={300} />
+  <MapPolygon
+    positions={[
+      [51.509, -0.08],
+      [51.503, -0.06],
+      [51.51, -0.047],
+    ]}
+  />
+  <MapPolyline
+    positions={[
+      [51.505, -0.09],
+      [51.51, -0.1],
+      [51.51, -0.12],
+    ]}
+  />
+  <MapRectangle
+    bounds={[
+      [51.49, -0.08],
+      [51.5, -0.06],
+    ]}
+  />
+</Map>
+```
+
+### With Fullscreen
+
+```tsx
+import {
+  Map, MapTileLayer, MapZoomControl, MapFullscreenControl,
+} from '@datum-cloud/datum-ui'
+
+<Map center={[51.505, -0.09]} zoom={13} className="h-[500px] w-full">
+  <MapTileLayer />
+  <MapZoomControl />
+  <MapFullscreenControl position="top-1 right-1" />
+</Map>
+```
+
+### With Marker Clustering
+
+```tsx
+import {
+  Map, MapTileLayer, MapZoomControl,
+  MapMarkerClusterGroup, MapMarker,
+} from '@datum-cloud/datum-ui'
+
+const points = [
+  [51.505, -0.09], [51.51, -0.1], [51.51, -0.12],
+  [51.49, -0.08], [51.5, -0.06], [51.515, -0.09],
+]
+
+<Map center={[51.505, -0.09]} zoom={12} className="h-[500px] w-full">
+  <MapTileLayer />
+  <MapZoomControl />
+  <MapMarkerClusterGroup>
+    {points.map(([lat, lng], i) => (
+      <MapMarker key={i} position={[lat, lng]} />
+    ))}
+  </MapMarkerClusterGroup>
+</Map>
+```
+
+## Sub-components
+
+| Component | Description |
+|-----------|-------------|
+| `Map` | Root container. Wraps React Leaflet's `MapContainer` with SSR-safe lazy loading. |
+| `MapTileLayer` | Theme-aware tile layer. Auto-switches between light/dark tile URLs. |
+| `MapMarker` | Marker with a customizable React icon (defaults to `MapPinIcon`). |
+| `MapPopup` | Styled popup that appears on marker click. |
+| `MapTooltip` | Styled tooltip with arrow and configurable side. |
+| `MapCircle` | Circle shape overlay. |
+| `MapCircleMarker` | Fixed-pixel-size circle marker. |
+| `MapPolygon` | Polygon shape overlay. |
+| `MapPolyline` | Polyline shape overlay. |
+| `MapRectangle` | Rectangle shape overlay. |
+| `MapLayers` | Context provider for layer management. |
+| `MapLayersControl` | Dropdown UI for switching tile layers and toggling layer groups. |
+| `MapLayerGroup` | Named layer group that can be toggled via `MapLayersControl`. |
+| `MapFeatureGroup` | Named feature group (like `MapLayerGroup` but uses `FeatureGroup`). |
+| `MapMarkerClusterGroup` | Clusters nearby markers with customizable cluster icons. |
+| `MapZoomControl` | Zoom in/out button group. |
+| `MapFullscreenControl` | Toggle fullscreen mode. |
+| `MapLocateControl` | Geolocate the user and track their position. |
+| `MapSearchControl` | Place autocomplete search input (requires Google Maps API key). |
+| `MapDrawControl` | Drawing toolbar container. |
+| `MapDrawMarker` | Draw marker tool button. |
+| `MapDrawPolyline` | Draw polyline tool button. |
+| `MapDrawCircle` | Draw circle tool button. |
+| `MapDrawRectangle` | Draw rectangle tool button. |
+| `MapDrawPolygon` | Draw polygon tool button. |
+| `MapDrawEdit` | Edit shapes tool button. |
+| `MapDrawDelete` | Delete shapes tool button. |
+| `MapDrawUndo` | Undo edit/delete action button. |
+| `MapControlContainer` | Positioned container for custom map controls. |
+
+## Props — Map
+
+Extends `MapContainerProps` from `react-leaflet` (except `zoomControl` which is always `false`).
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `center` | `LatLngExpression` | — | **Required.** Initial center coordinates `[lat, lng]`. |
+| `zoom` | `number` | `15` | Initial zoom level. |
+| `maxZoom` | `number` | `18` | Maximum zoom level. |
+| `className` | `string` | — | Additional CSS classes. |
+
+## Props — MapTileLayer
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | `'Default'` | Layer name (used by `MapLayersControl`). |
+| `url` | `string` | CartoDB Light | Light-theme tile URL. |
+| `darkUrl` | `string` | CartoDB Dark | Dark-theme tile URL override. |
+| `attribution` | `string` | OSM + CARTO | Attribution text. |
+| `darkAttribution` | `string` | — | Attribution override for dark theme. |
+
+## Props — MapMarker
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `position` | `LatLngExpression` | — | **Required.** Marker position `[lat, lng]`. |
+| `icon` | `ReactNode` | `<MapPinIcon />` | Custom React element for the marker icon. |
+| `iconAnchor` | `PointExpression` | `[12, 12]` | Anchor point of the icon relative to its top-left. |
+
+## Props — MapTooltip
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'top'` | Tooltip placement relative to marker. |
+| `sideOffset` | `number` | `15` | Distance in pixels from the marker. |
+
+## Props — MapDrawControl
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `onLayersChange` | `(layers: FeatureGroup) => void` | — | Callback when drawn layers change. |
+| `position` | `string` | `'bottom-1 left-1'` | Tailwind position classes. |

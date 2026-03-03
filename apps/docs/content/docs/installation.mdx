@@ -1,0 +1,50 @@
+---
+title: Installation
+description: Install and configure datum-ui in your project.
+---
+
+## Install
+
+```package-install
+@datum-cloud/datum-ui
+```
+
+## Peer Dependencies
+
+datum-ui requires React 19 and Tailwind CSS v4:
+
+```package-install
+react react-dom tailwindcss
+```
+
+## Component Peer Dependencies
+
+datum-ui exposes all components from a single package. Some components require additional peer dependencies — check each component's doc page for the specific install command.
+
+For example, if you use the Dialog component:
+
+```package-install
+@radix-ui/react-dialog
+```
+
+Many components use icons from [lucide-react](https://lucide.dev). If your project uses icon-based components (Sidebar, Dropdown, etc.):
+
+```package-install
+lucide-react
+```
+
+Components built with only React and Tailwind (like Alert, Badge, Card, Input) need no extra packages.
+
+## Provider Setup
+
+Wrap your app with `DatumProvider` — it automatically loads all design tokens, theme variables, and component styles:
+
+```tsx
+import { DatumProvider } from '@datum-cloud/datum-ui'
+
+export default function RootLayout({ children }) {
+  return <DatumProvider>{children}</DatumProvider>
+}
+```
+
+See [Providers](/docs/providers) for full configuration options.

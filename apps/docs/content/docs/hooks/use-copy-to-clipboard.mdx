@@ -1,0 +1,124 @@
+---
+title: useCopyToClipboard
+description: Copy text to the clipboard with a transient success state and optional toast notification.
+---
+
+## Overview
+
+`useCopyToClipboard` provides a `copy` function and an `isCopied` status flag. The flag resets to `false` automatically after 2 seconds, making it easy to show brief visual feedback. An optional toast notification can be triggered on successful copy.
+
+## Usage
+
+```tsx
+import { useCopyToClipboard } from '@datum-cloud/datum-ui'
+
+function CopyButton({ text }: { text: string }) {
+  const [isCopied, copy] = useCopyToClipboard()
+
+  return (
+    <button onClick={() => copy(text)}>
+      {isCopied ? 'Copied!' : 'Copy'}
+    </button>
+  )
+}
+```
+
+## API
+
+### Parameters
+
+This hook takes no parameters.
+
+### Return Value
+
+Returns a tuple `[isCopied, copy]`:
+
+| Index | Name | Type | Description |
+|-------|------|------|-------------|
+| `0` | `isCopied` | `boolean` | `true` for 2 seconds after a successful copy, then resets to `false`. |
+| `1` | `copy` | `(text: string, options?: CopyOptions) => Promise<boolean>` | Copies `text` to the clipboard. Returns `true` on success, `false` on failure. |
+
+### CopyOptions
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `withToast` | `boolean` | `false` | Show a success toast notification after copying. |
+| `toastMessage` | `string` | `'Copied to clipboard'` | Custom message for the toast notification. |
+
+## Examples
+
+### Copy with Toast
+
+Display a toast notification when the user copies a value.
+
+```tsx
+import { useCopyToClipboard } from '@datum-cloud/datum-ui'
+
+function ApiKeyDisplay({ apiKey }: { apiKey: string }) {
+  const [isCopied, copy] = useCopyToClipboard()
+
+  return (
+    <div className="flex items-center gap-2">
+      <code>{apiKey}</code>
+      <button
+        onClick={() => copy(apiKey, { withToast: true, toastMessage: 'API key copied!' })}
+      >
+        {isCopied ? 'Copied!' : 'Copy key'}
+      </button>
+    </div>
+  )
+}
+```
+
+### Copy Code Block
+
+Add a copy button to a code snippet with icon feedback.
+
+```tsx
+import { useCopyToClipboard } from '@datum-cloud/datum-ui'
+import { Copy, Check } from 'lucide-react'
+
+function CodeBlock({ code }: { code: string }) {
+  const [isCopied, copy] = useCopyToClipboard()
+
+  return (
+    <div className="relative">
+      <pre className="rounded bg-muted p-4">
+        <code>{code}</code>
+      </pre>
+      <button
+        className="absolute right-2 top-2"
+        onClick={() => copy(code)}
+        aria-label="Copy code"
+      >
+        {isCopied ? <Check size={16} /> : <Copy size={16} />}
+      </button>
+    </div>
+  )
+}
+```
+
+### Share URL
+
+Copy the current page URL and show inline confirmation text.
+
+```tsx
+import { useCopyToClipboard } from '@datum-cloud/datum-ui'
+
+function ShareButton() {
+  const [isCopied, copy] = useCopyToClipboard()
+
+  const handleShare = async () => {
+    await copy(window.location.href, {
+      withToast: true,
+      toastMessage: 'Link copied to clipboard',
+    })
+  }
+
+  return (
+    <button onClick={handleShare}>
+      {isCopied ? 'Link copied!' : 'Share this page'}
+    </button>
+  )
+}
+```

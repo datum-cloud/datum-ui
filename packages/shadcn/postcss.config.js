@@ -1,1 +1,0 @@
-export { postcssConfig } from "@repo/tailwind-config/postcss";

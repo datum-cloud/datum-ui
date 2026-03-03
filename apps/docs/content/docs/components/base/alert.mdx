@@ -1,0 +1,114 @@
+---
+title: Alert
+description: Display contextual feedback messages with semantic variants and optional dismiss functionality.
+---
+
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui'
+
+## Overview
+
+The Alert component displays short, important messages to the user. It supports seven semantic variants for different contexts (default, secondary, outline, destructive, success, info, warning) and an optional close button for dismissible alerts.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Usage
+
+<ComponentPreview name="Basic Alert">
+  <Alert>
+    <AlertTitle>Heads up!</AlertTitle>
+    <AlertDescription>You can add components to your app using the CLI.</AlertDescription>
+  </Alert>
+</ComponentPreview>
+
+```tsx
+import { Alert, AlertTitle, AlertDescription } from '@datum-cloud/datum-ui'
+
+<Alert>
+  <AlertTitle>Heads up!</AlertTitle>
+  <AlertDescription>You can add components to your app using the CLI.</AlertDescription>
+</Alert>
+```
+
+## Examples
+
+### Variants
+
+<ComponentPreview name="Alert Variants">
+  <div className="flex flex-col gap-4">
+    <Alert variant="default">
+      <AlertTitle>Default</AlertTitle>
+      <AlertDescription>This is a default alert.</AlertDescription>
+    </Alert>
+    <Alert variant="secondary">
+      <AlertTitle>Secondary</AlertTitle>
+      <AlertDescription>This is a secondary alert.</AlertDescription>
+    </Alert>
+    <Alert variant="outline">
+      <AlertTitle>Outline</AlertTitle>
+      <AlertDescription>This is an outline alert.</AlertDescription>
+    </Alert>
+    <Alert variant="destructive">
+      <AlertTitle>Destructive</AlertTitle>
+      <AlertDescription>Your session has expired. Please log in again.</AlertDescription>
+    </Alert>
+    <Alert variant="success">
+      <AlertTitle>Success</AlertTitle>
+      <AlertDescription>Your changes have been saved successfully.</AlertDescription>
+    </Alert>
+    <Alert variant="info">
+      <AlertTitle>Info</AlertTitle>
+      <AlertDescription>A new software update is available.</AlertDescription>
+    </Alert>
+    <Alert variant="warning">
+      <AlertTitle>Warning</AlertTitle>
+      <AlertDescription>Your account is approaching its storage limit.</AlertDescription>
+    </Alert>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Alert variant="destructive">...</Alert>
+<Alert variant="success">...</Alert>
+<Alert variant="info">...</Alert>
+<Alert variant="warning">...</Alert>
+```
+
+### Closable
+
+Set `closable` to show a dismiss button. Provide `onClose` for custom handling, or omit it to auto-hide the alert.
+
+<ComponentPreview name="Closable Alert">
+  <Alert variant="info" closable>
+    <AlertTitle>Dismissible</AlertTitle>
+    <AlertDescription>Click the close button to dismiss this alert.</AlertDescription>
+  </Alert>
+</ComponentPreview>
+
+```tsx
+<Alert variant="info" closable onClose={() => console.log('closed')}>
+  <AlertTitle>Dismissible</AlertTitle>
+  <AlertDescription>Click the close button to dismiss this alert.</AlertDescription>
+</Alert>
+```
+
+## Props
+
+### Alert
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'default' \| 'secondary' \| 'outline' \| 'destructive' \| 'success' \| 'info' \| 'warning'` | `'default'` | Semantic color variant |
+| `closable` | `boolean` | `false` | Show a close button |
+| `onClose` | `() => void` | -- | Callback on dismiss; if omitted the alert auto-hides |
+| `className` | `string` | -- | Additional CSS classes |
+| `children` | `ReactNode` | -- | Alert content (typically AlertTitle + AlertDescription) |
+
+### AlertTitle
+
+Renders a bold heading line inside the alert. Accepts all `div` HTML attributes.
+
+### AlertDescription
+
+Renders muted body text inside the alert. Accepts all `div` HTML attributes.

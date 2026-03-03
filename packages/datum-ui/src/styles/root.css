@@ -20,9 +20,11 @@
 @import './tokens/figma-tokens.css';
 
 /* Shadcn/ui base variables and component styles */
-@import '@repo/shadcn/style.css';
+@import '@repo/shadcn/styles/shadcn.css';
 
 /* Theme overrides - always loaded after shadcn */
 @import './themes/alpha.css';
 
-@import './custom.css';
+/* Component styles */
+@import '../components/features/nprogress/nprogress.css';
+@import '../components/features/grid/style.css';

@@ -1,0 +1,111 @@
+---
+title: Themes
+description: Theme management with ThemeProvider and useTheme for light/dark mode switching.
+---
+
+## Overview
+
+datum-ui includes a `ThemeProvider` and `useTheme` hook for managing light, dark, and system color schemes. The provider handles persistence to localStorage, system preference detection, and seamless theme application via a configurable HTML attribute (`data-theme` by default or `class`).
+
+For the design token architecture and available CSS tokens, see [Theming](/docs/theming).
+
+## Setup
+
+Wrap your application with `ThemeProvider`:
+
+```tsx
+import { ThemeProvider } from '@datum-cloud/datum-ui'
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body className="theme-alpha">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  )
+}
+```
+
+## Usage
+
+Use the `useTheme` hook to read and set the current theme:
+
+```tsx
+import { useTheme } from '@datum-cloud/datum-ui'
+
+function ThemeToggle() {
+  const { resolvedTheme, setTheme } = useTheme()
+
+  return (
+    <button onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}>
+      {resolvedTheme === 'dark' ? 'Switch to Light' : 'Switch to Dark'}
+    </button>
+  )
+}
+```
+
+## Examples
+
+### Theme Selector
+
+Build a theme selector with all available options:
+
+```tsx
+function ThemeSelector() {
+  const { theme, setTheme, themes } = useTheme()
+
+  return (
+    <div className="flex gap-2">
+      {themes.map((t) => (
+        <button
+          key={t}
+          onClick={() => setTheme(t)}
+          className={theme === t ? 'font-bold underline' : ''}
+        >
+          {t}
+        </button>
+      ))}
+    </div>
+  )
+}
+```
+
+### Forced Theme
+
+Force a specific theme for a page (e.g., a marketing landing page that is always light):
+
+```tsx
+<ThemeProvider forcedTheme="light">
+  <MarketingPage />
+</ThemeProvider>
+```
+
+## Props
+
+### ThemeProvider
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `attribute` | `'class' \| 'data-theme' \| string` | `'data-theme'` | HTML attribute used to apply the theme |
+| `defaultTheme` | `string` | `'system'` | Theme used on first visit before user preference is set |
+| `enableSystem` | `boolean` | `true` | Add a `system` option that follows OS preference |
+| `enableColorScheme` | `boolean` | `true` | Set `color-scheme` CSS property on `<html>` |
+| `forcedTheme` | `string` | -- | Force a specific theme, ignoring user preference |
+| `storageKey` | `string` | `'theme'` | localStorage key for persistence |
+| `themes` | `string[]` | `['light', 'dark']` | Available theme values |
+| `disableTransitionOnChange` | `boolean` | `false` | Disable CSS transitions during theme switch |
+| `nonce` | `string` | -- | Nonce for inline style elements (CSP) |
+
+### useTheme()
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `theme` | `string` | Current theme value (`'light'`, `'dark'`, or `'system'`) |
+| `setTheme` | `(theme: string) => void` | Set the active theme |
+| `resolvedTheme` | `'light' \| 'dark'` | Resolved theme after system preference |
+| `systemTheme` | `'light' \| 'dark' \| undefined` | Current OS preference (only when `enableSystem` is true) |
+| `themes` | `string[]` | List of available themes |
+| `forcedTheme` | `string \| undefined` | Currently forced theme, if any |

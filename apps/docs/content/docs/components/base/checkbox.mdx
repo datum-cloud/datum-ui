@@ -1,0 +1,83 @@
+---
+title: Checkbox
+description: A toggleable checkbox control built on Radix UI Checkbox.
+---
+
+import { Checkbox, Label } from '@/components/ui'
+
+## Overview
+
+The `Checkbox` component renders an accessible checkbox input. It supports checked, unchecked, and indeterminate states, and is styled with Datum design tokens.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-checkbox
+```
+
+## Usage
+
+<ComponentPreview name="Basic Checkbox">
+  <Checkbox />
+</ComponentPreview>
+
+```tsx
+import { Checkbox } from '@datum-cloud/datum-ui'
+
+<Checkbox />
+```
+
+## Examples
+
+### Checked by Default
+
+<ComponentPreview name="Checked Checkbox">
+  <Checkbox defaultChecked />
+</ComponentPreview>
+
+```tsx
+<Checkbox defaultChecked />
+```
+
+### With Label
+
+<ComponentPreview name="Checkbox with Label">
+  <div className="flex items-center gap-2">
+    <Checkbox id="terms" />
+    <Label htmlFor="terms">Accept terms and conditions</Label>
+  </div>
+</ComponentPreview>
+
+```tsx
+<div className="flex items-center gap-2">
+  <Checkbox id="terms" />
+  <Label htmlFor="terms">Accept terms and conditions</Label>
+</div>
+```
+
+### Disabled
+
+<ComponentPreview name="Disabled Checkbox">
+  <Checkbox disabled />
+</ComponentPreview>
+
+```tsx
+<Checkbox disabled />
+```
+
+## Props
+
+The `Checkbox` component accepts all props from Radix UI's `Checkbox.Root`.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `checked` | `boolean \| 'indeterminate'` | -- | Controlled checked state |
+| `defaultChecked` | `boolean` | `false` | Default checked state |
+| `onCheckedChange` | `(checked: boolean \| 'indeterminate') => void` | -- | Callback when state changes |
+| `disabled` | `boolean` | `false` | Disables the checkbox |
+| `required` | `boolean` | `false` | Marks as required in a form |
+| `name` | `string` | -- | Name for form submission |
+| `value` | `string` | -- | Value for form submission |
+| `className` | `string` | -- | Additional CSS classes |

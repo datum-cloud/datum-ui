@@ -1,5 +1,8 @@
 {
-  "extends": "@repo/typescript-config/react-library.json",
-  "include": ["."],
-  "exclude": ["dist", "build", "node_modules"]
+  "extends": "@repo/config/tsconfig/react-library",
+  "compilerOptions": {
+    "rootDir": ".",
+    "isolatedDeclarations": false
+  },
+  "include": ["ui", "hooks", "lib"]
 }

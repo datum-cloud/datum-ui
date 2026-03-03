@@ -1,0 +1,65 @@
+---
+title: Textarea
+description: A multi-line text input with auto-sizing and Datum design tokens.
+---
+
+import { Textarea } from '@/components/ui'
+
+## Overview
+
+The `Textarea` component wraps a native `<textarea>` element with Datum styling. It uses `field-sizing: content` for automatic height adjustment and integrates with the Datum theming system for consistent focus and border styles.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Usage
+
+<ComponentPreview name="Basic Textarea">
+  <Textarea placeholder="Type your message..." />
+</ComponentPreview>
+
+```tsx
+import { Textarea } from '@datum-cloud/datum-ui'
+
+<Textarea placeholder="Type your message..." />
+```
+
+## Examples
+
+### With Rows
+
+Set a minimum visible height with the `rows` prop.
+
+<ComponentPreview name="Textarea with Rows">
+  <Textarea placeholder="Write a description..." rows={4} />
+</ComponentPreview>
+
+```tsx
+<Textarea placeholder="Write a description..." rows={4} />
+```
+
+### Disabled
+
+<ComponentPreview name="Disabled Textarea">
+  <Textarea disabled placeholder="Disabled textarea" />
+</ComponentPreview>
+
+```tsx
+<Textarea disabled placeholder="Disabled textarea" />
+```
+
+## Props
+
+The `Textarea` component accepts all standard HTML `<textarea>` attributes.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `placeholder` | `string` | -- | Placeholder text |
+| `rows` | `number` | -- | Minimum number of visible rows |
+| `disabled` | `boolean` | `false` | Disables the textarea |
+| `value` | `string` | -- | Controlled value |
+| `defaultValue` | `string` | -- | Uncontrolled default value |
+| `onChange` | `(e: ChangeEvent) => void` | -- | Change callback |
+| `className` | `string` | -- | Additional CSS classes |
+| `ref` | `RefObject<HTMLTextAreaElement>` | -- | Ref forwarded to the `<textarea>` element |

@@ -4,12 +4,13 @@
   "rsc": false,
   "tsx": true,
   "tailwind": {
-    "config": "tailwind.config.ts",
+    "config": "",
     "css": "styles/shadcn.css",
     "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
   },
+  "iconLibrary": "lucide",
   "aliases": {
     "components": "@repo/shadcn/components",
     "utils": "@repo/shadcn/lib/utils",
@@ -17,5 +18,7 @@
     "lib": "@repo/shadcn/lib",
     "hooks": "@repo/shadcn/hooks"
   },
-  "iconLibrary": "lucide"
+  "registries": {
+    "@shadcn-map": "http://shadcn-map.vercel.app/r/{name}.json"
+  }
 }

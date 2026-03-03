@@ -1,0 +1,48 @@
+---
+title: Overview
+description: Quick start guide for datum-ui — the Datum Cloud design system.
+---
+
+## What is datum-ui?
+
+datum-ui is Datum Cloud's component library built on top of [shadcn/ui](https://ui.shadcn.com) and [Radix UI](https://www.radix-ui.com). It provides themed, composable React components for building Datum Cloud applications.
+
+## Quick Start
+
+Install the package:
+
+```package-install
+@datum-cloud/datum-ui
+```
+
+Wrap your app with `DatumProvider`:
+
+```tsx
+import { DatumProvider } from '@datum-cloud/datum-ui'
+
+export default function App({ children }) {
+  return <DatumProvider>{children}</DatumProvider>
+}
+```
+
+Import and use components:
+
+```tsx
+import { Button, Badge, Input } from '@datum-cloud/datum-ui'
+
+function Example() {
+  return (
+    <div className="flex items-center gap-4">
+      <Input placeholder="Enter your name" />
+      <Button type="primary" theme="solid">Submit</Button>
+      <Badge variant="default">New</Badge>
+    </div>
+  )
+}
+```
+
+## Next Steps
+
+- [Installation](/docs/installation) — detailed setup for monorepo and standalone projects
+- [Theming](/docs/theming) — customize design tokens and colors
+- [Components](/docs/components) — browse the full component catalog

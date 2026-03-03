@@ -1,0 +1,281 @@
+---
+title: Form
+description: A compound component form system built on Conform.js and Zod with validation, conditional fields, field arrays, and multi-step support.
+---
+
+## Overview
+
+The `Form` component is a compound component library that provides a declarative API for building forms. It integrates Conform.js for form state management and Zod for schema validation. All sub-components are accessed through the `Form` namespace (e.g., `Form.Root`, `Form.Field`, `Form.Input`).
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@conform-to/react @conform-to/zod zod
+```
+
+## Usage
+
+```tsx
+import { Form } from '@datum-cloud/datum-ui'
+import { z } from 'zod'
+
+const schema = z.object({
+  name: z.string(),
+  email: z.string(),
+})
+
+<Form.Root schema={schema} onSubmit={(data) => console.log(data)} className="max-w-md space-y-4">
+  <Form.Field name="name" label="Name">
+    <Form.Input placeholder="John Doe" />
+  </Form.Field>
+  <Form.Field name="email" label="Email">
+    <Form.Input type="email" placeholder="john@example.com" />
+  </Form.Field>
+  <Form.Submit>Submit</Form.Submit>
+</Form.Root>
+```
+
+## Examples
+
+### With Validation
+
+Zod validation runs automatically. Required fields show an asterisk and error messages appear below the input.
+
+```tsx
+const schema = z.object({
+  username: z.string().min(3, 'Username must be at least 3 characters'),
+  email: z.string().email('Please enter a valid email address'),
+})
+
+<Form.Root schema={schema} onSubmit={handleSubmit} className="max-w-md space-y-4">
+  <Form.Field name="username" label="Username" required>
+    <Form.Input placeholder="Enter username (min 3 chars)" />
+  </Form.Field>
+  <Form.Field name="email" label="Email" required>
+    <Form.Input type="email" placeholder="user@example.com" />
+  </Form.Field>
+  <Form.Submit>Register</Form.Submit>
+</Form.Root>
+```
+
+### With Select, Checkbox, Switch, and RadioGroup
+
+All common input types are available as `Form.*` sub-components that automatically bind to the form context.
+
+```tsx
+<Form.Root schema={schema} onSubmit={handleSubmit} className="max-w-md space-y-4">
+  <Form.Field name="country" label="Country" required>
+    <Form.Select placeholder="Select a country">
+      <Form.SelectItem value="us">United States</Form.SelectItem>
+      <Form.SelectItem value="uk">United Kingdom</Form.SelectItem>
+    </Form.Select>
+  </Form.Field>
+  <Form.Field name="role" label="Role">
+    <Form.RadioGroup>
+      <Form.RadioItem value="admin" label="Admin" />
+      <Form.RadioItem value="editor" label="Editor" />
+    </Form.RadioGroup>
+  </Form.Field>
+  <Form.Field name="terms">
+    <Form.Checkbox label="I agree to the terms" />
+  </Form.Field>
+  <Form.Field name="notifications" label="Notifications">
+    <Form.Switch label="Enable email notifications" />
+  </Form.Field>
+  <Form.Submit>Save</Form.Submit>
+</Form.Root>
+```
+
+### Conditional Fields (Form.When)
+
+Show or hide fields based on the value of another field.
+
+```tsx
+<Form.Field name="contactMethod" label="Preferred Contact">
+  <Form.Select placeholder="Select method">
+    <Form.SelectItem value="email">Email</Form.SelectItem>
+    <Form.SelectItem value="phone">Phone</Form.SelectItem>
+  </Form.Select>
+</Form.Field>
+
+<Form.When field="contactMethod" is="email">
+  <Form.Field name="email" label="Email Address" required>
+    <Form.Input type="email" placeholder="you@example.com" />
+  </Form.Field>
+</Form.When>
+
+<Form.When field="contactMethod" is="phone">
+  <Form.Field name="phone" label="Phone Number" required>
+    <Form.Input type="tel" placeholder="+1 (555) 123-4567" />
+  </Form.Field>
+</Form.When>
+```
+
+### Field Arrays
+
+Dynamically add and remove groups of fields with `Form.FieldArray`.
+
+```tsx
+<Form.FieldArray name="members">
+  {({ fields, append, remove }) => (
+    <div className="space-y-3">
+      {fields.map((field, index) => (
+        <div key={field.key} className="flex items-start gap-2">
+          <Form.Field name={`members.${index}.email`} className="flex-1">
+            <Form.Input type="email" placeholder="member@example.com" />
+          </Form.Field>
+          <Button type="danger" theme="outline" size="icon" onClick={() => remove(index)}>
+            <TrashIcon size={14} />
+          </Button>
+        </div>
+      ))}
+      <Button type="secondary" theme="outline" onClick={() => append({ email: '' })}>
+        Add Member
+      </Button>
+    </div>
+  )}
+</Form.FieldArray>
+```
+
+### Multi-Step Form (Form.Stepper)
+
+Break a long form into validated steps using `Form.Stepper`. Each step has its own Zod schema and is validated before advancing.
+
+```tsx
+const steps = [
+  { id: 'account', label: 'Account', description: 'Set up credentials', schema: accountSchema },
+  { id: 'profile', label: 'Profile', description: 'Personal details', schema: profileSchema },
+  { id: 'preferences', label: 'Preferences', description: 'Choose your plan', schema: preferencesSchema },
+]
+
+<Form.Stepper steps={steps} onComplete={(data) => console.log(data)}>
+  <Form.StepperNavigation />
+
+  <Form.Step id="account">
+    <Form.Field name="email" label="Email" required>
+      <Form.Input type="email" placeholder="you@example.com" />
+    </Form.Field>
+    <Form.Field name="password" label="Password" required>
+      <Form.Input type="password" placeholder="Min 8 characters" />
+    </Form.Field>
+  </Form.Step>
+
+  <Form.Step id="profile">
+    <Form.Field name="fullName" label="Full Name" required>
+      <Form.Input placeholder="Jane Smith" />
+    </Form.Field>
+  </Form.Step>
+
+  <Form.Step id="preferences">
+    <Form.Field name="plan" label="Plan" required>
+      <Form.RadioGroup>
+        <Form.RadioItem value="free" label="Free" />
+        <Form.RadioItem value="pro" label="Pro - $10/mo" />
+      </Form.RadioGroup>
+    </Form.Field>
+  </Form.Step>
+
+  <Form.StepperControls />
+</Form.Stepper>
+```
+
+### Dialog Form
+
+Render a form inside a dialog using `Form.Dialog`.
+
+```tsx
+<Form.Dialog
+  open={open}
+  onOpenChange={setOpen}
+  title="Create a Resource"
+  description="Add a resource to manage your services."
+  schema={schema}
+  onSubmit={(data) => {
+    console.log(data)
+    setOpen(false)
+  }}
+  submitText="Confirm"
+  submitTextLoading="Creating..."
+>
+  <Form.Field name="name" label="Name" required>
+    <Form.Input placeholder="e.g. My Resource" />
+  </Form.Field>
+  <Form.Field name="description" label="Description">
+    <Form.Textarea placeholder="Optional..." rows={3} />
+  </Form.Field>
+</Form.Dialog>
+```
+
+## Sub-Components
+
+| Component | Description |
+|-----------|-------------|
+| `Form.Root` | Form container with schema and submit handler |
+| `Form.Field` | Field wrapper with label, description, and error display |
+| `Form.Input` | Text input |
+| `Form.Textarea` | Multi-line text input |
+| `Form.Select` | Dropdown select |
+| `Form.SelectItem` | Option inside `Form.Select` |
+| `Form.Checkbox` | Checkbox with inline label |
+| `Form.Switch` | Toggle switch with inline label |
+| `Form.RadioGroup` | Radio button group |
+| `Form.RadioItem` | Radio option inside `Form.RadioGroup` |
+| `Form.Autocomplete` | Searchable select (see [Autocomplete](/docs/components/autocomplete)) |
+| `Form.CopyBox` | Read-only copy-to-clipboard field |
+| `Form.Submit` | Submit button with loading state |
+| `Form.Error` | Manual error display |
+| `Form.Description` | Helper text |
+| `Form.When` | Conditional rendering based on field value |
+| `Form.FieldArray` | Dynamic array of fields |
+| `Form.Custom` | Escape hatch for custom implementations |
+| `Form.Dialog` | Form rendered inside a Dialog |
+| `Form.Stepper` | Multi-step form container |
+| `Form.Step` | Individual step content |
+| `Form.StepperNavigation` | Step progress indicators |
+| `Form.StepperControls` | Previous/Next/Submit buttons |
+
+## Key Props
+
+### Form.Root
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `schema` | `ZodType` | -- | Zod schema for validation |
+| `onSubmit` | `(data) => void \| Promise<void>` | -- | Submit handler with validated data |
+| `defaultValues` | `Partial<z.infer<T>>` | -- | Default field values |
+| `mode` | `'onBlur' \| 'onChange' \| 'onSubmit'` | -- | Validation timing |
+| `children` | `ReactNode \| (props: FormRootRenderProps) => ReactNode` | -- | Form content or render function |
+| `className` | `string` | -- | Additional CSS classes |
+
+### Form.Field
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | -- | Field name (supports dot paths like `address.city`) |
+| `label` | `string \| ReactNode` | -- | Field label |
+| `description` | `string \| ReactNode` | -- | Helper text below the field |
+| `required` | `boolean` | `false` | Show required asterisk |
+| `disabled` | `boolean` | `false` | Disable the field |
+| `children` | `ReactNode \| (props: FormFieldRenderProps) => ReactNode` | -- | Input or render function |
+
+### Form.Stepper
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `steps` | `StepConfig[]` | -- | Array of `{ id, label, description?, schema }` |
+| `onComplete` | `(data) => void \| Promise<void>` | -- | Called when all steps complete |
+| `onStepChange` | `(stepId, direction) => void` | -- | Called on step navigation |
+| `initialStep` | `string` | -- | Starting step ID |
+
+## Hooks
+
+| Hook | Description |
+|------|-------------|
+| `Form.useFormContext()` | Access form metadata, fields, and submit/reset functions |
+| `Form.useFieldContext()` | Access current field metadata inside a `Form.Field` |
+| `Form.useField(name)` | Access and control a specific field by name |
+| `Form.useWatch(name)` | Watch a single field's value reactively |
+| `Form.useWatchAll()` | Watch all field values |
+| `Form.useStepper()` | Access stepper context (current step, navigation, etc.) |

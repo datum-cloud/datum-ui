@@ -1,0 +1,79 @@
+---
+title: Collapsible
+description: A component that toggles the visibility of its content with expand/collapse behavior.
+---
+
+## Overview
+
+Collapsible is a thin wrapper around Radix UI's Collapsible primitive. It lets users expand and collapse a section of content, useful for FAQs, advanced settings panels, or any progressive-disclosure pattern.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-collapsible
+```
+
+## Usage
+
+```tsx
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@datum-cloud/datum-ui'
+import { Button } from '@datum-cloud/datum-ui'
+import { ChevronsUpDown } from 'lucide-react'
+
+<Collapsible>
+  <CollapsibleTrigger asChild>
+    <Button type="secondary" theme="borderless" size="small">
+      Advanced Settings
+      <ChevronsUpDown className="size-4 ml-2" />
+    </Button>
+  </CollapsibleTrigger>
+  <CollapsibleContent>
+    <div className="mt-2 rounded-md border p-4 text-sm text-muted-foreground">
+      Advanced configuration options go here.
+    </div>
+  </CollapsibleContent>
+</Collapsible>
+```
+
+## Examples
+
+### Controlled
+
+Use `open` and `onOpenChange` for controlled state:
+
+```tsx
+const [isOpen, setIsOpen] = useState(false)
+
+<Collapsible open={isOpen} onOpenChange={setIsOpen}>
+  <CollapsibleTrigger asChild>
+    <Button type="secondary" theme="outline" size="small">
+      {isOpen ? 'Hide' : 'Show'} Details
+    </Button>
+  </CollapsibleTrigger>
+  <CollapsibleContent>
+    <p className="mt-2 text-sm text-muted-foreground">
+      Detailed information revealed on demand.
+    </p>
+  </CollapsibleContent>
+</Collapsible>
+```
+
+## Props
+
+### Collapsible
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | -- | Controlled open state |
+| `onOpenChange` | `(open: boolean) => void` | -- | Callback when state changes |
+| `defaultOpen` | `boolean` | `false` | Uncontrolled initial state |
+| `disabled` | `boolean` | `false` | Prevent toggling |
+
+### Sub-components
+
+| Component | Description |
+|-----------|-------------|
+| `CollapsibleTrigger` | The element that toggles the content |
+| `CollapsibleContent` | The section that expands and collapses |

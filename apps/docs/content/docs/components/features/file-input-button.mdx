@@ -1,0 +1,78 @@
+---
+title: FileInputButton
+description: A button that triggers a native file picker with built-in validation.
+---
+
+import { FileInputButton } from '@/components/ui'
+
+## Overview
+
+The `FileInputButton` component wraps a hidden `<input type="file">` behind a styled Button. It validates file types and sizes before calling your callback, making it a simpler alternative to Dropzone when drag-and-drop is not needed.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Usage
+
+<ComponentPreview name="Basic FileInputButton">
+  <FileInputButton>
+    Upload File
+  </FileInputButton>
+</ComponentPreview>
+
+```tsx
+import { FileInputButton } from '@datum-cloud/datum-ui'
+
+<FileInputButton
+  onFileSelect={(files) => console.log('Selected:', files)}
+  onFileError={(err) => console.error(err.message)}
+>
+  Upload File
+</FileInputButton>
+```
+
+## Examples
+
+### With Accepted Types and Size Limit
+
+```tsx
+<FileInputButton
+  accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.gif'] }}
+  maxSize={5 * 1024 * 1024}
+  onFileSelect={(files) => console.log('Images:', files)}
+  onFileError={(err) => console.error(err.message)}
+>
+  Upload Image
+</FileInputButton>
+```
+
+### Multiple Files
+
+```tsx
+<FileInputButton
+  accept={{ 'application/json': ['.json'] }}
+  multiple
+  onFileSelect={(files) => console.log('JSON files:', files)}
+  onFileError={(err) => console.error(err.message)}
+  type="tertiary"
+  theme="outline"
+>
+  Upload JSON (Multiple)
+</FileInputButton>
+```
+
+## Props
+
+The `FileInputButton` accepts all [Button](/docs/components/button) props (except `onClick`) plus the following.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `accept` | `Record<string, string[]>` | -- | Accepted MIME types and extensions |
+| `maxSize` | `number` | -- | Maximum file size in bytes |
+| `minSize` | `number` | -- | Minimum file size in bytes |
+| `multiple` | `boolean` | `false` | Allow selecting multiple files |
+| `onFileSelect` | `(files: File[]) => void` | -- | Callback with validated files |
+| `onFileError` | `(error: Error) => void` | -- | Callback when validation fails |
+| `disabled` | `boolean` | `false` | Disables the button |
+| `children` | `ReactNode` | -- | Button label text |

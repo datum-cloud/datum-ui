@@ -1,0 +1,88 @@
+---
+title: InputNumber
+description: A numeric input with increment/decrement stepper buttons and formatting support.
+---
+
+import { InputNumber } from '@/components/ui'
+
+## Overview
+
+The `InputNumber` component provides a formatted numeric input with stepper buttons for incrementing and decrementing. It is built on `react-number-format` and supports min/max constraints, thousand separators, decimal scales, and keyboard arrow controls.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+react-number-format
+```
+
+## Usage
+
+<ComponentPreview name="Basic InputNumber">
+  <div className="w-48">
+    <InputNumber placeholder="Enter number" />
+  </div>
+</ComponentPreview>
+
+```tsx
+import { InputNumber } from '@datum-cloud/datum-ui'
+
+<InputNumber placeholder="Enter number" />
+```
+
+## Examples
+
+### With Min, Max, and Step
+
+<ComponentPreview name="InputNumber with Constraints">
+  <div className="w-48">
+    <InputNumber min={0} max={100} stepper={5} defaultValue={50} placeholder="0 - 100" />
+  </div>
+</ComponentPreview>
+
+```tsx
+<InputNumber min={0} max={100} stepper={5} defaultValue={50} placeholder="0 - 100" />
+```
+
+### Disabled
+
+<ComponentPreview name="Disabled InputNumber">
+  <div className="w-48">
+    <InputNumber disabled defaultValue={42} />
+  </div>
+</ComponentPreview>
+
+```tsx
+<InputNumber disabled defaultValue={42} />
+```
+
+### With Suffix
+
+<ComponentPreview name="InputNumber with Suffix">
+  <div className="w-48">
+    <InputNumber defaultValue={75} suffix="%" />
+  </div>
+</ComponentPreview>
+
+```tsx
+<InputNumber defaultValue={75} suffix="%" />
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | -- | Controlled value |
+| `defaultValue` | `number` | -- | Initial value |
+| `onValueChange` | `(value: number \| undefined) => void` | -- | Callback when value changes |
+| `min` | `number` | `-Infinity` | Minimum allowed value |
+| `max` | `number` | `Infinity` | Maximum allowed value |
+| `stepper` | `number` | `1` | Increment/decrement step size |
+| `placeholder` | `string` | -- | Placeholder text |
+| `disabled` | `boolean` | `false` | Disables the input |
+| `thousandSeparator` | `string` | -- | Character for thousand grouping |
+| `decimalScale` | `number` | `0` | Number of decimal places |
+| `fixedDecimalScale` | `boolean` | `false` | Always show decimal digits |
+| `suffix` | `string` | -- | Text appended after the value |
+| `prefix` | `string` | -- | Text prepended before the value |

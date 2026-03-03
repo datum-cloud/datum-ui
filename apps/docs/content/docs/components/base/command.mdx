@@ -1,0 +1,126 @@
+---
+title: Command
+description: A searchable command palette for quick navigation and action execution.
+---
+
+## Overview
+
+Command provides a searchable, keyboard-navigable list of actions, inspired by the command palettes in VS Code and Linear. It is built on [cmdk](https://cmdk.paco.me/) and can be used inline or inside a dialog overlay (`CommandDialog`). Items are automatically filtered as the user types.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+cmdk
+```
+
+## Usage
+
+```tsx
+import {
+  Command, CommandInput, CommandList,
+  CommandEmpty, CommandGroup, CommandItem
+} from '@datum-cloud/datum-ui'
+
+<Command>
+  <CommandInput placeholder="Search commands..." />
+  <CommandList>
+    <CommandEmpty>No results found.</CommandEmpty>
+    <CommandGroup heading="Actions">
+      <CommandItem>Create Project</CommandItem>
+      <CommandItem>Deploy Service</CommandItem>
+      <CommandItem>View Logs</CommandItem>
+    </CommandGroup>
+  </CommandList>
+</Command>
+```
+
+## Examples
+
+### Command Dialog
+
+Wrap the command palette in a `CommandDialog` for a modal overlay, typically bound to a keyboard shortcut like `Ctrl+K`:
+
+```tsx
+import { CommandDialog, CommandInput, CommandList, CommandGroup, CommandItem } from '@datum-cloud/datum-ui'
+
+function CommandMenu() {
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setOpen((prev) => !prev)
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [])
+
+  return (
+    <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandInput placeholder="Type a command or search..." />
+      <CommandList>
+        <CommandGroup heading="Navigation">
+          <CommandItem>Dashboard</CommandItem>
+          <CommandItem>Projects</CommandItem>
+          <CommandItem>Settings</CommandItem>
+        </CommandGroup>
+        <CommandGroup heading="Actions">
+          <CommandItem>Create Project</CommandItem>
+          <CommandItem>Invite Member</CommandItem>
+        </CommandGroup>
+      </CommandList>
+    </CommandDialog>
+  )
+}
+```
+
+### With Icons and Shortcuts
+
+```tsx
+import { Settings, Plus, Users } from 'lucide-react'
+
+<CommandItem>
+  <Settings className="size-4" />
+  Settings
+  <CommandShortcut>Ctrl+,</CommandShortcut>
+</CommandItem>
+<CommandItem>
+  <Plus className="size-4" />
+  New Project
+  <CommandShortcut>Ctrl+N</CommandShortcut>
+</CommandItem>
+```
+
+## Props
+
+### Command
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | -- | Additional CSS classes |
+| `filter` | `(value: string, search: string) => number` | -- | Custom filter function |
+
+### CommandDialog
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | -- | Controlled open state |
+| `onOpenChange` | `(open: boolean) => void` | -- | Callback when open state changes |
+| `title` | `string` | `'Command Palette'` | Accessible dialog title (visually hidden) |
+| `description` | `string` | `'Search for a command to run...'` | Accessible dialog description (visually hidden) |
+
+### Sub-components
+
+| Component | Description |
+|-----------|-------------|
+| `CommandInput` | Search input with a built-in search icon |
+| `CommandList` | Scrollable container for command items (max 300px height) |
+| `CommandEmpty` | Shown when no items match the search query |
+| `CommandGroup` | Groups items under a heading |
+| `CommandItem` | A single selectable command |
+| `CommandSeparator` | Visual divider between groups |
+| `CommandShortcut` | Right-aligned keyboard shortcut label |
