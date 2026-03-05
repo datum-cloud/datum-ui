@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Label, Switch } from '@datum-cloud/datum-ui'
+import { Label } from '@datum-cloud/datum-ui/label'
+import { Switch } from '@datum-cloud/datum-ui/switch'
 
 const meta: Meta<typeof Switch> = {
   title: 'Base/Switch',

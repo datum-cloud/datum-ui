@@ -26,8 +26,8 @@ react-day-picker date-fns date-fns-tz @radix-ui/react-popover @radix-ui/react-se
 </ComponentPreview>
 
 ```tsx
-import { TimeRangePicker } from '@datum-cloud/datum-ui'
-import type { TimeRangeValue } from '@datum-cloud/datum-ui'
+import { TimeRangePicker } from '@datum-cloud/datum-ui/date-picker'
+import type { TimeRangeValue } from '@datum-cloud/datum-ui/date-picker'
 import { useState } from 'react'
 
 function Example() {
@@ -50,7 +50,7 @@ function Example() {
 Provide your own preset configurations using the `presets` prop. The default presets include Today, Last 24 hours, Last 7 days, Last 30 days, and Last 90 days.
 
 ```tsx
-import { DEFAULT_PRESETS, TimeRangePicker } from '@datum-cloud/datum-ui'
+import { DEFAULT_PRESETS, TimeRangePicker } from '@datum-cloud/datum-ui/date-picker'
 
 <TimeRangePicker
   value={value}

@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
+import { Button } from '@datum-cloud/datum-ui/button'
 import {
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@datum-cloud/datum-ui'
+} from '@datum-cloud/datum-ui/dropdown'
 import {
   CreditCardIcon,
   KeyboardIcon,

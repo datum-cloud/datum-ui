@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@datum-cloud/datum-ui'
+import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@datum-cloud/datum-ui/dropzone'
 import { useState } from 'react'
 
 const meta: Meta = {

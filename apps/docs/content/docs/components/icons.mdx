@@ -14,7 +14,7 @@ The icon system provides three components: `Icon` for rendering any Lucide icon 
 The `Icon` component accepts any Lucide icon via the `icon` prop:
 
 ```tsx
-import { Icon } from '@datum-cloud/datum-ui'
+import { Icon } from '@datum-cloud/datum-ui/icon'
 import { Search } from 'lucide-react'
 
 <Icon icon={Search} />
@@ -27,7 +27,7 @@ import { Search } from 'lucide-react'
 The `Icon` component accepts any Lucide icon and applies consistent defaults for `strokeWidth`, `absoluteStrokeWidth`, and `size`.
 
 ```tsx
-import { Icon } from '@datum-cloud/datum-ui'
+import { Icon } from '@datum-cloud/datum-ui/icon'
 import { Search, Settings, Bell, User, Plus, Trash2, Heart, ChevronRight } from 'lucide-react'
 
 <Icon icon={Search} />
@@ -72,7 +72,7 @@ A custom SVG icon used for dismiss or close actions. It renders a circular close
 </ComponentPreview>
 
 ```tsx
-import { CloseIcon } from '@datum-cloud/datum-ui'
+import { CloseIcon } from '@datum-cloud/datum-ui/icon'
 
 <CloseIcon />
 <CloseIcon fill="fill-red-500" />
@@ -94,7 +94,7 @@ An animated circular spinner with configurable size, track color, and indicator 
 </ComponentPreview>
 
 ```tsx
-import { SpinnerIcon } from '@datum-cloud/datum-ui'
+import { SpinnerIcon } from '@datum-cloud/datum-ui/spinner'
 
 <SpinnerIcon size="xs" />
 <SpinnerIcon size="sm" />

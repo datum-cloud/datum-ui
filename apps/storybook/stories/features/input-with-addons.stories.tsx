@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { InputWithAddons } from '@datum-cloud/datum-ui'
+import { InputWithAddons } from '@datum-cloud/datum-ui/input-with-addons'
 import { Link, Mail, Search } from 'lucide-react'
 
 const meta: Meta<typeof InputWithAddons> = {

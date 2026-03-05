@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Textarea } from '@datum-cloud/datum-ui'
+import { Textarea } from '@datum-cloud/datum-ui/textarea'
 
 const meta: Meta<typeof Textarea> = {
   title: 'Base/Textarea',

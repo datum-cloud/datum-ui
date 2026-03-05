@@ -2,8 +2,12 @@
 
 import type { ReactNode } from 'react'
 
-import { DatumProvider } from '@datum-cloud/datum-ui'
+import { ThemeProvider } from '@datum-cloud/datum-ui/theme'
 
 export function Providers({ children }: { children: ReactNode }) {
-  return <DatumProvider>{children}</DatumProvider>
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      {children}
+    </ThemeProvider>
+  )
 }

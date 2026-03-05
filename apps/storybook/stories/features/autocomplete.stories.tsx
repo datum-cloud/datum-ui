@@ -1,6 +1,6 @@
-import type { AutocompleteGroup, AutocompleteOption } from '@datum-cloud/datum-ui'
+import type { AutocompleteGroup, AutocompleteOption } from '@datum-cloud/datum-ui/autocomplete'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Autocomplete } from '@datum-cloud/datum-ui'
+import { Autocomplete } from '@datum-cloud/datum-ui/autocomplete'
 import { useState } from 'react'
 
 const meta: Meta<typeof Autocomplete> = {

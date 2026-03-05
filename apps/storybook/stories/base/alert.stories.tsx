@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Alert, AlertDescription, AlertTitle } from '@datum-cloud/datum-ui'
+import { Alert, AlertDescription, AlertTitle } from '@datum-cloud/datum-ui/alert'
 import { AlertTriangleIcon, CheckCircleIcon, InfoIcon, XCircleIcon } from 'lucide-react'
 
 const meta: Meta<typeof Alert> = {

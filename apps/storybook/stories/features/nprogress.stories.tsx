@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Button, startProgress, stopProgress } from '@datum-cloud/datum-ui'
+import { Button } from '@datum-cloud/datum-ui/button'
+import { startProgress, stopProgress } from '@datum-cloud/datum-ui/nprogress'
 
 const meta: Meta = {
   title: 'Features/NProgress',

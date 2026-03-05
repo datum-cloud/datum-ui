@@ -2,8 +2,6 @@ import type { ReactNode } from 'react'
 
 export type Theme = 'light' | 'dark' | 'system'
 
-export type ThemeStyle = 'alpha' | 'default' | 'experimental'
-
 export type Attribute = 'class' | `data-${string}`
 
 export interface ThemeProviderProps {
@@ -30,5 +28,4 @@ export interface UseThemeProps {
   resolvedTheme?: Theme
   themes: string[]
   systemTheme?: 'light' | 'dark'
-  themeStyle?: ThemeStyle
 }

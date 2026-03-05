@@ -10,7 +10,7 @@ description: Copy text to the clipboard with a transient success state and optio
 ## Usage
 
 ```tsx
-import { useCopyToClipboard } from '@datum-cloud/datum-ui'
+import { useCopyToClipboard } from '@datum-cloud/datum-ui/hooks'
 
 function CopyButton({ text }: { text: string }) {
   const [isCopied, copy] = useCopyToClipboard()
@@ -52,7 +52,7 @@ Returns a tuple `[isCopied, copy]`:
 Display a toast notification when the user copies a value.
 
 ```tsx
-import { useCopyToClipboard } from '@datum-cloud/datum-ui'
+import { useCopyToClipboard } from '@datum-cloud/datum-ui/hooks'
 
 function ApiKeyDisplay({ apiKey }: { apiKey: string }) {
   const [isCopied, copy] = useCopyToClipboard()
@@ -75,7 +75,7 @@ function ApiKeyDisplay({ apiKey }: { apiKey: string }) {
 Add a copy button to a code snippet with icon feedback.
 
 ```tsx
-import { useCopyToClipboard } from '@datum-cloud/datum-ui'
+import { useCopyToClipboard } from '@datum-cloud/datum-ui/hooks'
 import { Copy, Check } from 'lucide-react'
 
 function CodeBlock({ code }: { code: string }) {
@@ -103,7 +103,7 @@ function CodeBlock({ code }: { code: string }) {
 Copy the current page URL and show inline confirmation text.
 
 ```tsx
-import { useCopyToClipboard } from '@datum-cloud/datum-ui'
+import { useCopyToClipboard } from '@datum-cloud/datum-ui/hooks'
 
 function ShareButton() {
   const [isCopied, copy] = useCopyToClipboard()

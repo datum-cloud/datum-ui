@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Button, toast, Toaster } from '@datum-cloud/datum-ui'
+import { Button } from '@datum-cloud/datum-ui/button'
+import { toast, Toaster } from '@datum-cloud/datum-ui/toast'
 
 const meta: Meta = {
   title: 'Features/Toast',

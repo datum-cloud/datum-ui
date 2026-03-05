@@ -15,20 +15,32 @@ Install the package:
 @datum-cloud/datum-ui
 ```
 
-Wrap your app with `DatumProvider`:
+Add styles to your CSS file and wrap your app with `ThemeProvider`:
+
+```css
+/* app.css */
+@import 'tailwindcss';
+@import '@datum-cloud/datum-ui/styles';
+```
 
 ```tsx
-import { DatumProvider } from '@datum-cloud/datum-ui'
+import { ThemeProvider } from '@datum-cloud/datum-ui/theme'
 
 export default function App({ children }) {
-  return <DatumProvider>{children}</DatumProvider>
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      {children}
+    </ThemeProvider>
+  )
 }
 ```
 
 Import and use components:
 
 ```tsx
-import { Button, Badge, Input } from '@datum-cloud/datum-ui'
+import { Button } from '@datum-cloud/datum-ui/button'
+import { Badge } from '@datum-cloud/datum-ui/badge'
+import { Input } from '@datum-cloud/datum-ui/input'
 
 function Example() {
   return (

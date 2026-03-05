@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Button, Popover, PopoverContent, PopoverTrigger } from '@datum-cloud/datum-ui'
+import { Button } from '@datum-cloud/datum-ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@datum-cloud/datum-ui/popover'
 import { Settings } from 'lucide-react'
 
 const meta: Meta = {

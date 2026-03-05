@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Button, Tooltip } from '@datum-cloud/datum-ui'
+import { Button } from '@datum-cloud/datum-ui/button'
+import { Tooltip } from '@datum-cloud/datum-ui/tooltip'
 import { InfoIcon } from 'lucide-react'
 
 const meta: Meta<typeof Tooltip> = {

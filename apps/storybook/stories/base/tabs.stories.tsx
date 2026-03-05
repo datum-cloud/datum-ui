@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@datum-cloud/datum-ui'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@datum-cloud/datum-ui/tabs'
 
 const meta: Meta<typeof Tabs> = {
   title: 'Base/Tabs',

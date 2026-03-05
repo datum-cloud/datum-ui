@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Label, RadioGroup, RadioGroupItem } from '@datum-cloud/datum-ui'
+import { Label } from '@datum-cloud/datum-ui/label'
+import { RadioGroup, RadioGroupItem } from '@datum-cloud/datum-ui/radio-group'
 
 const meta: Meta<typeof RadioGroup> = {
   title: 'Base/RadioGroup',

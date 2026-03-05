@@ -1,23 +1,16 @@
 ---
 title: Theming
-description: Customize datum-ui's visual appearance with design tokens and themes.
+description: Understand datum-ui's design token architecture and dark mode support.
 ---
 
 ## Design Token Architecture
 
-datum-ui uses a three-layer token system:
+datum-ui uses a two-layer token system:
 
 1. **Figma tokens** — raw color values exported from Figma (e.g., `--glacier-mist-700`, `--midnight-fjord`)
 2. **Purpose tokens** — semantic aliases used by components (e.g., `--background`, `--primary`, `--border`)
-3. **Theme classes** — map Figma tokens to purpose tokens (e.g., `.theme-alpha`)
 
-## Applying a Theme
-
-`DatumProvider` applies the theme class automatically on `<html>`. By default it uses the `alpha` theme style. You can change it via the `themeStyle` prop:
-
-```tsx
-<DatumProvider themeStyle="alpha">{children}</DatumProvider>
-```
+Purpose tokens are defined on `:root` for light mode and overridden in `.dark` for dark mode. They are registered with Tailwind via `@theme inline`, so you can use utilities like `bg-primary`, `text-foreground`, `border-border` in your own code.
 
 ## Available Tokens
 
@@ -43,10 +36,10 @@ datum-ui uses a three-layer token system:
 
 ## Dark Mode
 
-datum-ui supports dark mode via the `.dark` class. `DatumProvider` handles theme switching with a built-in theme provider that supports system preference detection, localStorage persistence, and CSS transition control.
+datum-ui supports dark mode via the `.dark` class on `<html>`. Use `ThemeProvider` for automatic switching:
 
 ```tsx
-import { useTheme } from '@datum-cloud/datum-ui'
+import { useTheme } from '@datum-cloud/datum-ui/theme'
 
 function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()

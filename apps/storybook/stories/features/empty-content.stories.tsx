@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { EmptyContent } from '@datum-cloud/datum-ui'
+import { EmptyContent } from '@datum-cloud/datum-ui/empty-content'
 import { Plus } from 'lucide-react'
 
 const meta: Meta<typeof EmptyContent> = {

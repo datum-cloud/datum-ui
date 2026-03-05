@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { AvatarStack } from '@datum-cloud/datum-ui'
+import { AvatarStack } from '@datum-cloud/datum-ui/avatar-stack'
 
 const meta: Meta<typeof AvatarStack> = {
   title: 'Features/AvatarStack',

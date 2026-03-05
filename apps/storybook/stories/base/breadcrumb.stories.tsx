@@ -6,7 +6,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@datum-cloud/datum-ui'
+} from '@datum-cloud/datum-ui/breadcrumb'
 import { Slash } from 'lucide-react'
 
 const meta: Meta = {

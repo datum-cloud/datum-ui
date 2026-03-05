@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { defineStepper } from '@datum-cloud/datum-ui'
+import { defineStepper } from '@datum-cloud/datum-ui/stepper'
 
 const { Stepper, steps } = defineStepper(
   { id: 'step-1', title: 'Account', description: 'Create your account' },

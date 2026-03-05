@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Button, Sheet } from '@datum-cloud/datum-ui'
+import { Button } from '@datum-cloud/datum-ui/button'
+import { Sheet } from '@datum-cloud/datum-ui/sheet'
 
 const meta: Meta = {
   title: 'Base/Sheet',

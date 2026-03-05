@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Spinner } from '@datum-cloud/datum-ui'
+import { Spinner } from '@datum-cloud/datum-ui/spinner'
 
 const meta: Meta<typeof Spinner> = {
   title: 'Base/Spinner',

@@ -1,6 +1,6 @@
-import type { TimeRangeValue } from '@datum-cloud/datum-ui'
+import type { TimeRangeValue } from '@datum-cloud/datum-ui/date-picker'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { DEFAULT_PRESETS, TimeRangePicker } from '@datum-cloud/datum-ui'
+import { DEFAULT_PRESETS, TimeRangePicker } from '@datum-cloud/datum-ui/date-picker'
 import { useState } from 'react'
 
 const meta: Meta<typeof TimeRangePicker> = {

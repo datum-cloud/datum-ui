@@ -1,10 +1,10 @@
-import type { NavItem } from '@datum-cloud/datum-ui'
+import type { NavItem } from '@datum-cloud/datum-ui/sidebar'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import {
   AppSidebar,
   SidebarInset,
   SidebarProvider,
-} from '@datum-cloud/datum-ui'
+} from '@datum-cloud/datum-ui/sidebar'
 import {
   FileText,
   Home,

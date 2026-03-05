@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { FileInputButton } from '@datum-cloud/datum-ui'
+import { FileInputButton } from '@datum-cloud/datum-ui/dropzone'
 
 const meta: Meta<typeof FileInputButton> = {
   title: 'Features/FileInputButton',

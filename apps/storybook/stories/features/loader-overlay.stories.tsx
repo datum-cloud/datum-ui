@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { LoaderOverlay } from '@datum-cloud/datum-ui'
+import { LoaderOverlay } from '@datum-cloud/datum-ui/loader-overlay'
 
 const meta: Meta<typeof LoaderOverlay> = {
   title: 'Features/LoaderOverlay',

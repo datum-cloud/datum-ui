@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Button, Form } from '@datum-cloud/datum-ui'
+import { Button } from '@datum-cloud/datum-ui/button'
+import { Form } from '@datum-cloud/datum-ui/form'
 import { PlusIcon, TrashIcon } from 'lucide-react'
 import { useState } from 'react'
 import { z } from 'zod'

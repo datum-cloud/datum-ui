@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Calendar } from '@datum-cloud/datum-ui'
+import { Calendar } from '@datum-cloud/datum-ui/calendar'
 import * as React from 'react'
 
 const meta: Meta<typeof Calendar> = {

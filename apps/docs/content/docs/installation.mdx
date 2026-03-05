@@ -11,39 +11,43 @@ description: Install and configure datum-ui in your project.
 
 ## Peer Dependencies
 
-datum-ui requires React 19 and Tailwind CSS v4:
+datum-ui requires React 19, Tailwind CSS v4 (v4.0.7 or later, v4.2.1+ recommended), and lucide-react:
 
 ```package-install
-react react-dom tailwindcss
+react react-dom tailwindcss lucide-react
 ```
 
-## Component Peer Dependencies
+Each component may have additional peer dependencies — check the component's doc page for the specific install command.
 
-datum-ui exposes all components from a single package. Some components require additional peer dependencies — check each component's doc page for the specific install command.
+## Styles Setup
 
-For example, if you use the Dialog component:
+Add the datum-ui styles import to your CSS file, after Tailwind:
 
-```package-install
-@radix-ui/react-dialog
+```css
+/* Required */
+@import 'tailwindcss';
+@import '@datum-cloud/datum-ui/styles';
+
+/* Optional — import only if you use these components */
+@import '@datum-cloud/datum-ui/grid';
+@import '@datum-cloud/datum-ui/nprogress';
 ```
 
-Many components use icons from [lucide-react](https://lucide.dev). If your project uses icon-based components (Sidebar, Dropdown, etc.):
+This loads all design tokens, theme variables, fonts, and component styles. The styles import automatically configures Tailwind to scan datum-ui's components for class usage, so utilities like `bg-primary` and `text-foreground` work out of the box.
 
-```package-install
-lucide-react
-```
+## Theme Provider
 
-Components built with only React and Tailwind (like Alert, Badge, Card, Input) need no extra packages.
-
-## Provider Setup
-
-Wrap your app with `DatumProvider` — it automatically loads all design tokens, theme variables, and component styles:
+Wrap your app with `ThemeProvider` for light/dark/system theme switching:
 
 ```tsx
-import { DatumProvider } from '@datum-cloud/datum-ui'
+import { ThemeProvider } from '@datum-cloud/datum-ui/theme'
 
 export default function RootLayout({ children }) {
-  return <DatumProvider>{children}</DatumProvider>
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      {children}
+    </ThemeProvider>
+  )
 }
 ```
 

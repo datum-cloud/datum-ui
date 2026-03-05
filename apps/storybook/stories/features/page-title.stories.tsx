@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Button, PageTitle } from '@datum-cloud/datum-ui'
+import { Button } from '@datum-cloud/datum-ui/button'
+import { PageTitle } from '@datum-cloud/datum-ui/page-title'
 import { Plus } from 'lucide-react'
 
 const meta: Meta<typeof PageTitle> = {

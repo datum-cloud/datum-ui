@@ -1,83 +1,77 @@
-import type { Plugin } from 'tsdown'
-import fs from 'node:fs'
-import path from 'node:path'
-import { tailwindPlugin } from '@bosh-code/tsdown-plugin-tailwindcss'
 import { defineConfig } from 'tsdown'
-
-const STABLE_CSS_NAME = 'style.css'
-
-/**
- * Re-injects CSS import statements into output JS entry chunks and
- * renames the hashed CSS file to a stable name for predictable exports.
- */
-function reinjectCssPlugin(): Plugin {
-  const cssFileMap = new Map<string, string>() // hashed name -> stable name
-
-  return {
-    name: 'reinject-css',
-    generateBundle(_options, bundle) {
-      // Find CSS files and record them for renaming later
-      const cssFiles = Object.keys(bundle).filter(
-        k => k.endsWith('.css') && !k.endsWith('.css.map'),
-      )
-      if (cssFiles.length === 0)
-        return
-
-      for (const cssFile of cssFiles) {
-        cssFileMap.set(cssFile, STABLE_CSS_NAME)
-      }
-
-      // Inject CSS import into every entry chunk using the stable name
-      for (const [name, chunk] of Object.entries(bundle)) {
-        if (chunk.type !== 'chunk' || !chunk.isEntry)
-          continue
-
-        const chunkDir = path.dirname(name)
-        let relativePath = path.relative(chunkDir, STABLE_CSS_NAME)
-        if (!relativePath.startsWith('.')) {
-          relativePath = `./${relativePath}`
-        }
-        chunk.code = `import '${relativePath}';\n${chunk.code}`
-      }
-    },
-
-    writeBundle(options) {
-      const outDir = options.dir || 'dist'
-
-      // Rename hashed CSS files to stable names on disk
-      for (const [hashedName, stableName] of cssFileMap) {
-        const hashedPath = path.resolve(outDir, hashedName)
-        const stablePath = path.resolve(outDir, stableName)
-
-        if (fs.existsSync(hashedPath)) {
-          fs.renameSync(hashedPath, stablePath)
-        }
-
-        // Also rename source map
-        const hashedMapPath = `${hashedPath}.map`
-        const stableMapPath = `${stablePath}.map`
-        if (fs.existsSync(hashedMapPath)) {
-          fs.renameSync(hashedMapPath, stableMapPath)
-        }
-      }
-    },
-  }
-}
 
 export default defineConfig({
   entry: {
-    // Barrel
+    // Root barrel (convenience — requires all peer deps)
     'index': 'src/index.ts',
-    // Components
-    'components/index': 'src/components/index.ts',
-    // Providers
-    'providers/index': 'src/providers/index.ts',
+
+    // Theme
+    'theme/index': 'src/components/themes/index.ts',
+
     // Hooks
     'hooks/index': 'src/hooks/index.ts',
+
     // Icons
     'icons/index': 'src/components/icons/index.ts',
-    // Utilities
+
+    // Utils
     'utils/index': 'src/utils/index.ts',
+
+    // Base components
+    'alert/index': 'src/components/base/alert/index.ts',
+    'badge/index': 'src/components/base/badge/index.ts',
+    'breadcrumb/index': 'src/components/base/breadcrumb/index.ts',
+    'button/index': 'src/components/base/button/index.tsx',
+    'button-group/index': 'src/components/base/button-group/index.ts',
+    'calendar/index': 'src/components/base/calendar/index.ts',
+    'card/index': 'src/components/base/card/index.ts',
+    'checkbox/index': 'src/components/base/checkbox/index.ts',
+    'collapsible/index': 'src/components/base/collapsible/index.ts',
+    'command/index': 'src/components/base/command/index.ts',
+    'dialog/index': 'src/components/base/dialog/index.ts',
+    'hover-card/index': 'src/components/base/hover-card/index.ts',
+    'input/index': 'src/components/base/input/index.ts',
+    'input-group/index': 'src/components/base/input-group/index.ts',
+    'label/index': 'src/components/base/label/index.ts',
+    'popover/index': 'src/components/base/popover/index.ts',
+    'radio-group/index': 'src/components/base/radio-group/index.ts',
+    'select/index': 'src/components/base/select/index.ts',
+    'separator/index': 'src/components/base/separator/index.ts',
+    'sheet/index': 'src/components/base/sheet/index.ts',
+    'skeleton/index': 'src/components/base/skeleton/index.ts',
+    'spinner/index': 'src/components/base/spinner/index.ts',
+    'switch/index': 'src/components/base/switch/index.ts',
+    'table/index': 'src/components/base/table/index.ts',
+    'tabs/index': 'src/components/base/tabs/index.ts',
+    'textarea/index': 'src/components/base/textarea/index.ts',
+    'tooltip/index': 'src/components/base/tooltip/index.ts',
+    'typography/index': 'src/components/base/typography/index.ts',
+    'visually-hidden/index': 'src/components/base/visuallyhidden/index.ts',
+
+    // Grouped features (shared heavy deps)
+    'chart/index': 'src/components/base/chart/index.ts',
+    'date-picker/index': 'src/components/features/date-picker/index.ts',
+    'dropzone/index': 'src/components/features/dropzone/index.ts',
+    'form/index': 'src/components/features/form/index.ts',
+    'map/index': 'src/exports/map.ts',
+
+    // Standalone features
+    'autocomplete/index': 'src/components/features/autocomplete/index.ts',
+    'avatar-stack/index': 'src/components/features/avatar-stack/index.ts',
+    'dropdown/index': 'src/components/features/dropdown/index.ts',
+    'empty-content/index': 'src/components/features/empty-content/index.ts',
+    'grid/index': 'src/components/features/grid/index.ts',
+    'input-number/index': 'src/components/features/input-number/index.ts',
+    'input-with-addons/index': 'src/components/features/input-with-addons/index.ts',
+    'loader-overlay/index': 'src/components/features/loader-overlay/index.ts',
+    'more-actions/index': 'src/components/features/more-actions/index.ts',
+    'nprogress/index': 'src/components/features/nprogress/index.ts',
+    'page-title/index': 'src/components/features/page-title/index.ts',
+    'sidebar/index': 'src/components/features/sidebar/index.ts',
+    'stepper/index': 'src/components/features/stepper/index.ts',
+    'tag-input/index': 'src/components/features/tag-input/index.ts',
+    'task-queue/index': 'src/components/features/task-queue/index.ts',
+    'toast/index': 'src/components/features/toast/index.ts',
   },
   format: ['esm'],
   dts: false,
@@ -119,10 +113,7 @@ export default defineConfig({
   ],
   clean: true,
   loader: {
-    '.woff2': 'dataurl',
-    '.ttf': 'dataurl',
     '.png': 'dataurl',
     '.svg': 'dataurl',
   },
-  plugins: [tailwindPlugin(), reinjectCssPlugin()],
 })

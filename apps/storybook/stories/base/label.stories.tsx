@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Input, Label } from '@datum-cloud/datum-ui'
+import { Input } from '@datum-cloud/datum-ui/input'
+import { Label } from '@datum-cloud/datum-ui/label'
 
 const meta: Meta<typeof Label> = {
   title: 'Base/Label',

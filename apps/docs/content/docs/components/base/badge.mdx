@@ -20,7 +20,7 @@ No additional dependencies required — this component uses only React and Tailw
 </ComponentPreview>
 
 ```tsx
-import { Badge } from '@datum-cloud/datum-ui'
+import { Badge } from '@datum-cloud/datum-ui/badge'
 
 <Badge>Badge</Badge>
 ```
@@ -226,7 +226,7 @@ Pass additional Tailwind classes via the `className` prop to customize padding, 
 The `badgeVariants` utility is also exported for use cases where you need badge styling without the Badge component wrapper.
 
 ```tsx
-import { badgeVariants } from '@datum-cloud/datum-ui'
+import { badgeVariants } from '@datum-cloud/datum-ui/badge'
 
 <div className={badgeVariants({ type: 'success', theme: 'light' })}>
   Custom Element

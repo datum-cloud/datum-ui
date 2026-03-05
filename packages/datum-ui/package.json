@@ -1,7 +1,7 @@
 {
   "name": "@datum-cloud/datum-ui",
   "type": "module",
-  "version": "0.2.0-alpha.2",
+  "version": "0.2.0-alpha.8",
   "license": "MIT",
   "repository": {
     "url": "https://github.com/datum-cloud/datum-ui"
@@ -14,13 +14,13 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.mjs"
     },
-    "./components": {
-      "types": "./dist/components/index.d.ts",
-      "default": "./dist/components/index.mjs"
+    "./styles": {
+      "style": "./dist/styles/root.css",
+      "default": "./dist/styles/root.css"
     },
-    "./providers": {
-      "types": "./dist/providers/index.d.ts",
-      "default": "./dist/providers/index.mjs"
+    "./theme": {
+      "types": "./dist/components/themes/index.d.ts",
+      "default": "./dist/theme/index.mjs"
     },
     "./hooks": {
       "types": "./dist/hooks/index.d.ts",
@@ -34,7 +34,208 @@
       "types": "./dist/utils/index.d.ts",
       "default": "./dist/utils/index.mjs"
     },
-    "./styles": "./dist/style.css"
+    "./alert": {
+      "types": "./dist/components/base/alert/index.d.ts",
+      "default": "./dist/alert/index.mjs"
+    },
+    "./badge": {
+      "types": "./dist/components/base/badge/index.d.ts",
+      "default": "./dist/badge/index.mjs"
+    },
+    "./breadcrumb": {
+      "types": "./dist/components/base/breadcrumb/index.d.ts",
+      "default": "./dist/breadcrumb/index.mjs"
+    },
+    "./button": {
+      "types": "./dist/components/base/button/index.d.ts",
+      "default": "./dist/button/index.mjs"
+    },
+    "./button-group": {
+      "types": "./dist/components/base/button-group/index.d.ts",
+      "default": "./dist/button-group/index.mjs"
+    },
+    "./calendar": {
+      "types": "./dist/components/base/calendar/index.d.ts",
+      "default": "./dist/calendar/index.mjs"
+    },
+    "./card": {
+      "types": "./dist/components/base/card/index.d.ts",
+      "default": "./dist/card/index.mjs"
+    },
+    "./chart": {
+      "types": "./dist/components/base/chart/index.d.ts",
+      "default": "./dist/chart/index.mjs"
+    },
+    "./checkbox": {
+      "types": "./dist/components/base/checkbox/index.d.ts",
+      "default": "./dist/checkbox/index.mjs"
+    },
+    "./collapsible": {
+      "types": "./dist/components/base/collapsible/index.d.ts",
+      "default": "./dist/collapsible/index.mjs"
+    },
+    "./command": {
+      "types": "./dist/components/base/command/index.d.ts",
+      "default": "./dist/command/index.mjs"
+    },
+    "./dialog": {
+      "types": "./dist/components/base/dialog/index.d.ts",
+      "default": "./dist/dialog/index.mjs"
+    },
+    "./hover-card": {
+      "types": "./dist/components/base/hover-card/index.d.ts",
+      "default": "./dist/hover-card/index.mjs"
+    },
+    "./input": {
+      "types": "./dist/components/base/input/index.d.ts",
+      "default": "./dist/input/index.mjs"
+    },
+    "./input-group": {
+      "types": "./dist/components/base/input-group/index.d.ts",
+      "default": "./dist/input-group/index.mjs"
+    },
+    "./label": {
+      "types": "./dist/components/base/label/index.d.ts",
+      "default": "./dist/label/index.mjs"
+    },
+    "./popover": {
+      "types": "./dist/components/base/popover/index.d.ts",
+      "default": "./dist/popover/index.mjs"
+    },
+    "./radio-group": {
+      "types": "./dist/components/base/radio-group/index.d.ts",
+      "default": "./dist/radio-group/index.mjs"
+    },
+    "./select": {
+      "types": "./dist/components/base/select/index.d.ts",
+      "default": "./dist/select/index.mjs"
+    },
+    "./separator": {
+      "types": "./dist/components/base/separator/index.d.ts",
+      "default": "./dist/separator/index.mjs"
+    },
+    "./sheet": {
+      "types": "./dist/components/base/sheet/index.d.ts",
+      "default": "./dist/sheet/index.mjs"
+    },
+    "./skeleton": {
+      "types": "./dist/components/base/skeleton/index.d.ts",
+      "default": "./dist/skeleton/index.mjs"
+    },
+    "./spinner": {
+      "types": "./dist/components/base/spinner/index.d.ts",
+      "default": "./dist/spinner/index.mjs"
+    },
+    "./switch": {
+      "types": "./dist/components/base/switch/index.d.ts",
+      "default": "./dist/switch/index.mjs"
+    },
+    "./table": {
+      "types": "./dist/components/base/table/index.d.ts",
+      "default": "./dist/table/index.mjs"
+    },
+    "./tabs": {
+      "types": "./dist/components/base/tabs/index.d.ts",
+      "default": "./dist/tabs/index.mjs"
+    },
+    "./textarea": {
+      "types": "./dist/components/base/textarea/index.d.ts",
+      "default": "./dist/textarea/index.mjs"
+    },
+    "./tooltip": {
+      "types": "./dist/components/base/tooltip/index.d.ts",
+      "default": "./dist/tooltip/index.mjs"
+    },
+    "./typography": {
+      "types": "./dist/components/base/typography/index.d.ts",
+      "default": "./dist/typography/index.mjs"
+    },
+    "./visually-hidden": {
+      "types": "./dist/components/base/visuallyhidden/index.d.ts",
+      "default": "./dist/visually-hidden/index.mjs"
+    },
+    "./autocomplete": {
+      "types": "./dist/components/features/autocomplete/index.d.ts",
+      "default": "./dist/autocomplete/index.mjs"
+    },
+    "./avatar-stack": {
+      "types": "./dist/components/features/avatar-stack/index.d.ts",
+      "default": "./dist/avatar-stack/index.mjs"
+    },
+    "./date-picker": {
+      "types": "./dist/components/features/date-picker/index.d.ts",
+      "default": "./dist/date-picker/index.mjs"
+    },
+    "./dropdown": {
+      "types": "./dist/components/features/dropdown/index.d.ts",
+      "default": "./dist/dropdown/index.mjs"
+    },
+    "./dropzone": {
+      "types": "./dist/components/features/dropzone/index.d.ts",
+      "default": "./dist/dropzone/index.mjs"
+    },
+    "./empty-content": {
+      "types": "./dist/components/features/empty-content/index.d.ts",
+      "default": "./dist/empty-content/index.mjs"
+    },
+    "./form": {
+      "types": "./dist/components/features/form/index.d.ts",
+      "default": "./dist/form/index.mjs"
+    },
+    "./grid": {
+      "types": "./dist/components/features/grid/index.d.ts",
+      "style": "./dist/grid/style.css",
+      "default": "./dist/grid/index.mjs"
+    },
+    "./input-number": {
+      "types": "./dist/components/features/input-number/index.d.ts",
+      "default": "./dist/input-number/index.mjs"
+    },
+    "./input-with-addons": {
+      "types": "./dist/components/features/input-with-addons/index.d.ts",
+      "default": "./dist/input-with-addons/index.mjs"
+    },
+    "./loader-overlay": {
+      "types": "./dist/components/features/loader-overlay/index.d.ts",
+      "default": "./dist/loader-overlay/index.mjs"
+    },
+    "./map": {
+      "types": "./dist/exports/map.d.ts",
+      "default": "./dist/map/index.mjs"
+    },
+    "./more-actions": {
+      "types": "./dist/components/features/more-actions/index.d.ts",
+      "default": "./dist/more-actions/index.mjs"
+    },
+    "./nprogress": {
+      "types": "./dist/components/features/nprogress/index.d.ts",
+      "style": "./dist/nprogress/nprogress.css",
+      "default": "./dist/nprogress/index.mjs"
+    },
+    "./page-title": {
+      "types": "./dist/components/features/page-title/index.d.ts",
+      "default": "./dist/page-title/index.mjs"
+    },
+    "./sidebar": {
+      "types": "./dist/components/features/sidebar/index.d.ts",
+      "default": "./dist/sidebar/index.mjs"
+    },
+    "./stepper": {
+      "types": "./dist/components/features/stepper/index.d.ts",
+      "default": "./dist/stepper/index.mjs"
+    },
+    "./tag-input": {
+      "types": "./dist/components/features/tag-input/index.d.ts",
+      "default": "./dist/tag-input/index.mjs"
+    },
+    "./task-queue": {
+      "types": "./dist/components/features/task-queue/index.d.ts",
+      "default": "./dist/task-queue/index.mjs"
+    },
+    "./toast": {
+      "types": "./dist/components/features/toast/index.d.ts",
+      "default": "./dist/toast/index.mjs"
+    }
   },
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -45,7 +246,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown --config-loader native && tsc -p tsconfig.build.json && node scripts/fix-dts-imports.mjs && cp -r src/styles/fonts dist/fonts",
+    "build": "tsdown --config-loader native && tsc -p tsconfig.build.json && node scripts/fix-dts-imports.mjs && node scripts/copy-styles.mjs",
     "dev": "tsdown --config-loader native --watch",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -54,7 +255,7 @@
     "test:coverage": "vitest run --coverage",
     "clean": "rm -rf dist .turbo node_modules coverage",
     "prepack": "node scripts/strip-workspace-deps.mjs --strip",
-    "postpack": "node scripts/strip-workspace-deps.mjs --restore"
+    "postpublish": "node scripts/strip-workspace-deps.mjs --restore"
   },
   "peerDependencies": {
     "@conform-to/react": ">=1",
@@ -211,16 +412,12 @@
     }
   },
   "dependencies": {
-    "@repo/shadcn": "workspace:*",
     "class-variance-authority": "^0.7",
     "clsx": "^2.1.1",
     "lucide-react": "^0.556",
-    "tailwind-merge": "^3.5.0",
-    "tailwind-scrollbar-hide": "^4.0.0",
-    "tw-animate-css": "^1.4.0"
+    "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
-    "@bosh-code/tsdown-plugin-tailwindcss": "^1.0.1",
     "@conform-to/react": "^1.17.1",
     "@conform-to/zod": "^1.17.1",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -230,8 +427,6 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@repo/config": "workspace:*",
     "@stepperize/react": "^6.1.0",
-    "@tailwindcss/node": "^4.2.1",
-    "@tailwindcss/oxide": "^4.2.1",
     "@tanstack/react-virtual": "^3.13.19",
     "@testing-library/jest-dom": "^6",
     "@testing-library/react": "^16",

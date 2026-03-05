@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Skeleton } from '@datum-cloud/datum-ui'
+import { Skeleton } from '@datum-cloud/datum-ui/skeleton'
 
 const meta: Meta<typeof Skeleton> = {
   title: 'Base/Skeleton',

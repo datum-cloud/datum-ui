@@ -1,6 +1,6 @@
-import type { MoreActionsProps } from '@datum-cloud/datum-ui'
+import type { MoreActionsProps } from '@datum-cloud/datum-ui/more-actions'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { MoreActions } from '@datum-cloud/datum-ui'
+import { MoreActions } from '@datum-cloud/datum-ui/more-actions'
 import { CopyIcon, DownloadIcon, PencilIcon, TrashIcon } from 'lucide-react'
 
 const meta: Meta<typeof MoreActions> = {

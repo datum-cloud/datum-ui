@@ -13,6 +13,14 @@ The Grid system provides a 24-column layout using `Row` and `Col` components. Ro
 
 No additional dependencies required — this component uses only React and Tailwind CSS.
 
+## Setup
+
+Import the grid CSS in your app's stylesheet:
+
+```css title="app.css"
+@import '@datum-cloud/datum-ui/grid';
+```
+
 ## Usage
 
 <ComponentPreview name="Basic Grid">
@@ -30,7 +38,7 @@ No additional dependencies required — this component uses only React and Tailw
 </ComponentPreview>
 
 ```tsx
-import { Row, Col } from '@datum-cloud/datum-ui'
+import { Row, Col } from '@datum-cloud/datum-ui/grid'
 
 <Row type="flex" gutter={16}>
   <Col span={8}>

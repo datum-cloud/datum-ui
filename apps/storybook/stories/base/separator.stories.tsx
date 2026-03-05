@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Separator } from '@datum-cloud/datum-ui'
+import { Separator } from '@datum-cloud/datum-ui/separator'
 
 const meta: Meta<typeof Separator> = {
   title: 'Base/Separator',

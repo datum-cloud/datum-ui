@@ -23,7 +23,7 @@ import {
   MapTileLayer,
   MapTooltip,
   MapZoomControl,
-} from '@datum-cloud/datum-ui'
+} from '@datum-cloud/datum-ui/map'
 
 const LONDON: [number, number] = [51.505, -0.09]
 

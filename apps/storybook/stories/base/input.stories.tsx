@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Input } from '@datum-cloud/datum-ui'
+import { Input } from '@datum-cloud/datum-ui/input'
 
 const meta: Meta<typeof Input> = {
   title: 'Base/Input',

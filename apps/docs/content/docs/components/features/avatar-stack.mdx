@@ -30,7 +30,7 @@ This component requires the following packages:
 </ComponentPreview>
 
 ```tsx
-import { AvatarStack } from '@datum-cloud/datum-ui'
+import { AvatarStack } from '@datum-cloud/datum-ui/avatar-stack'
 
 <AvatarStack
   avatars={[
@@ -230,7 +230,7 @@ Adjust `maxAvatarsAmount` to control how many avatars are shown before the overf
 The `avatarStackVariants` utility is also exported for use cases where you need the stack layout styling without the full component.
 
 ```tsx
-import { avatarStackVariants } from '@datum-cloud/datum-ui'
+import { avatarStackVariants } from '@datum-cloud/datum-ui/avatar-stack'
 
 <div className={avatarStackVariants({ orientation: 'vertical', spacing: 'md' })}>
   {/* custom avatar elements */}

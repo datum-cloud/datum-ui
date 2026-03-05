@@ -3,7 +3,7 @@ pre-commit:
   commands:
     eslint:
       root: packages/datum-ui/
-      glob: '*.{js,jsx,ts,tsx}'
+      glob: '*.{js,jsx,ts,tsx,md,mdx}'
       run: pnpm exec eslint {staged_files} --fix
       auto_add: true
     typecheck:
@@ -11,7 +11,7 @@ pre-commit:
       run: pnpm -F @datum-cloud/datum-ui typecheck
     storybook-eslint:
       root: apps/storybook/
-      glob: '*.{js,jsx,ts,tsx}'
+      glob: '*.{js,jsx,ts,tsx,md,mdx}'
       run: pnpm exec eslint {staged_files} --fix
       auto_add: true
     storybook-typecheck:

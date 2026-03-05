@@ -22,7 +22,7 @@ date-fns @radix-ui/react-tooltip @radix-ui/react-dialog
 ## Usage
 
 ```tsx
-import { TaskQueueProvider, useTaskQueue } from '@datum-cloud/datum-ui'
+import { TaskQueueProvider, useTaskQueue } from '@datum-cloud/datum-ui/task-queue'
 ```
 
 ### Setup
@@ -113,7 +113,7 @@ The per-call `renderContent` takes precedence over the global `summaryRenderCont
 Use `TaskSummaryDialog` directly for custom trigger points:
 
 ```tsx
-import { TaskSummaryDialog } from '@datum-cloud/datum-ui'
+import { TaskSummaryDialog } from '@datum-cloud/datum-ui/task-queue'
 
 <TaskSummaryDialog
   open={open}

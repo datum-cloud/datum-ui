@@ -106,20 +106,27 @@ pnpm add @datum-cloud/datum-ui
 bun add @datum-cloud/datum-ui
 ```
 
-Wrap your app with `DatumProvider` and import styles:
+Add datum-ui styles to your CSS file, after Tailwind:
+
+```css
+@import 'tailwindcss';
+@import '@datum-cloud/datum-ui/styles';
+```
+
+Wrap your app with `ThemeProvider` for light/dark/system switching:
 
 ```tsx
-import { DatumProvider, Button, Input } from '@datum-cloud/datum-ui'
-import '@datum-cloud/datum-ui/styles'
+import { ThemeProvider } from '@datum-cloud/datum-ui/theme'
+import { Button, Input } from '@datum-cloud/datum-ui'
 
 function App() {
   return (
-    <DatumProvider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <Input placeholder="Enter your name" />
       <Button type="primary" theme="solid">
         Submit
       </Button>
-    </DatumProvider>
+    </ThemeProvider>
   )
 }
 ```
@@ -128,13 +135,12 @@ function App() {
 
 | Import Path | Description |
 |---|---|
-| `@datum-cloud/datum-ui` | All components, hooks, providers, and utilities |
-| `@datum-cloud/datum-ui/components` | Components only (base + features) |
-| `@datum-cloud/datum-ui/providers` | `DatumProvider` |
+| `@datum-cloud/datum-ui` | All components, hooks, and utilities |
+| `@datum-cloud/datum-ui/styles` | CSS (fonts, tokens, theme variables, component styles) |
+| `@datum-cloud/datum-ui/theme` | `ThemeProvider`, `useTheme` |
 | `@datum-cloud/datum-ui/hooks` | `useCopyToClipboard`, `useDebounce` |
 | `@datum-cloud/datum-ui/icons` | `CloseIcon`, `IconWrapper`, `SpinnerIcon` |
 | `@datum-cloud/datum-ui/utils` | `cn` (className merge utility) |
-| `@datum-cloud/datum-ui/styles` | Global CSS (fonts, tokens, component styles) |
 
 ### Peer Dependencies
 

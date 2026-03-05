@@ -1,37 +1,53 @@
 ---
 title: Providers
-description: Configure DatumProvider for theming, tooltips, and global context.
+description: Configure ThemeProvider for light/dark/system theme switching.
 ---
 
-## DatumProvider
+## ThemeProvider
 
-All datum-ui components must be wrapped in `DatumProvider`. It provides:
+Wrap your app with `ThemeProvider` for theme management:
 
-- **Theme management** with built-in theme provider (light/dark/system)
-- **Design tokens and styles** loaded automatically via CSS import
+- **Light/dark/system** mode switching
+- **System preference** detection
+- **localStorage** persistence
+- **CSS transition** control during theme switches
 
 ## Basic Usage
 
 ```tsx
-import { DatumProvider } from '@datum-cloud/datum-ui'
+import { ThemeProvider } from '@datum-cloud/datum-ui/theme'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <DatumProvider>{children}</DatumProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )
 }
 ```
 
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `defaultTheme` | `'light' \| 'dark' \| 'system'` | `'system'` | Initial theme |
+| `storageKey` | `string` | `'theme'` | localStorage key for persistence |
+| `enableSystem` | `boolean` | `false` | Enable system preference detection |
+| `forcedTheme` | `Theme` | — | Force a specific theme |
+| `disableTransitionOnChange` | `boolean` | `false` | Disable CSS transitions during switches |
+| `attribute` | `'class' \| 'data-*'` | `'data-theme'` | HTML attribute for theme |
+| `nonce` | `string` | — | CSP nonce for inline script |
+
 ## Theme Hook
 
 Access and control the current theme:
 
 ```tsx
-import { useTheme } from '@datum-cloud/datum-ui'
+import { useTheme } from '@datum-cloud/datum-ui/theme'
 
 function MyComponent() {
   const { theme, setTheme, resolvedTheme } = useTheme()

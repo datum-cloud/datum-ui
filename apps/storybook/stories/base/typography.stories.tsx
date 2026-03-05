@@ -8,7 +8,7 @@ import {
   Paragraph,
   Text,
   Title,
-} from '@datum-cloud/datum-ui'
+} from '@datum-cloud/datum-ui/typography'
 
 const meta: Meta = {
   title: 'Base/Typography',
@@ -238,7 +238,7 @@ export const KitchenSink: Story = {
       </List>
 
       <Code as="pre">
-        {`import { Title, Text } from '@datum-cloud/datum-ui'
+        {`import { Title, Text } from '@datum-cloud/datum-ui/typography'
 
 <Title level={1}>Hello</Title>
 <Text strong>World</Text>`}

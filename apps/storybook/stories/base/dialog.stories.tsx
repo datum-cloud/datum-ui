@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Button, Dialog, Input, Label } from '@datum-cloud/datum-ui'
+import { Button } from '@datum-cloud/datum-ui/button'
+import { Dialog } from '@datum-cloud/datum-ui/dialog'
+import { Input } from '@datum-cloud/datum-ui/input'
+import { Label } from '@datum-cloud/datum-ui/label'
 
 const meta: Meta<typeof Dialog> = {
   title: 'Base/Dialog',

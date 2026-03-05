@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { TagsInput } from '@datum-cloud/datum-ui'
+import { TagsInput } from '@datum-cloud/datum-ui/tag-input'
 import { useState } from 'react'
 
 const meta: Meta<typeof TagsInput> = {

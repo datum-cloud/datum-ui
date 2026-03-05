@@ -1,16 +1,14 @@
 /**
  * Storybook CSS entry point.
  *
- * Imports the full datum-ui style chain (Tailwind, fonts, tokens, shadcn, alpha theme)
- * directly from source so components get hot-reloaded styles during development.
- *
- * The @source directives tell Tailwind CSS v4 where to scan for utility classes.
- * Without these, Tailwind would only scan apps/storybook/ and miss all the
- * utility classes used inside datum-ui and shadcn component source files,
- * resulting in missing styles (no colors, spacing, fonts, etc.).
+ * Uses package imports to dogfood the real consumer experience.
+ * Run `pnpm --filter @datum-cloud/datum-ui build` before starting storybook.
  */
-@import '../../../packages/datum-ui/src/styles/root.css';
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'tailwind-scrollbar-hide/v4';
+@import '@datum-cloud/datum-ui/styles';
+@import '@datum-cloud/datum-ui/grid';
+@import '@datum-cloud/datum-ui/nprogress';
 
-@source "../../../packages/datum-ui/src";
-@source "../../../packages/shadcn";
 @source "./";

@@ -22,13 +22,13 @@ nprogress
 Import the NProgress CSS in your root stylesheet:
 
 ```css
-@import '@datum-cloud/datum-ui/nprogress.css';
+@import '@datum-cloud/datum-ui/nprogress';
 ```
 
 Then configure NProgress once at app startup:
 
 ```tsx
-import { configureProgress } from '@datum-cloud/datum-ui'
+import { configureProgress } from '@datum-cloud/datum-ui/nprogress'
 
 // Call once, e.g. in your root loader or layout
 configureProgress()
@@ -39,7 +39,7 @@ configureProgress()
 Call `startProgress` when a navigation begins and `stopProgress` when it completes:
 
 ```tsx
-import { startProgress, stopProgress } from '@datum-cloud/datum-ui'
+import { startProgress, stopProgress } from '@datum-cloud/datum-ui/nprogress'
 
 // In a Remix app (root.tsx):
 export default function App() {

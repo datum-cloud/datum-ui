@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
+import { Button } from '@datum-cloud/datum-ui/button'
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@datum-cloud/datum-ui'
+} from '@datum-cloud/datum-ui/card'
 
 const meta: Meta<typeof Card> = {
   title: 'Base/Card',

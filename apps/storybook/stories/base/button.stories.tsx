@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Button } from '@datum-cloud/datum-ui'
+import { Button } from '@datum-cloud/datum-ui/button'
 import { Mail, Plus, Trash2 } from 'lucide-react'
 
 const meta: Meta<typeof Button> = {

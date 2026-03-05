@@ -7,7 +7,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@datum-cloud/datum-ui'
+} from '@datum-cloud/datum-ui/select'
 
 const meta: Meta<typeof Select> = {
   title: 'Base/Select',

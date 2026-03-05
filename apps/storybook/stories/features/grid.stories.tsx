@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Col, Row } from '@datum-cloud/datum-ui'
+import { Col, Row } from '@datum-cloud/datum-ui/grid'
 
 const meta: Meta = {
   title: 'Features/Grid',
@@ -43,9 +43,13 @@ export const Default: Story = {
 }
 
 export const ResponsiveGrid: Story = {
-  render: () => (
+  args: {
+    gutter: 32,
+  },
+
+  render: (args: Record<string, unknown>) => (
     <div className="flex flex-col gap-4">
-      <Row type="flex" gutter={16}>
+      <Row type="flex" gutter={args.gutter as number}>
         <Col xs={24} sm={12} md={8} lg={6}>
           <div style={{ ...colStyle, background: '#3b82f6' }}>xs=24 sm=12 md=8 lg=6</div>
         </Col>
@@ -60,7 +64,7 @@ export const ResponsiveGrid: Story = {
         </Col>
       </Row>
 
-      <Row type="flex" gutter={16}>
+      <Row type="flex" gutter={args.gutter as number}>
         <Col span={6}>
           <div style={{ ...colStyle, background: '#14b8a6' }}>Col 6</div>
         </Col>

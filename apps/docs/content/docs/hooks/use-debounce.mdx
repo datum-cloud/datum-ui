@@ -10,7 +10,7 @@ description: Debounce a value with a configurable delay to limit update frequenc
 ## Usage
 
 ```tsx
-import { useDebounce } from '@datum-cloud/datum-ui'
+import { useDebounce } from '@datum-cloud/datum-ui/hooks'
 
 function SearchComponent() {
   const [query, setQuery] = useState('')
@@ -49,7 +49,7 @@ Debounce a search query to avoid firing an API request on every keystroke.
 
 ```tsx
 import { useState, useEffect } from 'react'
-import { useDebounce } from '@datum-cloud/datum-ui'
+import { useDebounce } from '@datum-cloud/datum-ui/hooks'
 
 function UserSearch() {
   const [search, setSearch] = useState('')
@@ -94,7 +94,7 @@ Debounce a slider or numeric input to defer expensive filtering operations.
 
 ```tsx
 import { useState, useMemo } from 'react'
-import { useDebounce } from '@datum-cloud/datum-ui'
+import { useDebounce } from '@datum-cloud/datum-ui/hooks'
 
 function PriceFilter({ items }: { items: Product[] }) {
   const [maxPrice, setMaxPrice] = useState(100)

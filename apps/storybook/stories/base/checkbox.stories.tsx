@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Checkbox, Label } from '@datum-cloud/datum-ui'
+import { Checkbox } from '@datum-cloud/datum-ui/checkbox'
+import { Label } from '@datum-cloud/datum-ui/label'
 
 const meta: Meta<typeof Checkbox> = {
   title: 'Base/Checkbox',

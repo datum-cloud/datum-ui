@@ -21,7 +21,7 @@ cmdk
 import {
   Command, CommandInput, CommandList,
   CommandEmpty, CommandGroup, CommandItem
-} from '@datum-cloud/datum-ui'
+} from '@datum-cloud/datum-ui/command'
 
 <Command>
   <CommandInput placeholder="Search commands..." />
@@ -43,7 +43,7 @@ import {
 Wrap the command palette in a `CommandDialog` for a modal overlay, typically bound to a keyboard shortcut like `Ctrl+K`:
 
 ```tsx
-import { CommandDialog, CommandInput, CommandList, CommandGroup, CommandItem } from '@datum-cloud/datum-ui'
+import { CommandDialog, CommandInput, CommandList, CommandGroup, CommandItem } from '@datum-cloud/datum-ui/command'
 
 function CommandMenu() {
   const [open, setOpen] = useState(false)

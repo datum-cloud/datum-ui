@@ -1,6 +1,6 @@
 import type { DateRange } from 'react-day-picker'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { CalendarDatePicker } from '@datum-cloud/datum-ui'
+import { CalendarDatePicker } from '@datum-cloud/datum-ui/date-picker'
 import { endOfYear, startOfYear } from 'date-fns'
 import * as React from 'react'
 

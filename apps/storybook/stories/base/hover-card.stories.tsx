@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@datum-cloud/datum-ui'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@datum-cloud/datum-ui/hover-card'
 import { CalendarDays } from 'lucide-react'
 
 const meta: Meta = {

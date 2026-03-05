@@ -9,8 +9,13 @@
     "@repo/shadcn": "0.0.0"
   },
   "changesets": [
+    "css-architecture-refactor",
+    "fix-publish-lifecycle",
+    "fix-published-deps",
     "peer-deps-docs",
+    "per-component-subpath-exports",
     "rare-dancers-itch",
+    "readme-package-managers",
     "typography-map-docs"
   ]
 }

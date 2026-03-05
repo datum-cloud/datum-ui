@@ -1,4 +1,4 @@
-import type { Task, TaskSummaryItem } from '@datum-cloud/datum-ui'
+import type { Task, TaskSummaryItem } from '@datum-cloud/datum-ui/task-queue'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import {
   TaskPanelHeader,
@@ -6,7 +6,7 @@ import {
   TaskQueueProvider,
   TaskSummaryDialog,
   useTaskQueue,
-} from '@datum-cloud/datum-ui'
+} from '@datum-cloud/datum-ui/task-queue'
 import { FileText, Upload } from 'lucide-react'
 import { useState } from 'react'
 

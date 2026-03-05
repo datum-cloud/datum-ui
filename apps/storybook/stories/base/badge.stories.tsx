@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Badge } from '@datum-cloud/datum-ui'
+import { Badge } from '@datum-cloud/datum-ui/badge'
 
 const meta: Meta<typeof Badge> = {
   title: 'Base/Badge',

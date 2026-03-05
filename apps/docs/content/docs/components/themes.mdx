@@ -14,12 +14,12 @@ For the design token architecture and available CSS tokens, see [Theming](/docs/
 Wrap your application with `ThemeProvider`:
 
 ```tsx
-import { ThemeProvider } from '@datum-cloud/datum-ui'
+import { ThemeProvider } from '@datum-cloud/datum-ui/theme'
 
 export default function RootLayout({ children }) {
   return (
     <html>
-      <body className="theme-alpha">
+      <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>
@@ -34,7 +34,7 @@ export default function RootLayout({ children }) {
 Use the `useTheme` hook to read and set the current theme:
 
 ```tsx
-import { useTheme } from '@datum-cloud/datum-ui'
+import { useTheme } from '@datum-cloud/datum-ui/theme'
 
 function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
