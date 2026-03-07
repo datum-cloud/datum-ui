@@ -283,9 +283,6 @@ importers:
       '@radix-ui/react-visually-hidden':
         specifier: '>=1'
         version: 1.2.4(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@repo/shadcn':
-        specifier: workspace:*
-        version: link:../shadcn
       class-variance-authority:
         specifier: ^0.7
         version: 0.7.1
@@ -329,6 +326,9 @@ importers:
       '@repo/config':
         specifier: workspace:*
         version: link:../config
+      '@repo/shadcn':
+        specifier: workspace:*
+        version: link:../shadcn
       '@stepperize/react':
         specifier: ^6.1.0
         version: 6.1.0(react@19.2.4)(typescript@5.9.3)

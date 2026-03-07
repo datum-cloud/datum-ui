@@ -14,6 +14,11 @@ pnpm add @datum-cloud/datum-ui
 bun add @datum-cloud/datum-ui
 ```
 
+## Requirements
+
+- **React 19**
+- **Tailwind CSS v4.0.7+** (v4.2.1+ recommended)
+
 ## Setup
 
 ### 1. Import Styles
@@ -24,9 +29,13 @@ Add datum-ui styles to your CSS file, after Tailwind:
 /* app.css */
 @import 'tailwindcss';
 @import '@datum-cloud/datum-ui/styles';
+
+/* Optional — import only if you use these components */
+@import '@datum-cloud/datum-ui/grid';
+@import '@datum-cloud/datum-ui/nprogress';
 ```
 
-This loads all design tokens, theme variables, fonts, and component styles. Tokens are registered with Tailwind via `@theme inline`, so utilities like `bg-primary` and `text-foreground` work automatically.
+datum-ui ships uncompiled CSS that is processed by your Tailwind build in a single pass. The styles import automatically configures Tailwind to scan datum-ui's components for class usage via `@source`, so utilities like `bg-primary` and `text-foreground` work out of the box.
 
 ### 2. Add ThemeProvider
 
@@ -58,14 +67,16 @@ This keeps your bundle small and means you only install peer dependencies for th
 
 ### Shared Exports
 
-| Import Path                    | Description                                            |
-| ------------------------------ | ------------------------------------------------------ |
-| `@datum-cloud/datum-ui`        | Root barrel — all components (requires all peer deps)  |
-| `@datum-cloud/datum-ui/styles` | CSS (fonts, tokens, theme variables, component styles) |
-| `@datum-cloud/datum-ui/theme`  | Theme utilities and types                              |
-| `@datum-cloud/datum-ui/hooks`  | `useCopyToClipboard`, `useDebounce`                    |
-| `@datum-cloud/datum-ui/icons`  | `CloseIcon`, `IconWrapper`, `SpinnerIcon`              |
-| `@datum-cloud/datum-ui/utils`  | `cn` (className merge utility)                         |
+| Import Path                       | Description                                                    |
+| --------------------------------- | -------------------------------------------------------------- |
+| `@datum-cloud/datum-ui`           | Root barrel — all components (requires all peer deps)          |
+| `@datum-cloud/datum-ui/styles`    | Core CSS (fonts, tokens, theme variables, component styles)    |
+| `@datum-cloud/datum-ui/grid`      | Grid system CSS (optional — import if using Grid component)    |
+| `@datum-cloud/datum-ui/nprogress` | NProgress CSS (optional — import if using NProgress component) |
+| `@datum-cloud/datum-ui/theme`     | Theme utilities and types                                      |
+| `@datum-cloud/datum-ui/hooks`     | `useCopyToClipboard`, `useDebounce`                            |
+| `@datum-cloud/datum-ui/icons`     | `CloseIcon`, `IconWrapper`, `SpinnerIcon`                      |
+| `@datum-cloud/datum-ui/utils`     | `cn` (className merge utility)                                 |
 
 ### Grouped Exports
 
@@ -330,7 +341,7 @@ npm install motion
 ## Tech Stack
 
 - **React 19** with server component support
-- **Tailwind CSS v4** for styling
+- **Tailwind CSS v4** (v4.0.7+) for styling — ships uncompiled CSS processed by consumer's build
 - **Radix UI** for accessible primitives
 - **CVA** (class-variance-authority) for variant-based component APIs
 - **TypeScript** — fully typed with exported types
