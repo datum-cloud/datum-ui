@@ -1,0 +1,238 @@
+---
+title: Avatar Stack
+description: Display a group of overlapping avatars with overflow count and tooltip names.
+---
+
+import { AvatarStack } from '@/components/ui'
+
+## Overview
+
+AvatarStack renders a row of overlapping avatar images with automatic overflow handling. When the number of avatars exceeds `maxAvatarsAmount`, a "+N" indicator appears showing the count of hidden avatars. Each avatar displays a tooltip with the user's name on hover.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-avatar
+```
+
+## Usage
+
+<ComponentPreview name="Basic AvatarStack">
+  <AvatarStack
+    avatars={[
+      { name: 'Alice Johnson', image: 'https://i.pravatar.cc/40?u=alice' },
+      { name: 'Bob Smith', image: 'https://i.pravatar.cc/40?u=bob' },
+      { name: 'Charlie Brown', image: 'https://i.pravatar.cc/40?u=charlie' },
+    ]}
+  />
+</ComponentPreview>
+
+```tsx
+import { AvatarStack } from '@datum-cloud/datum-ui/avatar-stack'
+
+<AvatarStack
+  avatars={[
+    { name: 'Alice Johnson', image: 'https://i.pravatar.cc/40?u=alice' },
+    { name: 'Bob Smith', image: 'https://i.pravatar.cc/40?u=bob' },
+    { name: 'Charlie Brown', image: 'https://i.pravatar.cc/40?u=charlie' },
+  ]}
+/>
+```
+
+## Examples
+
+### Overflow Indicator
+
+When there are more avatars than `maxAvatarsAmount`, a "+N" badge appears. Hovering the badge reveals the names of hidden avatars.
+
+<ComponentPreview name="AvatarStack Overflow">
+  <AvatarStack
+    maxAvatarsAmount={3}
+    avatars={[
+      { name: 'Alice Johnson', image: 'https://i.pravatar.cc/40?u=alice' },
+      { name: 'Bob Smith', image: 'https://i.pravatar.cc/40?u=bob' },
+      { name: 'Charlie Brown', image: 'https://i.pravatar.cc/40?u=charlie' },
+      { name: 'Diana Prince', image: 'https://i.pravatar.cc/40?u=diana' },
+      { name: 'Eve Davis', image: 'https://i.pravatar.cc/40?u=eve' },
+      { name: 'Frank Miller', image: 'https://i.pravatar.cc/40?u=frank' },
+      { name: 'Grace Lee', image: 'https://i.pravatar.cc/40?u=grace' },
+    ]}
+  />
+</ComponentPreview>
+
+```tsx
+<AvatarStack
+  maxAvatarsAmount={3}
+  avatars={[
+    { name: 'Alice Johnson', image: 'https://i.pravatar.cc/40?u=alice' },
+    { name: 'Bob Smith', image: 'https://i.pravatar.cc/40?u=bob' },
+    { name: 'Charlie Brown', image: 'https://i.pravatar.cc/40?u=charlie' },
+    { name: 'Diana Prince', image: 'https://i.pravatar.cc/40?u=diana' },
+    { name: 'Eve Davis', image: 'https://i.pravatar.cc/40?u=eve' },
+    { name: 'Frank Miller', image: 'https://i.pravatar.cc/40?u=frank' },
+    { name: 'Grace Lee', image: 'https://i.pravatar.cc/40?u=grace' },
+  ]}
+/>
+```
+
+### Spacing Variants
+
+Control the overlap amount between avatars with the `spacing` prop.
+
+<ComponentPreview name="AvatarStack Spacing">
+  <div className="flex flex-col gap-6">
+    <div className="flex items-center gap-4">
+      <span className="text-muted-foreground w-8 text-sm">sm</span>
+      <AvatarStack
+        spacing="sm"
+        avatars={[
+          { name: 'Alice', image: 'https://i.pravatar.cc/40?u=alice' },
+          { name: 'Bob', image: 'https://i.pravatar.cc/40?u=bob' },
+          { name: 'Charlie', image: 'https://i.pravatar.cc/40?u=charlie' },
+        ]}
+      />
+    </div>
+    <div className="flex items-center gap-4">
+      <span className="text-muted-foreground w-8 text-sm">md</span>
+      <AvatarStack
+        spacing="md"
+        avatars={[
+          { name: 'Alice', image: 'https://i.pravatar.cc/40?u=alice' },
+          { name: 'Bob', image: 'https://i.pravatar.cc/40?u=bob' },
+          { name: 'Charlie', image: 'https://i.pravatar.cc/40?u=charlie' },
+        ]}
+      />
+    </div>
+    <div className="flex items-center gap-4">
+      <span className="text-muted-foreground w-8 text-sm">lg</span>
+      <AvatarStack
+        spacing="lg"
+        avatars={[
+          { name: 'Alice', image: 'https://i.pravatar.cc/40?u=alice' },
+          { name: 'Bob', image: 'https://i.pravatar.cc/40?u=bob' },
+          { name: 'Charlie', image: 'https://i.pravatar.cc/40?u=charlie' },
+        ]}
+      />
+    </div>
+    <div className="flex items-center gap-4">
+      <span className="text-muted-foreground w-8 text-sm">xl</span>
+      <AvatarStack
+        spacing="xl"
+        avatars={[
+          { name: 'Alice', image: 'https://i.pravatar.cc/40?u=alice' },
+          { name: 'Bob', image: 'https://i.pravatar.cc/40?u=bob' },
+          { name: 'Charlie', image: 'https://i.pravatar.cc/40?u=charlie' },
+        ]}
+      />
+    </div>
+  </div>
+</ComponentPreview>
+
+```tsx
+<AvatarStack spacing="sm" avatars={avatars} />
+<AvatarStack spacing="md" avatars={avatars} />
+<AvatarStack spacing="lg" avatars={avatars} />
+<AvatarStack spacing="xl" avatars={avatars} />
+```
+
+### Orientation
+
+The `orientation` prop controls whether avatars overlap horizontally (default `vertical` value uses `flex-row`) or vertically (`horizontal` value uses `flex-col`).
+
+<ComponentPreview name="AvatarStack Orientation">
+  <div className="flex items-start gap-12">
+    <div className="flex flex-col items-center gap-2">
+      <span className="text-muted-foreground text-sm">vertical (default)</span>
+      <AvatarStack
+        orientation="vertical"
+        avatars={[
+          { name: 'Alice', image: 'https://i.pravatar.cc/40?u=alice' },
+          { name: 'Bob', image: 'https://i.pravatar.cc/40?u=bob' },
+          { name: 'Charlie', image: 'https://i.pravatar.cc/40?u=charlie' },
+        ]}
+      />
+    </div>
+    <div className="flex flex-col items-center gap-2">
+      <span className="text-muted-foreground text-sm">horizontal</span>
+      <AvatarStack
+        orientation="horizontal"
+        avatars={[
+          { name: 'Alice', image: 'https://i.pravatar.cc/40?u=alice' },
+          { name: 'Bob', image: 'https://i.pravatar.cc/40?u=bob' },
+          { name: 'Charlie', image: 'https://i.pravatar.cc/40?u=charlie' },
+        ]}
+      />
+    </div>
+  </div>
+</ComponentPreview>
+
+```tsx
+<AvatarStack orientation="vertical" avatars={avatars} />
+<AvatarStack orientation="horizontal" avatars={avatars} />
+```
+
+### Custom Max Amount
+
+Adjust `maxAvatarsAmount` to control how many avatars are shown before the overflow indicator.
+
+<ComponentPreview name="AvatarStack Custom Max">
+  <div className="flex flex-col gap-6">
+    <div className="flex items-center gap-4">
+      <span className="text-muted-foreground w-24 text-sm">max=2</span>
+      <AvatarStack
+        maxAvatarsAmount={2}
+        avatars={[
+          { name: 'Alice', image: 'https://i.pravatar.cc/40?u=alice' },
+          { name: 'Bob', image: 'https://i.pravatar.cc/40?u=bob' },
+          { name: 'Charlie', image: 'https://i.pravatar.cc/40?u=charlie' },
+          { name: 'Diana', image: 'https://i.pravatar.cc/40?u=diana' },
+          { name: 'Eve', image: 'https://i.pravatar.cc/40?u=eve' },
+        ]}
+      />
+    </div>
+    <div className="flex items-center gap-4">
+      <span className="text-muted-foreground w-24 text-sm">max=4</span>
+      <AvatarStack
+        maxAvatarsAmount={4}
+        avatars={[
+          { name: 'Alice', image: 'https://i.pravatar.cc/40?u=alice' },
+          { name: 'Bob', image: 'https://i.pravatar.cc/40?u=bob' },
+          { name: 'Charlie', image: 'https://i.pravatar.cc/40?u=charlie' },
+          { name: 'Diana', image: 'https://i.pravatar.cc/40?u=diana' },
+          { name: 'Eve', image: 'https://i.pravatar.cc/40?u=eve' },
+        ]}
+      />
+    </div>
+  </div>
+</ComponentPreview>
+
+```tsx
+<AvatarStack maxAvatarsAmount={2} avatars={avatars} />
+<AvatarStack maxAvatarsAmount={4} avatars={avatars} />
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `avatars` | `{ name: string, image: string }[]` | -- | Array of avatar objects with name and image URL |
+| `maxAvatarsAmount` | `number` | `3` | Maximum number of avatars to display before showing overflow |
+| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | Layout direction of the avatar stack |
+| `spacing` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Overlap amount between avatars |
+| `avatarClassName` | `string` | -- | Additional CSS classes applied to each avatar |
+| `className` | `string` | -- | Additional CSS classes for the container |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | -- | All standard HTML div attributes |
+
+### avatarStackVariants
+
+The `avatarStackVariants` utility is also exported for use cases where you need the stack layout styling without the full component.
+
+```tsx
+import { avatarStackVariants } from '@datum-cloud/datum-ui/avatar-stack'
+
+<div className={avatarStackVariants({ orientation: 'vertical', spacing: 'md' })}>
+  {/* custom avatar elements */}
+</div>
+```

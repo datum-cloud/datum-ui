@@ -1,81 +1,467 @@
 {
   "name": "@datum-cloud/datum-ui",
-  "version": "0.1.0",
-  "sideEffects": [
-    "**/*.css"
-  ],
+  "type": "module",
+  "version": "0.2.0",
   "license": "MIT",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
   "repository": {
     "url": "https://github.com/datum-cloud/datum-ui"
   },
-  "types": "./dist/index.d.ts",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "default": "./dist/index.mjs"
     },
     "./styles": {
-      "default": "./src/styles/root.css"
+      "style": "./dist/styles/root.css",
+      "default": "./dist/styles/root.css"
     },
-    "./styles/*": {
-      "default": "./src/styles/*"
+    "./theme": {
+      "types": "./dist/components/themes/index.d.ts",
+      "default": "./dist/theme/index.mjs"
     },
-    "./styles/*/*": {
-      "default": "./src/styles/*/*"
+    "./hooks": {
+      "types": "./dist/hooks/index.d.ts",
+      "default": "./dist/hooks/index.mjs"
+    },
+    "./icons": {
+      "types": "./dist/components/icons/index.d.ts",
+      "default": "./dist/icons/index.mjs"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "default": "./dist/utils/index.mjs"
+    },
+    "./alert": {
+      "types": "./dist/components/base/alert/index.d.ts",
+      "default": "./dist/alert/index.mjs"
+    },
+    "./badge": {
+      "types": "./dist/components/base/badge/index.d.ts",
+      "default": "./dist/badge/index.mjs"
+    },
+    "./breadcrumb": {
+      "types": "./dist/components/base/breadcrumb/index.d.ts",
+      "default": "./dist/breadcrumb/index.mjs"
+    },
+    "./button": {
+      "types": "./dist/components/base/button/index.d.ts",
+      "default": "./dist/button/index.mjs"
+    },
+    "./button-group": {
+      "types": "./dist/components/base/button-group/index.d.ts",
+      "default": "./dist/button-group/index.mjs"
+    },
+    "./calendar": {
+      "types": "./dist/components/base/calendar/index.d.ts",
+      "default": "./dist/calendar/index.mjs"
+    },
+    "./card": {
+      "types": "./dist/components/base/card/index.d.ts",
+      "default": "./dist/card/index.mjs"
+    },
+    "./chart": {
+      "types": "./dist/components/base/chart/index.d.ts",
+      "default": "./dist/chart/index.mjs"
+    },
+    "./checkbox": {
+      "types": "./dist/components/base/checkbox/index.d.ts",
+      "default": "./dist/checkbox/index.mjs"
+    },
+    "./collapsible": {
+      "types": "./dist/components/base/collapsible/index.d.ts",
+      "default": "./dist/collapsible/index.mjs"
+    },
+    "./command": {
+      "types": "./dist/components/base/command/index.d.ts",
+      "default": "./dist/command/index.mjs"
+    },
+    "./dialog": {
+      "types": "./dist/components/base/dialog/index.d.ts",
+      "default": "./dist/dialog/index.mjs"
+    },
+    "./hover-card": {
+      "types": "./dist/components/base/hover-card/index.d.ts",
+      "default": "./dist/hover-card/index.mjs"
+    },
+    "./input": {
+      "types": "./dist/components/base/input/index.d.ts",
+      "default": "./dist/input/index.mjs"
+    },
+    "./input-group": {
+      "types": "./dist/components/base/input-group/index.d.ts",
+      "default": "./dist/input-group/index.mjs"
+    },
+    "./label": {
+      "types": "./dist/components/base/label/index.d.ts",
+      "default": "./dist/label/index.mjs"
+    },
+    "./popover": {
+      "types": "./dist/components/base/popover/index.d.ts",
+      "default": "./dist/popover/index.mjs"
+    },
+    "./radio-group": {
+      "types": "./dist/components/base/radio-group/index.d.ts",
+      "default": "./dist/radio-group/index.mjs"
+    },
+    "./select": {
+      "types": "./dist/components/base/select/index.d.ts",
+      "default": "./dist/select/index.mjs"
+    },
+    "./separator": {
+      "types": "./dist/components/base/separator/index.d.ts",
+      "default": "./dist/separator/index.mjs"
+    },
+    "./sheet": {
+      "types": "./dist/components/base/sheet/index.d.ts",
+      "default": "./dist/sheet/index.mjs"
+    },
+    "./skeleton": {
+      "types": "./dist/components/base/skeleton/index.d.ts",
+      "default": "./dist/skeleton/index.mjs"
+    },
+    "./spinner": {
+      "types": "./dist/components/base/spinner/index.d.ts",
+      "default": "./dist/spinner/index.mjs"
+    },
+    "./switch": {
+      "types": "./dist/components/base/switch/index.d.ts",
+      "default": "./dist/switch/index.mjs"
+    },
+    "./table": {
+      "types": "./dist/components/base/table/index.d.ts",
+      "default": "./dist/table/index.mjs"
+    },
+    "./tabs": {
+      "types": "./dist/components/base/tabs/index.d.ts",
+      "default": "./dist/tabs/index.mjs"
+    },
+    "./textarea": {
+      "types": "./dist/components/base/textarea/index.d.ts",
+      "default": "./dist/textarea/index.mjs"
+    },
+    "./tooltip": {
+      "types": "./dist/components/base/tooltip/index.d.ts",
+      "default": "./dist/tooltip/index.mjs"
+    },
+    "./typography": {
+      "types": "./dist/components/base/typography/index.d.ts",
+      "default": "./dist/typography/index.mjs"
+    },
+    "./visually-hidden": {
+      "types": "./dist/components/base/visuallyhidden/index.d.ts",
+      "default": "./dist/visually-hidden/index.mjs"
+    },
+    "./autocomplete": {
+      "types": "./dist/components/features/autocomplete/index.d.ts",
+      "default": "./dist/autocomplete/index.mjs"
+    },
+    "./avatar-stack": {
+      "types": "./dist/components/features/avatar-stack/index.d.ts",
+      "default": "./dist/avatar-stack/index.mjs"
+    },
+    "./date-picker": {
+      "types": "./dist/components/features/date-picker/index.d.ts",
+      "default": "./dist/date-picker/index.mjs"
+    },
+    "./dropdown": {
+      "types": "./dist/components/features/dropdown/index.d.ts",
+      "default": "./dist/dropdown/index.mjs"
+    },
+    "./dropzone": {
+      "types": "./dist/components/features/dropzone/index.d.ts",
+      "default": "./dist/dropzone/index.mjs"
+    },
+    "./empty-content": {
+      "types": "./dist/components/features/empty-content/index.d.ts",
+      "default": "./dist/empty-content/index.mjs"
+    },
+    "./form": {
+      "types": "./dist/components/features/form/index.d.ts",
+      "default": "./dist/form/index.mjs"
+    },
+    "./grid": {
+      "types": "./dist/components/features/grid/index.d.ts",
+      "style": "./dist/grid/style.css",
+      "default": "./dist/grid/index.mjs"
+    },
+    "./input-number": {
+      "types": "./dist/components/features/input-number/index.d.ts",
+      "default": "./dist/input-number/index.mjs"
+    },
+    "./input-with-addons": {
+      "types": "./dist/components/features/input-with-addons/index.d.ts",
+      "default": "./dist/input-with-addons/index.mjs"
+    },
+    "./loader-overlay": {
+      "types": "./dist/components/features/loader-overlay/index.d.ts",
+      "default": "./dist/loader-overlay/index.mjs"
+    },
+    "./map": {
+      "types": "./dist/exports/map.d.ts",
+      "default": "./dist/map/index.mjs"
+    },
+    "./more-actions": {
+      "types": "./dist/components/features/more-actions/index.d.ts",
+      "default": "./dist/more-actions/index.mjs"
+    },
+    "./nprogress": {
+      "types": "./dist/components/features/nprogress/index.d.ts",
+      "style": "./dist/nprogress/nprogress.css",
+      "default": "./dist/nprogress/index.mjs"
+    },
+    "./page-title": {
+      "types": "./dist/components/features/page-title/index.d.ts",
+      "default": "./dist/page-title/index.mjs"
+    },
+    "./sidebar": {
+      "types": "./dist/components/features/sidebar/index.d.ts",
+      "default": "./dist/sidebar/index.mjs"
+    },
+    "./stepper": {
+      "types": "./dist/components/features/stepper/index.d.ts",
+      "default": "./dist/stepper/index.mjs"
+    },
+    "./tag-input": {
+      "types": "./dist/components/features/tag-input/index.d.ts",
+      "default": "./dist/tag-input/index.mjs"
+    },
+    "./task-queue": {
+      "types": "./dist/components/features/task-queue/index.d.ts",
+      "default": "./dist/task-queue/index.mjs"
+    },
+    "./toast": {
+      "types": "./dist/components/features/toast/index.d.ts",
+      "default": "./dist/toast/index.mjs"
     }
   },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "files": [
-    "dist",
-    "src/styles",
+    "LICENSE",
     "README.md",
-    "LICENSE"
+    "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "lint": "eslint . --max-warnings 0",
-    "clean": "rm -rf .turbo node_modules dist"
+    "build": "tsdown --config-loader native && tsc -p tsconfig.build.json && node scripts/fix-dts-imports.mjs && node scripts/copy-styles.mjs",
+    "dev": "tsdown --config-loader native --watch",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf dist .turbo node_modules coverage",
+    "prepack": "node scripts/strip-workspace-deps.mjs --strip",
+    "postpublish": "node scripts/strip-workspace-deps.mjs --restore"
   },
-  "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/shadcn": "workspace:*",
-    "@repo/tailwind-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
-    "@types/react": "^19.2.3",
-    "@types/react-dom": "^19.2.3",
-    "eslint": "^8.57.0",
-    "prettier": "^3.8.1",
-    "prettier-plugin-organize-imports": "^4.3.0",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "@types/nprogress": "^0.2.3",
-    "react": "^19.2.3",
-    "tsup": "^8.5.1",
-    "typescript": "5.9.3"
+  "peerDependencies": {
+    "@conform-to/react": ">=1",
+    "@conform-to/zod": ">=1",
+    "@radix-ui/react-avatar": ">=1",
+    "@radix-ui/react-checkbox": ">=1",
+    "@radix-ui/react-collapsible": ">=1",
+    "@radix-ui/react-dialog": ">=1",
+    "@radix-ui/react-dropdown-menu": ">=2",
+    "@radix-ui/react-hover-card": ">=1",
+    "@radix-ui/react-label": ">=2",
+    "@radix-ui/react-popover": ">=1",
+    "@radix-ui/react-radio-group": ">=1",
+    "@radix-ui/react-select": ">=2",
+    "@radix-ui/react-separator": ">=1",
+    "@radix-ui/react-slot": ">=1",
+    "@radix-ui/react-switch": ">=1",
+    "@radix-ui/react-tabs": ">=1",
+    "@radix-ui/react-tooltip": ">=1",
+    "@radix-ui/react-visually-hidden": ">=1",
+    "@stepperize/react": ">=4",
+    "@tanstack/react-virtual": ">=3",
+    "cmdk": ">=1",
+    "date-fns": ">=4",
+    "date-fns-tz": ">=3",
+    "leaflet": ">=1.9",
+    "leaflet-draw": ">=1",
+    "leaflet.fullscreen": ">=5",
+    "leaflet.markercluster": ">=1.5",
+    "motion": ">=11",
+    "nprogress": ">=0.2",
+    "react": ">=19",
+    "react-day-picker": ">=9",
+    "react-dom": ">=19",
+    "react-dropzone": ">=14",
+    "react-leaflet": ">=5",
+    "react-leaflet-markercluster": ">=5.0.0-rc.0",
+    "react-number-format": ">=5",
+    "recharts": ">=2",
+    "sonner": ">=2",
+    "zod": ">=3"
+  },
+  "peerDependenciesMeta": {
+    "@conform-to/react": {
+      "optional": true
+    },
+    "@conform-to/zod": {
+      "optional": true
+    },
+    "@radix-ui/react-avatar": {
+      "optional": true
+    },
+    "@radix-ui/react-checkbox": {
+      "optional": true
+    },
+    "@radix-ui/react-collapsible": {
+      "optional": true
+    },
+    "@radix-ui/react-dialog": {
+      "optional": true
+    },
+    "@radix-ui/react-dropdown-menu": {
+      "optional": true
+    },
+    "@radix-ui/react-hover-card": {
+      "optional": true
+    },
+    "@radix-ui/react-label": {
+      "optional": true
+    },
+    "@radix-ui/react-popover": {
+      "optional": true
+    },
+    "@radix-ui/react-radio-group": {
+      "optional": true
+    },
+    "@radix-ui/react-select": {
+      "optional": true
+    },
+    "@radix-ui/react-separator": {
+      "optional": true
+    },
+    "@radix-ui/react-slot": {
+      "optional": true
+    },
+    "@radix-ui/react-switch": {
+      "optional": true
+    },
+    "@radix-ui/react-tabs": {
+      "optional": true
+    },
+    "@radix-ui/react-tooltip": {
+      "optional": true
+    },
+    "@radix-ui/react-visually-hidden": {
+      "optional": true
+    },
+    "@stepperize/react": {
+      "optional": true
+    },
+    "@tanstack/react-virtual": {
+      "optional": true
+    },
+    "cmdk": {
+      "optional": true
+    },
+    "date-fns": {
+      "optional": true
+    },
+    "date-fns-tz": {
+      "optional": true
+    },
+    "leaflet": {
+      "optional": true
+    },
+    "leaflet-draw": {
+      "optional": true
+    },
+    "leaflet.fullscreen": {
+      "optional": true
+    },
+    "leaflet.markercluster": {
+      "optional": true
+    },
+    "motion": {
+      "optional": true
+    },
+    "nprogress": {
+      "optional": true
+    },
+    "react-day-picker": {
+      "optional": true
+    },
+    "react-dropzone": {
+      "optional": true
+    },
+    "react-leaflet": {
+      "optional": true
+    },
+    "react-leaflet-markercluster": {
+      "optional": true
+    },
+    "react-number-format": {
+      "optional": true
+    },
+    "recharts": {
+      "optional": true
+    },
+    "sonner": {
+      "optional": true
+    },
+    "zod": {
+      "optional": true
+    }
   },
   "dependencies": {
+    "class-variance-authority": "^0.7",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.556",
+    "tailwind-merge": "^3.5.0"
+  },
+  "devDependencies": {
+    "@conform-to/react": "^1.17.1",
+    "@conform-to/zod": "^1.17.1",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
-    "@stepperize/react": "^3.0.0",
-    "class-variance-authority": "^0.7.1",
-    "lucide-react": "^0.556.0",
+    "@repo/config": "workspace:*",
+    "@repo/shadcn": "workspace:*",
+    "@stepperize/react": "^6.1.0",
+    "@tanstack/react-virtual": "^3.13.19",
+    "@testing-library/jest-dom": "^6",
+    "@testing-library/react": "^16",
+    "@testing-library/user-event": "^14",
+    "@types/leaflet": "^1.9.21",
+    "@types/leaflet-draw": "^1.0.13",
+    "@types/leaflet.fullscreen": "^5.2.0",
+    "@types/leaflet.markercluster": "^1.5.6",
+    "@types/nprogress": "^0.2.3",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
+    "eslint": "^9.39.3",
+    "jsdom": "^26",
+    "leaflet": "^1.9.4",
+    "leaflet-draw": "^1.0.4",
+    "leaflet.fullscreen": "^5.3.0",
+    "leaflet.markercluster": "^1.5.3",
+    "motion": "^12.34.4",
     "nprogress": "^0.2.0",
+    "react": "^19",
+    "react-day-picker": "^9.14.0",
+    "react-dom": "^19",
+    "react-dropzone": "^15.0.0",
+    "react-leaflet": "^5.0.0",
+    "react-leaflet-markercluster": "5.0.0-rc.0",
+    "react-number-format": "^5.4.4",
     "sonner": "^2.0.7",
-    "tailwind-scrollbar-hide": "^2.0.0"
-  },
-  "peerDependencies": {
-    "react": ">=18",
-    "react-router": "^7.0.0"
-  },
-  "peerDependenciesMeta": {
-    "react-router": {
-      "optional": true
-    }
+    "tailwindcss": "^4.2.1",
+    "tsdown": "^0.20.3",
+    "typescript": "^5.9",
+    "vitest": "^3",
+    "zod": "^4.3.6"
   },
   "publishConfig": {
     "access": "public"

@@ -1,0 +1,69 @@
+---
+title: Calendar
+description: A date picker calendar built on react-day-picker with Datum styling.
+---
+
+import { Calendar } from '@/components/ui'
+
+## Overview
+
+The `Calendar` component renders an interactive month calendar. It supports single-date selection, date ranges, outside-day display, and multiple months. Built on `react-day-picker` v4 with Datum design tokens applied to navigation, day cells, and range highlighting.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+react-day-picker
+```
+
+## Usage
+
+<ComponentPreview name="Basic Calendar">
+  <Calendar />
+</ComponentPreview>
+
+```tsx
+import { Calendar } from '@datum-cloud/datum-ui/calendar'
+
+<Calendar />
+```
+
+## Examples
+
+### Single Date Selection
+
+```tsx
+const [date, setDate] = useState<Date | undefined>(new Date())
+
+<Calendar
+  mode="single"
+  selected={date}
+  onSelect={setDate}
+/>
+```
+
+### Multi-Month
+
+```tsx
+<Calendar
+  mode="single"
+  numberOfMonths={2}
+/>
+```
+
+## Props
+
+The `Calendar` component accepts all `react-day-picker` `DayPicker` props plus the following.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `mode` | `'single' \| 'multiple' \| 'range'` | -- | Selection mode |
+| `selected` | `Date \| Date[] \| DateRange` | -- | Controlled selected date(s) |
+| `onSelect` | `(date) => void` | -- | Callback when selection changes |
+| `showOutsideDays` | `boolean` | `true` | Show days from adjacent months |
+| `numberOfMonths` | `number` | `1` | Number of months to display |
+| `captionLayout` | `'label' \| 'dropdown'` | `'label'` | Month/year caption style |
+| `buttonVariant` | `'ghost' \| 'outline' \| ...` | `'ghost'` | Navigation button variant |
+| `className` | `string` | -- | Additional CSS classes |
+| `classNames` | `object` | -- | Override individual element classes |

@@ -1,0 +1,313 @@
+---
+title: Sidebar
+description: A collapsible navigation sidebar with responsive behavior, hover expansion, and nested menu support.
+---
+
+import { SidebarProvider, AppSidebar, SidebarInset } from '@/components/ui'
+
+## Overview
+
+The Sidebar system provides a full-featured navigation panel with collapsible states, responsive mobile support (via Sheet), keyboard shortcuts, and hover-to-expand behavior. Use `AppSidebar` for a ready-made sidebar with navigation items, or compose your own layout using the lower-level primitives.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+motion @radix-ui/react-slot @radix-ui/react-collapsible @radix-ui/react-separator @radix-ui/react-dialog @radix-ui/react-tooltip
+```
+
+## Usage
+
+<ComponentPreview name="Basic Sidebar">
+  <div className="h-[400px] w-full">
+    <SidebarProvider defaultOpen>
+      <AppSidebar
+        navItems={[
+          { title: 'Home', href: '/', type: 'link' },
+          { title: 'Dashboard', href: '/dashboard', type: 'link' },
+          { title: 'Settings', href: '/settings', type: 'link' },
+        ]}
+        title="My App"
+        currentPath="/dashboard"
+        collapsible="icon"
+      />
+      <SidebarInset>
+        <div className="flex h-full items-center justify-center p-6">
+          <p className="text-muted-foreground text-sm">Main content area</p>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  </div>
+</ComponentPreview>
+
+```tsx
+import { SidebarProvider, AppSidebar, SidebarInset } from '@datum-cloud/datum-ui/sidebar'
+import { Home, LayoutDashboard, Settings } from 'lucide-react'
+
+<SidebarProvider defaultOpen>
+  <AppSidebar
+    navItems={[
+      { title: 'Home', href: '/', type: 'link', icon: Home },
+      { title: 'Dashboard', href: '/dashboard', type: 'link', icon: LayoutDashboard },
+      { title: 'Settings', href: '/settings', type: 'link', icon: Settings },
+    ]}
+    title="My App"
+    currentPath="/dashboard"
+    collapsible="icon"
+  />
+  <SidebarInset>
+    <div>Main content area</div>
+  </SidebarInset>
+</SidebarProvider>
+```
+
+## Examples
+
+### Collapsible with Nested Items
+
+Navigation items can have children, rendered as collapsible sub-menus.
+
+<ComponentPreview name="Sidebar with Nested Items">
+  <div className="h-[500px] w-full">
+    <SidebarProvider defaultOpen>
+      <AppSidebar
+        navItems={[
+          { title: 'Dashboard', href: '/dashboard', type: 'link' },
+          {
+            title: 'Users',
+            href: '/users',
+            type: 'collapsible',
+            children: [
+              { title: 'All Users', href: '/users/all', type: 'link' },
+              { title: 'Invitations', href: '/users/invitations', type: 'link' },
+              { title: 'Roles', href: '/users/roles', type: 'link' },
+            ],
+          },
+          {
+            title: 'Settings',
+            href: '/settings',
+            type: 'collapsible',
+            children: [
+              { title: 'General', href: '/settings/general', type: 'link' },
+              { title: 'Security', href: '/settings/security', type: 'link' },
+            ],
+          },
+        ]}
+        title="My App"
+        currentPath="/users/all"
+        collapsible="icon"
+      />
+      <SidebarInset>
+        <div className="flex h-full items-center justify-center p-6">
+          <p className="text-muted-foreground text-sm">Main content area</p>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  </div>
+</ComponentPreview>
+
+```tsx
+const navItems: NavItem[] = [
+  { title: 'Dashboard', href: '/dashboard', type: 'link', icon: LayoutDashboard },
+  {
+    title: 'Users',
+    href: '/users',
+    type: 'collapsible',
+    icon: Users,
+    children: [
+      { title: 'All Users', href: '/users/all', type: 'link' },
+      { title: 'Invitations', href: '/users/invitations', type: 'link' },
+      { title: 'Roles', href: '/users/roles', type: 'link' },
+    ],
+  },
+  {
+    title: 'Settings',
+    href: '/settings',
+    type: 'collapsible',
+    icon: Settings,
+    children: [
+      { title: 'General', href: '/settings/general', type: 'link' },
+      { title: 'Security', href: '/settings/security', type: 'link' },
+    ],
+  },
+]
+
+<SidebarProvider defaultOpen>
+  <AppSidebar navItems={navItems} title="My App" currentPath="/users/all" collapsible="icon" />
+  <SidebarInset>
+    <div>Main content area</div>
+  </SidebarInset>
+</SidebarProvider>
+```
+
+### Grouped Navigation
+
+Use `type: 'group'` to organize items under labeled sections.
+
+<ComponentPreview name="Sidebar with Groups">
+  <div className="h-[500px] w-full">
+    <SidebarProvider defaultOpen>
+      <AppSidebar
+        navItems={[
+          {
+            title: 'Platform',
+            href: null,
+            type: 'group',
+            children: [
+              { title: 'Dashboard', href: '/dashboard', type: 'link' },
+              { title: 'Users', href: '/users', type: 'link' },
+            ],
+          },
+          {
+            title: 'Resources',
+            href: null,
+            type: 'group',
+            children: [
+              { title: 'Documents', href: '/documents', type: 'link' },
+              { title: 'Settings', href: '/settings', type: 'link' },
+            ],
+          },
+        ]}
+        title="Grouped Nav"
+        currentPath="/dashboard"
+        collapsible="icon"
+      />
+      <SidebarInset>
+        <div className="flex h-full items-center justify-center p-6">
+          <p className="text-muted-foreground text-sm">Sidebar with grouped navigation</p>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  </div>
+</ComponentPreview>
+
+```tsx
+const groupedItems: NavItem[] = [
+  {
+    title: 'Platform',
+    href: null,
+    type: 'group',
+    children: [
+      { title: 'Dashboard', href: '/dashboard', type: 'link', icon: LayoutDashboard },
+      { title: 'Users', href: '/users', type: 'link', icon: Users },
+    ],
+  },
+  {
+    title: 'Resources',
+    href: null,
+    type: 'group',
+    children: [
+      { title: 'Documents', href: '/documents', type: 'link', icon: FileText },
+      { title: 'Settings', href: '/settings', type: 'link', icon: Settings },
+    ],
+  },
+]
+
+<SidebarProvider defaultOpen>
+  <AppSidebar navItems={groupedItems} title="Grouped Nav" currentPath="/dashboard" collapsible="icon" />
+  <SidebarInset>
+    <div>Sidebar with grouped navigation</div>
+  </SidebarInset>
+</SidebarProvider>
+```
+
+### Collapsed State
+
+Set `defaultOpen={false}` on `SidebarProvider` to start the sidebar in collapsed state.
+
+```tsx
+<SidebarProvider defaultOpen={false}>
+  <AppSidebar navItems={navItems} title="My App" currentPath="/" collapsible="icon" />
+  <SidebarInset>
+    <div>Sidebar starts collapsed</div>
+  </SidebarInset>
+</SidebarProvider>
+```
+
+## Props
+
+### SidebarProvider
+
+Wraps the entire sidebar layout and provides context to all child components.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `defaultOpen` | `boolean` | `true` | Initial open state of the sidebar |
+| `open` | `boolean` | -- | Controlled open state |
+| `onOpenChange` | `(open: boolean) => void` | -- | Callback when open state changes |
+| `expandOnHover` | `boolean` | `false` | Expand sidebar when hovered in collapsed state |
+| `expandBehavior` | `'push' \| 'overlay'` | `'push'` | How the expanded sidebar affects layout |
+| `showBackdrop` | `boolean` | `false` | Show backdrop overlay when expanded in overlay mode |
+| `className` | `string` | -- | Additional CSS classes |
+| `style` | `CSSProperties` | -- | Inline styles |
+
+### AppSidebar
+
+A pre-composed sidebar with navigation, header, and toggle built in.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `navItems` | `NavItem[]` | -- | Navigation items to render |
+| `title` | `string \| ReactNode` | -- | Sidebar header title |
+| `currentPath` | `string` | -- | Current URL pathname for active state detection |
+| `linkComponent` | `ElementType` | `'a'` | Component to render navigation links (e.g., Next.js `Link`) |
+| `closeOnNavigation` | `boolean` | -- | Close sidebar after clicking a navigation link |
+| `defaultOpen` | `boolean` | -- | Override initial open state from provider |
+| `collapsible` | `'offcanvas' \| 'icon' \| 'none'` | `'offcanvas'` | Collapse behavior |
+| `side` | `'left' \| 'right'` | `'left'` | Which side the sidebar appears on |
+| `variant` | `'sidebar' \| 'floating' \| 'inset'` | `'sidebar'` | Visual variant |
+
+### NavItem
+
+The data structure for navigation items.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | -- | Display text |
+| `href` | `string \| null` | -- | Navigation URL (null for groups) |
+| `type` | `'link' \| 'group' \| 'collapsible' \| 'externalLink'` | -- | Item behavior type |
+| `icon` | `LucideIcon` | -- | Icon component from lucide-react |
+| `children` | `NavItem[]` | -- | Nested navigation items |
+| `disabled` | `boolean` | -- | Disable the item |
+| `hidden` | `boolean` | -- | Hide the item |
+| `showSeparatorAbove` | `boolean` | -- | Show a separator line above this item |
+| `showSeparatorBelow` | `boolean` | -- | Show a separator line below this item |
+| `excludePaths` | `string[]` | -- | Sub-paths that should not activate this item |
+| `tabChildLinks` | `string[]` | -- | Additional paths that activate this item |
+| `onPrefetch` | `() => void` | -- | Called on hover for route prefetching |
+
+## Sub-Components
+
+The sidebar system includes many composable primitives for building custom sidebar layouts:
+
+| Component | Description |
+|-----------|-------------|
+| `Sidebar` | The main sidebar container |
+| `SidebarProvider` | Context provider managing open/close state |
+| `SidebarInset` | Main content area wrapper alongside the sidebar |
+| `SidebarHeader` | Top section of the sidebar |
+| `SidebarFooter` | Bottom section of the sidebar |
+| `SidebarContent` | Scrollable content area |
+| `SidebarGroup` | Groups related menu items |
+| `SidebarGroupLabel` | Label for a sidebar group |
+| `SidebarGroupAction` | Action button within a group header |
+| `SidebarGroupContent` | Content wrapper within a group |
+| `SidebarMenu` | Menu list container |
+| `SidebarMenuItem` | Individual menu item |
+| `SidebarMenuButton` | Clickable menu button with tooltip support |
+| `SidebarMenuAction` | Secondary action on a menu item |
+| `SidebarMenuBadge` | Badge indicator on a menu item |
+| `SidebarMenuSub` | Sub-menu container for nested items |
+| `SidebarMenuSubItem` | Individual sub-menu item |
+| `SidebarMenuSubButton` | Clickable sub-menu button |
+| `SidebarMenuSkeleton` | Loading skeleton for menu items |
+| `SidebarSeparator` | Visual divider between sections |
+| `SidebarInput` | Search input styled for the sidebar |
+| `SidebarRail` | Draggable rail for resizing/toggling |
+| `SidebarTrigger` | Toggle button to expand/collapse |
+| `useSidebar` | Hook to access sidebar state and controls |
+
+### Keyboard Shortcut
+
+The sidebar can be toggled with `Cmd+B` (macOS) or `Ctrl+B` (Windows/Linux).

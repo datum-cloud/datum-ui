@@ -1,0 +1,109 @@
+---
+title: Dropzone
+description: A drag-and-drop file upload area with empty state and content previews.
+---
+
+import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui'
+
+## Overview
+
+The `Dropzone` component provides a drag-and-drop file upload area built on `react-dropzone`. It uses compound sub-components (`DropzoneEmptyState` and `DropzoneContent`) to show different UI depending on whether files have been selected. Supports accepted file types, size limits, and multi-file uploads.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+react-dropzone
+```
+
+## Usage
+
+```tsx
+import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@datum-cloud/datum-ui/dropzone'
+import { useState } from 'react'
+
+const [files, setFiles] = useState<File[] | undefined>()
+
+<Dropzone
+  src={files}
+  onDrop={(accepted) => setFiles(accepted)}
+  onError={(err) => alert(err.message)}
+>
+  <DropzoneEmptyState
+    label="Drop files here or click to upload"
+    description="Drag and drop your files here"
+  />
+  <DropzoneContent />
+</Dropzone>
+```
+
+## Examples
+
+### With File Type and Size Constraints
+
+```tsx
+<Dropzone
+  src={files}
+  onDrop={(accepted) => setFiles(accepted)}
+  onError={(err) => alert(err.message)}
+  accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.gif'] }}
+  maxSize={5 * 1024 * 1024}
+  maxFiles={3}
+>
+  <DropzoneEmptyState
+    label="Upload images"
+    description="PNG, JPG, GIF up to 5MB"
+    showCaption
+  />
+  <DropzoneContent description="Drag and drop or click to replace" />
+</Dropzone>
+```
+
+### Disabled
+
+```tsx
+<Dropzone disabled>
+  <DropzoneEmptyState
+    label="Upload disabled"
+    description="This dropzone is currently disabled"
+  />
+</Dropzone>
+```
+
+## Props
+
+### Dropzone
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `File[]` | -- | Currently selected files (controls content vs. empty state) |
+| `onDrop` | `(accepted: File[], rejections, event) => void` | -- | Callback when files are dropped |
+| `onError` | `(error: Error) => void` | -- | Callback for validation errors |
+| `accept` | `Record<string, string[]>` | -- | Accepted MIME types and extensions |
+| `maxFiles` | `number` | `1` | Maximum number of files |
+| `maxSize` | `number` | -- | Maximum file size in bytes |
+| `minSize` | `number` | -- | Minimum file size in bytes |
+| `disabled` | `boolean` | `false` | Disables the dropzone |
+| `className` | `string` | -- | Additional CSS classes |
+
+### DropzoneEmptyState
+
+Rendered when `src` is `undefined` or empty.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `ReactNode` | -- | Primary text |
+| `description` | `ReactNode` | -- | Secondary text |
+| `icon` | `ReactNode` | Upload icon | Custom icon |
+| `showCaption` | `boolean` | `false` | Auto-generate a caption from accept/size constraints |
+
+### DropzoneContent
+
+Rendered when `src` contains files.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `ReactNode \| (files: File[]) => ReactNode` | -- | Custom label (defaults to file names) |
+| `description` | `ReactNode` | `'Drag and drop or click to replace'` | Secondary text |
+| `icon` | `ReactNode` | Upload icon | Custom icon |

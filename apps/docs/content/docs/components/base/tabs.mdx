@@ -1,0 +1,111 @@
+---
+title: Tabs
+description: Organize content into switchable panels with a tabbed navigation bar.
+---
+
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui'
+
+## Overview
+
+Tabs let users switch between related groups of content without leaving the page. The datum-ui Tabs component wraps Radix UI Tabs with Datum design tokens and is composed of `Tabs` (root), `TabsList`, `TabsTrigger`, and `TabsContent`.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-tabs
+```
+
+## Usage
+
+<ComponentPreview name="Basic Tabs">
+  <Tabs defaultValue="overview" className="w-[480px]">
+    <TabsList>
+      <TabsTrigger value="overview">Overview</TabsTrigger>
+      <TabsTrigger value="deployments">Deployments</TabsTrigger>
+      <TabsTrigger value="logs">Logs</TabsTrigger>
+    </TabsList>
+    <TabsContent value="overview">
+      <p className="pt-4 text-sm text-muted-foreground">Your service is running 3 replicas with 99.98% uptime.</p>
+    </TabsContent>
+    <TabsContent value="deployments">
+      <p className="pt-4 text-sm text-muted-foreground">Last deployment: v2.4.1, 2 hours ago.</p>
+    </TabsContent>
+    <TabsContent value="logs">
+      <p className="pt-4 font-mono text-xs text-muted-foreground">2026-02-27T10:14:02Z INFO Service started</p>
+    </TabsContent>
+  </Tabs>
+</ComponentPreview>
+
+```tsx
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@datum-cloud/datum-ui/tabs'
+
+<Tabs defaultValue="overview">
+  <TabsList>
+    <TabsTrigger value="overview">Overview</TabsTrigger>
+    <TabsTrigger value="deployments">Deployments</TabsTrigger>
+    <TabsTrigger value="logs">Logs</TabsTrigger>
+  </TabsList>
+  <TabsContent value="overview">Overview content</TabsContent>
+  <TabsContent value="deployments">Deployments content</TabsContent>
+  <TabsContent value="logs">Logs content</TabsContent>
+</Tabs>
+```
+
+## Examples
+
+### Disabled Tab
+
+<ComponentPreview name="Disabled Tab">
+  <Tabs defaultValue="account" className="w-[400px]">
+    <TabsList>
+      <TabsTrigger value="account">Account</TabsTrigger>
+      <TabsTrigger value="security">Security</TabsTrigger>
+      <TabsTrigger value="billing" disabled>Billing</TabsTrigger>
+    </TabsList>
+    <TabsContent value="account">
+      <p className="pt-4 text-sm text-muted-foreground">Manage your account settings.</p>
+    </TabsContent>
+    <TabsContent value="security">
+      <p className="pt-4 text-sm text-muted-foreground">Update your password.</p>
+    </TabsContent>
+  </Tabs>
+</ComponentPreview>
+
+```tsx
+<Tabs defaultValue="account">
+  <TabsList>
+    <TabsTrigger value="account">Account</TabsTrigger>
+    <TabsTrigger value="security">Security</TabsTrigger>
+    <TabsTrigger value="billing" disabled>Billing</TabsTrigger>
+  </TabsList>
+  <TabsContent value="account">Account settings</TabsContent>
+  <TabsContent value="security">Security settings</TabsContent>
+</Tabs>
+```
+
+## Props
+
+### Tabs
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `defaultValue` | `string` | -- | Initially active tab value (uncontrolled) |
+| `value` | `string` | -- | Active tab value (controlled) |
+| `onValueChange` | `(value: string) => void` | -- | Callback when the active tab changes |
+
+### TabsTrigger
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | -- | Unique tab identifier |
+| `disabled` | `boolean` | `false` | Prevent selection |
+| `className` | `string` | -- | Additional CSS classes |
+
+### TabsContent
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | -- | Tab value this content belongs to |
+| `className` | `string` | -- | Additional CSS classes |

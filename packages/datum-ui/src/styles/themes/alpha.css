@@ -8,15 +8,15 @@
  */
 
 /* ========================================
-Scope variables to the theme class so we can swap themes by class
+Light-mode tokens on :root, dark-mode tokens on .dark
 ======================================== */
-.theme-alpha {
+:root {
   /* ========================================
    FONT FAMILYS
    ======================================== */
   --font-sans:
-    'Alliance No1', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-    'Segoe UI Symbol', 'Noto Color Emoji';
+    'Alliance No1', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
 
   --font-mono: 'Menlo', 'Consolas', 'Monaco', 'DejaVu Sans Mono', monospace;
   /* ========================================
@@ -145,12 +145,63 @@ Scope variables to the theme class so we can swap themes by class
   --card-success: #f4f9f5;
   --card-success-secondary: #adbab0;
   --card-border: var(--glacier-mist-900);
+  --card-tertiary: var(--aurora-moss);
+  --card-quaternary: var(--app-dark-utility-5);
 
+  /* Button colors - light mode */
+  /* Neutral surfaces used by "light" and "borderless" variants */
+  --btn-neutral-bg: #e5e7eb; /* gray-200 */
+  --btn-neutral-bg-hover: #d1d5db; /* gray-300 */
+  --btn-neutral-bg-active: #9ca3af; /* gray-400 */
+
+  /* Primary */
   --btn-primary: rgba(156, 121, 121, 0.9);
+  --btn-primary-hover: var(--primary);
+  --btn-primary-active: color-mix(in srgb, var(--btn-primary-hover) 80%, black 20%);
+  --btn-primary-foreground: var(--primary-foreground);
+  --btn-primary-border: var(--primary);
+
+  /* Secondary */
   --btn-secondary: rgba(56, 69, 85, 0.9);
+  --btn-secondary-hover: var(--secondary);
+  --btn-secondary-active: color-mix(in srgb, var(--btn-secondary-hover) 80%, black 20%);
+  --btn-secondary-foreground: var(--secondary-foreground);
+  --btn-secondary-border: var(--secondary);
+
+  /* Tertiary */
   --btn-tertiary: var(--tertiary);
+  --btn-tertiary-hover: color-mix(in srgb, var(--btn-tertiary) 80%, black 20%);
+  --btn-tertiary-active: color-mix(in srgb, var(--btn-tertiary-hover) 80%, black 20%);
+  --btn-tertiary-foreground: var(--tertiary-foreground);
+  --btn-tertiary-border: var(--tertiary);
+
+  /* Quaternary */
   --btn-quaternary: var(--quaternary);
-  --btn-quaternary-hover: var(--app-dark-utility-4);
+  --btn-quaternary-hover: color-mix(in srgb, var(--btn-quaternary) 80%, black 20%);
+  --btn-quaternary-active: color-mix(in srgb, var(--btn-quaternary-hover) 80%, black 20%);
+  --btn-quaternary-foreground: var(--quaternary-foreground);
+  --btn-quaternary-border: var(--app-dark-utility-4);
+
+  /* Warning */
+  --btn-warning: #ca8a04; /* yellow-600 */
+  --btn-warning-hover: #a16207; /* yellow-700 */
+  --btn-warning-active: #854d0e; /* yellow-800 */
+  --btn-warning-foreground: #ffffff;
+  --btn-warning-border: #ca8a04;
+
+  /* Danger */
+  --btn-danger: var(--destructive);
+  --btn-danger-hover: color-mix(in srgb, var(--btn-danger) 80%, black 20%);
+  --btn-danger-active: color-mix(in srgb, var(--btn-danger-hover) 80%, black 20%);
+  --btn-danger-foreground: var(--destructive-foreground);
+  --btn-danger-border: var(--destructive);
+
+  /* Success */
+  --btn-success: #16a34a; /* green-600 */
+  --btn-success-hover: #15803d; /* green-700 */
+  --btn-success-active: #166534; /* green-800 */
+  --btn-success-foreground: #ffffff;
+  --btn-success-border: #16a34a;
 
   /* Icon Colors */
   --icon-primary: var(--app-dark-utility-3);
@@ -170,147 +221,197 @@ Scope variables to the theme class so we can swap themes by class
   --toast-success-background: var(--pine-forge);
   --toast-success-foreground: var(--glacier-mist-700);
   --toast-success-icon: var(--glacier-mist-700);
+}
 
-  /* ========================================
+/* ========================================
    DARK MODE OVERRIDES
    ======================================== */
-  &.dark {
-    /* Base colors - dark mode */
-    --background: var(--midnight-fjord);
-    --foreground: var(--glacier-mist-700);
+.dark {
+  /* Base colors - dark mode */
+  --background: var(--midnight-fjord);
+  --foreground: var(--glacier-mist-700);
 
-    /* Card colors - dark mode */
-    --card: var(--app-dark-utility-1);
-    --card-foreground: var(--glacier-mist-700);
+  /* Card colors - dark mode */
+  --card: var(--app-dark-utility-1);
+  --card-foreground: var(--glacier-mist-700);
 
-    /* Popover colors */
-    --popover: var(--app-dark-utility-1);
-    --popover-foreground: var(--glacier-mist-700);
+  /* Popover colors */
+  --popover: var(--app-dark-utility-1);
+  --popover-foreground: var(--glacier-mist-700);
 
-    /* Primary colors */
-    --primary: var(--aurora-moss);
-    --primary-foreground: var(--midnight-fjord);
+  /* Primary colors */
+  --primary: var(--aurora-moss);
+  --primary-foreground: var(--midnight-fjord);
 
-    /* Secondary colors */
-    --secondary: var(--aurora-moss);
-    --secondary-foreground: var(--midnight-fjord);
+  /* Secondary colors */
+  --secondary: var(--aurora-moss);
+  --secondary-foreground: var(--midnight-fjord);
 
-    /* Tertiary colors */
-    --tertiary: var(--aurora-moss);
-    --tertiary-foreground: var(--midnight-fjord);
+  /* Tertiary colors */
+  --tertiary: var(--aurora-moss);
+  --tertiary-foreground: var(--midnight-fjord);
 
-    /* Quaternary colors */
-    --quaternary: var(--app-dark-utility-2);
-    --quaternary-foreground: var(--glacier-mist-700);
+  /* Quaternary colors */
+  --quaternary: var(--app-dark-utility-2);
+  --quaternary-foreground: var(--glacier-mist-700);
 
-    /* Muted colors */
-    --muted: var(--app-dark-utility-1);
-    --muted-foreground: var(--app-dark-utility-4);
+  /* Muted colors */
+  --muted: var(--app-dark-utility-1);
+  --muted-foreground: var(--app-dark-utility-4);
 
-    /* Accent colors */
-    --accent: var(--app-dark-utility-2);
-    --accent-foreground: var(--glacier-mist-700);
+  /* Accent colors */
+  --accent: var(--app-dark-utility-2);
+  --accent-foreground: var(--glacier-mist-700);
 
-    /* Destructive colors */
-    --destructive: var(--alert-red-light);
-    --destructive-foreground: var(--glacier-mist-700);
+  /* Destructive colors */
+  --destructive: var(--alert-red-light);
+  --destructive-foreground: var(--glacier-mist-700);
 
-    /* UI elements */
-    --border: var(--app-dark-utility-2);
-    --input: var(--app-dark-utility-2);
-    --ring: var(--app-dark-utility-3);
-    --dialog-overlay: var(--midnight-fjord);
+  /* UI elements */
+  --border: var(--app-dark-utility-2);
+  --input: var(--app-dark-utility-2);
+  --ring: var(--app-dark-utility-3);
+  --dialog-overlay: var(--midnight-fjord);
 
-    --dialog-border: var(--app-dark-utility-2);
+  --dialog-border: var(--app-dark-utility-2);
 
-    /* Toast */
-    --toast-error-background: var(--alert-red-dark);
-    --toast-error-foreground: var(--midnight-fjord);
-    --toast-error-icon: var(--midnight-fjord);
-    --toast-success-background: var(--primary);
-    --toast-success-foreground: var(--midnight-fjord);
-    --toast-success-icon: var(--midnight-fjord);
+  /* Toast */
+  --toast-error-background: var(--alert-red-dark);
+  --toast-error-foreground: var(--midnight-fjord);
+  --toast-error-icon: var(--midnight-fjord);
+  --toast-success-background: var(--primary);
+  --toast-success-foreground: var(--midnight-fjord);
+  --toast-success-icon: var(--midnight-fjord);
 
-    /* Chart colors - dark mode */
-    --chart-1: hsl(220 70% 50%);
-    --chart-2: hsl(160 60% 45%);
-    --chart-3: hsl(30 80% 55%);
-    --chart-4: hsl(280 65% 60%);
-    --chart-5: hsl(340 75% 55%);
+  /* Chart colors - dark mode */
+  --chart-1: hsl(220 70% 50%);
+  --chart-2: hsl(160 60% 45%);
+  --chart-3: hsl(30 80% 55%);
+  --chart-4: hsl(280 65% 60%);
+  --chart-5: hsl(340 75% 55%);
 
-    /* Sidebar colors - dark mode */
-    --sidebar: var(--midnight-fjord);
-    --sidebar-foreground: var(--app-dark-utility-4);
-    --sidebar-primary: var(--glacier-mist-700);
-    --sidebar-primary-foreground: var(--app-dark-utility-2);
-    --sidebar-accent: var(--app-dark-utility-1);
-    --sidebar-accent-foreground: var(--app-dark-utility-4);
-    --sidebar-border: var(--app-dark-utility-1);
-    --sidebar-ring: var(--aurora-moss);
+  /* Sidebar colors - dark mode */
+  --sidebar: var(--midnight-fjord);
+  --sidebar-foreground: var(--app-dark-utility-4);
+  --sidebar-primary: var(--glacier-mist-700);
+  --sidebar-primary-foreground: var(--app-dark-utility-2);
+  --sidebar-accent: var(--app-dark-utility-1);
+  --sidebar-accent-foreground: var(--app-dark-utility-4);
+  --sidebar-border: var(--app-dark-utility-1);
+  --sidebar-ring: var(--aurora-moss);
 
-    /* Status colors - dark mode */
-    --success-100: hsl(150, 100%, 6%);
-    --success-300: hsl(147, 100%, 12%);
-    --success-500: hsl(150, 86%, 65%);
+  /* Status colors - dark mode */
+  --success-100: hsl(150, 100%, 6%);
+  --success-300: hsl(147, 100%, 12%);
+  --success-500: hsl(150, 86%, 65%);
 
-    --info-100: hsl(216, 87%, 65%);
-    --info-300: hsl(215, 100%, 6%);
-    --info-500: hsl(223, 43%, 17%);
+  --info-100: hsl(216, 87%, 65%);
+  --info-300: hsl(215, 100%, 6%);
+  --info-500: hsl(223, 43%, 17%);
 
-    /* Input */
-    --input-background: var(--midnight-fjord);
-    --input-foreground: var(--glacier-mist-700);
-    --input-border: var(--app-dark-utility-2);
-    --input-placeholder: var(--app-dark-utility-3);
-    --input-focus-border: var(--aurora-moss);
-    --input-focus-shadow: 0px 0px 0px 3px rgba(236, 249, 192, 0.08);
+  /* Input */
+  --input-background: var(--midnight-fjord);
+  --input-foreground: var(--glacier-mist-700);
+  --input-border: var(--app-dark-utility-2);
+  --input-placeholder: var(--app-dark-utility-3);
+  --input-focus-border: var(--aurora-moss);
+  --input-focus-shadow: 0px 0px 0px 3px rgba(236, 249, 192, 0.08);
 
-    --table-accent: var(--app-dark-utility-1);
-    --table-cell: var(--midnight-fjord);
-    --table-cell-hover: var(--app-dark-utility-1);
+  --table-accent: var(--app-dark-utility-1);
+  --table-cell: var(--midnight-fjord);
+  --table-cell-hover: var(--app-dark-utility-1);
 
-    /* Badge */
-    --badge-primary: var(--primary);
-    --badge-primary-foreground: var(--primary-foreground);
-    --badge-secondary: var(--secondary);
-    --badge-secondary-foreground: var(--secondary-foreground);
-    --badge-tertiary: var(--tertiary);
-    --badge-tertiary-foreground: var(--tertiary-foreground);
-    --badge-quaternary: var(--quaternary);
-    --badge-quaternary-foreground: var(--quaternary-foreground);
-    --badge-muted: var(--glacier-mist-800);
-    --badge-muted-foreground: var(--accent-foreground);
-    --badge-success: hsl(112, 14%, 57%);
-    --badge-success-foreground: var(--glacier-mist-700);
-    --badge-info: hsl(202, 34%, 46%);
-    --badge-info-foreground: var(--glacier-mist-700);
-    --badge-danger: var(--destructive);
-    --badge-danger-foreground: var(--destructive-foreground);
-    --badge-warning: hsl(34, 100%, 50%);
-    --badge-warning-foreground: var(--glacier-mist-700);
+  /* Badge */
+  --badge-primary: var(--primary);
+  --badge-primary-foreground: var(--primary-foreground);
+  --badge-secondary: var(--secondary);
+  --badge-secondary-foreground: var(--secondary-foreground);
+  --badge-tertiary: var(--tertiary);
+  --badge-tertiary-foreground: var(--tertiary-foreground);
+  --badge-quaternary: var(--quaternary);
+  --badge-quaternary-foreground: var(--quaternary-foreground);
+  --badge-muted: var(--glacier-mist-800);
+  --badge-muted-foreground: var(--accent-foreground);
+  --badge-success: hsl(112, 14%, 57%);
+  --badge-success-foreground: var(--glacier-mist-700);
+  --badge-info: hsl(202, 34%, 46%);
+  --badge-info-foreground: var(--glacier-mist-700);
+  --badge-danger: var(--destructive);
+  --badge-danger-foreground: var(--destructive-foreground);
+  --badge-warning: hsl(34, 100%, 50%);
+  --badge-warning-foreground: var(--glacier-mist-700);
 
-    --card-success-border: var(--potted-olive);
-    --card-success: #f4f9f53f;
-    --card-success-secondary: #adbab0;
-    --card-border: var(--app-dark-utility-2);
+  --card-success-border: var(--potted-olive);
+  --card-success: #f4f9f53f;
+  --card-success-secondary: #adbab0;
+  --card-border: var(--app-dark-utility-2);
+  --card-tertiary: var(--pine-forge);
+  --card-quaternary: var(--app-dark-utility-5);
 
-    --btn-primary: rgba(230, 245, 159, 0.9);
-    --btn-secondary: var(--btn-primary);
-    --btn-tertiary: var(--btn-primary);
-    --btn-quaternary: var(--quaternary);
-    --btn-quaternary-hover: var(--app-dark-utility-3);
+  /* Button colors - dark mode overrides */
+  --btn-neutral-bg: #374151; /* gray-700 */
+  --btn-neutral-bg-hover: #4b5563; /* gray-600 */
+  --btn-neutral-bg-active: #6b7280; /* gray-500 */
 
-    /* Icon Colors */
-    --icon-primary: var(--app-dark-utility-4);
-    --icon-secondary: var(--app-dark-utility-4);
-    --icon-tertiary: var(--app-dark-utility-3);
-    --icon-quaternary: var(--app-dark-utility-2);
-    --icon-quinary: var(--app-dark-utility-1);
-    --icon-header: var(--aurora-moss);
+  /* Primary */
+  --btn-primary: rgba(230, 245, 159, 0.9);
+  --btn-primary-hover: var(--aurora-moss);
+  --btn-primary-active: color-mix(in srgb, var(--btn-primary-hover) 80%, black 20%);
+  --btn-primary-foreground: var(--midnight-fjord);
+  --btn-primary-border: var(--aurora-moss);
 
-    --stepper-line: var(--app-dark-utility-2);
-    --stepper-label: var(--app-dark-utility-3);
-  }
+  /* Secondary */
+  --btn-secondary: rgba(230, 245, 159, 0.9);
+  --btn-secondary-hover: var(--aurora-moss);
+  --btn-secondary-active: color-mix(in srgb, var(--btn-secondary-hover) 80%, black 20%);
+  --btn-secondary-foreground: var(--midnight-fjord);
+  --btn-secondary-border: var(--aurora-moss);
+
+  /* Tertiary */
+  --btn-tertiary: rgba(230, 245, 159, 0.9);
+  --btn-tertiary-hover: var(--aurora-moss);
+  --btn-tertiary-active: color-mix(in srgb, var(--btn-tertiary-hover) 80%, black 20%);
+  --btn-tertiary-foreground: var(--midnight-fjord);
+  --btn-tertiary-border: var(--aurora-moss);
+
+  /* Quaternary */
+  --btn-quaternary: rgba(230, 245, 159, 0.9);
+  --btn-quaternary-hover: var(--aurora-moss);
+  --btn-quaternary-active: color-mix(in srgb, var(--btn-quaternary-hover) 80%, black 20%);
+  --btn-quaternary-foreground: var(--midnight-fjord);
+  --btn-quaternary-border: var(--aurora-moss);
+
+  /* Warning */
+  --btn-warning: #eab308; /* yellow-500 */
+  --btn-warning-hover: #ca8a04; /* yellow-600 */
+  --btn-warning-active: #a16207; /* yellow-700 */
+  --btn-warning-foreground: #111827; /* near gray-900 */
+  --btn-warning-border: #eab308;
+
+  /* Danger */
+  --btn-danger: var(--destructive);
+  --btn-danger-hover: color-mix(in srgb, var(--destructive) 82%, black 18%);
+  --btn-danger-active: color-mix(in srgb, var(--destructive) 70%, black 30%);
+  --btn-danger-foreground: var(--destructive-foreground);
+  --btn-danger-border: var(--destructive);
+
+  /* Success */
+  --btn-success: #22c55e; /* green-500 */
+  --btn-success-hover: #16a34a; /* green-600 */
+  --btn-success-active: #15803d; /* green-700 */
+  --btn-success-foreground: #111827; /* near gray-900 */
+  --btn-success-border: #22c55e;
+
+  /* Icon Colors */
+  --icon-primary: var(--app-dark-utility-4);
+  --icon-secondary: var(--app-dark-utility-4);
+  --icon-tertiary: var(--app-dark-utility-3);
+  --icon-quaternary: var(--app-dark-utility-2);
+  --icon-quinary: var(--app-dark-utility-1);
+  --icon-header: var(--aurora-moss);
+
+  --stepper-line: var(--app-dark-utility-2);
+  --stepper-label: var(--app-dark-utility-3);
 }
 
 /* ========================================
@@ -396,12 +497,55 @@ TAILWIND CUSTOM UTILITIES FOR THEME
   --color-card-success: var(--card-success);
   --color-card-success-secondary: var(--card-success-secondary);
   --color-card-border: var(--card-border);
+  --color-card-tertiary: var(--card-tertiary);
+  --color-card-quaternary: var(--card-quaternary);
+
+  /* Button colors */
+  --color-btn-neutral-bg: var(--btn-neutral-bg);
+  --color-btn-neutral-bg-hover: var(--btn-neutral-bg-hover);
+  --color-btn-neutral-bg-active: var(--btn-neutral-bg-active);
 
   --color-btn-primary: var(--btn-primary);
+  --color-btn-primary-hover: var(--btn-primary-hover);
+  --color-btn-primary-active: var(--btn-primary-active);
+  --color-btn-primary-foreground: var(--btn-primary-foreground);
+  --color-btn-primary-border: var(--btn-primary-border);
+
   --color-btn-secondary: var(--btn-secondary);
+  --color-btn-secondary-hover: var(--btn-secondary-hover);
+  --color-btn-secondary-active: var(--btn-secondary-active);
+  --color-btn-secondary-foreground: var(--btn-secondary-foreground);
+  --color-btn-secondary-border: var(--btn-secondary-border);
+
   --color-btn-tertiary: var(--btn-tertiary);
+  --color-btn-tertiary-hover: var(--btn-tertiary-hover);
+  --color-btn-tertiary-active: var(--btn-tertiary-active);
+  --color-btn-tertiary-foreground: var(--btn-tertiary-foreground);
+  --color-btn-tertiary-border: var(--btn-tertiary-border);
+
   --color-btn-quaternary: var(--btn-quaternary);
   --color-btn-quaternary-hover: var(--btn-quaternary-hover);
+  --color-btn-quaternary-active: var(--btn-quaternary-active);
+  --color-btn-quaternary-foreground: var(--btn-quaternary-foreground);
+  --color-btn-quaternary-border: var(--btn-quaternary-border);
+
+  --color-btn-warning: var(--btn-warning);
+  --color-btn-warning-hover: var(--btn-warning-hover);
+  --color-btn-warning-active: var(--btn-warning-active);
+  --color-btn-warning-foreground: var(--btn-warning-foreground);
+  --color-btn-warning-border: var(--btn-warning-border);
+
+  --color-btn-danger: var(--btn-danger);
+  --color-btn-danger-hover: var(--btn-danger-hover);
+  --color-btn-danger-active: var(--btn-danger-active);
+  --color-btn-danger-foreground: var(--btn-danger-foreground);
+  --color-btn-danger-border: var(--btn-danger-border);
+
+  --color-btn-success: var(--btn-success);
+  --color-btn-success-hover: var(--btn-success-hover);
+  --color-btn-success-active: var(--btn-success-active);
+  --color-btn-success-foreground: var(--btn-success-foreground);
+  --color-btn-success-border: var(--btn-success-border);
 
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -413,15 +557,6 @@ TAILWIND CUSTOM UTILITIES FOR THEME
 
   --color-stepper-line: var(--stepper-line);
   --color-stepper-label: var(--stepper-label);
-
-  /* Alert / Status colors */
-  --color-success-100: var(--success-100);
-  --color-success-300: var(--success-300);
-  --color-success-500: var(--success-500);
-
-  --color-info-100: var(--info-100);
-  --color-info-300: var(--info-300);
-  --color-info-500: var(--info-500);
 }
 
 /* ========================================

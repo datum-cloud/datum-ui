@@ -1,0 +1,145 @@
+---
+title: Page Title
+description: A page heading component with optional description and action buttons in inline or stacked layouts.
+---
+
+import { PageTitle } from '@/components/ui'
+
+## Overview
+
+The PageTitle component renders a page heading with optional description text and an action area. Actions can be positioned inline (side by side with the title) or stacked below the title and description.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Usage
+
+<ComponentPreview name="Basic PageTitle">
+  <PageTitle title="Dashboard" />
+</ComponentPreview>
+
+```tsx
+import { PageTitle } from '@datum-cloud/datum-ui/page-title'
+
+<PageTitle title="Dashboard" />
+```
+
+## Examples
+
+### With Description
+
+<ComponentPreview name="PageTitle with Description">
+  <PageTitle
+    title="Team Members"
+    description="Manage your team members and their roles."
+  />
+</ComponentPreview>
+
+```tsx
+<PageTitle
+  title="Team Members"
+  description="Manage your team members and their roles."
+/>
+```
+
+### With Actions (Inline)
+
+Actions are positioned inline by default, aligned to the right of the title.
+
+<ComponentPreview name="PageTitle with Inline Actions">
+  <PageTitle
+    title="Projects"
+    description="View and manage all your projects."
+    actions={
+      <button className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md">
+        New Project
+      </button>
+    }
+  />
+</ComponentPreview>
+
+```tsx
+import { Button } from '@datum-cloud/datum-ui/button'
+import { PageTitle } from '@datum-cloud/datum-ui/page-title'
+import { Plus } from 'lucide-react'
+
+<PageTitle
+  title="Projects"
+  description="View and manage all your projects."
+  actions={
+    <Button type="primary" icon={<Plus size={16} />}>
+      New Project
+    </Button>
+  }
+/>
+```
+
+### With Actions (Bottom)
+
+Set `actionsPosition="bottom"` to stack the actions below the title and description.
+
+<ComponentPreview name="PageTitle with Bottom Actions">
+  <PageTitle
+    title="Account Settings"
+    description="Update your account preferences and security settings."
+    actionsPosition="bottom"
+    actions={
+      <div className="flex gap-2">
+        <button className="px-4 py-2 text-sm border rounded-md">Cancel</button>
+        <button className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md">Save Changes</button>
+      </div>
+    }
+  />
+</ComponentPreview>
+
+```tsx
+<PageTitle
+  title="Account Settings"
+  description="Update your account preferences and security settings."
+  actionsPosition="bottom"
+  actions={
+    <div className="flex gap-2">
+      <Button type="secondary" theme="outline">Cancel</Button>
+      <Button type="primary" theme="solid">Save Changes</Button>
+    </div>
+  }
+/>
+```
+
+### Custom Styling
+
+Use the className props to customize individual sections.
+
+<ComponentPreview name="PageTitle Custom Styling">
+  <PageTitle
+    title="Styled Title"
+    description="With custom colors and sizing."
+    titleClassName="text-3xl text-blue-600"
+    descriptionClassName="text-base text-blue-400"
+    className="border-b pb-4"
+  />
+</ComponentPreview>
+
+```tsx
+<PageTitle
+  title="Styled Title"
+  description="With custom colors and sizing."
+  titleClassName="text-3xl text-blue-600"
+  descriptionClassName="text-base text-blue-400"
+  className="border-b pb-4"
+/>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | -- | The page heading text |
+| `description` | `ReactNode` | -- | Descriptive text displayed below the title |
+| `actions` | `ReactNode` | -- | Action elements (buttons, links, etc.) |
+| `actionsPosition` | `'inline' \| 'bottom'` | `'inline'` | Where to place the actions relative to the title |
+| `className` | `string` | -- | Additional CSS classes for the root container |
+| `titleClassName` | `string` | -- | Additional CSS classes for the title element |
+| `descriptionClassName` | `string` | -- | Additional CSS classes for the description element |
+| `actionsClassName` | `string` | -- | Additional CSS classes for the actions container |

@@ -1,9 +1,9 @@
 import { Slot } from '@radix-ui/react-slot';
-import { cn } from '../lib/utils';
+import { cn } from '@repo/shadcn/lib/utils';
 import { type VariantProps, cva } from 'class-variance-authority';
 import * as React from 'react';
 
-/** 
+/**
  * Vanilla shadcn/ui Button Component
  * Pure shadcn button without Datum customizations
  * For Datum-specific features (dashed variant, isLoading), import from @/modules/datum-ui

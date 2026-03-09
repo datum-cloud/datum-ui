@@ -1,0 +1,8 @@
+{
+  "title": "Hooks",
+  "pages": [
+    "index",
+    "use-debounce",
+    "use-copy-to-clipboard"
+  ]
+}

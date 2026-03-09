@@ -1,0 +1,220 @@
+---
+title: Typography
+description: Semantic typography components with responsive sizing, weight, and color variants.
+---
+
+## Overview
+
+The Typography module provides a set of semantic text components: `Title`, `Text`, `Paragraph`, `Link`, `List`, `Blockquote`, and `Code`. All components use CVA variants for consistent sizing, weight, and color. `Title` renders responsive heading elements, `Text` supports inline formatting shortcuts (bold, italic, code, mark, etc.), and `Paragraph` handles block-level text with spacing control.
+
+## Usage
+
+```tsx
+import { Title, Text, Paragraph } from '@datum-cloud/datum-ui/typography'
+
+<Title level={1}>Page Heading</Title>
+<Paragraph>Body text goes here.</Paragraph>
+<Text strong>Bold inline text</Text>
+```
+
+## Examples
+
+### Title Levels
+
+```tsx
+import { Title } from '@datum-cloud/datum-ui/typography'
+
+<Title level={1}>Heading 1</Title>
+<Title level={2}>Heading 2</Title>
+<Title level={3}>Heading 3</Title>
+<Title level={4}>Heading 4</Title>
+<Title level={5}>Heading 5</Title>
+<Title level={6}>Heading 6</Title>
+```
+
+### Title Colors
+
+```tsx
+import { Title } from '@datum-cloud/datum-ui/typography'
+
+<Title level={3} textColor="default">Default</Title>
+<Title level={3} textColor="muted">Muted</Title>
+<Title level={3} textColor="primary">Primary</Title>
+<Title level={3} textColor="destructive">Destructive</Title>
+<Title level={3} textColor="success">Success</Title>
+<Title level={3} textColor="warning">Warning</Title>
+<Title level={3} textColor="info">Info</Title>
+```
+
+### Text Variants
+
+```tsx
+import { Text } from '@datum-cloud/datum-ui/typography'
+
+<Text>Default text</Text>
+<Text strong>Strong text</Text>
+<Text italic>Italic text</Text>
+<Text underline>Underlined text</Text>
+<Text delete>Deleted text</Text>
+<Text code>Code text</Text>
+<Text mark>Marked text</Text>
+```
+
+### Text Sizes
+
+```tsx
+import { Text } from '@datum-cloud/datum-ui/typography'
+
+<Text size="xs">Extra small</Text>
+<Text size="sm">Small</Text>
+<Text size="base">Base</Text>
+<Text size="lg">Large</Text>
+<Text size="xl">Extra large</Text>
+```
+
+### Copyable Text
+
+```tsx
+import { Text } from '@datum-cloud/datum-ui/typography'
+
+<Text copyable>Click the icon to copy this text</Text>
+```
+
+### Ellipsis
+
+```tsx
+import { Text } from '@datum-cloud/datum-ui/typography'
+
+<div className="w-48">
+  <Text ellipsis>This text is very long and will be truncated with an ellipsis</Text>
+</div>
+```
+
+### Paragraph
+
+```tsx
+import { Paragraph } from '@datum-cloud/datum-ui/typography'
+
+<Paragraph>
+  Default paragraph with relaxed leading. Useful for body text in articles,
+  descriptions, and general content areas.
+</Paragraph>
+<Paragraph spacing="tight">Tight line spacing.</Paragraph>
+<Paragraph spacing="loose">Loose line spacing.</Paragraph>
+```
+
+### Link
+
+```tsx
+import { Link } from '@datum-cloud/datum-ui/typography'
+
+<Link href="https://datum.net">Datum Cloud</Link>
+<Link href="https://datum.net" target="_blank">Opens in new tab</Link>
+```
+
+### List
+
+```tsx
+import { List, ListItem } from '@datum-cloud/datum-ui/typography'
+
+<List>
+  <ListItem>First item</ListItem>
+  <ListItem>Second item</ListItem>
+  <ListItem>Third item</ListItem>
+</List>
+
+<List listType="ordered">
+  <ListItem>Step one</ListItem>
+  <ListItem>Step two</ListItem>
+  <ListItem>Step three</ListItem>
+</List>
+```
+
+### Blockquote
+
+```tsx
+import { Blockquote } from '@datum-cloud/datum-ui/typography'
+
+<Blockquote>
+  The best way to predict the future is to invent it.
+</Blockquote>
+```
+
+### Code
+
+```tsx
+import { Code } from '@datum-cloud/datum-ui/typography'
+
+<p>Use the <Code>useState</Code> hook for local state.</p>
+
+<Code as="pre">{`function hello() {
+  console.log('Hello, world!')
+}`}</Code>
+```
+
+## Sub-components
+
+| Component | Description |
+|-----------|-------------|
+| `Title` | Responsive heading element (h1–h6) with level, weight, and color variants. |
+| `Text` | Inline text with size, weight, color, and formatting variants (bold, italic, code, etc.). |
+| `Paragraph` | Block-level text with size and line-spacing variants. |
+| `Link` | Styled anchor with focus ring. Auto-sets `rel="noopener noreferrer"` for `target="_blank"`. |
+| `List` | Ordered or unordered list container. |
+| `ListItem` | List item. |
+| `Blockquote` | Styled blockquote with left border accent. |
+| `Code` | Inline code or pre-formatted code block. |
+
+## Props — Title
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `level` | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | `4` | Heading size (responsive). Also determines the default HTML element. |
+| `as` | `'h1' \| 'h2' \| ... \| 'h6'` | `h{level}` | Override the rendered HTML element. |
+| `weight` | `'normal' \| 'medium' \| 'semibold' \| 'bold' \| 'extrabold'` | `'semibold'` | Font weight. |
+| `textColor` | `'default' \| 'muted' \| 'primary' \| 'secondary' \| 'destructive' \| 'success' \| 'warning' \| 'info'` | `'default'` | Text color. |
+
+## Props — Text
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `'xs' \| 'sm' \| 'base' \| 'lg' \| 'xl' \| '2xl' \| '3xl' \| '4xl'` | `'base'` | Font size. |
+| `weight` | `'normal' \| 'medium' \| 'semibold' \| 'bold' \| 'extrabold'` | `'normal'` | Font weight. |
+| `textColor` | Same as Title | `'default'` | Text color. |
+| `as` | `'span' \| 'p' \| 'div'` | `'span'` | Rendered HTML element. |
+| `copyable` | `boolean` | — | Show a copy button that copies children to clipboard. |
+| `ellipsis` | `boolean` | — | Truncate with ellipsis on overflow. |
+| `strong` | `boolean` | — | Shortcut for `type="strong"`. |
+| `italic` | `boolean` | — | Shortcut for `type="italic"`. |
+| `code` | `boolean` | — | Shortcut for `type="code"`. |
+| `mark` | `boolean` | — | Shortcut for `type="mark"`. |
+| `underline` | `boolean` | — | Shortcut for `type="underline"`. |
+| `delete` | `boolean` | — | Shortcut for `type="delete"` (strikethrough). |
+
+## Props — Paragraph
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `'xs' \| 'sm' \| 'base' \| 'lg' \| 'xl'` | `'base'` | Font size. |
+| `spacing` | `'tight' \| 'normal' \| 'loose'` | `'normal'` | Line height. |
+| `as` | `'p' \| 'div'` | `'p'` | Rendered HTML element. |
+
+## Props — Link
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `href` | `string` | — | **Required.** Destination URL. |
+| `target` | `'_blank' \| '_self' \| '_parent' \| '_top'` | `'_self'` | Link target. |
+
+## Props — List
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `listType` | `'ordered' \| 'unordered'` | `'unordered'` | List style (numbered or bulleted). |
+| `as` | `'ol' \| 'ul'` | — | Override the rendered element (auto-determined by `listType`). |
+
+## Props — Code
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `as` | `'code' \| 'pre'` | `'code'` | Inline code or pre-formatted block. |

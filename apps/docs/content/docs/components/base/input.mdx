@@ -1,0 +1,124 @@
+---
+title: Input
+description: A styled text input field for capturing user input with built-in focus and error states.
+---
+
+import { Input } from '@/components/ui'
+
+## Overview
+
+The `Input` component wraps a standard HTML `<input>` element with Datum design tokens for consistent styling across your application. It supports all native input types, provides visual feedback for focus and invalid states, and integrates with the Datum theming system.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Usage
+
+```tsx
+import { Input } from '@datum-cloud/datum-ui/input'
+
+<Input placeholder="Enter text" />
+```
+
+## Examples
+
+### Default
+
+A basic text input with placeholder text.
+
+```tsx
+<Input placeholder="Enter text..." />
+```
+
+### Email Input
+
+Use the `type` prop to render different input types.
+
+```tsx
+<Input type="email" placeholder="you@example.com" />
+```
+
+### Password Input
+
+```tsx
+<Input type="password" placeholder="Enter password" />
+```
+
+### Number Input
+
+```tsx
+<Input type="number" placeholder="0" />
+```
+
+### Disabled
+
+Set the `disabled` prop to prevent interaction. The input renders with reduced opacity and a not-allowed cursor.
+
+```tsx
+<Input disabled placeholder="Disabled input" />
+```
+
+### Read-Only
+
+Use `readOnly` to display a value that cannot be edited.
+
+```tsx
+<Input readOnly value="Read-only value" />
+```
+
+### Invalid State
+
+Add `aria-invalid` to trigger the destructive border style, typically used with form validation.
+
+```tsx
+<Input aria-invalid="true" placeholder="Invalid input" />
+```
+
+### With Custom Class
+
+Pass a `className` prop to extend or override the default styles.
+
+```tsx
+<Input className="w-64" placeholder="Fixed width input" />
+```
+
+### File Input
+
+The component supports file inputs with styled file button text.
+
+```tsx
+<Input type="file" />
+```
+
+## Props
+
+The `Input` component accepts all standard HTML `<input>` attributes via `React.ComponentProps<'input'>`.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `string` | `'text'` | The HTML input type (`text`, `email`, `password`, `number`, `file`, etc.) |
+| `placeholder` | `string` | — | Placeholder text displayed when the input is empty |
+| `disabled` | `boolean` | `false` | Disables the input, preventing interaction |
+| `readOnly` | `boolean` | `false` | Makes the input read-only |
+| `value` | `string \| number` | — | The controlled value of the input |
+| `defaultValue` | `string \| number` | — | The uncontrolled default value |
+| `onChange` | `(e: ChangeEvent) => void` | — | Callback fired when the input value changes |
+| `className` | `string` | — | Additional CSS classes to merge with default styles |
+| `ref` | `RefObject<HTMLInputElement>` | — | Ref forwarded to the underlying `<input>` element |
+| `aria-invalid` | `boolean \| string` | — | Marks the input as invalid, applying a destructive border style |
+
+## Styling
+
+The Input component uses the following Datum design tokens:
+
+| Token | Purpose |
+|-------|---------|
+| `--input-background` | Input background color (applied at 50% opacity) |
+| `--input-foreground` | Text color |
+| `--input-border` | Default border color |
+| `--input-placeholder` | Placeholder text color |
+| `--input-focus-border` | Border color on focus |
+| `--input-focus-shadow` | Shadow applied on focus |
+
+Override these tokens in your theme to customize input appearance globally. See [Theming](/docs/theming) for details.

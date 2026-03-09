@@ -1,0 +1,14 @@
+/**
+ * Storybook CSS entry point.
+ *
+ * Uses package imports to dogfood the real consumer experience.
+ * Run `pnpm --filter @datum-cloud/datum-ui build` before starting storybook.
+ */
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'tailwind-scrollbar-hide/v4';
+@import '@datum-cloud/datum-ui/styles';
+@import '@datum-cloud/datum-ui/grid';
+@import '@datum-cloud/datum-ui/nprogress';
+
+@source "./";

@@ -1,0 +1,119 @@
+---
+title: Tooltip
+description: Display contextual information when hovering or focusing on a trigger element.
+---
+
+import { Tooltip, Button } from '@/components/ui'
+
+## Overview
+
+Tooltip wraps Radix UI's tooltip primitives into a single convenient component. Pass a `message` and wrap any element as the trigger. The tooltip supports positioning, delay customization, and controlled open state.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-tooltip
+```
+
+## Usage
+
+<ComponentPreview name="Basic Tooltip">
+  <Tooltip message="This is a tooltip">
+    <Button type="secondary" theme="outline">Hover me</Button>
+  </Tooltip>
+</ComponentPreview>
+
+```tsx
+import { Tooltip } from '@datum-cloud/datum-ui/tooltip'
+import { Button } from '@datum-cloud/datum-ui/button'
+
+<Tooltip message="This is a tooltip">
+  <Button type="secondary" theme="outline">Hover me</Button>
+</Tooltip>
+```
+
+## Examples
+
+### Positioning
+
+Use the `side` prop to control where the tooltip appears relative to the trigger.
+
+<ComponentPreview name="Tooltip Positions">
+  <div className="flex gap-4">
+    <Tooltip message="Top tooltip" side="top">
+      <Button type="secondary" theme="outline">Top</Button>
+    </Tooltip>
+    <Tooltip message="Right tooltip" side="right">
+      <Button type="secondary" theme="outline">Right</Button>
+    </Tooltip>
+    <Tooltip message="Bottom tooltip" side="bottom">
+      <Button type="secondary" theme="outline">Bottom</Button>
+    </Tooltip>
+    <Tooltip message="Left tooltip" side="left">
+      <Button type="secondary" theme="outline">Left</Button>
+    </Tooltip>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Tooltip message="Top tooltip" side="top">
+  <Button type="secondary" theme="outline">Top</Button>
+</Tooltip>
+<Tooltip message="Right tooltip" side="right">
+  <Button type="secondary" theme="outline">Right</Button>
+</Tooltip>
+<Tooltip message="Bottom tooltip" side="bottom">
+  <Button type="secondary" theme="outline">Bottom</Button>
+</Tooltip>
+<Tooltip message="Left tooltip" side="left">
+  <Button type="secondary" theme="outline">Left</Button>
+</Tooltip>
+```
+
+### With Custom Delay
+
+<ComponentPreview name="Tooltip With Delay">
+  <Tooltip message="Appears after 500ms" delayDuration={500}>
+    <Button type="secondary" theme="outline">Slow tooltip</Button>
+  </Tooltip>
+</ComponentPreview>
+
+```tsx
+<Tooltip message="Appears after 500ms" delayDuration={500}>
+  <Button type="secondary" theme="outline">Slow tooltip</Button>
+</Tooltip>
+```
+
+### Rich Content
+
+The `message` prop accepts ReactNode for rich tooltip content.
+
+<ComponentPreview name="Tooltip Rich Content">
+  <Tooltip message={<span><strong>Bold</strong> and <em>italic</em> content</span>}>
+    <Button type="secondary" theme="outline">Rich tooltip</Button>
+  </Tooltip>
+</ComponentPreview>
+
+```tsx
+<Tooltip message={<span><strong>Bold</strong> and <em>italic</em> content</span>}>
+  <Button type="secondary" theme="outline">Rich tooltip</Button>
+</Tooltip>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `message` | `string \| ReactNode` | -- | Tooltip content |
+| `children` | `ReactNode` | -- | Trigger element (rendered with `asChild`) |
+| `delayDuration` | `number` | `200` | Delay in ms before tooltip appears |
+| `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | -- | Preferred side of the trigger |
+| `align` | `'start' \| 'center' \| 'end'` | -- | Alignment along the side |
+| `sideOffset` | `number` | `0` | Distance in px from the trigger |
+| `hidden` | `boolean` | -- | Hide the tooltip content |
+| `open` | `boolean` | -- | Controlled open state |
+| `onOpenChange` | `(open: boolean) => void` | -- | Callback when open state changes |
+| `contentClassName` | `string` | -- | Class for the tooltip content container |
+| `arrowClassName` | `string` | -- | Class for the tooltip arrow |

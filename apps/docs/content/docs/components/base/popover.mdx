@@ -1,0 +1,88 @@
+---
+title: Popover
+description: A floating panel anchored to a trigger element for rich interactive content.
+---
+
+import { Button } from '@/components/ui'
+
+## Overview
+
+Popover displays rich content in a floating panel anchored to a trigger element. Unlike a tooltip (text-only, hover-activated), a popover can contain forms, buttons, or any interactive content and is opened by clicking the trigger. It is built on Radix UI's Popover primitive.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-popover
+```
+
+## Usage
+
+```tsx
+import { Popover, PopoverTrigger, PopoverContent } from '@datum-cloud/datum-ui/popover'
+
+<Popover>
+  <PopoverTrigger asChild>
+    <Button type="secondary" theme="outline">Open Popover</Button>
+  </PopoverTrigger>
+  <PopoverContent>
+    <div className="flex flex-col gap-2">
+      <h4 className="font-medium text-sm">Dimensions</h4>
+      <p className="text-sm text-muted-foreground">
+        Set the dimensions for the layer.
+      </p>
+    </div>
+  </PopoverContent>
+</Popover>
+```
+
+## Examples
+
+### Alignment
+
+Control where the popover appears relative to the trigger:
+
+```tsx
+<PopoverContent align="start">Left-aligned content</PopoverContent>
+<PopoverContent align="center">Center-aligned content</PopoverContent>
+<PopoverContent align="end">Right-aligned content</PopoverContent>
+```
+
+### With Form Content
+
+```tsx
+<Popover>
+  <PopoverTrigger asChild>
+    <Button type="secondary" theme="outline">Set Date Range</Button>
+  </PopoverTrigger>
+  <PopoverContent className="w-80">
+    <div className="flex flex-col gap-4">
+      <Label htmlFor="start-date">Start Date</Label>
+      <Input id="start-date" type="date" />
+      <Label htmlFor="end-date">End Date</Label>
+      <Input id="end-date" type="date" />
+      <Button type="primary" size="small">Apply</Button>
+    </div>
+  </PopoverContent>
+</Popover>
+```
+
+## Props
+
+### PopoverContent
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `align` | `'start' \| 'center' \| 'end'` | `'center'` | Horizontal alignment relative to trigger |
+| `sideOffset` | `number` | `4` | Distance from the trigger in pixels |
+| `className` | `string` | -- | Additional CSS classes |
+
+### Sub-components
+
+| Component | Description |
+|-----------|-------------|
+| `Popover` | Root -- manages open/close state |
+| `PopoverTrigger` | The element that opens the popover |
+| `PopoverContent` | The floating panel |
+| `PopoverAnchor` | Optional custom anchor point |

@@ -1,0 +1,136 @@
+---
+title: Radio Group
+description: A set of mutually exclusive radio options built on Radix UI RadioGroup.
+---
+
+import { RadioGroup, RadioGroupItem, Label } from '@/components/ui'
+
+## Overview
+
+The `RadioGroup` component renders a group of radio buttons where only one option can be selected at a time. It uses Radix UI RadioGroup for accessible keyboard navigation and focus management.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-radio-group
+```
+
+## Usage
+
+<ComponentPreview name="Basic RadioGroup">
+  <RadioGroup>
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="option-1" id="option-1" />
+      <Label htmlFor="option-1">Option One</Label>
+    </div>
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="option-2" id="option-2" />
+      <Label htmlFor="option-2">Option Two</Label>
+    </div>
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="option-3" id="option-3" />
+      <Label htmlFor="option-3">Option Three</Label>
+    </div>
+  </RadioGroup>
+</ComponentPreview>
+
+```tsx
+import { RadioGroup, RadioGroupItem } from '@datum-cloud/datum-ui/radio-group'
+import { Label } from '@datum-cloud/datum-ui/label'
+
+<RadioGroup>
+  <div className="flex items-center gap-2">
+    <RadioGroupItem value="option-1" id="option-1" />
+    <Label htmlFor="option-1">Option One</Label>
+  </div>
+  <div className="flex items-center gap-2">
+    <RadioGroupItem value="option-2" id="option-2" />
+    <Label htmlFor="option-2">Option Two</Label>
+  </div>
+  <div className="flex items-center gap-2">
+    <RadioGroupItem value="option-3" id="option-3" />
+    <Label htmlFor="option-3">Option Three</Label>
+  </div>
+</RadioGroup>
+```
+
+## Examples
+
+### With Default Value
+
+<ComponentPreview name="RadioGroup with Default">
+  <RadioGroup defaultValue="option-2">
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="option-1" id="default-1" />
+      <Label htmlFor="default-1">Option One</Label>
+    </div>
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="option-2" id="default-2" />
+      <Label htmlFor="default-2">Option Two</Label>
+    </div>
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="option-3" id="default-3" />
+      <Label htmlFor="default-3">Option Three</Label>
+    </div>
+  </RadioGroup>
+</ComponentPreview>
+
+```tsx
+<RadioGroup defaultValue="option-2">
+  <div className="flex items-center gap-2">
+    <RadioGroupItem value="option-1" id="default-1" />
+    <Label htmlFor="default-1">Option One</Label>
+  </div>
+  <div className="flex items-center gap-2">
+    <RadioGroupItem value="option-2" id="default-2" />
+    <Label htmlFor="default-2">Option Two</Label>
+  </div>
+</RadioGroup>
+```
+
+### Disabled
+
+<ComponentPreview name="Disabled RadioGroup">
+  <RadioGroup disabled defaultValue="option-1">
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="option-1" id="disabled-1" />
+      <Label htmlFor="disabled-1">Option One</Label>
+    </div>
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="option-2" id="disabled-2" />
+      <Label htmlFor="disabled-2">Option Two</Label>
+    </div>
+  </RadioGroup>
+</ComponentPreview>
+
+```tsx
+<RadioGroup disabled defaultValue="option-1">
+  ...
+</RadioGroup>
+```
+
+## Props
+
+### RadioGroup
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | -- | Controlled selected value |
+| `defaultValue` | `string` | -- | Default selected value |
+| `onValueChange` | `(value: string) => void` | -- | Callback when selection changes |
+| `disabled` | `boolean` | `false` | Disables all items |
+| `required` | `boolean` | `false` | Marks the group as required |
+| `orientation` | `'horizontal' \| 'vertical'` | `'vertical'` | Layout direction |
+| `name` | `string` | -- | Name for form submission |
+| `className` | `string` | -- | Additional CSS classes |
+
+### RadioGroupItem
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | -- | Unique value for this option |
+| `disabled` | `boolean` | `false` | Disables this item |
+| `id` | `string` | -- | ID for label association |
+| `className` | `string` | -- | Additional CSS classes |

@@ -1,0 +1,144 @@
+---
+title: Select
+description: A dropdown select menu with support for groups, sizes, and Datum design tokens.
+---
+
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui'
+
+## Overview
+
+The `Select` component is a styled dropdown built on Radix UI Select. It supports grouped options, placeholder text, and two trigger sizes. The Datum wrapper adds custom border, background, and focus tokens on top of the shadcn base.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-select
+```
+
+## Usage
+
+<ComponentPreview name="Basic Select">
+  <Select>
+    <SelectTrigger className="w-[200px]">
+      <SelectValue placeholder="Select a fruit" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="apple">Apple</SelectItem>
+      <SelectItem value="banana">Banana</SelectItem>
+      <SelectItem value="cherry">Cherry</SelectItem>
+    </SelectContent>
+  </Select>
+</ComponentPreview>
+
+```tsx
+import {
+  Select, SelectContent, SelectItem,
+  SelectTrigger, SelectValue,
+} from '@datum-cloud/datum-ui/select'
+
+<Select>
+  <SelectTrigger className="w-[200px]">
+    <SelectValue placeholder="Select a fruit" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="apple">Apple</SelectItem>
+    <SelectItem value="banana">Banana</SelectItem>
+    <SelectItem value="cherry">Cherry</SelectItem>
+  </SelectContent>
+</Select>
+```
+
+## Examples
+
+### With Groups
+
+<ComponentPreview name="Select with Groups">
+  <Select>
+    <SelectTrigger className="w-[200px]">
+      <SelectValue placeholder="Select a food" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectGroup>
+        <SelectLabel>Fruits</SelectLabel>
+        <SelectItem value="apple">Apple</SelectItem>
+        <SelectItem value="banana">Banana</SelectItem>
+      </SelectGroup>
+      <SelectGroup>
+        <SelectLabel>Vegetables</SelectLabel>
+        <SelectItem value="carrot">Carrot</SelectItem>
+        <SelectItem value="broccoli">Broccoli</SelectItem>
+      </SelectGroup>
+    </SelectContent>
+  </Select>
+</ComponentPreview>
+
+```tsx
+<Select>
+  <SelectTrigger className="w-[200px]">
+    <SelectValue placeholder="Select a food" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectGroup>
+      <SelectLabel>Fruits</SelectLabel>
+      <SelectItem value="apple">Apple</SelectItem>
+      <SelectItem value="banana">Banana</SelectItem>
+    </SelectGroup>
+    <SelectGroup>
+      <SelectLabel>Vegetables</SelectLabel>
+      <SelectItem value="carrot">Carrot</SelectItem>
+      <SelectItem value="broccoli">Broccoli</SelectItem>
+    </SelectGroup>
+  </SelectContent>
+</Select>
+```
+
+### Disabled
+
+<ComponentPreview name="Disabled Select">
+  <Select disabled>
+    <SelectTrigger className="w-[200px]">
+      <SelectValue placeholder="Disabled select" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="option-1">Option One</SelectItem>
+    </SelectContent>
+  </Select>
+</ComponentPreview>
+
+```tsx
+<Select disabled>
+  <SelectTrigger className="w-[200px]">
+    <SelectValue placeholder="Disabled select" />
+  </SelectTrigger>
+  ...
+</Select>
+```
+
+## Props
+
+### Select
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | -- | Controlled selected value |
+| `defaultValue` | `string` | -- | Default selected value |
+| `onValueChange` | `(value: string) => void` | -- | Callback when selection changes |
+| `disabled` | `boolean` | `false` | Disables the select |
+| `name` | `string` | -- | Name for form submission |
+
+### SelectTrigger
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `'sm' \| 'default'` | `'default'` | Trigger height (`default` = 36px, `sm` = 32px) |
+| `className` | `string` | -- | Additional CSS classes |
+
+### SelectItem
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | -- | Option value |
+| `disabled` | `boolean` | `false` | Disables this option |
+| `children` | `ReactNode` | -- | Option label |

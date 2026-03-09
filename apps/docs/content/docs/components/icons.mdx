@@ -1,0 +1,151 @@
+---
+title: Icons
+description: A lightweight icon system with a Lucide wrapper and custom SVG icons for consistent sizing and styling.
+---
+
+import { CloseIcon, SpinnerIcon } from '@/components/ui'
+
+## Overview
+
+The icon system provides three components: `Icon` for rendering any Lucide icon with consistent defaults, `CloseIcon` for a styled dismissal indicator, and `SpinnerIcon` for animated loading states. The `Icon` wrapper standardizes stroke width and sizing across the application.
+
+## Usage
+
+The `Icon` component accepts any Lucide icon via the `icon` prop:
+
+```tsx
+import { Icon } from '@datum-cloud/datum-ui/icon'
+import { Search } from 'lucide-react'
+
+<Icon icon={Search} />
+```
+
+## Examples
+
+### Lucide Icons with Icon Wrapper
+
+The `Icon` component accepts any Lucide icon and applies consistent defaults for `strokeWidth`, `absoluteStrokeWidth`, and `size`.
+
+```tsx
+import { Icon } from '@datum-cloud/datum-ui/icon'
+import { Search, Settings, Bell, User, Plus, Trash2, Heart, ChevronRight } from 'lucide-react'
+
+<Icon icon={Search} />
+<Icon icon={Settings} />
+<Icon icon={Bell} />
+<Icon icon={User} />
+```
+
+### Custom Sizes
+
+Override the default `size` prop to render icons at different dimensions.
+
+```tsx
+<Icon icon={Settings} size={12} />
+<Icon icon={Settings} size={16} />
+<Icon icon={Settings} size={20} />
+<Icon icon={Settings} size={24} />
+<Icon icon={Settings} size={32} />
+```
+
+### Custom Stroke Width
+
+Adjust the `strokeWidth` for thinner or bolder icon lines.
+
+```tsx
+<Icon icon={Heart} size={24} strokeWidth={0.5} absoluteStrokeWidth={false} />
+<Icon icon={Heart} size={24} strokeWidth={1} absoluteStrokeWidth={false} />
+<Icon icon={Heart} size={24} strokeWidth={1.5} absoluteStrokeWidth={false} />
+<Icon icon={Heart} size={24} strokeWidth={2} absoluteStrokeWidth={false} />
+```
+
+### CloseIcon
+
+A custom SVG icon used for dismiss or close actions. It renders a circular close indicator with a semi-transparent background.
+
+<ComponentPreview name="CloseIcon">
+  <div className="flex items-center gap-4">
+    <CloseIcon />
+    <CloseIcon fill="fill-red-500" />
+    <CloseIcon fill="fill-muted-foreground" />
+  </div>
+</ComponentPreview>
+
+```tsx
+import { CloseIcon } from '@datum-cloud/datum-ui/icon'
+
+<CloseIcon />
+<CloseIcon fill="fill-red-500" />
+<CloseIcon fill="fill-muted-foreground" />
+```
+
+### SpinnerIcon
+
+An animated circular spinner with configurable size, track color, and indicator color.
+
+<ComponentPreview name="SpinnerIcon">
+  <div className="flex items-center gap-6">
+    <SpinnerIcon size="xs" />
+    <SpinnerIcon size="sm" />
+    <SpinnerIcon size="md" />
+    <SpinnerIcon size="lg" />
+    <SpinnerIcon size="xl" />
+  </div>
+</ComponentPreview>
+
+```tsx
+import { SpinnerIcon } from '@datum-cloud/datum-ui/spinner'
+
+<SpinnerIcon size="xs" />
+<SpinnerIcon size="sm" />
+<SpinnerIcon size="md" />
+<SpinnerIcon size="lg" />
+<SpinnerIcon size="xl" />
+```
+
+### SpinnerIcon Custom Colors
+
+Override `trackClassName` and `indicatorClassName` to customize spinner colors.
+
+<ComponentPreview name="SpinnerIcon Colors">
+  <div className="flex items-center gap-6">
+    <SpinnerIcon size="lg" trackClassName="text-gray-200" indicatorClassName="text-blue-500" />
+    <SpinnerIcon size="lg" trackClassName="text-red-100" indicatorClassName="text-red-500" />
+    <SpinnerIcon size="lg" trackClassName="text-green-100" indicatorClassName="text-green-500" />
+  </div>
+</ComponentPreview>
+
+```tsx
+<SpinnerIcon size="lg" trackClassName="text-gray-200" indicatorClassName="text-blue-500" />
+<SpinnerIcon size="lg" trackClassName="text-red-100" indicatorClassName="text-red-500" />
+<SpinnerIcon size="lg" trackClassName="text-green-100" indicatorClassName="text-green-500" />
+```
+
+## Props
+
+### Icon
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | `LucideIcon` | -- | The Lucide icon component to render |
+| `size` | `number` | `16` | Icon dimensions in pixels |
+| `strokeWidth` | `number` | `1` | Stroke width of the icon lines |
+| `absoluteStrokeWidth` | `boolean` | `true` | Whether stroke width is absolute (not scaled with size) |
+| `...props` | `LucideProps` | -- | All standard Lucide icon props |
+
+### CloseIcon
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | -- | Additional CSS classes for the SVG element |
+| `fill` | `string` | `'fill-foreground'` | Tailwind fill class for the icon color |
+
+### SpinnerIcon
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| '3xl' \| '4xl' \| '5xl' \| '6xl' \| '7xl' \| '8xl' \| '9xl'` | `'md'` | Size of the spinner |
+| `className` | `string` | -- | Additional CSS classes |
+| `trackClassName` | `string` | `'text-border'` | Color class for the background track circle |
+| `indicatorClassName` | `string` | `'text-primary'` | Color class for the spinning indicator arc |
+| `...props` | `React.SVGProps<SVGSVGElement>` | -- | All standard SVG element props |

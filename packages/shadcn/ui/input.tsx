@@ -1,4 +1,4 @@
-import { cn } from '../lib/utils';
+import { cn } from '@repo/shadcn/lib/utils';
 import * as React from 'react';
 
 const Input = ({ className, type, ...props }: React.ComponentProps<'input'>) => {

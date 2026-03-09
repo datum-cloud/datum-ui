@@ -1,0 +1,161 @@
+---
+title: Task Queue
+description: Async task queue with progress tracking, retry logic, and persistent storage.
+---
+
+# Task Queue
+
+A comprehensive task queue system for managing async operations with progress tracking, batch processing, and persistent storage.
+
+## Installation
+
+The Task Queue is included in the `@datum-cloud/datum-ui` package.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+date-fns @radix-ui/react-tooltip @radix-ui/react-dialog
+```
+
+## Usage
+
+```tsx
+import { TaskQueueProvider, useTaskQueue } from '@datum-cloud/datum-ui/task-queue'
+```
+
+### Setup
+
+Wrap your app with `TaskQueueProvider`:
+
+```tsx
+<TaskQueueProvider>
+  <App />
+</TaskQueueProvider>
+```
+
+### Batch Processing
+
+```tsx
+const { enqueue } = useTaskQueue()
+
+enqueue({
+  title: `Adding ${domains.length} domains`,
+  items: domains,
+  processItem: async (domain) => {
+    await createDomain({ domainName: domain })
+  },
+  onComplete: () => queryClient.invalidateQueries({ queryKey: ['domains'] }),
+})
+```
+
+### Task Summary Dialog
+
+After a task completes, show a summary of results with `showSummary`:
+
+```tsx
+const { enqueue, showSummary } = useTaskQueue()
+
+enqueue({
+  title: 'Importing records',
+  items: records,
+  processItem: async (record) => {
+    await importRecord(record)
+  },
+  onComplete: (outcome) => {
+    const items = records.map(r => ({
+      id: r.id,
+      label: r.name,
+      status: outcome.failedItems.some(f => f.id === r.id) ? 'failed' : 'success',
+      message: outcome.failedItems.find(f => f.id === r.id)?.message,
+    }))
+    showSummary('Import Results', items)
+  },
+})
+```
+
+### Custom Summary Content
+
+Override the default table with a custom renderer, either per-call or globally.
+
+**Per-call override:**
+
+```tsx
+showSummary('Import Results', items, {
+  renderContent: (items) => (
+    <div className="space-y-2">
+      {items.map(item => (
+        <div key={item.id} className="flex items-center justify-between p-3 border rounded-lg">
+          <span>{item.label}</span>
+          <span>{item.status}</span>
+        </div>
+      ))}
+    </div>
+  ),
+})
+```
+
+**Global renderer via provider config:**
+
+```tsx
+<TaskQueueProvider config={{
+  summaryRenderContent: (items) => <CustomSummaryTable items={items} />,
+}}>
+  <App />
+</TaskQueueProvider>
+```
+
+The per-call `renderContent` takes precedence over the global `summaryRenderContent`.
+
+### Standalone TaskSummaryDialog
+
+Use `TaskSummaryDialog` directly for custom trigger points:
+
+```tsx
+import { TaskSummaryDialog } from '@datum-cloud/datum-ui/task-queue'
+
+<TaskSummaryDialog
+  open={open}
+  onOpenChange={setOpen}
+  title="Results"
+  items={summaryItems}
+  renderContent={(items) => <MyCustomContent items={items} />}
+/>
+```
+
+## API Reference
+
+### `useTaskQueue()`
+
+| Method / Property      | Description                                             |
+| ---------------------- | ------------------------------------------------------- |
+| `enqueue(options)`     | Add task to queue, returns `TaskHandle`                 |
+| `cancel(taskId)`       | Cancel a running task                                   |
+| `retry(taskId)`        | Retry a failed/cancelled task                           |
+| `dismiss(taskId)`      | Remove a finished task from the panel                   |
+| `dismissAll()`         | Remove all completed/failed/cancelled tasks             |
+| `showSummary(title, items, options?)` | Open the summary dialog                    |
+| `closeSummary()`       | Close the summary dialog                                |
+| `activeSummary`        | Current summary data or `null`                          |
+| `summaryRenderContent` | Global custom renderer from provider config             |
+| `tasks`                | Reactive array of all tasks                             |
+
+### `showSummary(title, items, options?)`
+
+| Parameter               | Type                                    | Description                          |
+| ----------------------- | --------------------------------------- | ------------------------------------ |
+| `title`                 | `string`                                | Dialog title                         |
+| `items`                 | `TaskSummaryItem[]`                     | Summary items to display             |
+| `options.renderContent` | `(items: TaskSummaryItem[]) => ReactNode` | Per-call content renderer override |
+
+### `TaskQueueConfig`
+
+| Option                  | Type                                    | Default    | Description                              |
+| ----------------------- | --------------------------------------- | ---------- | ---------------------------------------- |
+| `concurrency`           | `number`                                | `3`        | Max concurrent tasks                     |
+| `storageType`           | `'memory' \| 'local' \| 'auto'`        | `'memory'` | Storage backend                          |
+| `storageKey`            | `string`                                | —          | Custom localStorage key                  |
+| `summaryRenderContent`  | `(items: TaskSummaryItem[]) => ReactNode` | —        | Global custom renderer for summary dialog |
+
+Refer to the [Task Queue README](https://github.com/datum-cloud/datum-ui/tree/main/packages/datum-ui/src/components/features/task-queue/README.md) for the full API documentation.

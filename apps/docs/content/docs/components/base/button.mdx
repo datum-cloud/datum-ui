@@ -1,0 +1,134 @@
+---
+title: Button
+description: Trigger actions and events with configurable types, themes, sizes, and states.
+---
+
+import { Button } from '@/components/ui'
+
+## Overview
+
+The Button component supports multiple visual types (primary, secondary, tertiary, quaternary, danger, warning, success) combined with themes (solid, outline, light, borderless, link) for flexible styling. It includes loading states, icon support, and full-width layout.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-slot
+```
+
+## Usage
+
+<ComponentPreview name="Basic Button">
+  <Button type="primary" theme="solid">Click me</Button>
+</ComponentPreview>
+
+```tsx
+import { Button } from '@datum-cloud/datum-ui/button'
+
+<Button type="primary" theme="solid">Click me</Button>
+```
+
+## Examples
+
+### Types
+
+<ComponentPreview name="Button Types">
+  <div className="flex flex-wrap gap-2">
+    <Button type="primary" theme="solid">Primary</Button>
+    <Button type="secondary" theme="solid">Secondary</Button>
+    <Button type="tertiary" theme="solid">Tertiary</Button>
+    <Button type="quaternary" theme="solid">Quaternary</Button>
+    <Button type="danger" theme="solid">Danger</Button>
+    <Button type="warning" theme="solid">Warning</Button>
+    <Button type="success" theme="solid">Success</Button>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Button type="primary" theme="solid">Primary</Button>
+<Button type="secondary" theme="solid">Secondary</Button>
+<Button type="tertiary" theme="solid">Tertiary</Button>
+<Button type="quaternary" theme="solid">Quaternary</Button>
+<Button type="danger" theme="solid">Danger</Button>
+<Button type="warning" theme="solid">Warning</Button>
+<Button type="success" theme="solid">Success</Button>
+```
+
+### Themes
+
+<ComponentPreview name="Button Themes">
+  <div className="flex flex-wrap gap-2">
+    <Button type="primary" theme="solid">Solid</Button>
+    <Button type="primary" theme="outline">Outline</Button>
+    <Button type="primary" theme="light">Light</Button>
+    <Button type="primary" theme="borderless">Borderless</Button>
+    <Button type="primary" theme="link">Link</Button>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Button type="primary" theme="solid">Solid</Button>
+<Button type="primary" theme="outline">Outline</Button>
+<Button type="primary" theme="light">Light</Button>
+<Button type="primary" theme="borderless">Borderless</Button>
+<Button type="primary" theme="link">Link</Button>
+```
+
+### Sizes
+
+<ComponentPreview name="Button Sizes">
+  <div className="flex items-center gap-2">
+    <Button type="primary" theme="solid" size="xs">Extra Small</Button>
+    <Button type="primary" theme="solid" size="small">Small</Button>
+    <Button type="primary" theme="solid" size="default">Default</Button>
+    <Button type="primary" theme="solid" size="large">Large</Button>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Button size="xs">Extra Small</Button>
+<Button size="small">Small</Button>
+<Button size="default">Default</Button>
+<Button size="large">Large</Button>
+```
+
+### Loading State
+
+<ComponentPreview name="Loading Button">
+  <div className="flex gap-2">
+    <Button type="primary" theme="solid" loading>Loading</Button>
+    <Button type="primary" theme="outline" loading>Processing</Button>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Button type="primary" theme="solid" loading>Loading</Button>
+```
+
+### Full Width
+
+<ComponentPreview name="Full Width Button">
+  <div className="w-full max-w-sm">
+    <Button type="primary" theme="solid" block>Full Width</Button>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Button type="primary" theme="solid" block>Full Width</Button>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `'primary' \| 'secondary' \| 'tertiary' \| 'quaternary' \| 'warning' \| 'danger' \| 'success'` | `'primary'` | Color type |
+| `theme` | `'solid' \| 'light' \| 'outline' \| 'borderless' \| 'link'` | `'solid'` | Visual theme |
+| `size` | `'xs' \| 'small' \| 'default' \| 'large' \| 'icon' \| 'link'` | `'default'` | Button size |
+| `block` | `boolean` | `false` | Full width |
+| `loading` | `boolean` | `false` | Show loading spinner |
+| `icon` | `ReactNode` | -- | Icon element |
+| `iconPosition` | `'left' \| 'right'` | `'left'` | Icon placement |
+| `loadingIcon` | `ReactNode` | -- | Custom loading spinner |
+| `disabled` | `boolean` | `false` | Disabled state |
+| `htmlType` | `'button' \| 'submit' \| 'reset'` | `'button'` | HTML button type |

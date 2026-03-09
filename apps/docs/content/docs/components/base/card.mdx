@@ -1,0 +1,207 @@
+---
+title: Card
+description: A container component for grouping related content with optional header, footer, and description sections.
+---
+
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui'
+
+## Overview
+
+The Card component provides a styled container for grouping related content. It extends the shadcn Card with Datum-specific styling and includes sub-components for structured layouts: `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, and `CardFooter`.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Usage
+
+<ComponentPreview name="Basic Card">
+  <Card className="w-[380px]">
+    <CardHeader>
+      <CardTitle>Card Title</CardTitle>
+      <CardDescription>Card description providing additional context.</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <p className="text-sm text-muted-foreground">
+        This is the main content area of the card.
+      </p>
+    </CardContent>
+  </Card>
+</ComponentPreview>
+
+```tsx
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@datum-cloud/datum-ui/card'
+
+<Card>
+  <CardHeader>
+    <CardTitle>Card Title</CardTitle>
+    <CardDescription>Card description providing additional context.</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <p>This is the main content area of the card.</p>
+  </CardContent>
+</Card>
+```
+
+## Examples
+
+### Simple Card
+
+A card with content only, without header or footer.
+
+<ComponentPreview name="Simple Card">
+  <Card className="w-[380px]">
+    <CardContent>
+      <p className="text-sm text-muted-foreground">
+        A simple card with only content, no header or footer.
+      </p>
+    </CardContent>
+  </Card>
+</ComponentPreview>
+
+```tsx
+<Card>
+  <CardContent>
+    <p>A simple card with only content, no header or footer.</p>
+  </CardContent>
+</Card>
+```
+
+### With Footer Actions
+
+Use `CardFooter` to place actions at the bottom of the card.
+
+<ComponentPreview name="Card with Actions">
+  <Card className="w-[380px]">
+    <CardHeader>
+      <CardTitle>Project Settings</CardTitle>
+      <CardDescription>Manage your project configuration and preferences.</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <p className="text-sm text-muted-foreground">
+        Review and update project settings below. Changes will be applied immediately after saving.
+      </p>
+    </CardContent>
+    <CardFooter className="flex justify-end gap-2">
+      <button className="px-4 py-2 text-sm border rounded-md">Cancel</button>
+      <button className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md">Save Changes</button>
+    </CardFooter>
+  </Card>
+</ComponentPreview>
+
+```tsx
+import { Button } from '@datum-cloud/datum-ui/button'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@datum-cloud/datum-ui/card'
+
+<Card>
+  <CardHeader>
+    <CardTitle>Project Settings</CardTitle>
+    <CardDescription>Manage your project configuration and preferences.</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <p>Review and update project settings below.</p>
+  </CardContent>
+  <CardFooter className="flex justify-end gap-2">
+    <Button type="secondary" theme="outline">Cancel</Button>
+    <Button type="primary" theme="solid">Save Changes</Button>
+  </CardFooter>
+</Card>
+```
+
+### Full Example
+
+A complete card showcasing all sub-components together.
+
+<ComponentPreview name="Full Card">
+  <Card className="w-[380px]">
+    <CardHeader>
+      <CardTitle>Notifications</CardTitle>
+      <CardDescription>Configure how you receive notifications.</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div className="flex flex-col gap-2 text-sm">
+        <div className="flex items-center justify-between">
+          <span>Email notifications</span>
+          <span className="text-muted-foreground">Enabled</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span>Push notifications</span>
+          <span className="text-muted-foreground">Disabled</span>
+        </div>
+      </div>
+    </CardContent>
+    <CardFooter>
+      <button className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md w-full">Update Preferences</button>
+    </CardFooter>
+  </Card>
+</ComponentPreview>
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>Notifications</CardTitle>
+    <CardDescription>Configure how you receive notifications.</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <div className="flex flex-col gap-2 text-sm">
+      <div className="flex items-center justify-between">
+        <span>Email notifications</span>
+        <span>Enabled</span>
+      </div>
+      <div className="flex items-center justify-between">
+        <span>Push notifications</span>
+        <span>Disabled</span>
+      </div>
+    </div>
+  </CardContent>
+  <CardFooter>
+    <Button type="primary" theme="solid" block>Update Preferences</Button>
+  </CardFooter>
+</Card>
+```
+
+## Props
+
+### Card
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | -- | Additional CSS classes |
+| `children` | `ReactNode` | -- | Card content, typically sub-components |
+
+All standard `div` HTML attributes are also supported.
+
+### CardHeader
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | -- | Additional CSS classes |
+| `children` | `ReactNode` | -- | Typically contains `CardTitle` and `CardDescription` |
+
+### CardTitle
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | -- | Additional CSS classes |
+| `children` | `ReactNode` | -- | Title text |
+
+### CardDescription
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | -- | Additional CSS classes |
+| `children` | `ReactNode` | -- | Description text |
+
+### CardContent
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | -- | Additional CSS classes |
+| `children` | `ReactNode` | -- | Main card body content |
+
+### CardFooter
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | -- | Additional CSS classes |
+| `children` | `ReactNode` | -- | Footer content, typically actions |

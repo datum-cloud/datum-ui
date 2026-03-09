@@ -1,0 +1,4 @@
+{
+  "extends": "@repo/config/tsconfig/react-app",
+  "include": ["stories", ".storybook"]
+}

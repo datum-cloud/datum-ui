@@ -1,0 +1,203 @@
+---
+title: Grid
+description: A 24-column responsive grid system with Row and Col components for flexible page layouts.
+---
+
+import { Row, Col } from '@/components/ui'
+
+## Overview
+
+The Grid system provides a 24-column layout using `Row` and `Col` components. Rows manage horizontal spacing and alignment, while columns define width spans and support responsive breakpoints (xs, sm, md, lg, xl, xxl) for adaptive layouts.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Setup
+
+Import the grid CSS in your app's stylesheet:
+
+```css title="app.css"
+@import '@datum-cloud/datum-ui/grid';
+```
+
+## Usage
+
+<ComponentPreview name="Basic Grid">
+  <Row type="flex" gutter={16}>
+    <Col span={8}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#3b82f6', borderRadius: '6px' }}>Col 8</div>
+    </Col>
+    <Col span={8}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#6366f1', borderRadius: '6px' }}>Col 8</div>
+    </Col>
+    <Col span={8}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#8b5cf6', borderRadius: '6px' }}>Col 8</div>
+    </Col>
+  </Row>
+</ComponentPreview>
+
+```tsx
+import { Row, Col } from '@datum-cloud/datum-ui/grid'
+
+<Row type="flex" gutter={16}>
+  <Col span={8}>
+    <div>Col 8</div>
+  </Col>
+  <Col span={8}>
+    <div>Col 8</div>
+  </Col>
+  <Col span={8}>
+    <div>Col 8</div>
+  </Col>
+</Row>
+```
+
+## Examples
+
+### Responsive Columns
+
+Use breakpoint props on `Col` to adapt column widths at different screen sizes. The grid uses a 24-column system.
+
+<ComponentPreview name="Responsive Grid">
+  <Row type="flex" gutter={16}>
+    <Col xs={24} sm={12} md={8} lg={6}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#3b82f6', borderRadius: '6px' }}>xs=24 sm=12 md=8 lg=6</div>
+    </Col>
+    <Col xs={24} sm={12} md={8} lg={6}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#6366f1', borderRadius: '6px' }}>xs=24 sm=12 md=8 lg=6</div>
+    </Col>
+    <Col xs={24} sm={12} md={8} lg={6}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#8b5cf6', borderRadius: '6px' }}>xs=24 sm=12 md=8 lg=6</div>
+    </Col>
+    <Col xs={24} sm={12} md={8} lg={6}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#a855f7', borderRadius: '6px' }}>xs=24 sm=12 md=8 lg=6</div>
+    </Col>
+  </Row>
+</ComponentPreview>
+
+```tsx
+<Row type="flex" gutter={16}>
+  <Col xs={24} sm={12} md={8} lg={6}>Content</Col>
+  <Col xs={24} sm={12} md={8} lg={6}>Content</Col>
+  <Col xs={24} sm={12} md={8} lg={6}>Content</Col>
+  <Col xs={24} sm={12} md={8} lg={6}>Content</Col>
+</Row>
+```
+
+### Mixed Column Widths
+
+Columns can have different spans as long as they sum to 24 (or less) per row.
+
+<ComponentPreview name="Mixed Column Widths">
+  <Row type="flex" gutter={16}>
+    <Col span={6}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#14b8a6', borderRadius: '6px' }}>Col 6</div>
+    </Col>
+    <Col span={12}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#06b6d4', borderRadius: '6px' }}>Col 12</div>
+    </Col>
+    <Col span={6}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#0ea5e9', borderRadius: '6px' }}>Col 6</div>
+    </Col>
+  </Row>
+</ComponentPreview>
+
+```tsx
+<Row type="flex" gutter={16}>
+  <Col span={6}><div>Col 6</div></Col>
+  <Col span={12}><div>Col 12</div></Col>
+  <Col span={6}><div>Col 6</div></Col>
+</Row>
+```
+
+### Column Offset
+
+Use `offset` to push a column to the right by a specified number of grid columns.
+
+<ComponentPreview name="Column Offset">
+  <Row type="flex" gutter={16}>
+    <Col span={6}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#3b82f6', borderRadius: '6px' }}>Col 6</div>
+    </Col>
+    <Col span={6} offset={6}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#6366f1', borderRadius: '6px' }}>Col 6, Offset 6</div>
+    </Col>
+  </Row>
+</ComponentPreview>
+
+```tsx
+<Row type="flex" gutter={16}>
+  <Col span={6}><div>Col 6</div></Col>
+  <Col span={6} offset={6}><div>Col 6, Offset 6</div></Col>
+</Row>
+```
+
+### Alignment
+
+Control vertical and horizontal alignment within a flex Row.
+
+<ComponentPreview name="Row Alignment">
+  <Row type="flex" justify="center" align="middle" gutter={16} style={{ minHeight: '100px', background: '#f1f5f9', borderRadius: '6px' }}>
+    <Col span={4}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#3b82f6', borderRadius: '6px' }}>Centered</div>
+    </Col>
+    <Col span={4}>
+      <div style={{ padding: '32px 16px', textAlign: 'center', color: 'white', background: '#6366f1', borderRadius: '6px' }}>Centered</div>
+    </Col>
+    <Col span={4}>
+      <div style={{ padding: '16px', textAlign: 'center', color: 'white', background: '#8b5cf6', borderRadius: '6px' }}>Centered</div>
+    </Col>
+  </Row>
+</ComponentPreview>
+
+```tsx
+<Row type="flex" justify="center" align="middle" gutter={16}>
+  <Col span={4}><div>Centered</div></Col>
+  <Col span={4}><div>Centered</div></Col>
+  <Col span={4}><div>Centered</div></Col>
+</Row>
+```
+
+## Row Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `'flex'` | -- | Enables flexbox layout on the row |
+| `align` | `'top' \| 'middle' \| 'bottom'` | -- | Vertical alignment of columns (requires `type="flex"`) |
+| `justify` | `'start' \| 'end' \| 'center' \| 'space-around' \| 'space-between'` | -- | Horizontal distribution of columns (requires `type="flex"`) |
+| `gutter` | `number \| Record<Breakpoint, number> \| [Gutter, Gutter]` | `0` | Spacing between columns in pixels. Pass a tuple for `[horizontal, vertical]` gutters |
+| `className` | `string` | -- | Additional CSS classes |
+| `style` | `CSSProperties` | -- | Inline styles |
+| `prefixCls` | `string` | `'grid'` | CSS class prefix |
+
+## Col Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `span` | `number` | -- | Number of columns to span (out of 24) |
+| `offset` | `number` | -- | Number of columns to offset from the left |
+| `order` | `number` | -- | Flex order of the column |
+| `push` | `number` | -- | Number of columns to push right |
+| `pull` | `number` | -- | Number of columns to pull left |
+| `xs` | `number \| ColSize` | -- | Span or config for screens < 576px |
+| `sm` | `number \| ColSize` | -- | Span or config for screens >= 576px |
+| `md` | `number \| ColSize` | -- | Span or config for screens >= 768px |
+| `lg` | `number \| ColSize` | -- | Span or config for screens >= 992px |
+| `xl` | `number \| ColSize` | -- | Span or config for screens >= 1200px |
+| `xxl` | `number \| ColSize` | -- | Span or config for screens >= 1600px |
+| `className` | `string` | -- | Additional CSS classes |
+| `style` | `CSSProperties` | -- | Inline styles |
+| `prefixCls` | `string` | `'grid'` | CSS class prefix |
+
+### ColSize Object
+
+When passing an object to a responsive breakpoint prop:
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `span` | `number` | Columns to span |
+| `order` | `number` | Flex order |
+| `offset` | `number` | Columns to offset |
+| `push` | `number` | Columns to push |
+| `pull` | `number` | Columns to pull |

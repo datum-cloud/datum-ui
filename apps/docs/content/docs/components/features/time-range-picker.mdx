@@ -1,0 +1,148 @@
+---
+title: TimeRangePicker
+description: A popover-based date range picker with quick presets, calendar selection, and timezone awareness.
+---
+
+import { TimeRangePicker } from '@/components/ui'
+
+## Overview
+
+TimeRangePicker lets users select a time range via quick preset buttons (e.g. "Last 24 hours", "Last 7 days") or a calendar for custom date ranges. All values are stored as UTC ISO strings, and the component converts to/from the user's timezone for display. It includes keyboard shortcuts, a clearable trigger, and a timezone indicator.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+react-day-picker date-fns date-fns-tz @radix-ui/react-popover @radix-ui/react-separator
+```
+
+## Usage
+
+<ComponentPreview name="Basic TimeRangePicker">
+  <TimeRangePicker
+    value={null}
+  />
+</ComponentPreview>
+
+```tsx
+import { TimeRangePicker } from '@datum-cloud/datum-ui/date-picker'
+import type { TimeRangeValue } from '@datum-cloud/datum-ui/date-picker'
+import { useState } from 'react'
+
+function Example() {
+  const [value, setValue] = useState<TimeRangeValue | null>(null)
+
+  return (
+    <TimeRangePicker
+      value={value}
+      onChange={setValue}
+      onClear={() => setValue(null)}
+    />
+  )
+}
+```
+
+## Examples
+
+### With Custom Presets
+
+Provide your own preset configurations using the `presets` prop. The default presets include Today, Last 24 hours, Last 7 days, Last 30 days, and Last 90 days.
+
+```tsx
+import { DEFAULT_PRESETS, TimeRangePicker } from '@datum-cloud/datum-ui/date-picker'
+
+<TimeRangePicker
+  value={value}
+  onChange={setValue}
+  onClear={() => setValue(null)}
+  presets={DEFAULT_PRESETS}
+  placeholder="Choose a time range"
+/>
+```
+
+### Disable Future Dates
+
+Use `disableFuture` to prevent selecting dates after today.
+
+<ComponentPreview name="TimeRangePicker Disable Future">
+  <TimeRangePicker
+    value={null}
+    disableFuture
+  />
+</ComponentPreview>
+
+```tsx
+<TimeRangePicker
+  value={value}
+  onChange={setValue}
+  disableFuture
+/>
+```
+
+### Disabled State
+
+<ComponentPreview name="TimeRangePicker Disabled">
+  <TimeRangePicker
+    value={null}
+    disabled
+    placeholder="Disabled"
+  />
+</ComponentPreview>
+
+```tsx
+<TimeRangePicker
+  value={null}
+  onChange={() => {}}
+  disabled
+  placeholder="Disabled"
+/>
+```
+
+### Custom Timezone
+
+Specify an explicit timezone instead of using the browser default.
+
+```tsx
+<TimeRangePicker
+  value={value}
+  onChange={setValue}
+  timezone="America/New_York"
+/>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `TimeRangeValue \| null` | -- | Current value (controlled), stores UTC timestamps |
+| `onChange` | `(value: TimeRangeValue) => void` | -- | Callback when the selected range changes |
+| `onClear` | `() => void` | -- | Callback when the clear button is clicked |
+| `timezone` | `string` | Browser timezone | Timezone for display conversion (IANA identifier) |
+| `presets` | `PresetConfig[]` | `DEFAULT_PRESETS` | Quick-select preset configurations |
+| `disableFuture` | `boolean` | `false` | Prevent selecting future dates |
+| `maxDate` | `Date` | -- | Maximum selectable date |
+| `minDate` | `Date` | -- | Minimum selectable date |
+| `disabled` | `boolean` | `false` | Disable the picker |
+| `placeholder` | `string` | `'Select time range'` | Trigger button placeholder text |
+| `align` | `'start' \| 'center' \| 'end'` | `'start'` | Popover alignment |
+| `side` | `'top' \| 'bottom'` | `'bottom'` | Popover side |
+| `className` | `string` | -- | Additional CSS class for the trigger button |
+
+### TimeRangeValue
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `type` | `'preset' \| 'custom'` | Whether the range was selected from a preset or custom calendar |
+| `preset` | `string` | Preset key (e.g. `'today'`, `'24h'`, `'7d'`) -- only for `preset` type |
+| `from` | `string` | Start time in UTC ISO format (e.g. `'2024-01-15T04:00:00Z'`) |
+| `to` | `string` | End time in UTC ISO format (e.g. `'2024-01-15T08:00:00Z'`) |
+
+### PresetConfig
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `key` | `string` | Unique identifier for the preset |
+| `label` | `string` | Display label (e.g. `'Last 24 hours'`) |
+| `shortcut` | `string` | Keyboard shortcut key |
+| `getRange` | `(timezone: string) => DateRange` | Function returning `{ from: Date, to: Date }` |

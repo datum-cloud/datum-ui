@@ -1,0 +1,133 @@
+---
+title: TagInput
+description: An input field for adding and removing string tags with validation, paste support, and keyboard navigation.
+---
+
+import { TagsInput } from '@/components/ui'
+
+## Overview
+
+TagsInput lets users build a list of string values by typing and pressing Enter or comma. Tags display as badges that can be removed individually. The component supports paste splitting (newlines, commas, semicolons), Zod-based validation, min/max limits, and keyboard navigation between tags.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Usage
+
+<ComponentPreview name="Basic TagsInput">
+  <TagsInput
+    value={['React', 'TypeScript']}
+    placeholder="Type and press Enter..."
+  />
+</ComponentPreview>
+
+```tsx
+import { TagsInput } from '@datum-cloud/datum-ui/tag-input'
+import { useState } from 'react'
+
+function Example() {
+  const [tags, setTags] = useState<string[]>([])
+
+  return (
+    <TagsInput
+      value={tags}
+      onValueChange={setTags}
+      placeholder="Type and press Enter..."
+    />
+  )
+}
+```
+
+## Examples
+
+### With Default Tags
+
+<ComponentPreview name="TagsInput With Defaults">
+  <TagsInput
+    value={['React', 'TypeScript', 'Storybook']}
+    placeholder="Add more tags..."
+  />
+</ComponentPreview>
+
+```tsx
+const [tags, setTags] = useState(['React', 'TypeScript', 'Storybook'])
+
+<TagsInput
+  value={tags}
+  onValueChange={setTags}
+  placeholder="Add more tags..."
+/>
+```
+
+### With Max Items
+
+Limit the number of tags that can be added.
+
+<ComponentPreview name="TagsInput Max Items">
+  <TagsInput
+    value={['one', 'two']}
+    placeholder="Max 3 tags..."
+    maxItems={3}
+  />
+</ComponentPreview>
+
+```tsx
+<TagsInput
+  value={tags}
+  onValueChange={setTags}
+  placeholder="Max 3 tags..."
+  maxItems={3}
+/>
+```
+
+### With Zod Validation
+
+Use the `validator` prop with a Zod schema to validate each tag before adding it.
+
+```tsx
+import { z } from 'zod'
+
+const emailSchema = z.string().email('Please enter a valid email')
+
+<TagsInput
+  value={emails}
+  onValueChange={setEmails}
+  placeholder="Add email addresses..."
+  validator={emailSchema}
+  showValidationErrors
+/>
+```
+
+### With External Error Handling
+
+Integrate with form libraries by using `onValidationError` to capture errors externally.
+
+```tsx
+<TagsInput
+  value={tags}
+  onValueChange={setTags}
+  placeholder="Add tags..."
+  validator={schema}
+  onValidationError={(error) => setFieldError('tags', error)}
+  showValidationErrors={false}
+  error={formErrors.tags}
+/>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string[]` | -- | Current list of tag values (controlled) |
+| `onValueChange` | `(value: string[]) => void` | -- | Callback when the tag list changes |
+| `placeholder` | `string` | -- | Input placeholder text |
+| `maxItems` | `number` | `Infinity` | Maximum number of tags |
+| `minItems` | `number` | `0` | Minimum number of tags (prevents removing below this) |
+| `validator` | `z.ZodType<string>` | -- | Zod schema for validating individual tag values |
+| `onValidationError` | `(error: string \| null) => void` | -- | Callback for external error handling |
+| `error` | `string \| string[]` | -- | External error message to display |
+| `showValidationErrors` | `boolean` | `true` | Whether to show inline validation errors |
+| `name` | `string` | -- | Form field name (for hidden select element) |
+| `dir` | `string` | -- | Text direction (`'ltr'` or `'rtl'`) |
+| `className` | `string` | -- | Additional CSS class for the container |

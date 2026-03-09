@@ -1,0 +1,93 @@
+---
+title: Sheet
+description: A slide-in panel anchored to a screen edge for supplementary content or forms.
+---
+
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetFooter, SheetTitle, SheetDescription, SheetClose } from '@/components/ui'
+import { Button } from '@/components/ui'
+
+## Overview
+
+Sheet is a panel that slides in from a screen edge (right, left, top, or bottom). It is built on Radix UI's Dialog primitive and is useful for settings panels, detail views, and mobile navigation menus without navigating away from the current page.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-dialog
+```
+
+## Usage
+
+<ComponentPreview name="Basic Sheet">
+  <Sheet>
+    <SheetTrigger asChild>
+      <Button type="primary">Open Sheet</Button>
+    </SheetTrigger>
+    <SheetContent>
+      <SheetHeader>
+        <SheetTitle>Settings</SheetTitle>
+        <SheetDescription>Adjust your preferences below.</SheetDescription>
+      </SheetHeader>
+      <div className="py-4 text-sm text-muted-foreground">Panel content goes here.</div>
+      <SheetFooter>
+        <SheetClose asChild>
+          <Button type="secondary" theme="outline">Close</Button>
+        </SheetClose>
+      </SheetFooter>
+    </SheetContent>
+  </Sheet>
+</ComponentPreview>
+
+```tsx
+import {
+  Sheet, SheetTrigger, SheetContent,
+  SheetHeader, SheetFooter, SheetTitle,
+  SheetDescription, SheetClose
+} from '@datum-cloud/datum-ui/sheet'
+
+<Sheet>
+  <SheetTrigger asChild>
+    <Button type="primary">Open Sheet</Button>
+  </SheetTrigger>
+  <SheetContent>
+    <SheetHeader>
+      <SheetTitle>Settings</SheetTitle>
+      <SheetDescription>Adjust your preferences below.</SheetDescription>
+    </SheetHeader>
+    <div className="py-4">Panel content goes here.</div>
+    <SheetFooter>
+      <SheetClose asChild>
+        <Button type="secondary" theme="outline">Close</Button>
+      </SheetClose>
+    </SheetFooter>
+  </SheetContent>
+</Sheet>
+```
+
+## Examples
+
+### Side Variants
+
+The `side` prop controls which edge the sheet slides in from.
+
+```tsx
+<SheetContent side="left">...</SheetContent>
+<SheetContent side="right">...</SheetContent>
+<SheetContent side="top">...</SheetContent>
+<SheetContent side="bottom">...</SheetContent>
+```
+
+## Props
+
+### SheetContent
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'right'` | Edge the sheet slides in from |
+| `className` | `string` | -- | Additional CSS classes |
+
+### Sub-components
+
+`Sheet`, `SheetTrigger`, `SheetClose`, `SheetHeader`, `SheetFooter`, `SheetTitle`, and `SheetDescription` follow the same trigger + content composition pattern as Dialog.

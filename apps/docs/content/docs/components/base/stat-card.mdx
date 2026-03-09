@@ -1,0 +1,153 @@
+---
+title: Stat Card
+description: Display key metrics and statistics using Card composition components.
+---
+
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui'
+
+## Overview
+
+Stat Card is a composition pattern using the Card, CardHeader, CardContent, CardTitle, and CardDescription components to display key metrics. There is no dedicated StatCard component -- instead, compose the existing Card primitives to build stat displays that match your layout needs.
+
+## Dependencies
+
+No additional dependencies required — this component uses only React and Tailwind CSS.
+
+## Usage
+
+<ComponentPreview name="Basic Stat Card">
+  <Card className="w-64">
+    <CardHeader>
+      <CardDescription>Total Revenue</CardDescription>
+      <CardTitle className="text-2xl font-bold">$45,231.89</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+    </CardContent>
+  </Card>
+</ComponentPreview>
+
+```tsx
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardTitle,
+  CardDescription,
+} from '@datum-cloud/datum-ui/card'
+
+<Card className="w-64">
+  <CardHeader>
+    <CardDescription>Total Revenue</CardDescription>
+    <CardTitle className="text-2xl font-bold">$45,231.89</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+  </CardContent>
+</Card>
+```
+
+## Examples
+
+### Stat Card Grid
+
+Arrange multiple stat cards in a responsive grid.
+
+<ComponentPreview name="Stat Card Grid">
+  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <Card>
+      <CardHeader>
+        <CardDescription>Total Users</CardDescription>
+        <CardTitle className="text-2xl font-bold">2,350</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-xs text-muted-foreground">+180 this week</p>
+      </CardContent>
+    </Card>
+    <Card>
+      <CardHeader>
+        <CardDescription>Active Sessions</CardDescription>
+        <CardTitle className="text-2xl font-bold">573</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-xs text-muted-foreground">+12% from yesterday</p>
+      </CardContent>
+    </Card>
+    <Card>
+      <CardHeader>
+        <CardDescription>Error Rate</CardDescription>
+        <CardTitle className="text-2xl font-bold">0.4%</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-xs text-muted-foreground">-0.1% from last hour</p>
+      </CardContent>
+    </Card>
+  </div>
+</ComponentPreview>
+
+```tsx
+<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <Card>
+    <CardHeader>
+      <CardDescription>Total Users</CardDescription>
+      <CardTitle className="text-2xl font-bold">2,350</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="text-xs text-muted-foreground">+180 this week</p>
+    </CardContent>
+  </Card>
+  <Card>
+    <CardHeader>
+      <CardDescription>Active Sessions</CardDescription>
+      <CardTitle className="text-2xl font-bold">573</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="text-xs text-muted-foreground">+12% from yesterday</p>
+    </CardContent>
+  </Card>
+  <Card>
+    <CardHeader>
+      <CardDescription>Error Rate</CardDescription>
+      <CardTitle className="text-2xl font-bold">0.4%</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="text-xs text-muted-foreground">-0.1% from last hour</p>
+    </CardContent>
+  </Card>
+</div>
+```
+
+### Compact Stat Card
+
+Use minimal padding for dense dashboards.
+
+<ComponentPreview name="Compact Stat Card">
+  <Card className="w-48 py-3">
+    <CardHeader className="px-4">
+      <CardDescription className="text-xs">CPU Usage</CardDescription>
+      <CardTitle className="text-xl font-bold">42%</CardTitle>
+    </CardHeader>
+  </Card>
+</ComponentPreview>
+
+```tsx
+<Card className="w-48 py-3">
+  <CardHeader className="px-4">
+    <CardDescription className="text-xs">CPU Usage</CardDescription>
+    <CardTitle className="text-xl font-bold">42%</CardTitle>
+  </CardHeader>
+</Card>
+```
+
+## Components Used
+
+| Component | Description |
+|-----------|-------------|
+| `Card` | Root container with border and padding |
+| `CardHeader` | Groups title and description |
+| `CardTitle` | Primary display value (the stat number) |
+| `CardDescription` | Label above the stat value |
+| `CardContent` | Additional context below the header |
+| `CardFooter` | Optional footer area |
+
+All components accept a `className` prop for custom styling. See the [Card](/docs/components/card) documentation for full details.

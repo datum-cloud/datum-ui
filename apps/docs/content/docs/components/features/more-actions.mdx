@@ -1,0 +1,106 @@
+---
+title: MoreActions
+description: A pre-built ellipsis dropdown for row-level or contextual action menus.
+---
+
+## Overview
+
+MoreActions is a convenience component that renders an ellipsis button (`...`) which opens a dropdown menu of actions. It is commonly used in data table rows, card headers, or anywhere a compact actions menu is needed. Actions support destructive variants, icons, tooltips, and conditional visibility or disabled states.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-tooltip @radix-ui/react-dropdown-menu
+```
+
+## Usage
+
+```tsx
+import { MoreActions } from '@datum-cloud/datum-ui/more-actions'
+
+const actions = [
+  {
+    key: 'edit',
+    label: 'Edit',
+    action: () => console.log('edit'),
+  },
+  {
+    key: 'delete',
+    label: 'Delete',
+    variant: 'destructive' as const,
+    action: () => console.log('delete'),
+  },
+]
+
+<MoreActions actions={actions} />
+```
+
+## Examples
+
+### With Row Data
+
+When used in a table, pass the `row` prop so each action receives the row data:
+
+```tsx
+<MoreActions
+  row={project}
+  actions={[
+    {
+      key: 'view',
+      label: 'View Details',
+      icon: <Eye className="size-4" />,
+      action: (row) => navigate(`/projects/${row.id}`),
+    },
+    {
+      key: 'delete',
+      label: 'Delete',
+      variant: 'destructive',
+      icon: <Trash2 className="size-4" />,
+      action: (row) => deleteProject(row.id),
+      disabled: (row) => row.isProtected,
+      tooltip: (row) => row.isProtected ? 'Protected projects cannot be deleted' : 'Delete project',
+    },
+  ]}
+/>
+```
+
+### Conditional Visibility
+
+Actions with a `hidden` function are filtered out before rendering. If all actions are hidden, the component renders nothing.
+
+```tsx
+{
+  key: 'admin-only',
+  label: 'Admin Settings',
+  action: () => openAdminPanel(),
+  hidden: (row) => !currentUser.isAdmin,
+}
+```
+
+## Props
+
+### MoreActions
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `actions` | `MoreActionsProps<TData>[]` | -- | Array of action definitions |
+| `row` | `TData` | -- | Row data passed to each action callback |
+| `disabled` | `boolean` | `false` | Disable the trigger button |
+| `className` | `string` | -- | Additional CSS classes for the trigger button |
+| `iconClassName` | `string` | -- | CSS classes for the ellipsis icon |
+
+### MoreActionsProps
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `key` | `string` | -- | Unique identifier |
+| `label` | `string` | -- | Display text |
+| `variant` | `'default' \| 'destructive'` | `'default'` | Visual style (destructive shows red text) |
+| `icon` | `ReactNode` | -- | Icon rendered before the label |
+| `action` | `(row?: TData) => void` | -- | Callback when clicked |
+| `disabled` | `(row?: TData) => boolean` | -- | Return `true` to disable this item |
+| `hidden` | `(row?: TData) => boolean` | -- | Return `true` to hide this item |
+| `tooltip` | `string \| ((row?: TData) => string)` | -- | Tooltip text (shown when different from label) |
+| `className` | `string` | -- | Additional CSS for the menu item |

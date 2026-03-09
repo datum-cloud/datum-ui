@@ -1,0 +1,124 @@
+---
+title: useDebounce
+description: Debounce a value with a configurable delay to limit update frequency.
+---
+
+## Overview
+
+`useDebounce` delays updating a value until a specified time has passed since the last change. Use it to avoid excessive re-renders or API calls triggered by rapidly changing inputs such as search fields or sliders.
+
+## Usage
+
+```tsx
+import { useDebounce } from '@datum-cloud/datum-ui/hooks'
+
+function SearchComponent() {
+  const [query, setQuery] = useState('')
+  const debouncedQuery = useDebounce(query, 300)
+
+  useEffect(() => {
+    if (debouncedQuery) {
+      fetchResults(debouncedQuery)
+    }
+  }, [debouncedQuery])
+
+  return <input value={query} onChange={(e) => setQuery(e.target.value)} />
+}
+```
+
+## API
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `value` | `T` | -- | The value to debounce. Can be any type. |
+| `delay` | `number` | -- | Delay in milliseconds before the value updates. |
+
+### Return Value
+
+| Type | Description |
+|------|-------------|
+| `T` | The debounced value. Updates only after `delay` ms of inactivity. |
+
+## Examples
+
+### Search Input
+
+Debounce a search query to avoid firing an API request on every keystroke.
+
+```tsx
+import { useState, useEffect } from 'react'
+import { useDebounce } from '@datum-cloud/datum-ui/hooks'
+
+function UserSearch() {
+  const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 500)
+  const [results, setResults] = useState([])
+
+  useEffect(() => {
+    if (!debouncedSearch) {
+      setResults([])
+      return
+    }
+
+    async function fetchUsers() {
+      const res = await fetch(`/api/users?q=${debouncedSearch}`)
+      const data = await res.json()
+      setResults(data)
+    }
+
+    fetchUsers()
+  }, [debouncedSearch])
+
+  return (
+    <div>
+      <input
+        placeholder="Search users..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+      <ul>
+        {results.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+```
+
+### Filter with Numeric Input
+
+Debounce a slider or numeric input to defer expensive filtering operations.
+
+```tsx
+import { useState, useMemo } from 'react'
+import { useDebounce } from '@datum-cloud/datum-ui/hooks'
+
+function PriceFilter({ items }: { items: Product[] }) {
+  const [maxPrice, setMaxPrice] = useState(100)
+  const debouncedMaxPrice = useDebounce(maxPrice, 200)
+
+  const filtered = useMemo(
+    () => items.filter((item) => item.price <= debouncedMaxPrice),
+    [items, debouncedMaxPrice],
+  )
+
+  return (
+    <div>
+      <label>
+        Max price: ${maxPrice}
+        <input
+          type="range"
+          min={0}
+          max={500}
+          value={maxPrice}
+          onChange={(e) => setMaxPrice(Number(e.target.value))}
+        />
+      </label>
+      <p>{filtered.length} items</p>
+    </div>
+  )
+}
+```

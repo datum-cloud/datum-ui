@@ -1,0 +1,118 @@
+---
+title: Separator
+description: A visual divider for separating content sections horizontally or vertically.
+---
+
+import { Separator } from '@/components/ui'
+
+## Overview
+
+The Separator component renders a thin line to visually divide content. It supports horizontal and vertical orientations and is built on top of `@radix-ui/react-separator` with accessible defaults.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-separator
+```
+
+## Usage
+
+<ComponentPreview name="Basic Separator">
+  <div className="w-full max-w-md">
+    <div className="space-y-1">
+      <h4 className="text-sm font-medium leading-none">Datum UI</h4>
+      <p className="text-sm text-muted-foreground">An open-source component library.</p>
+    </div>
+    <Separator className="my-4" />
+    <div className="space-y-1">
+      <h4 className="text-sm font-medium leading-none">Components</h4>
+      <p className="text-sm text-muted-foreground">Build your interface with reusable components.</p>
+    </div>
+  </div>
+</ComponentPreview>
+
+```tsx
+import { Separator } from '@datum-cloud/datum-ui/separator'
+
+<div>
+  <h4>Datum UI</h4>
+  <p>An open-source component library.</p>
+</div>
+<Separator className="my-4" />
+<div>
+  <h4>Components</h4>
+  <p>Build your interface with reusable components.</p>
+</div>
+```
+
+## Examples
+
+### Horizontal (Default)
+
+The default orientation is horizontal, rendering a full-width line.
+
+<ComponentPreview name="Horizontal Separator">
+  <div className="w-full max-w-md space-y-4">
+    <p className="text-sm">Section one content</p>
+    <Separator />
+    <p className="text-sm">Section two content</p>
+    <Separator />
+    <p className="text-sm">Section three content</p>
+  </div>
+</ComponentPreview>
+
+```tsx
+<div className="space-y-4">
+  <p>Section one content</p>
+  <Separator />
+  <p>Section two content</p>
+  <Separator />
+  <p>Section three content</p>
+</div>
+```
+
+### Vertical
+
+Use `orientation="vertical"` to render a vertical divider between inline elements. The parent container must have a defined height.
+
+<ComponentPreview name="Vertical Separator">
+  <div className="flex h-5 items-center gap-4 text-sm">
+    <span>Blog</span>
+    <Separator orientation="vertical" />
+    <span>Docs</span>
+    <Separator orientation="vertical" />
+    <span>Source</span>
+  </div>
+</ComponentPreview>
+
+```tsx
+<div className="flex h-5 items-center gap-4 text-sm">
+  <span>Blog</span>
+  <Separator orientation="vertical" />
+  <span>Docs</span>
+  <Separator orientation="vertical" />
+  <span>Source</span>
+</div>
+```
+
+### Decorative vs Non-Decorative
+
+By default, the separator is decorative (hidden from screen readers). Set `decorative={false}` to make it visible to assistive technology as a semantic separator.
+
+```tsx
+{/* Decorative (default) — hidden from screen readers */}
+<Separator />
+
+{/* Non-decorative — announced as a separator by screen readers */}
+<Separator decorative={false} />
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Direction of the separator line |
+| `decorative` | `boolean` | `true` | When `true`, the separator is hidden from assistive technology |
+| `className` | `string` | -- | Additional CSS classes |

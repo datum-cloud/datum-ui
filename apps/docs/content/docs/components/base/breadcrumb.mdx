@@ -1,0 +1,97 @@
+---
+title: Breadcrumb
+description: A navigational trail showing the user's current location within a hierarchy.
+---
+
+## Overview
+
+Breadcrumb renders a horizontal list of links representing the user's current path within the application hierarchy. It follows the WAI-ARIA breadcrumb pattern with `nav[aria-label="breadcrumb"]` and `aria-current="page"` on the current page. Built on Radix UI's Slot for polymorphic link rendering.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-slot
+```
+
+## Usage
+
+```tsx
+import {
+  Breadcrumb, BreadcrumbList, BreadcrumbItem,
+  BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator
+} from '@datum-cloud/datum-ui/breadcrumb'
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/">Home</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/projects">Projects</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbPage>Settings</BreadcrumbPage>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>
+```
+
+## Examples
+
+### With Framework Links
+
+Use `asChild` on `BreadcrumbLink` to render your framework's link component instead of a plain `<a>`:
+
+```tsx
+import { Link } from '@remix-run/react'
+
+<BreadcrumbLink asChild>
+  <Link to="/projects">Projects</Link>
+</BreadcrumbLink>
+```
+
+### With Ellipsis
+
+For deep hierarchies, collapse middle items with `BreadcrumbEllipsis`:
+
+```tsx
+import { BreadcrumbEllipsis } from '@datum-cloud/datum-ui/breadcrumb'
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/">Home</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbEllipsis />
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/projects/acme/services">Services</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbPage>API Gateway</BreadcrumbPage>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>
+```
+
+## Props
+
+### Sub-components
+
+| Component | Description |
+|-----------|-------------|
+| `Breadcrumb` | Root `nav` element with `aria-label="breadcrumb"` |
+| `BreadcrumbList` | Ordered list (`ol`) container |
+| `BreadcrumbItem` | List item (`li`) wrapper |
+| `BreadcrumbLink` | Clickable link; supports `asChild` for custom link components |
+| `BreadcrumbPage` | Current page indicator (non-interactive, `aria-current="page"`) |
+| `BreadcrumbSeparator` | Chevron separator between items (customizable via `children`) |
+| `BreadcrumbEllipsis` | Collapsed indicator for deep hierarchies |

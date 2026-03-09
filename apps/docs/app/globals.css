@@ -1,0 +1,5 @@
+@import 'tailwindcss';
+@import '@datum-cloud/datum-ui/styles';
+@import '@datum-cloud/datum-ui/grid';
+@import '@datum-cloud/datum-ui/nprogress';
+@import 'fumadocs-ui/style.css';

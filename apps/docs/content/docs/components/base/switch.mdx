@@ -1,0 +1,83 @@
+---
+title: Switch
+description: A toggle control for binary on/off states, built on Radix UI Switch.
+---
+
+import { Switch, Label } from '@/components/ui'
+
+## Overview
+
+The `Switch` component provides a visual toggle for boolean settings. It is built on Radix UI Switch and styled with Datum design tokens.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@radix-ui/react-switch
+```
+
+## Usage
+
+<ComponentPreview name="Basic Switch">
+  <Switch />
+</ComponentPreview>
+
+```tsx
+import { Switch } from '@datum-cloud/datum-ui/switch'
+
+<Switch />
+```
+
+## Examples
+
+### Checked by Default
+
+<ComponentPreview name="Checked Switch">
+  <Switch defaultChecked />
+</ComponentPreview>
+
+```tsx
+<Switch defaultChecked />
+```
+
+### With Label
+
+<ComponentPreview name="Switch with Label">
+  <div className="flex items-center gap-2">
+    <Switch id="airplane-mode" />
+    <Label htmlFor="airplane-mode">Airplane Mode</Label>
+  </div>
+</ComponentPreview>
+
+```tsx
+<div className="flex items-center gap-2">
+  <Switch id="airplane-mode" />
+  <Label htmlFor="airplane-mode">Airplane Mode</Label>
+</div>
+```
+
+### Disabled
+
+<ComponentPreview name="Disabled Switch">
+  <Switch disabled />
+</ComponentPreview>
+
+```tsx
+<Switch disabled />
+```
+
+## Props
+
+The `Switch` component accepts all props from Radix UI's `Switch.Root`.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `checked` | `boolean` | -- | Controlled checked state |
+| `defaultChecked` | `boolean` | `false` | Default checked state |
+| `onCheckedChange` | `(checked: boolean) => void` | -- | Callback when state changes |
+| `disabled` | `boolean` | `false` | Disables the switch |
+| `required` | `boolean` | `false` | Marks as required in a form |
+| `name` | `string` | -- | Name for form submission |
+| `value` | `string` | -- | Value for form submission |
+| `className` | `string` | -- | Additional CSS classes |

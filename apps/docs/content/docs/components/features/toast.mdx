@@ -1,0 +1,109 @@
+---
+title: Toast
+description: Ephemeral notification messages triggered by user actions.
+---
+
+## Overview
+
+Toasts display brief, auto-dismissing messages at the edge of the screen. datum-ui uses [Sonner](https://sonner.emilkowal.dev/) under the hood. You render the `<Toaster />` provider once in your layout and call the `toast()` function anywhere in your app to show a notification.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+sonner
+```
+
+## Setup
+
+Add the `Toaster` component to your root layout so it can render toast notifications:
+
+```tsx
+import { Toaster } from '@datum-cloud/datum-ui/toast'
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        {children}
+        <Toaster />
+      </body>
+    </html>
+  )
+}
+```
+
+## Usage
+
+```tsx
+import { toast } from 'sonner'
+
+function SaveButton() {
+  return (
+    <Button
+      type="primary"
+      onClick={() => toast.success('Changes saved successfully')}
+    >
+      Save
+    </Button>
+  )
+}
+```
+
+## Examples
+
+### Variants
+
+```tsx
+import { toast } from 'sonner'
+
+// Success
+toast.success('Deployment complete')
+
+// Error
+toast.error('Failed to connect to database')
+
+// Info / default
+toast('New version available')
+
+// With description
+toast.success('API key created', {
+  description: 'Store it securely -- it will only be shown once.',
+})
+
+// With action button
+toast('File deleted', {
+  action: {
+    label: 'Undo',
+    onClick: () => restoreFile(),
+  },
+})
+```
+
+### Promise Toast
+
+Show loading, success, and error states automatically:
+
+```tsx
+toast.promise(deployService(), {
+  loading: 'Deploying...',
+  success: 'Deployed successfully',
+  error: 'Deployment failed',
+})
+```
+
+## Props
+
+### Toaster
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `theme` | `'light' \| 'dark' \| 'system'` | -- | Color theme for toasts |
+| `position` | `string` | `'bottom-right'` | Screen position (Sonner positions) |
+| `richColors` | `boolean` | `false` | Enable colored success/error/info backgrounds |
+| `duration` | `number` | `4000` | Auto-dismiss duration in milliseconds |
+
+### toast()
+
+The `toast` function and its variants (`toast.success`, `toast.error`, `toast.promise`) are re-exported from Sonner. See the [Sonner documentation](https://sonner.emilkowal.dev/) for the full API.

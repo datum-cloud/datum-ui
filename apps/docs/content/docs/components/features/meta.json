@@ -1,0 +1,33 @@
+{
+  "title": "Features",
+  "pages": [
+    "---General---",
+    "loader-overlay",
+    "avatar-stack",
+    "empty-content",
+    "---Layout---",
+    "grid",
+    "sidebar",
+    "page-title",
+    "---Forms---",
+    "form",
+    "input-number",
+    "input-with-addons",
+    "autocomplete",
+    "calendar-date-picker",
+    "dropzone",
+    "file-input-button",
+    "---Data Display---",
+    "tag-input",
+    "time-range-picker",
+    "---Feedback---",
+    "toast",
+    "---Navigation---",
+    "dropdown",
+    "more-actions",
+    "nprogress",
+    "---Other---",
+    "stepper",
+    "task-queue"
+  ]
+}
