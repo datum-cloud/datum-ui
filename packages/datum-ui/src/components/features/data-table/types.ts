@@ -341,6 +341,7 @@ export interface DataTableStoreState<TData> {
 
 export interface DataTableStore<TData> {
   readonly getSnapshot: () => DataTableStoreState<TData>
+  readonly getServerSnapshot: () => DataTableStoreState<TData>
   readonly subscribe: (listener: () => void) => () => void
   readonly setData: (data: TData[]) => void
   readonly setServerData: (data: TData[]) => void

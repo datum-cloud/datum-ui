@@ -87,8 +87,8 @@ export function useDataTableServer<TResponse, TData>(
   )
 
   // 2. Read store state
-  const { sorting, filters, search, rowSelection, pageSize, pageIndex }
-    = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot)
+  const { sorting, filters, search, rowSelection, pageSize, pageIndex, data }
+    = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot)
 
   // 3. Fetch on query change — also resets cursors when query params change
   const prevQueryRef = useRef({ sorting, filters, search, pageSize })
@@ -166,7 +166,7 @@ export function useDataTableServer<TResponse, TData>(
 
   // 5. Create TanStack table (display only — no sorting/filtering/pagination)
   const table = useReactTable({
-    data: store.getSnapshot().data,
+    data,
     columns: resolvedColumns,
     state: {
       sorting,

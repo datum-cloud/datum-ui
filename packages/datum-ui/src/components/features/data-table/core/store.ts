@@ -50,6 +50,9 @@ export function createDataTableStore<TData>(
     state = { ...state, filteredData: computeFilteredData(state) }
   }
 
+  // Capture initial state for SSR — frozen, never changes
+  const serverSnapshot = state
+
   function notify() {
     for (const listener of listeners) listener()
   }
@@ -61,6 +64,7 @@ export function createDataTableStore<TData>(
 
   const store: DataTableStore<TData> = {
     getSnapshot: () => state,
+    getServerSnapshot: () => serverSnapshot,
     subscribe: (listener) => {
       listeners.add(listener)
       return () => listeners.delete(listener)

@@ -45,7 +45,17 @@ function useSliceSelector<TData, TSlice extends Record<string, unknown>>(
     return next
   }, [store, selector])
 
-  return useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot)
+  const serverCachedRef = useRef<TSlice | null>(null)
+  const getServerSnapshot = useCallback(() => {
+    const next = selector(store.getServerSnapshot())
+    if (serverCachedRef.current && shallowEqual(serverCachedRef.current, next)) {
+      return serverCachedRef.current
+    }
+    serverCachedRef.current = next
+    return next
+  }, [store, selector])
+
+  return useSyncExternalStore(store.subscribe, getSnapshot, getServerSnapshot)
 }
 
 export function useDataTableFilters() {
@@ -166,7 +176,7 @@ export function useDataTableInlineContents<TData>() {
 export function useDataTableContext<TData>() {
   const store = useDataTableStore<TData>()
   const table = useTableInstance<TData>()
-  const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot)
+  const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot)
   return {
     table,
     mode: state.mode,
