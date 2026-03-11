@@ -43,6 +43,7 @@ export function createDataTableStore<TData>(
     isLoading: false,
     error: null,
     inlineContents: [],
+    _version: 0,
   }
 
   // Apply default filters on init if any exist (pageIndex already 0)
@@ -55,7 +56,7 @@ export function createDataTableStore<TData>(
   }
 
   function setState(next: DataTableStoreState<TData>) {
-    state = next
+    state = { ...next, _version: state._version + 1 }
     notify()
   }
 

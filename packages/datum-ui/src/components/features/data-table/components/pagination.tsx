@@ -148,9 +148,9 @@ export function DataTablePagination({
                   key={page}
                   theme={isActive ? 'solid' : 'outline'}
                   size="small"
-                  className={cn('h-8 min-w-8 px-2', isActive && 'font-semibold')}
+                  className={cn('h-8 min-w-8 px-2', isActive && 'pointer-events-none font-semibold')}
                   onClick={() => setPageIndex(page - 1)}
-                  disabled={isActive}
+                  aria-disabled={isActive || undefined}
                   aria-label={`Page ${page}`}
                   aria-current={isActive ? 'page' : undefined}
                 >

@@ -337,6 +337,8 @@ export interface DataTableStoreState<TData> {
   readonly isLoading: boolean
   readonly error: Error | null
   readonly inlineContents: readonly InlineContentEntry<TData>[]
+  /** Monotonic counter incremented on every state change. Used by table-dependent selectors to detect updates. */
+  readonly _version: number
 }
 
 export interface DataTableStore<TData> {

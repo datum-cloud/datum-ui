@@ -1,9 +1,8 @@
 'use client'
 
-import type { HeaderGroup, Row, RowSelectionState } from '@tanstack/react-table'
 import type { DataTableStoreState, InlineContentEntry } from '../types'
 import { useCallback, useRef, useSyncExternalStore } from 'react'
-import { useDataTableStore, useTableInstance } from '../core/data-table-context'
+import { useDataTableStore, useRenderKey, useTableInstance } from '../core/data-table-context'
 
 function shallowEqual(a: Record<string, unknown>, b: Record<string, unknown>): boolean {
   const keysA = Object.keys(a)
@@ -84,58 +83,49 @@ export function useDataTableSorting() {
 }
 
 export function useDataTableSelection<TData>() {
+  useRenderKey() // re-render when store changes (table is mutable singleton)
   const store = useDataTableStore<TData>()
   const table = useTableInstance<TData>()
-  return useSliceSelector<TData, {
-    rowSelection: RowSelectionState
-    setRowSelection: (selection: RowSelectionState) => void
-    selectedRows: TData[]
-  }>(
-    useCallback((state: DataTableStoreState<TData>) => ({
-      rowSelection: state.rowSelection,
-      setRowSelection: store.setRowSelection,
-      selectedRows: table.getFilteredSelectedRowModel().rows.map(r => r.original),
-    }), [store, table]),
-  )
+  const state = store.getSnapshot()
+  return {
+    rowSelection: state.rowSelection,
+    setRowSelection: store.setRowSelection,
+    selectedRows: table.getFilteredSelectedRowModel().rows.map(r => r.original),
+  }
 }
 
 export function useDataTablePagination() {
+  useRenderKey() // re-render when store changes (table is mutable singleton)
   const store = useDataTableStore()
   const table = useTableInstance()
+  const state = store.getSnapshot()
 
-  // Stable function references — do not recreate on every snapshot call
+  // Stable function references (table ref is stable from useReactTable)
   const nextPage = useCallback(() => table.nextPage(), [table])
   const prevPage = useCallback(() => table.previousPage(), [table])
 
-  return useSliceSelector(
-    useCallback((state: DataTableStoreState<any>) => ({
-      canNextPage: table.getCanNextPage(),
-      canPrevPage: table.getCanPreviousPage(),
-      nextPage,
-      prevPage,
-      pageIndex: state.pageIndex,
-      pageCount: table.getPageCount(),
-      setPageIndex: store.setPageIndex,
-      pageSize: state.pageSize,
-      setPageSize: store.setPageSize,
-      totalRows: state.filteredData.length,
-    }), [store, table, nextPage, prevPage]),
-  )
+  return {
+    canNextPage: table.getCanNextPage(),
+    canPrevPage: table.getCanPreviousPage(),
+    nextPage,
+    prevPage,
+    pageIndex: state.pageIndex,
+    pageCount: table.getPageCount(),
+    setPageIndex: store.setPageIndex,
+    pageSize: state.pageSize,
+    setPageSize: store.setPageSize,
+    totalRows: state.filteredData.length,
+  }
 }
 
 export function useDataTableRows<TData>() {
+  useRenderKey() // re-render when store changes (table is mutable singleton)
   const table = useTableInstance<TData>()
-  return useSliceSelector<TData, {
-    rows: Row<TData>[]
-    headerGroups: HeaderGroup<TData>[]
-    totalColumns: number
-  }>(
-    useCallback((_state: DataTableStoreState<TData>) => ({
-      rows: table.getRowModel().rows,
-      headerGroups: table.getHeaderGroups(),
-      totalColumns: table.getAllColumns().length,
-    }), [table]),
-  )
+  return {
+    rows: table.getRowModel().rows,
+    headerGroups: table.getHeaderGroups(),
+    totalColumns: table.getAllColumns().length,
+  }
 }
 
 export function useDataTableLoading() {
@@ -161,4 +151,3 @@ export function useDataTableInlineContents<TData>() {
     }), [store]),
   )
 }
-

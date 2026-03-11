@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import type { UseDataTableServerOptions } from '../hooks/use-data-table-server'
 import { useDataTableServer } from '../hooks/use-data-table-server'
 import { useIsClient } from '../hooks/use-is-client'
-import { DataTableStoreContext, TableInstanceContext } from './data-table-context'
+import { DataTableRenderKeyContext, DataTableStoreContext, TableInstanceContext } from './data-table-context'
 
 export type DataTableServerProviderProps<TResponse, TData> = UseDataTableServerOptions<TResponse, TData> & {
   readonly className?: string
@@ -27,7 +27,9 @@ function ServerProviderInner<TResponse, TData>({
   return (
     <DataTableStoreContext value={store}>
       <TableInstanceContext value={table}>
-        <div className={className}>{children}</div>
+        <DataTableRenderKeyContext value={store.getSnapshot()._version}>
+          <div className={className}>{children}</div>
+        </DataTableRenderKeyContext>
       </TableInstanceContext>
     </DataTableStoreContext>
   )

@@ -104,4 +104,3 @@ describe('useDataTableLoading', () => {
     expect(renderCount.current).toBe(countBefore)
   })
 })
-

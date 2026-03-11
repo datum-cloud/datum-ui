@@ -1,8 +1,8 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { ServerProvider } from '../core/server-provider'
 import { useDataTableStore } from '../core/data-table-context'
+import { ServerProvider } from '../core/server-provider'
 import { useDataTableLoading } from '../hooks/use-selectors'
 
 interface TestRow {

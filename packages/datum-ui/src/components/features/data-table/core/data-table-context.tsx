@@ -2,10 +2,29 @@
 
 import type { Table } from '@tanstack/react-table'
 import type { DataTableContextValue, DataTableStore } from '../types'
-import { createContext, use } from 'react'
+import { createContext, use, useContext } from 'react' // eslint-disable-line react/no-use-context -- useContext needed: use() breaks context subscriptions after SSR hydration
 
 export const DataTableStoreContext = createContext<DataTableStore<any> | null>(null)
 export const TableInstanceContext = createContext<Table<any> | null>(null)
+
+/**
+ * Monotonic counter that increments on every store mutation.
+ * Table-dependent hooks consume this context to force re-renders
+ * through React's {children} composition boundary, since the
+ * mutable table singleton (stable ref) cannot trigger context updates.
+ */
+export const DataTableRenderKeyContext = createContext<number>(0)
+
+/**
+ * Forces a re-render when the store changes. Used by table-dependent hooks.
+ * Uses useContext (not use()) because use() does not reliably register
+ * context subscriptions in SSR/hydration scenarios (React Router SSR),
+ * preventing re-renders when the context value changes.
+ */
+export function useRenderKey(): number {
+  // eslint-disable-next-line react/no-use-context -- use() does not register context subscriptions after SSR hydration
+  return useContext(DataTableRenderKeyContext)
+}
 
 // Legacy context — retained for backward compat until providers are migrated (Task 4)
 export const DataTableContext = createContext<DataTableContextValue<any> | null>(null)
