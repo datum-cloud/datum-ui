@@ -11,7 +11,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react'
 import { withSelectionColumn } from '../columns/selection-column'
 import { createDataTableStore } from '../core/store'
 
@@ -70,8 +70,8 @@ export function useDataTableServer<TResponse, TData>(
   // Page 0 has undefined cursor (start from beginning)
   const cursorMapRef = useRef<Map<number, string | undefined>>(new Map())
 
-  // Track hasNextPage to control the Next button
-  const [hasNextPage, setHasNextPage] = useState(false)
+  // Track hasNextPage via ref to avoid extra state/render cycle
+  const hasNextPageRef = useRef(false)
 
   // 1. Create store
   const store = useMemo<DataTableStore<TData>>(
@@ -90,8 +90,30 @@ export function useDataTableServer<TResponse, TData>(
   const { sorting, filters, search, rowSelection, pageSize, pageIndex }
     = useSyncExternalStore(store.subscribe, store.getSnapshot)
 
-  // 3. Fetch on query change (including page changes)
+  // 3. Fetch on query change — also resets cursors when query params change
+  const prevQueryRef = useRef({ sorting, filters, search, pageSize })
   useEffect(() => {
+    // Detect query param changes (vs page-only changes)
+    const prev = prevQueryRef.current
+    const queryChanged
+      = prev.sorting !== sorting
+        || prev.filters !== filters
+        || prev.search !== search
+        || prev.pageSize !== pageSize
+
+    if (queryChanged) {
+      cursorMapRef.current = new Map()
+      hasNextPageRef.current = false
+      // Reset to first page — the store update will re-trigger this effect
+      // with pageIndex=0, which then performs the actual fetch
+      if (pageIndex !== 0) {
+        prevQueryRef.current = { sorting, filters, search, pageSize }
+        store.setPageIndex(0)
+        return
+      }
+    }
+    prevQueryRef.current = { sorting, filters, search, pageSize }
+
     let cancelled = false
     store.setLoading(true)
 
@@ -115,14 +137,14 @@ export function useDataTableServer<TResponse, TData>(
         if (result.nextCursor) {
           cursorMapRef.current.set(pageIndex + 1, result.nextCursor)
         }
-        setHasNextPage(result.hasNextPage)
+        hasNextPageRef.current = result.hasNextPage
       })
       .catch((error) => {
         if (cancelled)
           return
         store.setServerData([] as TData[])
         store.setError(error instanceof Error ? error : new Error(String(error)))
-        setHasNextPage(false)
+        hasNextPageRef.current = false
       })
       .finally(() => {
         if (!cancelled)
@@ -133,24 +155,6 @@ export function useDataTableServer<TResponse, TData>(
       cancelled = true
     }
   }, [sorting, filters, search, pageSize, pageIndex, store])
-
-  // Reset cursors when query params change (not page changes)
-  const prevQueryRef = useRef({ sorting, filters, search, pageSize })
-  useEffect(() => {
-    const prev = prevQueryRef.current
-    const queryChanged
-      = prev.sorting !== sorting
-        || prev.filters !== filters
-        || prev.search !== search
-        || prev.pageSize !== pageSize
-
-    if (queryChanged) {
-      cursorMapRef.current = new Map()
-      store.setPageIndex(0)
-      setHasNextPage(false)
-    }
-    prevQueryRef.current = { sorting, filters, search, pageSize }
-  }, [sorting, filters, search, pageSize, store])
 
   // 4. Resolve columns
   const resolvedColumns = useMemo(
@@ -173,7 +177,7 @@ export function useDataTableServer<TResponse, TData>(
     manualSorting: true,
     manualFiltering: true,
     // Tell TanStack about page capabilities so pagination component works
-    pageCount: hasNextPage ? pageIndex + 2 : pageIndex + 1,
+    pageCount: hasNextPageRef.current ? pageIndex + 2 : pageIndex + 1,
     getCoreRowModel: getCoreRowModel(),
     getRowId,
     enableRowSelection: !!enableRowSelection,
@@ -188,10 +192,7 @@ export function useDataTableServer<TResponse, TData>(
     onPaginationChange: (updater) => {
       const prev = { pageIndex, pageSize }
       const next = typeof updater === 'function' ? updater(prev) : updater
-      if (next.pageIndex !== pageIndex)
-        store.setPageIndex(next.pageIndex)
-      if (next.pageSize !== pageSize)
-        store.setPageSize(next.pageSize)
+      store.setPagination(next.pageIndex, next.pageSize)
     },
   })
 

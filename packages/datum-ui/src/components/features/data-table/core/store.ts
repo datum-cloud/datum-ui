@@ -11,7 +11,7 @@ import { applyFilters } from './filter-engine'
 export function createDataTableStore<TData>(
   options: CreateStoreOptions<TData>,
 ): DataTableStore<TData> {
-  const registeredFilters = new Map<string, FilterStrategy>()
+  let registeredFilters = new Map<string, FilterStrategy>()
   const listeners = new Set<() => void>()
 
   function computeFilteredData(s: DataTableStoreState<TData>): TData[] {
@@ -115,11 +115,21 @@ export function createDataTableStore<TData>(
     },
 
     setPageIndex: (pageIndex) => {
-      setState({ ...state, pageIndex, rowSelection: {} })
+      if (!Number.isFinite(pageIndex) || pageIndex < 0)
+        return
+      setState({ ...state, pageIndex: Math.floor(pageIndex), rowSelection: {} })
     },
 
     setPageSize: (pageSize) => {
-      setState({ ...state, pageSize, pageIndex: 0, rowSelection: {} })
+      if (!Number.isFinite(pageSize) || pageSize < 1)
+        return
+      setState({ ...state, pageSize: Math.floor(pageSize), pageIndex: 0, rowSelection: {} })
+    },
+
+    setPagination: (pageIndex, pageSize) => {
+      const safeIndex = Number.isFinite(pageIndex) ? Math.max(0, Math.floor(pageIndex)) : state.pageIndex
+      const safeSize = Number.isFinite(pageSize) ? Math.max(1, Math.floor(pageSize)) : state.pageSize
+      setState({ ...state, pageIndex: safeIndex, pageSize: safeSize, rowSelection: {} })
     },
 
     setLoading: (isLoading) => {
@@ -131,13 +141,17 @@ export function createDataTableStore<TData>(
     },
 
     registerFilter: (column, strategy) => {
-      registeredFilters.set(column, strategy)
+      const next = new Map(registeredFilters)
+      next.set(column, strategy)
+      registeredFilters = next
       const filteredData = computeFilteredData(state)
       setState({ ...state, filteredData })
     },
 
     unregisterFilter: (column) => {
-      registeredFilters.delete(column)
+      const next = new Map(registeredFilters)
+      next.delete(column)
+      registeredFilters = next
       if (column in state.filters) {
         const filteredData = computeFilteredData(state)
         setState({ ...state, filteredData })

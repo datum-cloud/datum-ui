@@ -121,13 +121,14 @@ export function DataTablePagination({
       </div>
 
       {/* Right side: page navigation */}
-      <div className="flex items-center gap-1">
+      <nav aria-label="Table pagination" className="flex items-center gap-1">
         <Button
           theme="outline"
           size="icon"
           className="size-8"
           onClick={prevPage}
           disabled={!canPrevPage}
+          aria-label="Previous page"
         >
           <ChevronLeft className="size-4" />
         </Button>
@@ -150,6 +151,8 @@ export function DataTablePagination({
                   className={cn('h-8 min-w-8 px-2', isActive && 'font-semibold')}
                   onClick={() => setPageIndex(page - 1)}
                   disabled={isActive}
+                  aria-label={`Page ${page}`}
+                  aria-current={isActive ? 'page' : undefined}
                 >
                   {page}
                 </Button>
@@ -169,10 +172,11 @@ export function DataTablePagination({
           className="size-8"
           onClick={nextPage}
           disabled={!canNextPage}
+          aria-label="Next page"
         >
           <ChevronRight className="size-4" />
         </Button>
-      </div>
+      </nav>
     </div>
   )
 }

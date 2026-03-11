@@ -34,6 +34,7 @@ export function DataTableSearch({
       value={inputValue}
       onChange={e => setInputValue(e.target.value)}
       className={className}
+      aria-label={placeholder}
       data-slot="dt-search"
     />
   )

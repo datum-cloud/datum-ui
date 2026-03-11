@@ -21,6 +21,7 @@ export function DataTableColumnHeader<TData, TValue>({
         type="button"
         className="flex items-center gap-1 hover:text-foreground -ml-3 h-8 px-3 cursor-pointer"
         onClick={column.getToggleSortingHandler()}
+        aria-label={`Sort by ${title}${sorted === 'asc' ? ', sorted ascending' : sorted === 'desc' ? ', sorted descending' : ''}`}
       >
         <span>{title}</span>
         {sorted === 'desc'

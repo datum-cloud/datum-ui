@@ -53,9 +53,9 @@ describe('dataTablePagination', () => {
     )
 
     // 25 items / 10 per page = 3 pages
-    expect(screen.getByRole('button', { name: '1' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '2' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '3' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Page 1' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Page 2' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Page 3' })).toBeInTheDocument()
   })
 
   it('renders rows per page selector', () => {

@@ -99,8 +99,7 @@ export function useDataTableClient<TData>(options: UseDataTableClientOptions<TDa
     onPaginationChange: (updater) => {
       const prev = { pageIndex, pageSize: storePageSize }
       const next = typeof updater === 'function' ? updater(prev) : updater
-      store.setPageIndex(next.pageIndex)
-      store.setPageSize(next.pageSize)
+      store.setPagination(next.pageIndex, next.pageSize)
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),

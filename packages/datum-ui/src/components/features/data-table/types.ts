@@ -354,6 +354,7 @@ export interface DataTableStore<TData> {
   readonly setRowSelection: (selection: RowSelectionState) => void
   readonly setPageIndex: (index: number) => void
   readonly setPageSize: (size: number) => void
+  readonly setPagination: (pageIndex: number, pageSize: number) => void
   readonly setLoading: (loading: boolean) => void
   readonly setError: (error: Error | null) => void
   readonly registerFilter: (column: string, strategy: FilterStrategy) => void
