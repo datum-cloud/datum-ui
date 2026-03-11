@@ -1,0 +1,430 @@
+---
+title: Data Table
+description: A composable, type-safe data table with client and server modes, sorting, filtering, pagination, and optional URL state sync.
+---
+
+# Data Table
+
+A compound component data table built on TanStack React Table. Supports both client-side and server-side data with sorting, filtering, search, row selection, bulk actions, and pagination.
+
+## Installation
+
+The Data Table is included in the `@datum-cloud/datum-ui` package.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@tanstack/react-table
+```
+
+Optional, for URL state sync:
+
+```package-install
+nuqs
+```
+
+## Usage
+
+```tsx
+import { DataTable, useDataTableClient } from '@datum-cloud/datum-ui/data-table'
+```
+
+### Client Data Table
+
+For data that is fully loaded in the browser:
+
+```tsx
+import { DataTable, useDataTableClient } from '@datum-cloud/datum-ui/data-table'
+import type { ColumnDef } from '@tanstack/react-table'
+
+interface User {
+  id: string
+  name: string
+  email: string
+  role: string
+}
+
+const columns: ColumnDef<User>[] = [
+  {
+    accessorKey: 'name',
+    header: ({ column }) => (
+      <DataTable.ColumnHeader column={column} title="Name" />
+    ),
+  },
+  {
+    accessorKey: 'email',
+    header: 'Email',
+  },
+  {
+    accessorKey: 'role',
+    header: 'Role',
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => (
+      <DataTable.RowActions
+        row={row}
+        actions={[
+          { label: 'Edit', onClick: (user) => { /* navigate to edit page */ } },
+          { label: 'Delete', variant: 'destructive', onClick: (user) => { /* handle delete */ } },
+        ]}
+      />
+    ),
+  },
+]
+
+function UsersPage({ users }: { users: User[] }) {
+  const tableState = useDataTableClient({
+    data: users,
+    columns,
+    pageSize: 20,
+    getRowId: (row) => row.id,
+    enableRowSelection: true,
+    defaultSort: [{ id: 'name', desc: false }],
+  })
+
+  return (
+    <DataTable.Client {...tableState}>
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-3">
+          <DataTable.Search placeholder="Search users..." />
+          <DataTable.SelectFilter
+            column="role"
+            label="Role"
+            options={[
+              { label: 'Admin', value: 'admin' },
+              { label: 'Editor', value: 'editor' },
+            ]}
+          />
+        </div>
+        <DataTable.BulkActions>
+          {(selectedRows) => (
+            <span>{selectedRows.length} selected</span>
+          )}
+        </DataTable.BulkActions>
+        <DataTable.Content emptyMessage="No users found." />
+        <DataTable.Pagination />
+      </div>
+    </DataTable.Client>
+  )
+}
+```
+
+### Server Data Table
+
+For paginated API data (e.g., Kubernetes resources with continuation tokens):
+
+```tsx
+import { DataTable, useDataTableServer } from '@datum-cloud/datum-ui/data-table'
+
+function ResourcesPage() {
+  const [data, setData] = useState<Resource[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasNextPage, setHasNextPage] = useState(false)
+
+  const tableState = useDataTableServer({
+    columns: resourceColumns,
+    limit: 25,
+    getRowId: (row) => row.metadata.uid,
+  })
+
+  // Fetch data when sorting/filters change
+  useEffect(() => {
+    fetchResources({
+      sorting: tableState.sorting,
+      filters: tableState.filters,
+      limit: tableState.pagination.limit,
+    }).then((result) => {
+      setData(result.items)
+      setHasNextPage(Boolean(result.continue))
+      setIsLoading(false)
+    })
+  }, [tableState.sorting, tableState.filters, tableState.pagination.limit])
+
+  return (
+    <DataTable.Server
+      {...tableState}
+      data={data}
+      isLoading={isLoading}
+      pagination={{
+        ...tableState.pagination,
+        hasNextPage,
+        hasPrevPage: false,
+        nextPage: () => { /* fetch next page */ },
+        prevPage: () => { /* fetch prev page */ },
+      }}
+    >
+      <DataTable.Search placeholder="Search resources..." />
+      {isLoading
+        ? <DataTable.Loading rows={5} columns={4} />
+        : <DataTable.Content />}
+      <DataTable.Pagination />
+    </DataTable.Server>
+  )
+}
+```
+
+## Sorting
+
+Column headers render a click-to-sort control. Click once for ascending, again for descending, then cycles back to ascending. No props required beyond the column definition:
+
+```tsx
+{
+  accessorKey: 'name',
+  header: ({ column }) => (
+    <DataTable.ColumnHeader column={column} title="Name" />
+  ),
+}
+```
+
+## Filters
+
+Filters are autonomous composable components. Each filter reads and writes its own key in the shared filter state.
+
+### Select Filter
+
+Combobox popover with search. Allows single-value selection with a clear button to reset. Use the `searchable` prop to enable filtering within the options list:
+
+```tsx
+<DataTable.SelectFilter
+  column="status"
+  label="Status"
+  searchable
+  options={[
+    { label: 'Active', value: 'active' },
+    { label: 'Inactive', value: 'inactive' },
+  ]}
+/>
+```
+
+### Checkbox Filter
+
+Multi-value checkbox popover. Selected values display as badges in the trigger button. Includes a clear button to reset the selection. Stores selected values as `string[]`:
+
+```tsx
+<DataTable.CheckboxFilter
+  column="role"
+  label="Roles"
+  options={[
+    { label: 'Admin', value: 'admin' },
+    { label: 'Editor', value: 'editor' },
+    { label: 'Viewer', value: 'viewer' },
+  ]}
+/>
+```
+
+### Date Picker Filter
+
+Popover with CalendarDatePicker integration. Supports optional `minDate` and `maxDate` constraints:
+
+```tsx
+<DataTable.DatePickerFilter
+  column="createdAt"
+  label="Created after"
+  minDate={new Date('2020-01-01')}
+  maxDate={new Date()}
+/>
+```
+
+## Inline Content
+
+Render custom content inline within the table body — for create forms, edit forms, detail panels, etc.
+
+### Top Position (Create)
+
+```tsx
+const [isCreating, setIsCreating] = useState(false)
+
+<DataTable.InlineContent position="top" open={isCreating} onClose={() => setIsCreating(false)}>
+  {({ onClose }) => (
+    <form className="flex gap-2 p-4">
+      <input placeholder="Name" />
+      <button type="submit">Create</button>
+      <button type="button" onClick={onClose}>Cancel</button>
+    </form>
+  )}
+</DataTable.InlineContent>
+```
+
+### Row Position (Edit)
+
+```tsx
+const [editingId, setEditingId] = useState<string | null>(null)
+
+<DataTable.InlineContent
+  position="row"
+  rowId={editingId ?? undefined}
+  open={!!editingId}
+  onClose={() => setEditingId(null)}
+>
+  {({ onClose, rowData }) => (
+    <form className="flex gap-2 p-4">
+      <input defaultValue={rowData?.name} />
+      <button type="submit">Save</button>
+      <button type="button" onClick={onClose}>Cancel</button>
+    </form>
+  )}
+</DataTable.InlineContent>
+```
+
+## Customization
+
+### Sub-Element Class Names
+
+`DataTable.Content` accepts className props for every sub-element:
+
+```tsx
+<DataTable.Content
+  className="rounded-lg border"
+  tableClassName="border-collapse"
+  headerClassName="bg-slate-800 text-white"
+  headerRowClassName="border-b"
+  headerCellClassName="uppercase text-xs"
+  bodyClassName="divide-y"
+  rowClassName="hover:bg-slate-50"
+  cellClassName="py-3 px-4"
+/>
+```
+
+`rowClassName` and `cellClassName` also accept functions for dynamic styling:
+
+```tsx
+<DataTable.Content
+  rowClassName={(row) => row.original.status === 'inactive' ? 'opacity-50' : ''}
+/>
+```
+
+### Data Slot Selectors
+
+Every element has a `data-slot` attribute for CSS-only customization:
+
+| Element | data-slot |
+|---------|-----------|
+| Wrapper | `dt` |
+| Table | `dt-table` |
+| Header | `dt-header` |
+| Header row | `dt-header-row` |
+| Header cell | `dt-header-cell` |
+| Body | `dt-body` |
+| Row | `dt-row` |
+| Cell | `dt-cell` |
+| Pagination | `dt-pagination` |
+| Search | `dt-search` |
+| Filter | `dt-filter` |
+| Bulk actions | `dt-bulk-actions` |
+| Row actions | `dt-row-actions` |
+| Loading | `dt-loading` |
+| Column header | `dt-column-header` |
+| Inline content | `dt-inline-content` |
+| Empty state | `dt-empty` |
+
+The wrapper has the class `datum-ui-data-table` for scoping:
+
+```css
+.datum-ui-data-table [data-slot="dt-row"]:hover {
+  background-color: #f1f5f9;
+}
+```
+
+## URL State Sync (nuqs)
+
+Sync table state to URL query parameters with the `useNuqsAdapter` hook. Requires `nuqs` to be installed.
+
+```tsx
+import { useNuqsAdapter } from '@datum-cloud/datum-ui/data-table'
+import { parseAsString } from 'nuqs'
+
+// Zero config — sorting, search, page, size synced automatically
+const stateAdapter = useNuqsAdapter()
+
+// With custom filter parsers
+const stateAdapter = useNuqsAdapter({
+  filters: {
+    status: parseAsString.withDefault(''),
+  },
+})
+
+const tableState = useDataTableClient({ data, columns, stateAdapter })
+```
+
+URL params: `?sort=[{"id":"name","desc":false}]&q=hello&page=0&size=20&status=active`
+
+## API Reference
+
+### `useDataTableClient(options)`
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `data` | `TData[]` | -- | Table data array |
+| `columns` | `ColumnDef<TData>[]` | -- | TanStack column definitions |
+| `pageSize` | `number` | `20` | Initial page size |
+| `getRowId` | `(row: TData) => string` | -- | Custom row ID accessor |
+| `enableRowSelection` | `boolean \| SelectionColumnOptions` | `false` | Enable row selection with auto-injected checkbox column. Pass `true` for defaults or an options object for customization |
+| `defaultSort` | `SortingState` | `[]` | Initial sort state |
+| `defaultFilters` | `FilterValue` | `{}` | Initial filter state |
+| `searchableColumns` | `string[]` | -- | Columns to search in |
+| `searchFn` | `(row, search) => boolean` | -- | Custom search function |
+| `stateAdapter` | `StateAdapter` | -- | URL state sync adapter |
+
+### `useDataTableServer(options)`
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `columns` | `ColumnDef<TData>[]` | -- | TanStack column definitions |
+| `limit` | `number` | `20` | Page size for cursor pagination |
+| `getRowId` | `(row: TData) => string` | -- | Custom row ID accessor |
+| `enableRowSelection` | `boolean \| SelectionColumnOptions` | `false` | Enable row selection with auto-injected checkbox column. Pass `true` for defaults or an options object for customization |
+| `defaultSort` | `SortingState` | `[]` | Initial sort state |
+| `defaultFilters` | `FilterValue` | `{}` | Initial filter state |
+| `stateAdapter` | `StateAdapter` | -- | URL state sync adapter |
+
+### `DataTable` Namespace
+
+| Component | Description |
+|-----------|-------------|
+| `DataTable.Client` | Client-mode provider with full sorting, filtering, pagination |
+| `DataTable.Server` | Server-mode provider with manual pagination/sorting/filtering |
+| `DataTable.Content` | Table rendering with header, body, and empty state. Accepts sub-element className props (`tableClassName`, `headerClassName`, `headerRowClassName`, `headerCellClassName`, `bodyClassName`, `rowClassName`, `cellClassName`) |
+| `DataTable.ColumnHeader` | Click-to-sort column header |
+| `DataTable.Pagination` | Page navigation with page size selector |
+| `DataTable.Search` | Debounced search input |
+| `DataTable.RowActions` | Per-row action dropdown from `ActionItem[]` |
+| `DataTable.BulkActions` | Render prop for selected rows |
+| `DataTable.Loading` | Skeleton loading state |
+| `DataTable.InlineContent` | Render custom content inline within the table body. Supports `position` (`"top"` or `"row"`), `open`, `onClose`, and `rowId` props |
+| `DataTable.SelectFilter` | Combobox popover filter with single-select and optional `searchable` prop |
+| `DataTable.CheckboxFilter` | Multi-value checkbox popover filter with badges and clear button |
+| `DataTable.DatePickerFilter` | CalendarDatePicker filter with optional `minDate` and `maxDate` constraints |
+
+### `createSelectionColumn(options?)`
+
+Creates a selection checkbox column definition. Use when you need to customize or manually position the selection column:
+
+```tsx
+import { createSelectionColumn } from '@datum-cloud/datum-ui/data-table'
+
+// Custom styling
+const cols = [createSelectionColumn({ className: 'size-5' }), ...myColumns]
+
+// Custom position (not first)
+const cols = [nameCol, createSelectionColumn(), emailCol]
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `className` | `string` | -- | Class for cell checkboxes |
+| `headerClassName` | `string` | -- | Class for header checkbox |
+| `renderHeader` | `(props) => ReactNode` | -- | Custom header render |
+| `renderCell` | `(props) => ReactNode` | -- | Custom cell render |
+
+> **Note:** When `enableRowSelection` is `true`, a selection column is auto-injected as the first column. If your columns already include one with `id: 'select'`, auto-injection is skipped.
+
+### `useNuqsAdapter(options?)`
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `filters` | `Record<string, NuqsParser>` | -- | Custom filter parsers to sync to URL |
+
+Returns a `StateAdapter` that syncs sorting, search, pageIndex, pageSize, and custom filters to URL query parameters.

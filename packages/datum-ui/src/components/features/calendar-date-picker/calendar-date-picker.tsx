@@ -83,9 +83,10 @@ interface CalendarDatePickerProps
   disableFuture?: boolean
   disablePast?: boolean
   maxRange?: number // Maximum number of days between start and end date
+  popoverClassName?: string
 }
 
-export function CalendarDatePicker({ ref, id = 'calendar-date-picker', className, triggerClassName, date, closeOnSelect = false, numberOfMonths = 2, yearsRange = 10, onDateSelect, variant, placeholder, excludePresets, customPresets, minDate, maxDate, disableFuture = false, disablePast = false, maxRange, ...props }: CalendarDatePickerProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
+export function CalendarDatePicker({ ref, id = 'calendar-date-picker', className, triggerClassName, date, closeOnSelect = false, numberOfMonths = 2, yearsRange = 10, onDateSelect, variant, placeholder, excludePresets, customPresets, minDate, maxDate, disableFuture = false, disablePast = false, maxRange, popoverClassName, ...props }: CalendarDatePickerProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
   const [isPopoverOpen, setIsPopoverOpen] = React.useState(false)
   const [selectedRange, setSelectedRange] = React.useState<string | null>(
     numberOfMonths === 2 ? 'This Year' : 'Today',
@@ -734,7 +735,7 @@ export function CalendarDatePicker({ ref, id = 'calendar-date-picker', className
         </PopoverTrigger>
         {isPopoverOpen && (
           <PopoverContent
-            className="w-auto"
+            className={cn('w-auto popover-content-width-full', popoverClassName)}
             align="center"
             avoidCollisions={false}
             onInteractOutside={handleClose}

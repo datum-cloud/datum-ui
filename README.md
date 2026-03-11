@@ -210,14 +210,23 @@ pnpm --filter @datum-cloud/datum-ui typecheck
 pnpm --filter @datum-cloud/datum-ui lint
 pnpm --filter @datum-cloud/datum-ui test
 
-# 3. Add a changeset
-pnpm changeset
-
-# 4. Commit and push
+# 3. Commit and push
 git add .
 git commit -m "feat: description of changes"
 git push -u origin feat/my-feature
 ```
+
+### Release Labels
+
+When your PR is merged to `main`, the publish workflow automatically bumps the package version based on PR labels:
+
+| Label | Version Bump | Example |
+|---|---|---|
+| `release:major` | Major | `0.3.0` → `1.0.0` |
+| `release:minor` | Minor | `0.2.1` → `0.3.0` |
+| _(no label)_ | Patch (default) | `0.2.1` → `0.2.2` |
+
+Add the appropriate label to your PR before merging to control the version bump.
 
 ## License
 

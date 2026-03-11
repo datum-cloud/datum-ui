@@ -72,6 +72,7 @@ export default defineConfig({
     'tag-input/index': 'src/components/features/tag-input/index.ts',
     'task-queue/index': 'src/components/features/task-queue/index.ts',
     'toast/index': 'src/components/features/toast/index.ts',
+    'data-table/index': 'src/components/features/data-table/index.ts',
   },
   format: ['esm'],
   dts: false,
@@ -93,6 +94,7 @@ export default defineConfig({
     'react-day-picker',
     'react-dropzone',
     'react-number-format',
+    'nuqs',
     'zod',
     // Transitive deps from @repo/shadcn
     /^@radix-ui\//,

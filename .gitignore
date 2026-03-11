@@ -13,3 +13,5 @@ coverage/
 .claude/
 CLAUDE.MD
 /docs/
+/specs/
+*.backup

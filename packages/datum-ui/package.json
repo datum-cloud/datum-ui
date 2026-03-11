@@ -1,7 +1,7 @@
 {
   "name": "@datum-cloud/datum-ui",
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "repository": {
     "url": "https://github.com/datum-cloud/datum-ui"
@@ -235,6 +235,10 @@
     "./toast": {
       "types": "./dist/components/features/toast/index.d.ts",
       "default": "./dist/toast/index.mjs"
+    },
+    "./data-table": {
+      "types": "./dist/components/features/data-table/index.d.ts",
+      "default": "./dist/data-table/index.mjs"
     }
   },
   "main": "./dist/index.mjs",
@@ -277,6 +281,7 @@
     "@radix-ui/react-tooltip": ">=1",
     "@radix-ui/react-visually-hidden": ">=1",
     "@stepperize/react": ">=4",
+    "@tanstack/react-table": ">=8",
     "@tanstack/react-virtual": ">=3",
     "cmdk": ">=1",
     "date-fns": ">=4",
@@ -287,6 +292,7 @@
     "leaflet.markercluster": ">=1.5",
     "motion": ">=11",
     "nprogress": ">=0.2",
+    "nuqs": ">=2",
     "react": ">=19",
     "react-day-picker": ">=9",
     "react-dom": ">=19",
@@ -356,6 +362,9 @@
     "@stepperize/react": {
       "optional": true
     },
+    "@tanstack/react-table": {
+      "optional": true
+    },
     "@tanstack/react-virtual": {
       "optional": true
     },
@@ -384,6 +393,9 @@
       "optional": true
     },
     "nprogress": {
+      "optional": true
+    },
+    "nuqs": {
       "optional": true
     },
     "react-day-picker": {
@@ -428,6 +440,7 @@
     "@repo/config": "workspace:*",
     "@repo/shadcn": "workspace:*",
     "@stepperize/react": "^6.1.0",
+    "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.13.19",
     "@testing-library/jest-dom": "^6",
     "@testing-library/react": "^16",
@@ -449,6 +462,7 @@
     "leaflet.markercluster": "^1.5.3",
     "motion": "^12.34.4",
     "nprogress": "^0.2.0",
+    "nuqs": "^2.8.9",
     "react": "^19",
     "react-day-picker": "^9.14.0",
     "react-dom": "^19",
