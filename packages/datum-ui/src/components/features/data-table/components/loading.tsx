@@ -1,7 +1,7 @@
 'use client'
 
 import type { LoadingProps } from '../types'
-import { Skeleton } from '@repo/shadcn/ui/skeleton'
+import { Skeleton } from '../../../base/skeleton'
 import { DEFAULT_LOADING_ROWS } from '../constants'
 
 export function DataTableLoading({

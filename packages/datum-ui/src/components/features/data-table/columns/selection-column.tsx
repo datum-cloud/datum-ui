@@ -2,7 +2,7 @@
 
 import type { ColumnDef } from '@tanstack/react-table'
 import type { SelectionColumnOptions } from '../types'
-import { Checkbox } from '@repo/shadcn/ui/checkbox'
+import { Checkbox } from '../../../base/checkbox'
 
 const SELECTION_COLUMN_ID = 'select'
 

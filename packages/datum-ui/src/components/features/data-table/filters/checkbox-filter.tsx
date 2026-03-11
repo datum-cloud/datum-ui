@@ -1,18 +1,18 @@
 'use client'
 
 import type { FilterCheckboxProps } from '../types'
-import { cn } from '@repo/shadcn/lib/utils'
-import { Badge } from '@repo/shadcn/ui/badge'
-import { Button } from '@repo/shadcn/ui/button'
-import { Checkbox } from '@repo/shadcn/ui/checkbox'
-import { Label } from '@repo/shadcn/ui/label'
+import { ChevronDown, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { cn } from '../../../../utils/cn'
+import { Badge } from '../../../base/badge'
+import { Button } from '../../../base/button'
+import { Checkbox } from '../../../base/checkbox'
+import { Label } from '../../../base/label'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@repo/shadcn/ui/popover'
-import { ChevronDown, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+} from '../../../base/popover'
 import { useDataTableFilters } from '../hooks/use-selectors'
 
 const MAX_VISIBLE_BADGES = 2
@@ -60,7 +60,7 @@ export function CheckboxFilter({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
+          theme="outline"
           className={cn('justify-between gap-1', className)}
           data-slot="dt-filter"
           data-testid="dt-filter-trigger"
@@ -71,7 +71,7 @@ export function CheckboxFilter({
                   {visibleBadges.map((val) => {
                     const opt = options.find(o => o.value === val)
                     return (
-                      <Badge key={val} variant="secondary" className="text-xs px-1.5 py-0">
+                      <Badge key={val} type="secondary" theme="light" className="text-xs px-1.5 py-0">
                         {opt?.label ?? val}
                         <span
                           role="button"
@@ -115,8 +115,8 @@ export function CheckboxFilter({
           <span className="text-sm font-medium">{label}</span>
           {selectedValues.length > 0 && (
             <Button
-              variant="ghost"
-              size="sm"
+              theme="borderless"
+              size="small"
               className="h-auto p-1 text-xs"
               onClick={() => clearFilter(column)}
             >

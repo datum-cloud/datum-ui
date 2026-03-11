@@ -1,8 +1,10 @@
 'use client'
 
 import type { FilterSelectProps } from '../types'
-import { cn } from '@repo/shadcn/lib/utils'
-import { Button } from '@repo/shadcn/ui/button'
+import { Check, ChevronDown, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { cn } from '../../../../utils/cn'
+import { Button } from '../../../base/button'
 import {
   Command,
   CommandEmpty,
@@ -10,14 +12,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@repo/shadcn/ui/command'
+} from '../../../base/command'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@repo/shadcn/ui/popover'
-import { Check, ChevronDown, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+} from '../../../base/popover'
 import { useDataTableFilters } from '../hooks/use-selectors'
 
 export function SelectFilter({
@@ -44,7 +44,7 @@ export function SelectFilter({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
+          theme="outline"
           role="combobox"
           aria-expanded={open}
           className={cn('justify-between', className)}

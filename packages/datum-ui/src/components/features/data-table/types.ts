@@ -294,6 +294,25 @@ export interface PaginationProps {
   readonly className?: string
 }
 
+export interface ActiveFiltersProps {
+  /** Label shown before filter groups. Set to `null` to hide. Default: "Selected Filters" */
+  readonly label?: string | null
+  /** Maps column keys to human-readable names */
+  readonly filterLabels?: Record<string, string>
+  /** Custom value formatter for badge display */
+  readonly formatFilterValue?: (column: string, value: unknown) => string | undefined
+  /** Controls the clear-all action appearance. Default: "icon" (X icon only) */
+  readonly clearAll?: 'icon' | 'button' | 'text'
+  /** Label for the clear-all action when using "button" or "text" mode. Default: "Clear all" */
+  readonly clearAllLabel?: string
+  /** CSS class for the root container */
+  readonly className?: string
+  /** CSS class for the filter group boxes */
+  readonly groupClassName?: string
+  /** CSS class for filter value badges */
+  readonly badgeClassName?: string
+}
+
 export interface LoadingProps {
   readonly rows?: number
   readonly columns?: number

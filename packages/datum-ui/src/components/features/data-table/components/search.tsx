@@ -1,8 +1,8 @@
 'use client'
 
 import type { SearchProps } from '../types'
-import { Input } from '@repo/shadcn/ui/input'
 import { useEffect, useState } from 'react'
+import { Input } from '../../../base/input'
 import { DEFAULT_DEBOUNCE_MS } from '../constants'
 import { useDataTableSearch } from '../hooks/use-selectors'
 

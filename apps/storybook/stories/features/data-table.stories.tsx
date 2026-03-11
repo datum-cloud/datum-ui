@@ -134,6 +134,9 @@ function ClientTableDemo() {
             ]}
           />
         </div>
+        <DataTable.ActiveFilters
+          filterLabels={{ role: 'Role', status: 'Status' }}
+        />
         <DataTable.BulkActions>
           {selectedRows => (
             <div className="bg-muted flex items-center gap-2 rounded-lg px-3 py-2 text-sm">
@@ -224,6 +227,7 @@ function ServerTableContent() {
   return (
     <div className="flex flex-col gap-4">
       <DataTable.Search placeholder="Search posts..." />
+      <DataTable.ActiveFilters />
       {isLoading
         ? <DataTable.Loading rows={5} columns={4} />
         : <DataTable.Content emptyMessage="No posts found." />}
@@ -365,6 +369,9 @@ function MultiSelectBulkActionsDemo() {
             ]}
           />
         </div>
+        <DataTable.ActiveFilters
+          filterLabels={{ role: 'Roles', status: 'Status' }}
+        />
         <DataTable.BulkActions>
           {selectedRows => (
             <div className="bg-muted flex items-center gap-3 rounded-lg px-4 py-2 text-sm">
@@ -647,4 +654,137 @@ function InlineContentDemo() {
 
 export const InlineContent: Story = {
   render: () => <InlineContentDemo />,
+}
+
+// ---------------------------------------------------------------------------
+// Active Filters -- showcases all customization options
+// ---------------------------------------------------------------------------
+
+function ActiveFiltersDemo() {
+  const filterLabels = { role: 'Role', status: 'Status' }
+
+  const sharedOptions = {
+    data: sampleUsers,
+    columns,
+    pageSize: 5,
+    defaultFilters: {
+      role: ['Admin', 'Editor'],
+      status: 'active',
+    },
+  }
+
+  const defaultState = useDataTableClient(sharedOptions)
+  const customLabelState = useDataTableClient(sharedOptions)
+  const noLabelState = useDataTableClient(sharedOptions)
+
+  return (
+    <div className="flex flex-col gap-8">
+      {/* Default variant */}
+      <div>
+        <h3 className="mb-2 text-sm font-medium text-muted-foreground">Default</h3>
+        <DataTable.Client {...defaultState}>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <DataTable.CheckboxFilter
+                column="role"
+                label="Roles"
+                options={[
+                  { label: 'Admin', value: 'Admin' },
+                  { label: 'Editor', value: 'Editor' },
+                  { label: 'Viewer', value: 'Viewer' },
+                ]}
+              />
+              <DataTable.SelectFilter
+                column="status"
+                label="Status"
+                options={[
+                  { label: 'Active', value: 'active' },
+                  { label: 'Inactive', value: 'inactive' },
+                ]}
+              />
+            </div>
+            <DataTable.ActiveFilters filterLabels={filterLabels} />
+            <DataTable.Content emptyMessage="No users found." />
+            <DataTable.Pagination />
+          </div>
+        </DataTable.Client>
+      </div>
+
+      {/* Custom label + button clear */}
+      <div>
+        <h3 className="mb-2 text-sm font-medium text-muted-foreground">Custom label with button clear</h3>
+        <DataTable.Client {...customLabelState}>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <DataTable.CheckboxFilter
+                column="role"
+                label="Roles"
+                options={[
+                  { label: 'Admin', value: 'Admin' },
+                  { label: 'Editor', value: 'Editor' },
+                  { label: 'Viewer', value: 'Viewer' },
+                ]}
+              />
+              <DataTable.SelectFilter
+                column="status"
+                label="Status"
+                options={[
+                  { label: 'Active', value: 'active' },
+                  { label: 'Inactive', value: 'inactive' },
+                ]}
+              />
+            </div>
+            <DataTable.ActiveFilters
+              label="Filters Applied"
+              filterLabels={filterLabels}
+              clearAll="button"
+              clearAllLabel="Reset"
+            />
+            <DataTable.Content emptyMessage="No users found." />
+            <DataTable.Pagination />
+          </div>
+        </DataTable.Client>
+      </div>
+
+      {/* No label + text clear */}
+      <div>
+        <h3 className="mb-2 text-sm font-medium text-muted-foreground">No label with text clear</h3>
+        <DataTable.Client {...noLabelState}>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <DataTable.CheckboxFilter
+                column="role"
+                label="Roles"
+                options={[
+                  { label: 'Admin', value: 'Admin' },
+                  { label: 'Editor', value: 'Editor' },
+                  { label: 'Viewer', value: 'Viewer' },
+                ]}
+              />
+              <DataTable.SelectFilter
+                column="status"
+                label="Status"
+                options={[
+                  { label: 'Active', value: 'active' },
+                  { label: 'Inactive', value: 'inactive' },
+                ]}
+              />
+            </div>
+            <DataTable.ActiveFilters
+              label={null}
+              filterLabels={filterLabels}
+              clearAll="text"
+              clearAllLabel="Clear filters"
+            />
+            <DataTable.Content emptyMessage="No users found." />
+            <DataTable.Pagination />
+          </div>
+        </DataTable.Client>
+      </div>
+    </div>
+  )
+}
+
+export const ActiveFilters: Story = {
+  render: () => <ActiveFiltersDemo />,
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import { DataTableActiveFilters } from './components/active-filters'
 import { DataTableBulkActions } from './components/bulk-actions'
 import { DataTableColumnHeader } from './components/column-header'
 import { DataTableContent } from './components/content'
@@ -17,6 +18,7 @@ import { SelectFilter } from './filters/select-filter'
 export const DataTable = {
   Client: ClientProvider,
   Server: ServerProvider,
+  ActiveFilters: DataTableActiveFilters,
   Content: DataTableContent,
   InlineContent: DataTableInlineContent,
   ColumnHeader: DataTableColumnHeader,

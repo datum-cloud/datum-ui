@@ -36,6 +36,7 @@ export {
 // Types
 export type {
   ActionItem,
+  ActiveFiltersProps,
   BulkActionsProps,
   ClientPaginationState,
   ColumnHeaderProps,

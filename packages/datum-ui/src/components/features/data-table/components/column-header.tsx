@@ -1,8 +1,8 @@
 'use client'
 
 import type { ColumnHeaderProps } from '../types'
-import { cn } from '@repo/shadcn/lib/utils'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
+import { cn } from '../../../../utils/cn'
 
 export function DataTableColumnHeader<TData, TValue>({
   column,

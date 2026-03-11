@@ -1,17 +1,17 @@
 'use client'
 
 import type { PaginationProps } from '../types'
-import { cn } from '@repo/shadcn/lib/utils'
-import { Button } from '@repo/shadcn/ui/button'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useMemo } from 'react'
+import { cn } from '../../../../utils/cn'
+import { Button } from '../../../base/button'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@repo/shadcn/ui/select'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useMemo } from 'react'
+} from '../../../base/select'
 import { DEFAULT_PAGE_SIZES } from '../constants'
 import { useDataTablePagination } from '../hooks/use-selectors'
 
@@ -123,7 +123,7 @@ export function DataTablePagination({
       {/* Right side: page navigation */}
       <div className="flex items-center gap-1">
         <Button
-          variant="outline"
+          theme="outline"
           size="icon"
           className="size-8"
           onClick={prevPage}
@@ -145,8 +145,8 @@ export function DataTablePagination({
               return (
                 <Button
                   key={page}
-                  variant={isActive ? 'default' : 'outline'}
-                  size="sm"
+                  theme={isActive ? 'solid' : 'outline'}
+                  size="small"
                   className={cn('h-8 min-w-8 px-2', isActive && 'font-semibold')}
                   onClick={() => setPageIndex(page - 1)}
                   disabled={isActive}
@@ -164,7 +164,7 @@ export function DataTablePagination({
             )}
 
         <Button
-          variant="outline"
+          theme="outline"
           size="icon"
           className="size-8"
           onClick={nextPage}

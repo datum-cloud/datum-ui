@@ -1,7 +1,6 @@
 'use client'
 
 import type { RowActionsProps } from '../types'
-import { Button } from '@repo/shadcn/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@repo/shadcn/ui/dropdown-menu'
 import { MoreHorizontal } from 'lucide-react'
+import { Button } from '../../../base/button'
 
 export function DataTableRowActions<TData>({
   row,
@@ -30,8 +30,8 @@ export function DataTableRowActions<TData>({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="ghost"
-          size="sm"
+          theme="borderless"
+          size="small"
           className={className}
           disabled={isLoading}
           data-slot="dt-row-actions"

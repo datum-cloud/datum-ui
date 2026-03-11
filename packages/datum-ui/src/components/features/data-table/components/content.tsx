@@ -2,7 +2,9 @@
 
 import type { Cell, Row } from '@tanstack/react-table'
 import type { ContentProps, InlineContentEntry } from '../types'
-import { cn } from '@repo/shadcn/lib/utils'
+import { flexRender } from '@tanstack/react-table'
+import { useMemo } from 'react'
+import { cn } from '../../../../utils/cn'
 import {
   Table,
   TableBody,
@@ -10,9 +12,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@repo/shadcn/ui/table'
-import { flexRender } from '@tanstack/react-table'
-import { useMemo } from 'react'
+} from '../../../base/table'
 import { useDataTableInlineContents, useDataTableRows } from '../hooks/use-selectors'
 
 function resolveClassName<T>(

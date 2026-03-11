@@ -1,6 +1,6 @@
 ---
 title: Data Table
-description: A composable, type-safe data table with client and server modes, sorting, filtering, pagination, and optional URL state sync.
+description: A composable, type-safe data table with client and server modes, sorting, filtering, active filters, pagination, and optional URL state sync.
 ---
 
 # Data Table
@@ -117,50 +117,44 @@ function UsersPage({ users }: { users: User[] }) {
 For paginated API data (e.g., Kubernetes resources with continuation tokens):
 
 ```tsx
-import { DataTable, useDataTableServer } from '@datum-cloud/datum-ui/data-table'
+import { DataTable, useDataTableServer, useDataTableLoading } from '@datum-cloud/datum-ui/data-table'
 
-function ResourcesPage() {
-  const [data, setData] = useState<Resource[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [hasNextPage, setHasNextPage] = useState(false)
-
-  const tableState = useDataTableServer({
-    columns: resourceColumns,
-    limit: 25,
-    getRowId: (row) => row.metadata.uid,
-  })
-
-  // Fetch data when sorting/filters change
-  useEffect(() => {
-    fetchResources({
-      sorting: tableState.sorting,
-      filters: tableState.filters,
-      limit: tableState.pagination.limit,
-    }).then((result) => {
-      setData(result.items)
-      setHasNextPage(Boolean(result.continue))
-      setIsLoading(false)
-    })
-  }, [tableState.sorting, tableState.filters, tableState.pagination.limit])
-
+function ServerContent() {
+  const { isLoading } = useDataTableLoading()
   return (
-    <DataTable.Server
-      {...tableState}
-      data={data}
-      isLoading={isLoading}
-      pagination={{
-        ...tableState.pagination,
-        hasNextPage,
-        hasPrevPage: false,
-        nextPage: () => { /* fetch next page */ },
-        prevPage: () => { /* fetch prev page */ },
-      }}
-    >
-      <DataTable.Search placeholder="Search resources..." />
+    <div className="flex flex-col gap-4">
+      <DataTable.Search placeholder="Search..." />
       {isLoading
         ? <DataTable.Loading rows={5} columns={4} />
-        : <DataTable.Content />}
+        : <DataTable.Content emptyMessage="No results." />}
       <DataTable.Pagination />
+    </div>
+  )
+}
+
+function ResourcesPage() {
+  const tableState = useDataTableServer<ApiResponse, Resource>({
+    columns: resourceColumns,
+    limit: 25,
+    getRowId: (row) => row.id,
+    fetchFn: async (args) => {
+      const params = new URLSearchParams({
+        limit: String(args.limit),
+        ...(args.cursor && { cursor: args.cursor }),
+      })
+      const res = await fetch(`/api/resources?${params}`)
+      return res.json()
+    },
+    transform: (response) => ({
+      data: response.items,
+      cursor: response.nextCursor,
+      hasNextPage: Boolean(response.nextCursor),
+    }),
+  })
+
+  return (
+    <DataTable.Server {...tableState}>
+      <ServerContent />
     </DataTable.Server>
   )
 }
@@ -168,7 +162,7 @@ function ResourcesPage() {
 
 ## Sorting
 
-Column headers render a click-to-sort control. Click once for ascending, again for descending, then cycles back to ascending. No props required beyond the column definition:
+Column headers render a click-to-sort control. Click once for ascending, again for descending, and a third click removes the sort (tri-state cycle). No props required beyond the column definition:
 
 ```tsx
 {
@@ -227,6 +221,63 @@ Popover with CalendarDatePicker integration. Supports optional `minDate` and `ma
   maxDate={new Date()}
 />
 ```
+
+## Active Filters
+
+Display currently active filters as removable badges, grouped by category. Supports customizable label, clear-all behavior, and value formatting.
+
+### Basic Usage
+
+```tsx
+<DataTable.ActiveFilters
+  filterLabels={{
+    status: 'Status',
+    department: 'Department',
+  }}
+/>
+```
+
+### Customization
+
+```tsx
+{/* Custom label and button-style clear */}
+<DataTable.ActiveFilters
+  label="Filters Applied"
+  clearAll="button"
+  clearAllLabel="Reset"
+  filterLabels={{ status: 'Status' }}
+/>
+
+{/* No label, text-style clear */}
+<DataTable.ActiveFilters
+  label={null}
+  clearAll="text"
+  clearAllLabel="Clear filters"
+  filterLabels={{ status: 'Status' }}
+/>
+
+{/* Custom value formatting */}
+<DataTable.ActiveFilters
+  filterLabels={{ status: 'Status' }}
+  formatFilterValue={(column, value) => {
+    if (column === 'status') return String(value).toUpperCase()
+    return undefined // fallback to default
+  }}
+/>
+```
+
+### ActiveFilters Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string \| null` | `"Selected Filters"` | Label text before filter groups. Set to `null` to hide |
+| `filterLabels` | `Record<string, string>` | `{}` | Maps column keys to display names |
+| `formatFilterValue` | `(column, value) => string \| undefined` | -- | Custom value formatter |
+| `clearAll` | `'icon' \| 'button' \| 'text'` | `'icon'` | Clear-all action style |
+| `clearAllLabel` | `string` | `"Clear all"` | Label for the clear-all action |
+| `className` | `string` | -- | Root container class |
+| `groupClassName` | `string` | -- | Filter group box class |
+| `badgeClassName` | `string` | -- | Badge class |
 
 ## Inline Content
 
@@ -319,6 +370,10 @@ Every element has a `data-slot` attribute for CSS-only customization:
 | Column header | `dt-column-header` |
 | Inline content | `dt-inline-content` |
 | Empty state | `dt-empty` |
+| Active filters | `dt-active-filters` |
+| Active filters label | `dt-active-filters-label` |
+| Filter group | `dt-filter-group` |
+| Clear all filters | `dt-clear-all-filters` |
 
 The wrapper has the class `datum-ui-data-table` for scoping:
 
@@ -349,7 +404,7 @@ const stateAdapter = useNuqsAdapter({
 const tableState = useDataTableClient({ data, columns, stateAdapter })
 ```
 
-URL params: `?sort=[{"id":"name","desc":false}]&q=hello&page=0&size=20&status=active`
+URL params: `?sort=-name&q=hello&page=0&size=20&status=active`
 
 ## API Reference
 
@@ -379,6 +434,8 @@ URL params: `?sort=[{"id":"name","desc":false}]&q=hello&page=0&size=20&status=ac
 | `defaultSort` | `SortingState` | `[]` | Initial sort state |
 | `defaultFilters` | `FilterValue` | `{}` | Initial filter state |
 | `stateAdapter` | `StateAdapter` | -- | URL state sync adapter |
+| `fetchFn` | `(args: ServerFetchArgs) => Promise<TResponse>` | -- | Async function called when table state changes |
+| `transform` | `(response: TResponse) => ServerTransformResult<TData>` | -- | Transform API response to table data format |
 
 ### `DataTable` Namespace
 
@@ -397,6 +454,7 @@ URL params: `?sort=[{"id":"name","desc":false}]&q=hello&page=0&size=20&status=ac
 | `DataTable.SelectFilter` | Combobox popover filter with single-select and optional `searchable` prop |
 | `DataTable.CheckboxFilter` | Multi-value checkbox popover filter with badges and clear button |
 | `DataTable.DatePickerFilter` | CalendarDatePicker filter with optional `minDate` and `maxDate` constraints |
+| `DataTable.ActiveFilters` | Displays active filters as grouped removable badges with customizable label and clear-all action |
 
 ### `createSelectionColumn(options?)`
 
