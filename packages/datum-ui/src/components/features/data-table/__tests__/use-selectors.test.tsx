@@ -5,7 +5,6 @@ import { describe, expect, it, vi } from 'vitest'
 import { DataTableStoreContext, TableInstanceContext } from '../core/data-table-context'
 import { createDataTableStore } from '../core/store'
 import {
-  useDataTableContext,
   useDataTableFilters,
   useDataTableLoading,
   useDataTableSearch,
@@ -106,20 +105,3 @@ describe('useDataTableLoading', () => {
   })
 })
 
-describe('useDataTableContext (deprecated facade)', () => {
-  it('returns full context and re-renders on any change', () => {
-    const store = createDataTableStore({ data: sampleData, mode: 'client' })
-    const renderCount = { current: 0 }
-    const { result } = renderHook(() => {
-      renderCount.current++
-      return useDataTableContext()
-    }, { wrapper: createWrapper(store) })
-
-    expect(result.current.mode).toBe('client')
-    expect(result.current.filters).toEqual({})
-
-    const countBefore = renderCount.current
-    act(() => store.setSorting([{ id: 'name', desc: true }]))
-    expect(renderCount.current).toBeGreaterThan(countBefore)
-  })
-})

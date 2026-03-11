@@ -5,7 +5,6 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { DataTablePagination } from '../components/pagination'
 import { ClientProvider } from '../core/client-provider'
-import { useDataTableClient } from '../hooks/use-data-table-client'
 
 interface TestRow {
   readonly id: string
@@ -26,9 +25,8 @@ function TestWrapper({
   readonly pageSize?: number
   readonly children: ReactNode
 }) {
-  const { store, table } = useDataTableClient({ data, columns, pageSize })
   return (
-    <ClientProvider store={store} table={table}>
+    <ClientProvider data={data} columns={columns} pageSize={pageSize}>
       {children}
     </ClientProvider>
   )

@@ -2,9 +2,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import {
   DataTable,
-  useDataTableClient,
   useDataTableLoading,
-  useDataTableServer,
 } from '@datum-cloud/datum-ui/data-table'
 import { useState } from 'react'
 
@@ -102,17 +100,15 @@ const columns: ColumnDef<User>[] = [
 // ---------------------------------------------------------------------------
 
 function ClientTableDemo() {
-  const tableState = useDataTableClient({
-    data: sampleUsers,
-    columns,
-    pageSize: 5,
-    getRowId: row => row.id,
-    enableRowSelection: true,
-    defaultSort: [{ id: 'name', desc: false }],
-  })
-
   return (
-    <DataTable.Client {...tableState}>
+    <DataTable.Client
+      data={sampleUsers}
+      columns={columns}
+      pageSize={5}
+      getRowId={row => row.id}
+      enableRowSelection
+      defaultSort={[{ id: 'name', desc: false }]}
+    >
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-3">
           <DataTable.Search placeholder="Search users..." />
@@ -237,30 +233,28 @@ function ServerTableContent() {
 }
 
 function ServerTableDemo() {
-  const tableState = useDataTableServer<Post[], Post>({
-    columns: postColumns,
-    limit: 10,
-    getRowId: (row: Post) => String(row.id),
-    fetchFn: async (args) => {
-      const start = args.cursor ? Number(args.cursor) : 0
-      const res = await fetch(
-        `https://jsonplaceholder.typicode.com/posts?_start=${start}&_limit=${args.limit}`,
-      )
-      return res.json()
-    },
-    transform: (posts) => {
-      const start = posts.length > 0 ? (posts[0]?.id ?? 1) - 1 : 0
-      const nextStart = start + posts.length
-      return {
-        data: posts,
-        cursor: nextStart < 100 ? String(nextStart) : undefined,
-        hasNextPage: posts.length === 10 && nextStart < 100,
-      }
-    },
-  })
-
   return (
-    <DataTable.Server {...tableState}>
+    <DataTable.Server
+      columns={postColumns}
+      limit={10}
+      getRowId={(row: Post) => String(row.id)}
+      fetchFn={async (args) => {
+        const start = args.cursor ? Number(args.cursor) : 0
+        const res = await fetch(
+          `https://jsonplaceholder.typicode.com/posts?_start=${start}&_limit=${args.limit}`,
+        )
+        return res.json()
+      }}
+      transform={(posts: Post[]) => {
+        const start = posts.length > 0 ? (posts[0]?.id ?? 1) - 1 : 0
+        const nextStart = start + posts.length
+        return {
+          data: posts,
+          cursor: nextStart < 100 ? String(nextStart) : undefined,
+          hasNextPage: posts.length === 10 && nextStart < 100,
+        }
+      }}
+    >
       <ServerTableContent />
     </DataTable.Server>
   )
@@ -275,13 +269,11 @@ export const ServerTable: Story = {
 // ---------------------------------------------------------------------------
 
 function MinimalDemo() {
-  const tableState = useDataTableClient({
-    data: sampleUsers.slice(0, 5),
-    columns: columns.filter(c => 'accessorKey' in c && c.accessorKey !== 'createdAt'),
-  })
-
   return (
-    <DataTable.Client {...tableState}>
+    <DataTable.Client
+      data={sampleUsers.slice(0, 5)}
+      columns={columns.filter(c => 'accessorKey' in c && c.accessorKey !== 'createdAt')}
+    >
       <DataTable.Content />
     </DataTable.Client>
   )
@@ -296,14 +288,8 @@ export const Minimal: Story = {
 // ---------------------------------------------------------------------------
 
 function CheckboxFilterDemo() {
-  const tableState = useDataTableClient({
-    data: sampleUsers,
-    columns,
-    pageSize: 6,
-  })
-
   return (
-    <DataTable.Client {...tableState}>
+    <DataTable.Client data={sampleUsers} columns={columns} pageSize={6}>
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-3">
           <DataTable.Search placeholder="Search..." />
@@ -337,17 +323,15 @@ export const WithCheckboxFilters: Story = {
 // ---------------------------------------------------------------------------
 
 function MultiSelectBulkActionsDemo() {
-  const tableState = useDataTableClient({
-    data: sampleUsers,
-    columns,
-    pageSize: 6,
-    getRowId: row => row.id,
-    enableRowSelection: true,
-    defaultSort: [{ id: 'name', desc: false }],
-  })
-
   return (
-    <DataTable.Client {...tableState}>
+    <DataTable.Client
+      data={sampleUsers}
+      columns={columns}
+      pageSize={6}
+      getRowId={row => row.id}
+      enableRowSelection
+      defaultSort={[{ id: 'name', desc: false }]}
+    >
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-3">
           <DataTable.Search placeholder="Search users..." />
@@ -413,15 +397,13 @@ export const MultiSelectBulkActions: Story = {
 // ---------------------------------------------------------------------------
 
 function CustomStylingDemo() {
-  const tableState = useDataTableClient({
-    data: sampleUsers,
-    columns: columns.filter(c => !('id' in c && c.id === 'actions')),
-    pageSize: 6,
-    getRowId: row => row.id,
-  })
-
   return (
-    <DataTable.Client {...tableState}>
+    <DataTable.Client
+      data={sampleUsers}
+      columns={columns.filter(c => !('id' in c && c.id === 'actions'))}
+      pageSize={6}
+      getRowId={row => row.id}
+    >
       <div className="flex flex-col gap-4">
         {/* Inline styles targeting data-slot attributes */}
         <style>
@@ -539,15 +521,13 @@ function InlineContentDemo() {
     },
   ]
 
-  const tableState = useDataTableClient({
-    data: sampleUsers,
-    columns: inlineColumns,
-    pageSize: 6,
-    getRowId: row => row.id,
-  })
-
   return (
-    <DataTable.Client {...tableState}>
+    <DataTable.Client
+      data={sampleUsers}
+      columns={inlineColumns}
+      pageSize={6}
+      getRowId={row => row.id}
+    >
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-3">
           <DataTable.Search placeholder="Search users..." />
@@ -660,49 +640,49 @@ export const InlineContent: Story = {
 // Active Filters -- showcases all customization options
 // ---------------------------------------------------------------------------
 
+const sharedFilterOptions = {
+  data: sampleUsers,
+  columns,
+  pageSize: 5,
+  defaultFilters: {
+    role: ['Admin', 'Editor'],
+    status: 'active',
+  },
+} as const
+
+const filterLabels = { role: 'Role', status: 'Status' }
+
+const filterControls = (
+  <div className="flex flex-wrap items-center gap-3">
+    <DataTable.CheckboxFilter
+      column="role"
+      label="Roles"
+      options={[
+        { label: 'Admin', value: 'Admin' },
+        { label: 'Editor', value: 'Editor' },
+        { label: 'Viewer', value: 'Viewer' },
+      ]}
+    />
+    <DataTable.SelectFilter
+      column="status"
+      label="Status"
+      options={[
+        { label: 'Active', value: 'active' },
+        { label: 'Inactive', value: 'inactive' },
+      ]}
+    />
+  </div>
+)
+
 function ActiveFiltersDemo() {
-  const filterLabels = { role: 'Role', status: 'Status' }
-
-  const sharedOptions = {
-    data: sampleUsers,
-    columns,
-    pageSize: 5,
-    defaultFilters: {
-      role: ['Admin', 'Editor'],
-      status: 'active',
-    },
-  }
-
-  const defaultState = useDataTableClient(sharedOptions)
-  const customLabelState = useDataTableClient(sharedOptions)
-  const noLabelState = useDataTableClient(sharedOptions)
-
   return (
     <div className="flex flex-col gap-8">
       {/* Default variant */}
       <div>
         <h3 className="mb-2 text-sm font-medium text-muted-foreground">Default</h3>
-        <DataTable.Client {...defaultState}>
+        <DataTable.Client {...sharedFilterOptions}>
           <div className="flex flex-col gap-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <DataTable.CheckboxFilter
-                column="role"
-                label="Roles"
-                options={[
-                  { label: 'Admin', value: 'Admin' },
-                  { label: 'Editor', value: 'Editor' },
-                  { label: 'Viewer', value: 'Viewer' },
-                ]}
-              />
-              <DataTable.SelectFilter
-                column="status"
-                label="Status"
-                options={[
-                  { label: 'Active', value: 'active' },
-                  { label: 'Inactive', value: 'inactive' },
-                ]}
-              />
-            </div>
+            {filterControls}
             <DataTable.ActiveFilters filterLabels={filterLabels} />
             <DataTable.Content emptyMessage="No users found." />
             <DataTable.Pagination />
@@ -713,27 +693,9 @@ function ActiveFiltersDemo() {
       {/* Custom label + button clear */}
       <div>
         <h3 className="mb-2 text-sm font-medium text-muted-foreground">Custom label with button clear</h3>
-        <DataTable.Client {...customLabelState}>
+        <DataTable.Client {...sharedFilterOptions}>
           <div className="flex flex-col gap-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <DataTable.CheckboxFilter
-                column="role"
-                label="Roles"
-                options={[
-                  { label: 'Admin', value: 'Admin' },
-                  { label: 'Editor', value: 'Editor' },
-                  { label: 'Viewer', value: 'Viewer' },
-                ]}
-              />
-              <DataTable.SelectFilter
-                column="status"
-                label="Status"
-                options={[
-                  { label: 'Active', value: 'active' },
-                  { label: 'Inactive', value: 'inactive' },
-                ]}
-              />
-            </div>
+            {filterControls}
             <DataTable.ActiveFilters
               label="Filters Applied"
               filterLabels={filterLabels}
@@ -749,27 +711,9 @@ function ActiveFiltersDemo() {
       {/* No label + text clear */}
       <div>
         <h3 className="mb-2 text-sm font-medium text-muted-foreground">No label with text clear</h3>
-        <DataTable.Client {...noLabelState}>
+        <DataTable.Client {...sharedFilterOptions}>
           <div className="flex flex-col gap-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <DataTable.CheckboxFilter
-                column="role"
-                label="Roles"
-                options={[
-                  { label: 'Admin', value: 'Admin' },
-                  { label: 'Editor', value: 'Editor' },
-                  { label: 'Viewer', value: 'Viewer' },
-                ]}
-              />
-              <DataTable.SelectFilter
-                column="status"
-                label="Status"
-                options={[
-                  { label: 'Active', value: 'active' },
-                  { label: 'Inactive', value: 'inactive' },
-                ]}
-              />
-            </div>
+            {filterControls}
             <DataTable.ActiveFilters
               label={null}
               filterLabels={filterLabels}

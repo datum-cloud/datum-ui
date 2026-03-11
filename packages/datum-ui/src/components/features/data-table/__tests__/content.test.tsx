@@ -5,7 +5,6 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { DataTableContent } from '../components/content'
 import { ClientProvider } from '../core/client-provider'
-import { useDataTableClient } from '../hooks/use-data-table-client'
 
 interface TestRow {
   readonly id: string
@@ -27,9 +26,8 @@ function TestWrapper({
   readonly columns: ColumnDef<TestRow, any>[]
   readonly children: ReactNode
 }) {
-  const { store, table } = useDataTableClient({ data, columns })
   return (
-    <ClientProvider store={store} table={table}>
+    <ClientProvider data={data} columns={columns}>
       {children}
     </ClientProvider>
   )

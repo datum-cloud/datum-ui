@@ -5,7 +5,7 @@ import { render } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { DataTableInlineContent } from '../components/inline-content'
 import { ClientProvider } from '../core/client-provider'
-import { useDataTableClient } from '../hooks/use-data-table-client'
+import { useDataTableStore } from '../core/data-table-context'
 
 interface TestRow {
   readonly id: string
@@ -20,20 +20,22 @@ const testData: TestRow[] = [
 
 let capturedStore: any = null
 
+/** Helper that captures the store from context */
+function StoreCapturer({ children }: { readonly children: ReactNode }) {
+  capturedStore = useDataTableStore()
+  return <>{children}</>
+}
+
 function TestWrapper({
-  data,
-  columns,
   children,
 }: {
-  readonly data: TestRow[]
-  readonly columns: ColumnDef<TestRow, any>[]
   readonly children: ReactNode
 }) {
-  const { store, table } = useDataTableClient({ data, columns })
-  capturedStore = store
   return (
-    <ClientProvider store={store} table={table}>
-      {children}
+    <ClientProvider data={testData} columns={testColumns}>
+      <StoreCapturer>
+        {children}
+      </StoreCapturer>
     </ClientProvider>
   )
 }
@@ -44,7 +46,7 @@ describe('dataTableInlineContent', () => {
     const renderFn = vi.fn()
 
     render(
-      <TestWrapper data={testData} columns={testColumns}>
+      <TestWrapper>
         <DataTableInlineContent
           position="top"
           open={true}
@@ -67,7 +69,7 @@ describe('dataTableInlineContent', () => {
 
   it('unregisters inline content on unmount', () => {
     const { unmount } = render(
-      <TestWrapper data={testData} columns={testColumns}>
+      <TestWrapper>
         <DataTableInlineContent
           position="top"
           open={true}
@@ -87,7 +89,7 @@ describe('dataTableInlineContent', () => {
 
   it('renders nothing itself', () => {
     const { container } = render(
-      <TestWrapper data={testData} columns={testColumns}>
+      <TestWrapper>
         <DataTableInlineContent
           position="row"
           rowId="row-1"

@@ -77,7 +77,7 @@ export function useDataTableClient<TData>(options: UseDataTableClientOptions<TDa
 
   // 4. Read store state for TanStack table
   const { filteredData, sorting, rowSelection, pageIndex, pageSize: storePageSize, filters, search }
-    = useSyncExternalStore(store.subscribe, store.getSnapshot)
+    = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot)
 
   // 5. Create TanStack table (sort + paginate only, no filtering)
   const table = useReactTable({

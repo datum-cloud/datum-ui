@@ -2,8 +2,8 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { ServerProvider } from '../core/server-provider'
-import { useDataTableServer } from '../hooks/use-data-table-server'
-import { useDataTableContext } from '../hooks/use-selectors'
+import { useDataTableStore } from '../core/data-table-context'
+import { useDataTableLoading } from '../hooks/use-selectors'
 
 interface TestRow {
   readonly id: string
@@ -24,37 +24,42 @@ function mockTransform(response: TestResponse) {
 }
 
 function ContextReader() {
-  const ctx = useDataTableContext<TestRow>()
+  const store = useDataTableStore()
+  const { isLoading } = useDataTableLoading()
+  const mode = store.getSnapshot().mode
   return (
     <div>
-      <span data-testid="mode">{ctx.mode}</span>
-      <span data-testid="loading">{String(ctx.isLoading)}</span>
+      <span data-testid="mode">{mode}</span>
+      <span data-testid="loading">{String(isLoading)}</span>
     </div>
-  )
-}
-
-function TestWrapper() {
-  const { store, table } = useDataTableServer<TestResponse, TestRow>({
-    columns: testColumns,
-    fetchFn: mockFetchFn,
-    transform: mockTransform,
-  })
-  return (
-    <ServerProvider store={store} table={table}>
-      <ContextReader />
-    </ServerProvider>
   )
 }
 
 describe('serverProvider', () => {
   it('provides context with server mode', () => {
-    render(<TestWrapper />)
+    render(
+      <ServerProvider
+        columns={testColumns}
+        fetchFn={mockFetchFn}
+        transform={mockTransform}
+      >
+        <ContextReader />
+      </ServerProvider>,
+    )
 
     expect(screen.getByTestId('mode')).toHaveTextContent('server')
   })
 
   it('renders children within the provider', () => {
-    render(<TestWrapper />)
+    render(
+      <ServerProvider
+        columns={testColumns}
+        fetchFn={mockFetchFn}
+        transform={mockTransform}
+      >
+        <ContextReader />
+      </ServerProvider>,
+    )
 
     expect(screen.getByTestId('mode')).toBeInTheDocument()
     expect(screen.getByTestId('loading')).toBeInTheDocument()

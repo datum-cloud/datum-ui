@@ -6,7 +6,6 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { DataTableSearch } from '../components/search'
 import { ClientProvider } from '../core/client-provider'
-import { useDataTableClient } from '../hooks/use-data-table-client'
 
 interface TestRow {
   readonly id: string
@@ -16,9 +15,8 @@ const testColumns: ColumnDef<TestRow, any>[] = [{ accessorKey: 'id', header: 'ID
 const emptyData: TestRow[] = []
 
 function TestWrapper({ children }: { readonly children: ReactNode }) {
-  const { store, table } = useDataTableClient({ data: emptyData, columns: testColumns })
   return (
-    <ClientProvider store={store} table={table}>
+    <ClientProvider data={emptyData} columns={testColumns}>
       {children}
     </ClientProvider>
   )

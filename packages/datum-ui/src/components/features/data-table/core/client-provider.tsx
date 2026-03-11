@@ -1,23 +1,29 @@
 'use client'
 
-import type { Table } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
-import type { DataTableStore } from '../types'
+import type { UseDataTableClientOptions } from '../hooks/use-data-table-client'
+import { useDataTableClient } from '../hooks/use-data-table-client'
+import { useIsClient } from '../hooks/use-is-client'
 import { DataTableStoreContext, TableInstanceContext } from './data-table-context'
 
-export interface DataTableClientProviderProps<TData> {
-  readonly store: DataTableStore<TData>
-  readonly table: Table<TData>
+export type DataTableClientProviderProps<TData> = UseDataTableClientOptions<TData> & {
   readonly className?: string
+  /** Rendered during SSR and first client paint. Provide a skeleton matching the table dimensions to avoid layout shift. */
+  readonly ssrFallback?: ReactNode
   readonly children: ReactNode
 }
 
-export function ClientProvider<TData>({
-  store,
-  table,
+/**
+ * Inner component that calls useDataTableClient.
+ * Only rendered on the client (gated by ClientProvider).
+ */
+function ClientProviderInner<TData>({
   className,
   children,
+  ssrFallback: _ssrFallback,
+  ...options
 }: DataTableClientProviderProps<TData>) {
+  const { store, table } = useDataTableClient(options)
   return (
     <DataTableStoreContext value={store}>
       <TableInstanceContext value={table}>
@@ -25,4 +31,14 @@ export function ClientProvider<TData>({
       </TableInstanceContext>
     </DataTableStoreContext>
   )
+}
+
+export function ClientProvider<TData>(props: DataTableClientProviderProps<TData>) {
+  const isClient = useIsClient()
+
+  if (!isClient) {
+    return <>{props.ssrFallback ?? null}</>
+  }
+
+  return <ClientProviderInner {...props} />
 }

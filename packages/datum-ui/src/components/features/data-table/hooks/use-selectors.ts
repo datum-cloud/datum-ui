@@ -45,7 +45,7 @@ function useSliceSelector<TData, TSlice extends Record<string, unknown>>(
     return next
   }, [store, selector])
 
-  return useSyncExternalStore(store.subscribe, getSnapshot)
+  return useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot)
 }
 
 export function useDataTableFilters() {
@@ -162,39 +162,3 @@ export function useDataTableInlineContents<TData>() {
   )
 }
 
-// Deprecated facade — subscribes to entire snapshot (no re-render isolation)
-export function useDataTableContext<TData>() {
-  const store = useDataTableStore<TData>()
-  const table = useTableInstance<TData>()
-  const state = useSyncExternalStore(store.subscribe, store.getSnapshot)
-  return {
-    table,
-    mode: state.mode,
-    sorting: state.sorting,
-    filters: state.filters,
-    search: state.search,
-    rowSelection: state.rowSelection,
-    isLoading: state.isLoading,
-    setSorting: store.setSorting,
-    setFilter: store.setFilter,
-    clearFilter: store.clearFilter,
-    clearAllFilters: store.clearAllFilters,
-    setSearch: store.setSearch,
-    clearSearch: store.clearSearch,
-    setRowSelection: store.setRowSelection,
-    pagination: {
-      canNextPage: table.getCanNextPage(),
-      canPrevPage: table.getCanPreviousPage(),
-      nextPage: () => table.nextPage(),
-      prevPage: () => table.previousPage(),
-      pageIndex: state.pageIndex,
-      pageCount: table.getPageCount(),
-      setPageIndex: store.setPageIndex,
-      pageSize: state.pageSize,
-      setPageSize: store.setPageSize,
-    },
-    inlineContents: state.inlineContents,
-    registerInlineContent: store.registerInlineContent,
-    unregisterInlineContent: store.unregisterInlineContent,
-  }
-}

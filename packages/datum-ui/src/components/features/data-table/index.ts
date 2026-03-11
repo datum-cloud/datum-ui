@@ -18,11 +18,7 @@ export { createDataTableStore } from './core/store'
 // Namespace (primary API)
 export { DataTable } from './data-table'
 // Hooks
-export { useDataTableClient } from './hooks/use-data-table-client'
-export { useDataTableServer } from './hooks/use-data-table-server'
-
 export {
-  useDataTableContext,
   useDataTableFilters,
   useDataTableInlineContents,
   useDataTableLoading,
