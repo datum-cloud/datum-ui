@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "predev": "pnpm --filter @datum-cloud/datum-ui build",
+    "predev": "[ -d '../../packages/datum-ui/dist' ] || pnpm --filter @datum-cloud/datum-ui build",
     "dev": "storybook dev -p 6006",
     "build": "storybook build --docs",
     "lint": "eslint .",

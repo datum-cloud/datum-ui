@@ -11,6 +11,7 @@
   ],
   "exports": {
     ".": {
+      "source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.mjs"
     },
@@ -19,166 +20,207 @@
       "default": "./dist/styles/root.css"
     },
     "./theme": {
+      "source": "./src/components/themes/index.ts",
       "types": "./dist/components/themes/index.d.ts",
       "default": "./dist/theme/index.mjs"
     },
     "./hooks": {
+      "source": "./src/hooks/index.ts",
       "types": "./dist/hooks/index.d.ts",
       "default": "./dist/hooks/index.mjs"
     },
     "./icons": {
+      "source": "./src/components/icons/index.ts",
       "types": "./dist/components/icons/index.d.ts",
       "default": "./dist/icons/index.mjs"
     },
     "./utils": {
+      "source": "./src/utils/index.ts",
       "types": "./dist/utils/index.d.ts",
       "default": "./dist/utils/index.mjs"
     },
     "./alert": {
+      "source": "./src/components/base/alert/index.ts",
       "types": "./dist/components/base/alert/index.d.ts",
       "default": "./dist/alert/index.mjs"
     },
     "./badge": {
+      "source": "./src/components/base/badge/index.ts",
       "types": "./dist/components/base/badge/index.d.ts",
       "default": "./dist/badge/index.mjs"
     },
     "./breadcrumb": {
+      "source": "./src/components/base/breadcrumb/index.ts",
       "types": "./dist/components/base/breadcrumb/index.d.ts",
       "default": "./dist/breadcrumb/index.mjs"
     },
     "./button": {
+      "source": "./src/components/base/button/index.tsx",
       "types": "./dist/components/base/button/index.d.ts",
       "default": "./dist/button/index.mjs"
     },
     "./button-group": {
+      "source": "./src/components/base/button-group/index.ts",
       "types": "./dist/components/base/button-group/index.d.ts",
       "default": "./dist/button-group/index.mjs"
     },
     "./calendar": {
+      "source": "./src/components/base/calendar/index.ts",
       "types": "./dist/components/base/calendar/index.d.ts",
       "default": "./dist/calendar/index.mjs"
     },
     "./card": {
+      "source": "./src/components/base/card/index.ts",
       "types": "./dist/components/base/card/index.d.ts",
       "default": "./dist/card/index.mjs"
     },
     "./chart": {
+      "source": "./src/components/base/chart/index.ts",
       "types": "./dist/components/base/chart/index.d.ts",
       "default": "./dist/chart/index.mjs"
     },
     "./checkbox": {
+      "source": "./src/components/base/checkbox/index.ts",
       "types": "./dist/components/base/checkbox/index.d.ts",
       "default": "./dist/checkbox/index.mjs"
     },
     "./collapsible": {
+      "source": "./src/components/base/collapsible/index.ts",
       "types": "./dist/components/base/collapsible/index.d.ts",
       "default": "./dist/collapsible/index.mjs"
     },
     "./command": {
+      "source": "./src/components/base/command/index.ts",
       "types": "./dist/components/base/command/index.d.ts",
       "default": "./dist/command/index.mjs"
     },
     "./dialog": {
+      "source": "./src/components/base/dialog/index.ts",
       "types": "./dist/components/base/dialog/index.d.ts",
       "default": "./dist/dialog/index.mjs"
     },
     "./hover-card": {
+      "source": "./src/components/base/hover-card/index.ts",
       "types": "./dist/components/base/hover-card/index.d.ts",
       "default": "./dist/hover-card/index.mjs"
     },
     "./input": {
+      "source": "./src/components/base/input/index.ts",
       "types": "./dist/components/base/input/index.d.ts",
       "default": "./dist/input/index.mjs"
     },
     "./input-group": {
+      "source": "./src/components/base/input-group/index.ts",
       "types": "./dist/components/base/input-group/index.d.ts",
       "default": "./dist/input-group/index.mjs"
     },
     "./label": {
+      "source": "./src/components/base/label/index.ts",
       "types": "./dist/components/base/label/index.d.ts",
       "default": "./dist/label/index.mjs"
     },
     "./popover": {
+      "source": "./src/components/base/popover/index.ts",
       "types": "./dist/components/base/popover/index.d.ts",
       "default": "./dist/popover/index.mjs"
     },
     "./radio-group": {
+      "source": "./src/components/base/radio-group/index.ts",
       "types": "./dist/components/base/radio-group/index.d.ts",
       "default": "./dist/radio-group/index.mjs"
     },
     "./select": {
+      "source": "./src/components/base/select/index.ts",
       "types": "./dist/components/base/select/index.d.ts",
       "default": "./dist/select/index.mjs"
     },
     "./separator": {
+      "source": "./src/components/base/separator/index.ts",
       "types": "./dist/components/base/separator/index.d.ts",
       "default": "./dist/separator/index.mjs"
     },
     "./sheet": {
+      "source": "./src/components/base/sheet/index.ts",
       "types": "./dist/components/base/sheet/index.d.ts",
       "default": "./dist/sheet/index.mjs"
     },
     "./skeleton": {
+      "source": "./src/components/base/skeleton/index.ts",
       "types": "./dist/components/base/skeleton/index.d.ts",
       "default": "./dist/skeleton/index.mjs"
     },
     "./spinner": {
+      "source": "./src/components/base/spinner/index.ts",
       "types": "./dist/components/base/spinner/index.d.ts",
       "default": "./dist/spinner/index.mjs"
     },
     "./switch": {
+      "source": "./src/components/base/switch/index.ts",
       "types": "./dist/components/base/switch/index.d.ts",
       "default": "./dist/switch/index.mjs"
     },
     "./table": {
+      "source": "./src/components/base/table/index.ts",
       "types": "./dist/components/base/table/index.d.ts",
       "default": "./dist/table/index.mjs"
     },
     "./tabs": {
+      "source": "./src/components/base/tabs/index.ts",
       "types": "./dist/components/base/tabs/index.d.ts",
       "default": "./dist/tabs/index.mjs"
     },
     "./textarea": {
+      "source": "./src/components/base/textarea/index.ts",
       "types": "./dist/components/base/textarea/index.d.ts",
       "default": "./dist/textarea/index.mjs"
     },
     "./tooltip": {
+      "source": "./src/components/base/tooltip/index.ts",
       "types": "./dist/components/base/tooltip/index.d.ts",
       "default": "./dist/tooltip/index.mjs"
     },
     "./typography": {
+      "source": "./src/components/base/typography/index.ts",
       "types": "./dist/components/base/typography/index.d.ts",
       "default": "./dist/typography/index.mjs"
     },
     "./visually-hidden": {
+      "source": "./src/components/base/visuallyhidden/index.ts",
       "types": "./dist/components/base/visuallyhidden/index.d.ts",
       "default": "./dist/visually-hidden/index.mjs"
     },
     "./autocomplete": {
+      "source": "./src/components/features/autocomplete/index.ts",
       "types": "./dist/components/features/autocomplete/index.d.ts",
       "default": "./dist/autocomplete/index.mjs"
     },
     "./avatar-stack": {
+      "source": "./src/components/features/avatar-stack/index.ts",
       "types": "./dist/components/features/avatar-stack/index.d.ts",
       "default": "./dist/avatar-stack/index.mjs"
     },
     "./date-picker": {
+      "source": "./src/components/features/date-picker/index.ts",
       "types": "./dist/components/features/date-picker/index.d.ts",
       "default": "./dist/date-picker/index.mjs"
     },
     "./dropdown": {
+      "source": "./src/components/features/dropdown/index.ts",
       "types": "./dist/components/features/dropdown/index.d.ts",
       "default": "./dist/dropdown/index.mjs"
     },
     "./dropzone": {
+      "source": "./src/components/features/dropzone/index.ts",
       "types": "./dist/components/features/dropzone/index.d.ts",
       "default": "./dist/dropzone/index.mjs"
     },
     "./empty-content": {
+      "source": "./src/components/features/empty-content/index.ts",
       "types": "./dist/components/features/empty-content/index.d.ts",
       "default": "./dist/empty-content/index.mjs"
     },
     "./form": {
+      "source": "./src/components/features/form/index.ts",
       "types": "./dist/components/features/form/index.d.ts",
       "default": "./dist/form/index.mjs"
     },
@@ -188,22 +230,27 @@
       "default": "./dist/grid/index.mjs"
     },
     "./input-number": {
+      "source": "./src/components/features/input-number/index.ts",
       "types": "./dist/components/features/input-number/index.d.ts",
       "default": "./dist/input-number/index.mjs"
     },
     "./input-with-addons": {
+      "source": "./src/components/features/input-with-addons/index.ts",
       "types": "./dist/components/features/input-with-addons/index.d.ts",
       "default": "./dist/input-with-addons/index.mjs"
     },
     "./loader-overlay": {
+      "source": "./src/components/features/loader-overlay/index.ts",
       "types": "./dist/components/features/loader-overlay/index.d.ts",
       "default": "./dist/loader-overlay/index.mjs"
     },
     "./map": {
+      "source": "./src/exports/map.ts",
       "types": "./dist/exports/map.d.ts",
       "default": "./dist/map/index.mjs"
     },
     "./more-actions": {
+      "source": "./src/components/features/more-actions/index.ts",
       "types": "./dist/components/features/more-actions/index.d.ts",
       "default": "./dist/more-actions/index.mjs"
     },
@@ -213,30 +260,37 @@
       "default": "./dist/nprogress/index.mjs"
     },
     "./page-title": {
+      "source": "./src/components/features/page-title/index.ts",
       "types": "./dist/components/features/page-title/index.d.ts",
       "default": "./dist/page-title/index.mjs"
     },
     "./sidebar": {
+      "source": "./src/components/features/sidebar/index.ts",
       "types": "./dist/components/features/sidebar/index.d.ts",
       "default": "./dist/sidebar/index.mjs"
     },
     "./stepper": {
+      "source": "./src/components/features/stepper/index.ts",
       "types": "./dist/components/features/stepper/index.d.ts",
       "default": "./dist/stepper/index.mjs"
     },
     "./tag-input": {
+      "source": "./src/components/features/tag-input/index.ts",
       "types": "./dist/components/features/tag-input/index.d.ts",
       "default": "./dist/tag-input/index.mjs"
     },
     "./task-queue": {
+      "source": "./src/components/features/task-queue/index.ts",
       "types": "./dist/components/features/task-queue/index.d.ts",
       "default": "./dist/task-queue/index.mjs"
     },
     "./toast": {
+      "source": "./src/components/features/toast/index.ts",
       "types": "./dist/components/features/toast/index.d.ts",
       "default": "./dist/toast/index.mjs"
     },
     "./data-table": {
+      "source": "./src/components/features/data-table/index.ts",
       "types": "./dist/components/features/data-table/index.d.ts",
       "default": "./dist/data-table/index.mjs"
     }
