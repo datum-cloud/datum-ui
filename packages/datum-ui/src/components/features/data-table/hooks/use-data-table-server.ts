@@ -1,11 +1,8 @@
 'use client'
 
-import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import type {
   DataTableStore,
-  FilterValue,
-  SelectionColumnOptions,
-  StateAdapter,
+  UseDataTableServerOptions,
 } from '../types'
 import {
   getCoreRowModel,
@@ -15,31 +12,7 @@ import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react'
 import { withSelectionColumn } from '../columns/selection-column'
 import { createDataTableStore } from '../core/store'
 
-export interface ServerFetchArgs {
-  readonly sorting: SortingState
-  readonly filters: FilterValue
-  readonly search: string
-  readonly cursor: string | undefined
-  readonly limit: number
-}
-
-export interface ServerTransformResult<TData> {
-  readonly data: TData[]
-  readonly nextCursor?: string
-  readonly hasNextPage: boolean
-}
-
-export interface UseDataTableServerOptions<TResponse, TData> {
-  readonly columns: ColumnDef<TData, any>[]
-  readonly fetchFn: (args: ServerFetchArgs) => Promise<TResponse>
-  readonly transform: (response: TResponse) => ServerTransformResult<TData>
-  readonly limit?: number
-  readonly getRowId?: (row: TData) => string
-  readonly enableRowSelection?: boolean | SelectionColumnOptions
-  readonly defaultSort?: SortingState
-  readonly defaultFilters?: FilterValue
-  readonly stateAdapter?: StateAdapter
-}
+export type { UseDataTableServerOptions }
 
 export function useDataTableServer<TResponse, TData>(
   options: UseDataTableServerOptions<TResponse, TData>,
@@ -134,8 +107,8 @@ export function useDataTableServer<TResponse, TData>(
         store.setError(null)
 
         // Track cursor for the next page
-        if (result.nextCursor) {
-          cursorMapRef.current.set(pageIndex + 1, result.nextCursor)
+        if (result.cursor) {
+          cursorMapRef.current.set(pageIndex + 1, result.cursor)
         }
         hasNextPageRef.current = result.hasNextPage
       })

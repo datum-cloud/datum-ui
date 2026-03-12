@@ -1,7 +1,10 @@
 'use client'
 
-import type { ColumnDef, SortingState } from '@tanstack/react-table'
-import type { CreateStoreOptions, DataTableStore, FilterValue, SelectionColumnOptions, StateAdapter } from '../types'
+import type {
+  CreateStoreOptions,
+  DataTableStore,
+  UseDataTableClientOptions,
+} from '../types'
 import {
   getCoreRowModel,
   getPaginationRowModel,
@@ -12,19 +15,7 @@ import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react'
 import { withSelectionColumn } from '../columns/selection-column'
 import { createDataTableStore } from '../core/store'
 
-export interface UseDataTableClientOptions<TData> {
-  readonly data: TData[]
-  readonly columns: ColumnDef<TData, any>[]
-  readonly pageSize?: number
-  readonly getRowId?: (row: TData) => string
-  readonly enableRowSelection?: boolean | SelectionColumnOptions
-  readonly defaultSort?: SortingState
-  readonly defaultFilters?: FilterValue
-  readonly searchableColumns?: string[]
-  readonly searchFn?: (row: TData, query: string) => boolean
-  readonly filterFns?: Record<string, (cellValue: unknown, filterValue: unknown) => boolean>
-  readonly stateAdapter?: StateAdapter
-}
+export type { UseDataTableClientOptions }
 
 export function useDataTableClient<TData>(options: UseDataTableClientOptions<TData>) {
   const {

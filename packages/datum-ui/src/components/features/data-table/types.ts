@@ -162,6 +162,7 @@ export interface UseDataTableClientOptions<TData> {
   readonly defaultFilters?: FilterValue
   readonly searchableColumns?: string[]
   readonly searchFn?: (row: TData, search: string) => boolean
+  readonly filterFns?: Record<string, (cellValue: unknown, filterValue: unknown) => boolean>
   readonly stateAdapter?: StateAdapter
 }
 

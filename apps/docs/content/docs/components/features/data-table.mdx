@@ -28,15 +28,15 @@ nuqs
 ## Usage
 
 ```tsx
-import { DataTable, useDataTableClient } from '@datum-cloud/datum-ui/data-table'
+import { DataTable } from '@datum-cloud/datum-ui/data-table'
 ```
 
 ### Client Data Table
 
-For data that is fully loaded in the browser:
+For data that is fully loaded in the browser. Pass all options as props directly to `DataTable.Client` — the provider creates the store and table instance internally:
 
 ```tsx
-import { DataTable, useDataTableClient } from '@datum-cloud/datum-ui/data-table'
+import { DataTable } from '@datum-cloud/datum-ui/data-table'
 import type { ColumnDef } from '@tanstack/react-table'
 
 interface User {
@@ -76,17 +76,15 @@ const columns: ColumnDef<User>[] = [
 ]
 
 function UsersPage({ users }: { users: User[] }) {
-  const tableState = useDataTableClient({
-    data: users,
-    columns,
-    pageSize: 20,
-    getRowId: (row) => row.id,
-    enableRowSelection: true,
-    defaultSort: [{ id: 'name', desc: false }],
-  })
-
   return (
-    <DataTable.Client {...tableState}>
+    <DataTable.Client
+      data={users}
+      columns={columns}
+      pageSize={20}
+      getRowId={(row) => row.id}
+      enableRowSelection
+      defaultSort={[{ id: 'name', desc: false }]}
+    >
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-3">
           <DataTable.Search placeholder="Search users..." />
@@ -114,10 +112,10 @@ function UsersPage({ users }: { users: User[] }) {
 
 ### Server Data Table
 
-For paginated API data (e.g., Kubernetes resources with continuation tokens):
+For paginated API data (e.g., Kubernetes resources with continuation tokens). Like the client mode, pass all options as props directly to `DataTable.Server`:
 
 ```tsx
-import { DataTable, useDataTableServer, useDataTableLoading } from '@datum-cloud/datum-ui/data-table'
+import { DataTable, useDataTableLoading } from '@datum-cloud/datum-ui/data-table'
 
 function ServerContent() {
   const { isLoading } = useDataTableLoading()
@@ -133,27 +131,25 @@ function ServerContent() {
 }
 
 function ResourcesPage() {
-  const tableState = useDataTableServer<ApiResponse, Resource>({
-    columns: resourceColumns,
-    limit: 25,
-    getRowId: (row) => row.id,
-    fetchFn: async (args) => {
-      const params = new URLSearchParams({
-        limit: String(args.limit),
-        ...(args.cursor && { cursor: args.cursor }),
-      })
-      const res = await fetch(`/api/resources?${params}`)
-      return res.json()
-    },
-    transform: (response) => ({
-      data: response.items,
-      cursor: response.nextCursor,
-      hasNextPage: Boolean(response.nextCursor),
-    }),
-  })
-
   return (
-    <DataTable.Server {...tableState}>
+    <DataTable.Server
+      columns={resourceColumns}
+      limit={25}
+      getRowId={(row) => row.id}
+      fetchFn={async (args) => {
+        const params = new URLSearchParams({
+          limit: String(args.limit),
+          ...(args.cursor && { cursor: args.cursor }),
+        })
+        const res = await fetch(`/api/resources?${params}`)
+        return res.json()
+      }}
+      transform={(response) => ({
+        data: response.items,
+        cursor: response.nextCursor,
+        hasNextPage: Boolean(response.nextCursor),
+      })}
+    >
       <ServerContent />
     </DataTable.Server>
   )
@@ -388,30 +384,37 @@ The wrapper has the class `datum-ui-data-table` for scoping:
 Sync table state to URL query parameters with the `useNuqsAdapter` hook. Requires `nuqs` to be installed.
 
 ```tsx
-import { useNuqsAdapter } from '@datum-cloud/datum-ui/data-table'
+import { DataTable, useNuqsAdapter } from '@datum-cloud/datum-ui/data-table'
 import { parseAsString } from 'nuqs'
 
-// Zero config — sorting, search, page, size synced automatically
-const stateAdapter = useNuqsAdapter()
+function MyTable({ data, columns }) {
+  // Zero config — sorting, search, page, size synced automatically
+  const stateAdapter = useNuqsAdapter()
 
-// With custom filter parsers
-const stateAdapter = useNuqsAdapter({
-  filters: {
-    status: parseAsString.withDefault(''),
-  },
-})
+  // Or with custom filter parsers:
+  // const stateAdapter = useNuqsAdapter({
+  //   filters: { status: parseAsString.withDefault('') },
+  // })
 
-const tableState = useDataTableClient({ data, columns, stateAdapter })
+  return (
+    <DataTable.Client data={data} columns={columns} stateAdapter={stateAdapter}>
+      <DataTable.Content />
+      <DataTable.Pagination />
+    </DataTable.Client>
+  )
+}
 ```
 
 URL params: `?sort=-name&q=hello&page=0&size=20&status=active`
 
 ## API Reference
 
-### `useDataTableClient(options)`
+### `DataTable.Client` Props
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
+All options are passed as props directly to the provider component. The provider creates the store and TanStack table instance internally.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
 | `data` | `TData[]` | -- | Table data array |
 | `columns` | `ColumnDef<TData>[]` | -- | TanStack column definitions |
 | `pageSize` | `number` | `20` | Initial page size |
@@ -421,28 +424,35 @@ URL params: `?sort=-name&q=hello&page=0&size=20&status=active`
 | `defaultFilters` | `FilterValue` | `{}` | Initial filter state |
 | `searchableColumns` | `string[]` | -- | Columns to search in |
 | `searchFn` | `(row, search) => boolean` | -- | Custom search function |
+| `filterFns` | `Record<string, (cellValue, filterValue) => boolean>` | -- | Custom filter functions per column |
 | `stateAdapter` | `StateAdapter` | -- | URL state sync adapter |
+| `className` | `string` | -- | Class for the provider wrapper div |
+| `ssrFallback` | `ReactNode` | `null` | Rendered during SSR and first client paint. Provide a skeleton matching the table dimensions to avoid layout shift |
+| `children` | `ReactNode` | -- | Table content |
 
-### `useDataTableServer(options)`
+### `DataTable.Server` Props
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
 | `columns` | `ColumnDef<TData>[]` | -- | TanStack column definitions |
+| `fetchFn` | `(args: ServerFetchArgs) => Promise<TResponse>` | -- | Async function called when table state changes |
+| `transform` | `(response: TResponse) => ServerTransformResult<TData>` | -- | Transform API response to table data format. Return `{ data, cursor, hasNextPage }` |
 | `limit` | `number` | `20` | Page size for cursor pagination |
 | `getRowId` | `(row: TData) => string` | -- | Custom row ID accessor |
 | `enableRowSelection` | `boolean \| SelectionColumnOptions` | `false` | Enable row selection with auto-injected checkbox column. Pass `true` for defaults or an options object for customization |
 | `defaultSort` | `SortingState` | `[]` | Initial sort state |
 | `defaultFilters` | `FilterValue` | `{}` | Initial filter state |
 | `stateAdapter` | `StateAdapter` | -- | URL state sync adapter |
-| `fetchFn` | `(args: ServerFetchArgs) => Promise<TResponse>` | -- | Async function called when table state changes |
-| `transform` | `(response: TResponse) => ServerTransformResult<TData>` | -- | Transform API response to table data format |
+| `className` | `string` | -- | Class for the provider wrapper div |
+| `ssrFallback` | `ReactNode` | `null` | Rendered during SSR and first client paint. Provide a skeleton matching the table dimensions to avoid layout shift |
+| `children` | `ReactNode` | -- | Table content |
 
 ### `DataTable` Namespace
 
 | Component | Description |
 |-----------|-------------|
-| `DataTable.Client` | Client-mode provider with full sorting, filtering, pagination |
-| `DataTable.Server` | Server-mode provider with manual pagination/sorting/filtering |
+| `DataTable.Client` | Client-mode provider — pass `data`, `columns`, and all options as props. SSR-safe with optional `ssrFallback` |
+| `DataTable.Server` | Server-mode provider — pass `columns`, `fetchFn`, `transform`, and all options as props. SSR-safe with optional `ssrFallback` |
 | `DataTable.Content` | Table rendering with header, body, and empty state. Accepts sub-element className props (`tableClassName`, `headerClassName`, `headerRowClassName`, `headerCellClassName`, `bodyClassName`, `rowClassName`, `cellClassName`) |
 | `DataTable.ColumnHeader` | Click-to-sort column header |
 | `DataTable.Pagination` | Page navigation with page size selector |
