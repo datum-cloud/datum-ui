@@ -41,7 +41,7 @@ export function ClientProvider<TData>(props: DataTableClientProviderProps<TData>
 
   if (!isClient) {
     const fallback = props.ssrFallback === undefined
-      ? <DataTableLoading columns={props.columns.length} />
+      ? <DataTableLoading columns={props.columns.length} className={props?.className} />
       : props.ssrFallback
     return <>{fallback}</>
   }

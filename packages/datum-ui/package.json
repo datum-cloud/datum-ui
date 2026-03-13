@@ -381,9 +381,7 @@
     "leaflet.markercluster": {
       "optional": true
     },
-    "lucide-react": {
-      "optional": true
-    },
+    "lucide-react": {},
     "motion": {
       "optional": true
     },
@@ -464,10 +462,10 @@
     "eslint": "^9.39.3",
     "jsdom": "^26",
     "leaflet": "^1.9.4",
-    "lucide-react": "^0.556",
     "leaflet-draw": "^1.0.4",
     "leaflet.fullscreen": "^5.3.0",
     "leaflet.markercluster": "^1.5.3",
+    "lucide-react": "^0.556",
     "motion": "^12.34.4",
     "nprogress": "^0.2.0",
     "nuqs": "^2.8.9",

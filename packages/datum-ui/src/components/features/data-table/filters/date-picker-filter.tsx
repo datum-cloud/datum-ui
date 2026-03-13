@@ -3,6 +3,7 @@
 import type { DateRange } from 'react-day-picker'
 import type { FilterDatePickerProps } from '../types'
 import { useEffect, useMemo } from 'react'
+import { cn } from '../../../../utils/cn'
 import { CalendarDatePicker } from '../../calendar-date-picker/calendar-date-picker'
 import { useDataTableFilters } from '../hooks/use-selectors'
 
@@ -40,7 +41,7 @@ export function DatePickerFilter({
         numberOfMonths={1}
         closeOnSelect
         placeholder={label}
-        triggerClassName={className}
+        triggerClassName={cn('h-10', className)}
         variant="outline"
         disabled={disabled}
         disableFuture={disableFuture}
