@@ -23,6 +23,8 @@ jobs:
     with:
       package-name: "@datum-cloud/datum-ui"
       package-path: packages/datum-ui
+      lockfile-path: pnpm-lock.yaml
+      install-path: "."
 
   # Alpha publish on PR with 'alpha' label
   alpha:
