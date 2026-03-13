@@ -63,7 +63,7 @@ export function CheckboxFilter({
         <Button
           theme="outline"
           disabled={disabled}
-          className={cn('justify-between gap-1', className)}
+          className={cn('h-10 justify-between gap-1', className)}
           data-slot="dt-filter"
           data-testid="dt-filter-trigger"
         >

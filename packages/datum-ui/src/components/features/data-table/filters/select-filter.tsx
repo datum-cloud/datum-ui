@@ -49,7 +49,7 @@ export function SelectFilter({
           role="combobox"
           aria-expanded={open}
           disabled={disabled}
-          className={cn('justify-between', className)}
+          className={cn('h-10 justify-between', className)}
           data-slot="dt-filter"
           data-testid="dt-filter-trigger"
         >
