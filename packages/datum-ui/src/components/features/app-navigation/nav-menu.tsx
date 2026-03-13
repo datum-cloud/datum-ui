@@ -13,6 +13,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { cn } from '../../../utils/cn'
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -23,8 +24,7 @@ import {
   SidebarMenuSub,
   SidebarSeparator,
   useSidebar,
-} from '..'
-import { cn } from '../../../utils/cn'
+} from '../../base/sidebar/sidebar'
 import { Icon } from '../../icons/icon-wrapper'
 
 export interface NavItem {
@@ -122,7 +122,7 @@ function NavSidebarMenuButton({ ref, item, isActive, disableTooltip, className, 
 
 NavSidebarMenuButton.displayName = 'NavSidebarMenuButton'
 
-export function NavMain({ ref, className, items, currentPath, linkComponent: LinkComp = 'a', overrideState, itemClassName, disableTooltip, closeOnNavigation, ...props }: ComponentProps<'ul'> & {
+export function NavMenu({ ref, className, items, currentPath, linkComponent: LinkComp = 'a', overrideState, itemClassName, disableTooltip, closeOnNavigation, ...props }: ComponentProps<'ul'> & {
   items: NavItem[]
   /** Current URL pathname — replaces internal useLocation() */
   currentPath: string
@@ -666,4 +666,4 @@ export function NavMain({ ref, className, items, currentPath, linkComponent: Lin
   )
 }
 
-NavMain.displayName = 'NavMain'
+NavMenu.displayName = 'NavMenu'

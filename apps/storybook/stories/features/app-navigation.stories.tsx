@@ -1,10 +1,10 @@
-import type { NavItem } from '@datum-cloud/datum-ui/sidebar'
+import type { NavItem } from '@datum-cloud/datum-ui/app-navigation'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import {
-  AppSidebar,
+  AppNavigation,
   SidebarInset,
   SidebarProvider,
-} from '@datum-cloud/datum-ui/sidebar'
+} from '@datum-cloud/datum-ui/app-navigation'
 import {
   FileText,
   Home,
@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 
 const meta: Meta = {
-  title: 'Features/Sidebar',
+  title: 'Features/AppNavigation',
 }
 
 export default meta
@@ -69,7 +69,7 @@ export const Default: Story = {
   render: () => (
     <div className="h-[600px] w-full">
       <SidebarProvider defaultOpen>
-        <AppSidebar
+        <AppNavigation
           navItems={navItems}
           title="My App"
           currentPath="/dashboard"
@@ -89,7 +89,7 @@ export const Collapsed: Story = {
   render: () => (
     <div className="h-[600px] w-full">
       <SidebarProvider defaultOpen={false}>
-        <AppSidebar
+        <AppNavigation
           navItems={navItems}
           title="My App"
           currentPath="/dashboard"
@@ -133,7 +133,7 @@ export const WithGroups: Story = {
     return (
       <div className="h-[600px] w-full">
         <SidebarProvider defaultOpen>
-          <AppSidebar
+          <AppNavigation
             navItems={groupedItems}
             title="Grouped Nav"
             currentPath="/dashboard"

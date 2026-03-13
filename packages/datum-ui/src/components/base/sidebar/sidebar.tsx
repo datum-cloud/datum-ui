@@ -10,9 +10,9 @@ import { cva } from 'class-variance-authority'
 import { PanelLeftCloseIcon, PanelLeftOpenIcon } from 'lucide-react'
 import * as React from 'react'
 import { cn } from '../../../utils/cn'
-import { Input } from '../../base/input/input'
-import { Tooltip } from '../../base/tooltip/tooltip'
 import { Icon } from '../../icons/icon-wrapper'
+import { Input } from '../input/input'
+import { Tooltip } from '../tooltip/tooltip'
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state'
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7

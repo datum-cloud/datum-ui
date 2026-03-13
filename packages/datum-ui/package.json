@@ -265,9 +265,14 @@
       "default": "./dist/page-title/index.mjs"
     },
     "./sidebar": {
-      "source": "./src/components/features/sidebar/index.ts",
-      "types": "./dist/components/features/sidebar/index.d.ts",
+      "source": "./src/components/base/sidebar/index.ts",
+      "types": "./dist/components/base/sidebar/index.d.ts",
       "default": "./dist/sidebar/index.mjs"
+    },
+    "./app-navigation": {
+      "source": "./src/components/features/app-navigation/index.ts",
+      "types": "./dist/components/features/app-navigation/index.d.ts",
+      "default": "./dist/app-navigation/index.mjs"
     },
     "./stepper": {
       "source": "./src/components/features/stepper/index.ts",

@@ -1,0 +1,190 @@
+---
+title: App Navigation
+description: A complete navigation sidebar with collapsible menus, route highlighting, and motion animations.
+---
+
+## Overview
+
+`AppNavigation` is a pre-composed sidebar built on top of the base [Sidebar](/docs/components/features/sidebar) primitives. It adds:
+
+- Declarative navigation via a `navItems` prop
+- Automatic active-state detection based on `currentPath`
+- Collapsible sub-menus (`type: 'collapsible'`)
+- Labeled section groups (`type: 'group'`)
+- Hover-to-expand behavior with `motion` animations
+- Keyboard shortcut (`Cmd+B` / `Ctrl+B`) to toggle
+
+`AppNavigation` also re-exports all base sidebar primitives, so you can import everything from a single entry point.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+motion
+```
+
+## Usage
+
+```tsx
+import { SidebarProvider, AppNavigation, SidebarInset } from '@datum-cloud/datum-ui/app-navigation'
+import { Home, LayoutDashboard, Settings } from 'lucide-react'
+
+<SidebarProvider defaultOpen>
+  <AppNavigation
+    navItems={[
+      { title: 'Home', href: '/', type: 'link', icon: Home },
+      { title: 'Dashboard', href: '/dashboard', type: 'link', icon: LayoutDashboard },
+      { title: 'Settings', href: '/settings', type: 'link', icon: Settings },
+    ]}
+    title="My App"
+    currentPath="/dashboard"
+    collapsible="icon"
+  />
+  <SidebarInset>
+    <div>Main content area</div>
+  </SidebarInset>
+</SidebarProvider>
+```
+
+## Examples
+
+### With Nested Collapsible Items
+
+Navigation items can have children, rendered as collapsible sub-menus.
+
+```tsx
+import { SidebarProvider, AppNavigation, SidebarInset } from '@datum-cloud/datum-ui/app-navigation'
+import type { NavItem } from '@datum-cloud/datum-ui/app-navigation'
+import { LayoutDashboard, Users, Settings } from 'lucide-react'
+
+const navItems: NavItem[] = [
+  { title: 'Dashboard', href: '/dashboard', type: 'link', icon: LayoutDashboard },
+  {
+    title: 'Users',
+    href: '/users',
+    type: 'collapsible',
+    icon: Users,
+    children: [
+      { title: 'All Users', href: '/users/all', type: 'link' },
+      { title: 'Invitations', href: '/users/invitations', type: 'link' },
+      { title: 'Roles', href: '/users/roles', type: 'link' },
+    ],
+  },
+  {
+    title: 'Settings',
+    href: '/settings',
+    type: 'collapsible',
+    icon: Settings,
+    children: [
+      { title: 'General', href: '/settings/general', type: 'link' },
+      { title: 'Security', href: '/settings/security', type: 'link' },
+    ],
+  },
+]
+
+<SidebarProvider defaultOpen>
+  <AppNavigation navItems={navItems} title="My App" currentPath="/users/all" collapsible="icon" />
+  <SidebarInset>
+    <div>Main content area</div>
+  </SidebarInset>
+</SidebarProvider>
+```
+
+### With Groups
+
+Use `type: 'group'` to organize items under labeled sections.
+
+```tsx
+import { SidebarProvider, AppNavigation, SidebarInset } from '@datum-cloud/datum-ui/app-navigation'
+import type { NavItem } from '@datum-cloud/datum-ui/app-navigation'
+import { LayoutDashboard, Users, FileText, Settings } from 'lucide-react'
+
+const groupedItems: NavItem[] = [
+  {
+    title: 'Platform',
+    href: null,
+    type: 'group',
+    children: [
+      { title: 'Dashboard', href: '/dashboard', type: 'link', icon: LayoutDashboard },
+      { title: 'Users', href: '/users', type: 'link', icon: Users },
+    ],
+  },
+  {
+    title: 'Resources',
+    href: null,
+    type: 'group',
+    children: [
+      { title: 'Documents', href: '/documents', type: 'link', icon: FileText },
+      { title: 'Settings', href: '/settings', type: 'link', icon: Settings },
+    ],
+  },
+]
+
+<SidebarProvider defaultOpen>
+  <AppNavigation navItems={groupedItems} title="Grouped Nav" currentPath="/dashboard" collapsible="icon" />
+  <SidebarInset>
+    <div>Sidebar with grouped navigation</div>
+  </SidebarInset>
+</SidebarProvider>
+```
+
+### Collapsed State
+
+Set `defaultOpen={false}` on `SidebarProvider` to start the sidebar in collapsed state.
+
+```tsx
+<SidebarProvider defaultOpen={false}>
+  <AppNavigation navItems={navItems} title="My App" currentPath="/" collapsible="icon" />
+  <SidebarInset>
+    <div>Sidebar starts collapsed</div>
+  </SidebarInset>
+</SidebarProvider>
+```
+
+## Props
+
+### AppNavigation
+
+A pre-composed navigation sidebar with header, menu, and toggle built in.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `navItems` | `NavItem[]` | -- | Navigation items to render |
+| `title` | `string \| ReactNode` | -- | Sidebar header title |
+| `currentPath` | `string` | -- | Current URL pathname for active state detection |
+| `linkComponent` | `ElementType` | `'a'` | Component to render navigation links (e.g., Next.js `Link`) |
+| `closeOnNavigation` | `boolean` | -- | Close sidebar after clicking a navigation link |
+| `defaultOpen` | `boolean` | -- | Override initial open state from provider |
+| `collapsible` | `'offcanvas' \| 'icon' \| 'none'` | `'offcanvas'` | Collapse behavior |
+| `side` | `'left' \| 'right'` | `'left'` | Which side the sidebar appears on |
+| `variant` | `'sidebar' \| 'floating' \| 'inset'` | `'sidebar'` | Visual variant |
+
+### NavMenu
+
+Renders a list of `NavItem` entries inside a sidebar group. Used internally by `AppNavigation` but available for custom compositions.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `NavItem[]` | -- | Navigation items to render |
+| `currentPath` | `string` | -- | Current pathname for active state |
+| `linkComponent` | `ElementType` | `'a'` | Link component override |
+
+### NavItem
+
+The data structure for navigation items.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | -- | Display text |
+| `href` | `string \| null` | -- | Navigation URL (`null` for groups) |
+| `type` | `'link' \| 'group' \| 'collapsible' \| 'externalLink'` | -- | Item behavior type |
+| `icon` | `LucideIcon` | -- | Icon component from lucide-react |
+| `children` | `NavItem[]` | -- | Nested navigation items |
+| `disabled` | `boolean` | -- | Disable the item |
+| `hidden` | `boolean` | -- | Hide the item |
+| `showSeparatorAbove` | `boolean` | -- | Show a separator line above this item |
+| `showSeparatorBelow` | `boolean` | -- | Show a separator line below this item |
+| `excludePaths` | `string[]` | -- | Sub-paths that should not activate this item |
+| `tabChildLinks` | `string[]` | -- | Additional paths that activate this item |
+| `onPrefetch` | `() => void` | -- | Called on hover for route prefetching |
