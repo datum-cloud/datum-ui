@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "predev": "pnpm --filter @datum-cloud/datum-ui build",
+    "predev": "[ -d '../../packages/datum-ui/dist' ] || pnpm --filter @datum-cloud/datum-ui build",
     "dev": "next dev --turbopack",
     "build": "next build",
     "clean": "rm -rf .next .turbo node_modules"

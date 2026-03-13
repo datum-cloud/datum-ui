@@ -1,1 +1,1 @@
-export * from '@repo/shadcn/ui/skeleton'
+export * from './skeleton'

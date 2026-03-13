@@ -22,6 +22,9 @@
 /* Figma design tokens — source of truth */
 @import './tokens/figma-tokens.css';
 
+/* Animation utilities required by shadcn component transitions */
+@import 'tw-animate-css';
+
 /* Shadcn/ui base variables and component styles */
 @import '@repo/shadcn/styles/shadcn.css';
 

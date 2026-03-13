@@ -1,4 +1,4 @@
-import type { NavItem } from './nav-main'
+import type { NavItem } from './nav-menu'
 import { useEffect } from 'react'
 import {
   Sidebar,
@@ -7,10 +7,10 @@ import {
   SidebarHeader,
   SidebarTrigger,
   useSidebar,
-} from '..'
-import { NavMain } from './nav-main'
+} from '../../base/sidebar/sidebar'
+import { NavMenu } from './nav-menu'
 
-export function AppSidebar({
+export function AppNavigation({
   navItems,
   title,
   closeOnNavigation,
@@ -24,9 +24,9 @@ export function AppSidebar({
   closeOnNavigation?: boolean
   /** Controls sidebar open state — when false, sidebar closes on mount */
   defaultOpen?: boolean
-  /** Current URL pathname — passed through to NavMain */
+  /** Current URL pathname — passed through to NavMenu */
   currentPath: string
-  /** Link component — passed through to NavMain (defaults to native `<a>`) */
+  /** Link component — passed through to NavMenu (defaults to native `<a>`) */
   linkComponent?: React.ElementType
 }) {
   const { setOpen } = useSidebar()
@@ -43,7 +43,7 @@ export function AppSidebar({
         {title && <SidebarHeader className="px-4 pt-4 pb-0">{title}</SidebarHeader>}
 
         {navItems.length > 0 && (
-          <NavMain
+          <NavMenu
             className="h-fit py-2"
             items={navItems}
             currentPath={currentPath}

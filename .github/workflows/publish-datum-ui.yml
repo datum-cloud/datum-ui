@@ -4,18 +4,134 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    types: [labeled, synchronize]
+    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  publish-datum-ui:
+  # Stable publish on push to main (reusable workflow)
+  publish:
+    if: github.event_name == 'push'
     uses: datum-cloud/actions/.github/workflows/publish-npm-package.yaml@main
     permissions:
       contents: write
       id-token: write
-
     with:
       package-name: "@datum-cloud/datum-ui"
       package-path: packages/datum-ui
+
+  # Alpha publish on PR with 'alpha' label
+  alpha:
+    name: Publish alpha
+    if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'alpha')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Determine next version
+        id: version
+        working-directory: packages/datum-ui
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+
+          # Detect bump type from PR labels
+          LABELS='${{ toJSON(github.event.pull_request.labels.*.name) }}'
+          if echo "$LABELS" | grep -q "release:major"; then
+            BUMP="major"
+          elif echo "$LABELS" | grep -q "release:minor"; then
+            BUMP="minor"
+          else
+            BUMP="patch"
+          fi
+
+          # Calculate next version
+          NEXT=$(node -e "
+            const [major, minor, patch] = '${CURRENT}'.split('.').map(Number);
+            const bump = '${BUMP}';
+            if (bump === 'major') console.log(\`\${major+1}.0.0\`);
+            else if (bump === 'minor') console.log(\`\${major}.\${minor+1}.0\`);
+            else console.log(\`\${major}.\${minor}.\${patch+1}\`);
+          ")
+          SHORT_SHA=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)
+          ALPHA_VERSION="${NEXT}-alpha.${SHORT_SHA}"
+
+          echo "version=${ALPHA_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Publishing ${ALPHA_VERSION} (${BUMP} bump from ${CURRENT})"
+
+      - name: Set alpha version
+        working-directory: packages/datum-ui
+        run: npm version ${{ steps.version.outputs.version }} --no-git-tag-version
+
+      - name: Build
+        run: pnpm --filter @datum-cloud/datum-ui build
+
+      - name: Publish to npm
+        working-directory: packages/datum-ui
+        run: pnpm publish --no-git-checks --access public --tag alpha --provenance
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ steps.version.outputs.version }}';
+            const body = [
+              `### 📦 Alpha published`,
+              '',
+              `\`@datum-cloud/datum-ui@${version}\``,
+              '',
+              '```bash',
+              `pnpm add @datum-cloud/datum-ui@${version}`,
+              '# or use the alpha tag for the latest alpha:',
+              'pnpm add @datum-cloud/datum-ui@alpha',
+              '```',
+            ].join('\n');
+
+            // Find and update existing comment, or create new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const marker = '### 📦 Alpha published';
+            const existing = comments.find(c => c.body.startsWith(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
