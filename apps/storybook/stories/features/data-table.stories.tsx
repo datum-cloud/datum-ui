@@ -1,9 +1,6 @@
 import type { ColumnDef } from '@tanstack/react-table'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import {
-  DataTable,
-  useDataTableLoading,
-} from '@datum-cloud/datum-ui/data-table'
+import { DataTable } from '@datum-cloud/datum-ui/data-table'
 import { useState } from 'react'
 
 const meta: Meta = {
@@ -219,14 +216,11 @@ const postColumns: ColumnDef<Post>[] = [
 ]
 
 function ServerTableContent() {
-  const { isLoading } = useDataTableLoading()
   return (
     <div className="flex flex-col gap-4">
       <DataTable.Search placeholder="Search posts..." />
       <DataTable.ActiveFilters />
-      {isLoading
-        ? <DataTable.Loading rows={5} columns={4} />
-        : <DataTable.Content emptyMessage="No posts found." />}
+      <DataTable.Content emptyMessage="No posts found." />
       <DataTable.Pagination />
     </div>
   )
@@ -690,15 +684,19 @@ function ActiveFiltersDemo() {
         </DataTable.Client>
       </div>
 
-      {/* Custom label + button clear */}
+      {/* Custom label + button clear + formatFilterValue */}
       <div>
-        <h3 className="mb-2 text-sm font-medium text-muted-foreground">Custom label with button clear</h3>
+        <h3 className="mb-2 text-sm font-medium text-muted-foreground">Custom label with button clear + formatted values</h3>
         <DataTable.Client {...sharedFilterOptions}>
           <div className="flex flex-col gap-4">
             {filterControls}
             <DataTable.ActiveFilters
               label="Filters Applied"
               filterLabels={filterLabels}
+              formatFilterValue={{
+                status: (value: string) => value === 'active' ? 'Active' : 'Inactive',
+                role: (value: string) => `Role: ${value}`,
+              }}
               clearAll="button"
               clearAllLabel="Reset"
             />

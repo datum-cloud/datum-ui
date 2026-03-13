@@ -40,6 +40,22 @@ describe('createDataTableStore', () => {
   })
 })
 
+describe('isLoading option', () => {
+  it('initializes with isLoading from options', () => {
+    const store = createDataTableStore({
+      data: [],
+      mode: 'client',
+      isLoading: true,
+    })
+    expect(store.getSnapshot().isLoading).toBe(true)
+  })
+
+  it('defaults isLoading to false when not specified', () => {
+    const store = createDataTableStore({ data: [], mode: 'client' })
+    expect(store.getSnapshot().isLoading).toBe(false)
+  })
+})
+
 describe('store actions', () => {
   it('setSorting updates sorting and resets rowSelection', () => {
     const store = createDataTableStore({ data: sampleData, mode: 'client' })

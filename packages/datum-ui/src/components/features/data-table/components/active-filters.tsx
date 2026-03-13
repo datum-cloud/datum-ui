@@ -8,12 +8,10 @@ import { Badge } from '../../../base/badge'
 import { Button } from '../../../base/button'
 import { useDataTableFilters, useDataTableSearch } from '../hooks/use-selectors'
 
-function formatValue(column: string, value: unknown, formatter?: ActiveFiltersProps['formatFilterValue']): string {
-  if (formatter) {
-    const result = formatter(column, value)
-    if (result !== undefined)
-      return result
-  }
+function formatValue(column: string, value: unknown, formatters?: ActiveFiltersProps['formatFilterValue']): string {
+  const fn = formatters?.[column]
+  if (fn)
+    return fn(value)
   return String(value)
 }
 
@@ -44,7 +42,7 @@ function ActiveFiltersInner({
   label = 'Selected Filters',
   excludeFilters,
   filterLabels = EMPTY_LABELS,
-  formatFilterValue: formatter,
+  formatFilterValue: formatters,
   clearAll = 'icon',
   clearAllLabel = 'Clear all',
   className,
@@ -127,11 +125,11 @@ function ActiveFiltersInner({
             <FilterGroup key={column} label={groupLabel} className={groupClassName}>
               {value.map(item => (
                 <Badge key={item} type="muted" theme="solid" className={badgeCn}>
-                  <span>{formatValue(column, item, formatter)}</span>
+                  <span>{formatValue(column, item, formatters)}</span>
                   <Button
                     theme="borderless"
                     size="small"
-                    aria-label={`Remove ${formatValue(column, item, formatter)} from ${groupLabel}`}
+                    aria-label={`Remove ${formatValue(column, item, formatters)} from ${groupLabel}`}
                     className="h-auto p-0 text-muted-foreground hover:text-foreground"
                     onClick={() => removeArrayItem(column, value as string[], item)}
                   >
@@ -146,7 +144,7 @@ function ActiveFiltersInner({
         return (
           <FilterGroup key={column} label={groupLabel} className={groupClassName}>
             <Badge type="muted" theme="solid" className={badgeCn}>
-              <span>{formatValue(column, value, formatter)}</span>
+              <span>{formatValue(column, value, formatters)}</span>
               <Button
                 theme="borderless"
                 size="small"

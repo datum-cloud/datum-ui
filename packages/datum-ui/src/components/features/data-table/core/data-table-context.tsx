@@ -46,10 +46,25 @@ export function useDataTableStore<TData>(): DataTableStore<TData> {
   return store as DataTableStore<TData>
 }
 
+/**
+ * @deprecated Use `useTableInstanceOrNull` instead — this throws during the
+ * SSR/hydration window when the table instance is not yet mounted.
+ */
 export function useTableInstance<TData>(): Table<TData> {
   const table = use(TableInstanceContext)
   if (!table) {
-    throw new Error('useTableInstance must be used within a <DataTable.Client> or <DataTable.Server> provider')
+    throw new Error(
+      'useTableInstance: table instance not yet available. '
+      + 'The table mounts after hydration. Use useTableInstanceOrNull to handle the loading window.',
+    )
   }
   return table as Table<TData>
+}
+
+/**
+ * Returns the table instance or null if not yet available.
+ * Used by hooks that need to handle the null-table window during SSR.
+ */
+export function useTableInstanceOrNull<TData>(): Table<TData> | null {
+  return use(TableInstanceContext) as Table<TData> | null
 }

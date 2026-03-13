@@ -1,7 +1,12 @@
 'use client'
 
+import type { ColumnDef } from '@tanstack/react-table'
 import type {
   DataTableStore,
+  SelectionColumnOptions,
+  ServerFetchArgs,
+  ServerTransformResult,
+  StateAdapter,
   UseDataTableServerOptions,
 } from '../types'
 import {
@@ -14,18 +19,33 @@ import { createDataTableStore } from '../core/store'
 
 export type { UseDataTableServerOptions }
 
-export function useDataTableServer<TResponse, TData>(
-  options: UseDataTableServerOptions<TResponse, TData>,
+// ── useServerTable ──
+
+export interface UseServerTableOptions<TResponse, TData> {
+  readonly columns: ColumnDef<TData, any>[]
+  readonly fetchFn: (args: ServerFetchArgs) => Promise<TResponse>
+  readonly transform: (response: TResponse) => ServerTransformResult<TData>
+  readonly limit?: number
+  readonly getRowId?: (row: TData) => string
+  readonly enableRowSelection?: boolean | SelectionColumnOptions
+  readonly stateAdapter?: StateAdapter
+}
+
+/**
+ * Creates a TanStack Table instance from an existing store.
+ * Handles fetch-on-query-change, cursor pagination, and state adapter sync.
+ * Does NOT create the store — the caller is responsible for that.
+ */
+export function useServerTable<TResponse, TData>(
+  store: DataTableStore<TData>,
+  options: UseServerTableOptions<TResponse, TData>,
 ) {
   const {
     columns,
     fetchFn,
     transform,
-    limit = 20,
     getRowId,
     enableRowSelection = false,
-    defaultSort,
-    defaultFilters,
     stateAdapter,
   } = options
 
@@ -46,24 +66,11 @@ export function useDataTableServer<TResponse, TData>(
   // Track hasNextPage via ref to avoid extra state/render cycle
   const hasNextPageRef = useRef(false)
 
-  // 1. Create store
-  const store = useMemo<DataTableStore<TData>>(
-    () => createDataTableStore<TData>({
-      data: [] as TData[],
-      mode: 'server',
-      defaultSort,
-      defaultFilters,
-      pageSize: limit,
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  )
-
-  // 2. Read store state
+  // 1. Read store state
   const { sorting, filters, search, rowSelection, pageSize, pageIndex }
     = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot)
 
-  // 3. Fetch on query change — also resets cursors when query params change
+  // 2. Fetch on query change — also resets cursors when query params change
   const prevQueryRef = useRef({ sorting, filters, search, pageSize })
   useEffect(() => {
     // Detect query param changes (vs page-only changes)
@@ -129,7 +136,7 @@ export function useDataTableServer<TResponse, TData>(
     }
   }, [sorting, filters, search, pageSize, pageIndex, store])
 
-  // 4. Resolve columns
+  // 3. Resolve columns
   const resolvedColumns = useMemo(
     () => enableRowSelection
       ? withSelectionColumn(columns, typeof enableRowSelection === 'object' ? enableRowSelection : {})
@@ -137,7 +144,7 @@ export function useDataTableServer<TResponse, TData>(
     [columns, enableRowSelection],
   )
 
-  // 5. Create TanStack table (display only — no sorting/filtering/pagination)
+  // 4. Create TanStack table (display only — no sorting/filtering/pagination)
   const table = useReactTable({
     data: store.getSnapshot().data,
     columns: resolvedColumns,
@@ -169,12 +176,56 @@ export function useDataTableServer<TResponse, TData>(
     },
   })
 
-  // 7. State adapter sync
+  // 5. State adapter sync
   useEffect(() => {
     if (stateAdapter) {
       stateAdapter.write({ sorting, filters, search, pageSize })
     }
   }, [sorting, filters, search, pageSize, stateAdapter])
+
+  return { table }
+}
+
+// ── useDataTableServer (convenience wrapper) ──
+
+export function useDataTableServer<TResponse, TData>(
+  options: UseDataTableServerOptions<TResponse, TData>,
+) {
+  const {
+    columns,
+    fetchFn,
+    transform,
+    limit = 20,
+    getRowId,
+    enableRowSelection,
+    defaultSort,
+    defaultFilters,
+    stateAdapter,
+  } = options
+
+  // 1. Create store
+  const store = useMemo<DataTableStore<TData>>(
+    () => createDataTableStore<TData>({
+      data: [] as TData[],
+      mode: 'server',
+      defaultSort,
+      defaultFilters,
+      pageSize: limit,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  )
+
+  // 2. Create table from store
+  const { table } = useServerTable(store, {
+    columns,
+    fetchFn,
+    transform,
+    limit,
+    getRowId,
+    enableRowSelection,
+    stateAdapter,
+  })
 
   return { store, table }
 }

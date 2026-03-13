@@ -1,4 +1,3 @@
-import type { Table } from '@tanstack/react-table'
 import type {
   CreateStoreOptions,
   DataTableStore,
@@ -39,8 +38,9 @@ export function createDataTableStore<TData>(
     rowSelection: {},
     pageIndex: 0,
     pageSize: options.pageSize ?? DEFAULT_PAGE_SIZE,
+    columnCount: options.columnCount ?? 0,
     mode: options.mode,
-    isLoading: false,
+    isLoading: options.isLoading ?? false,
     error: null,
     inlineContents: [],
     _version: 0,
@@ -75,9 +75,6 @@ export function createDataTableStore<TData>(
     setServerData: (data) => {
       setState({ ...state, data, filteredData: data })
     },
-
-    // Table instance stored for future use by selector hooks (Task 3)
-    setTable: (_t: Table<TData>) => { /* retained for provider wiring */ },
 
     setSorting: (sorting) => {
       setState({ ...state, sorting, rowSelection: {} })

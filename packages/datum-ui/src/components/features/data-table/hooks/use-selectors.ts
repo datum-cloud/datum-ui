@@ -1,8 +1,9 @@
 'use client'
 
+import type { HeaderGroup, Row } from '@tanstack/react-table'
 import type { DataTableStoreState, InlineContentEntry } from '../types'
 import { useCallback, useRef, useSyncExternalStore } from 'react'
-import { useDataTableStore, useRenderKey, useTableInstance } from '../core/data-table-context'
+import { useDataTableStore, useRenderKey, useTableInstanceOrNull } from '../core/data-table-context'
 
 function shallowEqual(a: Record<string, unknown>, b: Record<string, unknown>): boolean {
   const keysA = Object.keys(a)
@@ -85,30 +86,44 @@ export function useDataTableSorting() {
 export function useDataTableSelection<TData>() {
   useRenderKey() // re-render when store changes (table is mutable singleton)
   const store = useDataTableStore<TData>()
-  const table = useTableInstance<TData>()
+  const table = useTableInstanceOrNull<TData>()
   const state = store.getSnapshot()
+
   return {
     rowSelection: state.rowSelection,
     setRowSelection: store.setRowSelection,
-    selectedRows: table.getFilteredSelectedRowModel().rows.map(r => r.original),
+    selectedRows: table
+      ? table.getFilteredSelectedRowModel().rows.map(r => r.original)
+      : [] as TData[],
   }
 }
 
 export function useDataTablePagination() {
   useRenderKey() // re-render when store changes (table is mutable singleton)
   const store = useDataTableStore()
-  const table = useTableInstance()
+  const table = useTableInstanceOrNull()
   const state = store.getSnapshot()
 
-  // Stable function references (table ref is stable from useReactTable)
-  const nextPage = useCallback(() => table.nextPage(), [table])
-  const prevPage = useCallback(() => table.previousPage(), [table])
+  if (!table) {
+    return {
+      canNextPage: false,
+      canPrevPage: false,
+      nextPage: () => {},
+      prevPage: () => {},
+      pageIndex: state.pageIndex,
+      pageCount: 0,
+      setPageIndex: store.setPageIndex,
+      pageSize: state.pageSize,
+      setPageSize: store.setPageSize,
+      totalRows: 0,
+    }
+  }
 
   return {
     canNextPage: table.getCanNextPage(),
     canPrevPage: table.getCanPreviousPage(),
-    nextPage,
-    prevPage,
+    nextPage: () => table.nextPage(),
+    prevPage: () => table.previousPage(),
     pageIndex: state.pageIndex,
     pageCount: table.getPageCount(),
     setPageIndex: store.setPageIndex,
@@ -120,7 +135,10 @@ export function useDataTablePagination() {
 
 export function useDataTableRows<TData>() {
   useRenderKey() // re-render when store changes (table is mutable singleton)
-  const table = useTableInstance<TData>()
+  const table = useTableInstanceOrNull<TData>()
+  if (!table) {
+    return { rows: [] as Row<TData>[], headerGroups: [] as HeaderGroup<TData>[], totalColumns: 0 }
+  }
   return {
     rows: table.getRowModel().rows,
     headerGroups: table.getHeaderGroups(),
@@ -133,6 +151,7 @@ export function useDataTableLoading() {
     useCallback((state: DataTableStoreState<any>) => ({
       isLoading: state.isLoading,
       error: state.error,
+      columnCount: state.columnCount,
     }), []),
   )
 }

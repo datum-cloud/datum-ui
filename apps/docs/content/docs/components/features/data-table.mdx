@@ -115,16 +115,13 @@ function UsersPage({ users }: { users: User[] }) {
 For paginated API data (e.g., Kubernetes resources with continuation tokens). Like the client mode, pass all options as props directly to `DataTable.Server`:
 
 ```tsx
-import { DataTable, useDataTableLoading } from '@datum-cloud/datum-ui/data-table'
+import { DataTable } from '@datum-cloud/datum-ui/data-table'
 
 function ServerContent() {
-  const { isLoading } = useDataTableLoading()
   return (
     <div className="flex flex-col gap-4">
       <DataTable.Search placeholder="Search..." />
-      {isLoading
-        ? <DataTable.Loading rows={5} columns={4} />
-        : <DataTable.Content emptyMessage="No results." />}
+      <DataTable.Content emptyMessage="No results." />
       <DataTable.Pagination />
     </div>
   )
@@ -324,12 +321,15 @@ Display currently active filters as removable badges, grouped by category. Suppo
   filterLabels={{ status: 'Status' }}
 />
 
-{/* Custom value formatting */}
+{/* Custom value formatting — per-column record, consumer-typed values */}
 <DataTable.ActiveFilters
-  filterLabels={{ status: 'Status' }}
-  formatFilterValue={(column, value) => {
-    if (column === 'status') return String(value).toUpperCase()
-    return undefined // fallback to default
+  filterLabels={{ status: 'Status', 'status.approval': 'Approval' }}
+  formatFilterValue={{
+    status: (value: string) => value.toUpperCase(),
+    'status.approval': (value: string) => {
+      const labels = { Approved: 'Approved', Rejected: 'Rejected', Pending: 'Pending' }
+      return labels[value] ?? value
+    },
   }}
 />
 ```
@@ -365,7 +365,7 @@ All filter and search components accept a `disabled` prop. Use this to prevent i
 ```tsx
 const { data, isLoading } = useFetchData()
 
-<DataTable.Client data={data} columns={columns}>
+<DataTable.Client data={data} columns={columns} loading={isLoading}>
   <DataTable.Search placeholder="Search..." disabled={isLoading} />
   <DataTable.SelectFilter
     column="status"
@@ -384,7 +384,7 @@ const { data, isLoading } = useFetchData()
     label="Created"
     disabled={isLoading}
   />
-  {isLoading ? <DataTable.Loading /> : <DataTable.Content />}
+  <DataTable.Content emptyMessage="No results." />
 </DataTable.Client>
 ```
 
@@ -395,7 +395,7 @@ const { data, isLoading } = useFetchData()
 | `label` | `string \| null` | `"Selected Filters"` | Label text before filter groups. Set to `null` to hide |
 | `excludeFilters` | `string[]` | -- | Keys to hide from display. Use column data paths for filters, `'search'` for the search badge |
 | `filterLabels` | `Record<string, string>` | `{}` | Maps column keys to display names |
-| `formatFilterValue` | `(column, value) => string \| undefined` | -- | Custom value formatter |
+| `formatFilterValue` | `Record<string, (value) => string>` | -- | Per-column value formatters. Keys support dot notation. |
 | `clearAll` | `'icon' \| 'button' \| 'text'` | `'icon'` | Clear-all action style |
 | `clearAllLabel` | `string` | `"Clear all"` | Label for the clear-all action |
 | `className` | `string` | -- | Root container class |
@@ -552,9 +552,9 @@ All options are passed as props directly to the provider component. The provider
 | `searchableColumns` | `string[]` | -- | Data paths to search in. Supports dot notation (e.g. `['metadata.name', 'spec.email']`) |
 | `searchFn` | `(row, search) => boolean` | -- | Custom search function |
 | `filterFns` | `Record<string, (cellValue, filterValue) => boolean>` | -- | Custom filter functions per column. Keys are data paths |
+| `loading` | `boolean` | -- | Consumer-controlled loading state. When `true`, `DataTable.Content` shows skeleton rows instead of the empty message |
 | `stateAdapter` | `StateAdapter` | -- | URL state sync adapter |
 | `className` | `string` | -- | Class for the provider wrapper div |
-| `ssrFallback` | `ReactNode \| null` | `<DataTable.Loading>` | Rendered during SSR and first client paint. Defaults to a skeleton table matching column count. Set to `null` to render nothing |
 | `children` | `ReactNode` | -- | Table content |
 
 ### `DataTable.Server` Props
@@ -571,22 +571,21 @@ All options are passed as props directly to the provider component. The provider
 | `defaultFilters` | `FilterValue` | `{}` | Initial filter state |
 | `stateAdapter` | `StateAdapter` | -- | URL state sync adapter |
 | `className` | `string` | -- | Class for the provider wrapper div |
-| `ssrFallback` | `ReactNode \| null` | `<DataTable.Loading>` | Rendered during SSR and first client paint. Defaults to a skeleton table matching column count. Set to `null` to render nothing |
 | `children` | `ReactNode` | -- | Table content |
 
 ### `DataTable` Namespace
 
 | Component | Description |
 |-----------|-------------|
-| `DataTable.Client` | Client-mode provider — pass `data`, `columns`, and all options as props. SSR-safe with automatic skeleton fallback |
-| `DataTable.Server` | Server-mode provider — pass `columns`, `fetchFn`, `transform`, and all options as props. SSR-safe with automatic skeleton fallback |
-| `DataTable.Content` | Table rendering with header, body, and empty state. Accepts sub-element className props (`tableClassName`, `headerClassName`, `headerRowClassName`, `headerCellClassName`, `bodyClassName`, `rowClassName`, `cellClassName`) |
+| `DataTable.Client` | Client-mode provider — pass `data`, `columns`, and all options as props. Accepts `loading` prop for consumer-controlled skeleton state |
+| `DataTable.Server` | Server-mode provider — pass `columns`, `fetchFn`, `transform`, and all options as props. Manages loading state internally via fetch lifecycle |
+| `DataTable.Content` | Table rendering with header, body, empty state, and skeleton loading. Shows skeleton rows (matching `pageSize` and column count) when loading. Accepts sub-element className props (`tableClassName`, `headerClassName`, `headerRowClassName`, `headerCellClassName`, `bodyClassName`, `rowClassName`, `cellClassName`) |
 | `DataTable.ColumnHeader` | Click-to-sort column header |
 | `DataTable.Pagination` | Page navigation with page size selector |
 | `DataTable.Search` | Debounced search input. Accepts `disabled` prop |
 | `DataTable.RowActions` | Per-row action dropdown from `ActionItem[]` |
 | `DataTable.BulkActions` | Render prop for selected rows |
-| `DataTable.Loading` | Skeleton loading state |
+| `DataTable.Loading` | Standalone skeleton table. Use for custom loading layouts outside `DataTable.Content` |
 | `DataTable.InlineContent` | Render custom content inline within the table body. Supports `position` (`"top"` or `"row"`), `open`, `onClose`, and `rowId` props |
 | `DataTable.SelectFilter` | Combobox popover filter with single-select. Accepts `searchable` and `disabled` props |
 | `DataTable.CheckboxFilter` | Multi-value checkbox popover filter with badges and clear button. Accepts `disabled` prop |

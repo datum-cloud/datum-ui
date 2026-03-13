@@ -5,6 +5,7 @@ import type { ContentProps, InlineContentEntry } from '../types'
 import { flexRender } from '@tanstack/react-table'
 import { useMemo } from 'react'
 import { cn } from '../../../../utils/cn'
+import { Skeleton } from '../../../base/skeleton'
 import {
   Table,
   TableBody,
@@ -13,7 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from '../../../base/table'
-import { useDataTableInlineContents, useDataTableRows } from '../hooks/use-selectors'
+import { DEFAULT_LOADING_ROWS } from '../constants'
+import { useDataTableInlineContents, useDataTableLoading, useDataTablePagination, useDataTableRows } from '../hooks/use-selectors'
 
 function resolveClassName<T>(
   value: string | ((item: T) => string) | undefined,
@@ -60,9 +62,12 @@ export function DataTableContent({
   cellClassName,
 }: ContentProps) {
   const { rows, headerGroups, totalColumns } = useDataTableRows()
+  const { isLoading, columnCount } = useDataTableLoading()
+  const { pageSize } = useDataTablePagination()
   const { inlineContents } = useDataTableInlineContents()
   const openInlineContents = useMemo(() => inlineContents.filter(e => e.open), [inlineContents])
   const colSpan = totalColumns
+  const skeletonColumns = totalColumns || columnCount || DEFAULT_LOADING_ROWS
 
   return (
     <div className={cn('datum-ui-data-table', className)} data-slot="dt" style={{ overflowX: 'auto' }}>
@@ -114,17 +119,29 @@ export function DataTableContent({
                   )
                 })
               )
-            : (
-                <TableRow data-slot="dt-row">
-                  <TableCell
-                    colSpan={colSpan}
-                    className="h-24 text-center"
-                    data-slot="dt-empty"
-                  >
-                    {emptyMessage ?? 'No results.'}
-                  </TableCell>
-                </TableRow>
-              )}
+            : isLoading
+              ? (
+                  Array.from({ length: pageSize }, (_, i) => (
+                    <TableRow key={i} data-slot="dt-skeleton-row">
+                      {Array.from({ length: skeletonColumns }, (_, j) => (
+                        <TableCell key={j} data-slot="dt-skeleton-cell">
+                          <Skeleton className="h-4 w-full" />
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                )
+              : (
+                  <TableRow data-slot="dt-row">
+                    <TableCell
+                      colSpan={colSpan}
+                      className="h-24 text-center"
+                      data-slot="dt-empty"
+                    >
+                      {emptyMessage ?? 'No results.'}
+                    </TableCell>
+                  </TableRow>
+                )}
         </TableBody>
       </Table>
     </div>

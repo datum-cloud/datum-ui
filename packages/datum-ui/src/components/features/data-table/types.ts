@@ -297,8 +297,8 @@ export interface ActiveFiltersProps {
   readonly excludeFilters?: readonly string[]
   /** Maps column keys to human-readable names */
   readonly filterLabels?: Record<string, string>
-  /** Custom value formatter for badge display */
-  readonly formatFilterValue?: (column: string, value: unknown) => string | undefined
+  /** Per-column value formatter for badge display. Keys support dot notation (e.g. `'status.approval'`). */
+  readonly formatFilterValue?: Readonly<Record<string, (value: any) => string>>
   /** Controls the clear-all action appearance. Default: "icon" (X icon only) */
   readonly clearAll?: 'icon' | 'button' | 'text'
   /** Label for the clear-all action when using "button" or "text" mode. Default: "Clear all" */
@@ -331,6 +331,7 @@ export interface DataTableStoreState<TData> {
   readonly rowSelection: RowSelectionState
   readonly pageIndex: number
   readonly pageSize: number
+  readonly columnCount: number
   readonly mode: 'client' | 'server'
   readonly isLoading: boolean
   readonly error: Error | null
@@ -344,7 +345,6 @@ export interface DataTableStore<TData> {
   readonly subscribe: (listener: () => void) => () => void
   readonly setData: (data: TData[]) => void
   readonly setServerData: (data: TData[]) => void
-  readonly setTable: (table: Table<TData>) => void
   readonly setSorting: (sorting: SortingState) => void
   readonly setFilter: (key: string, value: unknown) => void
   readonly clearFilter: (key: string) => void
@@ -372,4 +372,6 @@ export interface CreateStoreOptions<TData> {
   readonly searchableColumns?: string[]
   readonly searchFn?: (row: TData, query: string) => boolean
   readonly filterFns?: Record<string, (cellValue: unknown, filterValue: unknown) => boolean>
+  readonly isLoading?: boolean
+  readonly columnCount?: number
 }

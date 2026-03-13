@@ -142,11 +142,42 @@ describe('dataTableActiveFilters', () => {
       filters: { status: 'active' },
       props: {
         filterLabels: { status: 'Status' },
-        formatFilterValue: (_col, val) => String(val).toUpperCase(),
+        formatFilterValue: {
+          status: (value: string) => value.toUpperCase(),
+        },
       },
     })
 
     expect(screen.getByText('ACTIVE')).toBeInTheDocument()
+  })
+
+  it('falls back to String(value) for columns without a formatter', () => {
+    renderActiveFilters({
+      filters: { status: 'active', department: 'engineering' },
+      props: {
+        filterLabels: { status: 'Status', department: 'Department' },
+        formatFilterValue: {
+          status: (value: string) => value.toUpperCase(),
+        },
+      },
+    })
+
+    expect(screen.getByText('ACTIVE')).toBeInTheDocument()
+    expect(screen.getByText('engineering')).toBeInTheDocument()
+  })
+
+  it('supports dot-notation keys in formatFilterValue', () => {
+    renderActiveFilters({
+      filters: { 'status.approval': 'Pending' },
+      props: {
+        filterLabels: { 'status.approval': 'Approval' },
+        formatFilterValue: {
+          'status.approval': (value: string) => `[${value}]`,
+        },
+      },
+    })
+
+    expect(screen.getByText('[Pending]')).toBeInTheDocument()
   })
 
   it('falls back to column key when filterLabels not provided', () => {

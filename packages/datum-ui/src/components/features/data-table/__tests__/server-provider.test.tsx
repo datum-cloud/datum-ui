@@ -64,4 +64,39 @@ describe('serverProvider', () => {
     expect(screen.getByTestId('mode')).toBeInTheDocument()
     expect(screen.getByTestId('loading')).toBeInTheDocument()
   })
+
+  it('always renders children (no SSR gate)', () => {
+    render(
+      <ServerProvider
+        columns={testColumns}
+        fetchFn={mockFetchFn}
+        transform={mockTransform}
+      >
+        <span data-testid="child">visible</span>
+      </ServerProvider>,
+    )
+    expect(screen.getByTestId('child')).toBeInTheDocument()
+  })
+
+  it('starts loading and fetches after hydration', async () => {
+    const fetchSpy = vi.fn<any>().mockResolvedValue({ items: testData })
+
+    render(
+      <ServerProvider
+        columns={testColumns}
+        fetchFn={fetchSpy}
+        transform={mockTransform}
+      >
+        <ContextReader />
+      </ServerProvider>,
+    )
+
+    // Store starts with isLoading: true
+    expect(screen.getByTestId('loading')).toHaveTextContent('true')
+
+    // fetchFn is called after hydration (useEffect fires)
+    await vi.waitFor(() => {
+      expect(fetchSpy).toHaveBeenCalledTimes(1)
+    })
+  })
 })

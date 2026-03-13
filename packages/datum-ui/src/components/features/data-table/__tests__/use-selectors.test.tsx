@@ -2,12 +2,15 @@ import type { ReactNode } from 'react'
 /// <reference types="@testing-library/jest-dom/vitest" />
 import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { DataTableStoreContext, TableInstanceContext } from '../core/data-table-context'
+import { DataTableRenderKeyContext, DataTableStoreContext, TableInstanceContext } from '../core/data-table-context'
 import { createDataTableStore } from '../core/store'
 import {
   useDataTableFilters,
   useDataTableLoading,
+  useDataTablePagination,
+  useDataTableRows,
   useDataTableSearch,
+  useDataTableSelection,
 } from '../hooks/use-selectors'
 
 const sampleData = [
@@ -28,11 +31,13 @@ const mockTable = {
   getState: () => ({ pagination: { pageIndex: 0, pageSize: 20 } }),
 } as any
 
-function createWrapper(store: any, table = mockTable) {
+function createWrapper(store: any, table: any = mockTable) {
   return ({ children }: { children: ReactNode }) => (
     <DataTableStoreContext value={store}>
       <TableInstanceContext value={table}>
-        {children}
+        <DataTableRenderKeyContext value={store.getSnapshot()._version}>
+          {children}
+        </DataTableRenderKeyContext>
       </TableInstanceContext>
     </DataTableStoreContext>
   )
@@ -102,5 +107,42 @@ describe('useDataTableLoading', () => {
     const countBefore = renderCount.current
     act(() => store.setFilter('status', 'active'))
     expect(renderCount.current).toBe(countBefore)
+  })
+})
+
+describe('useDataTableRows (null table)', () => {
+  it('returns empty rows when table is null', () => {
+    const store = createDataTableStore({ data: sampleData, mode: 'client' })
+    const { result } = renderHook(() => useDataTableRows(), {
+      wrapper: createWrapper(store, null),
+    })
+    expect(result.current.rows).toEqual([])
+    expect(result.current.headerGroups).toEqual([])
+    expect(result.current.totalColumns).toBe(0)
+  })
+})
+
+describe('useDataTablePagination (null table)', () => {
+  it('returns disabled pagination state when table is null', () => {
+    const store = createDataTableStore({ data: sampleData, mode: 'client', pageSize: 10 })
+    const { result } = renderHook(() => useDataTablePagination(), {
+      wrapper: createWrapper(store, null),
+    })
+    expect(result.current.canNextPage).toBe(false)
+    expect(result.current.canPrevPage).toBe(false)
+    expect(result.current.pageCount).toBe(0)
+    expect(result.current.pageSize).toBe(10)
+    expect(result.current.totalRows).toBe(0)
+  })
+})
+
+describe('useDataTableSelection (null table)', () => {
+  it('returns empty selection when table is null', () => {
+    const store = createDataTableStore({ data: sampleData, mode: 'client' })
+    const { result } = renderHook(() => useDataTableSelection(), {
+      wrapper: createWrapper(store, null),
+    })
+    expect(result.current.rowSelection).toEqual({})
+    expect(result.current.selectedRows).toEqual([])
   })
 })
