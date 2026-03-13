@@ -85,6 +85,7 @@ export default defineConfig({
     '@conform-to/react',
     '@conform-to/zod',
     '@stepperize/react',
+    'lucide-react',
     /^@tanstack\//,
     'date-fns',
     'date-fns-tz',
@@ -96,12 +97,8 @@ export default defineConfig({
     'react-number-format',
     'nuqs',
     'zod',
-    // Transitive deps from @repo/shadcn
-    /^@radix-ui\//,
+    // Transitive deps from @repo/shadcn (heavy/optional only)
     'sonner',
-    'clsx',
-    'tailwind-merge',
-    'cmdk',
     /^leaflet/,
     /^react-leaflet/,
     '@react-leaflet/core',
