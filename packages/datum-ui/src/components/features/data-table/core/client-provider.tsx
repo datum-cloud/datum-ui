@@ -2,14 +2,15 @@
 
 import type { ReactNode } from 'react'
 import type { UseDataTableClientOptions } from '../hooks/use-data-table-client'
+import { DataTableLoading } from '../components/loading'
 import { useDataTableClient } from '../hooks/use-data-table-client'
 import { useIsClient } from '../hooks/use-is-client'
 import { DataTableRenderKeyContext, DataTableStoreContext, TableInstanceContext } from './data-table-context'
 
 export type DataTableClientProviderProps<TData> = UseDataTableClientOptions<TData> & {
   readonly className?: string
-  /** Rendered during SSR and first client paint. Provide a skeleton matching the table dimensions to avoid layout shift. */
-  readonly ssrFallback?: ReactNode
+  /** Rendered during SSR and first client paint. Defaults to a skeleton table. Set to `null` to render nothing. */
+  readonly ssrFallback?: ReactNode | null
   readonly children: ReactNode
 }
 
@@ -39,7 +40,10 @@ export function ClientProvider<TData>(props: DataTableClientProviderProps<TData>
   const isClient = useIsClient()
 
   if (!isClient) {
-    return <>{props.ssrFallback ?? null}</>
+    const fallback = props.ssrFallback === undefined
+      ? <DataTableLoading columns={props.columns.length} />
+      : props.ssrFallback
+    return <>{fallback}</>
   }
 
   return <ClientProviderInner {...props} />

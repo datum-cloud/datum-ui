@@ -1,5 +1,38 @@
 import { describe, expect, it } from 'vitest'
-import { applyFilters, FILTER_STRATEGIES } from '../core/filter-engine'
+import { applyFilters, FILTER_STRATEGIES, resolvePath } from '../core/filter-engine'
+
+describe('resolvePath', () => {
+  const obj = {
+    name: 'Alice',
+    status: { state: 'Active', registrationApproval: 'Approved' },
+    metadata: { labels: { env: 'prod' } },
+  }
+
+  it('resolves flat key', () => {
+    expect(resolvePath(obj, 'name')).toBe('Alice')
+  })
+
+  it('resolves one-level dot path', () => {
+    expect(resolvePath(obj, 'status.state')).toBe('Active')
+  })
+
+  it('resolves two-level dot path', () => {
+    expect(resolvePath(obj, 'metadata.labels.env')).toBe('prod')
+  })
+
+  it('returns undefined for missing flat key', () => {
+    expect(resolvePath(obj, 'missing')).toBeUndefined()
+  })
+
+  it('returns undefined for missing nested path', () => {
+    expect(resolvePath(obj, 'status.missing.deep')).toBeUndefined()
+  })
+
+  it('returns undefined for null/undefined input', () => {
+    expect(resolvePath(null, 'foo')).toBeUndefined()
+    expect(resolvePath(undefined, 'bar')).toBeUndefined()
+  })
+})
 
 describe('fILTER_STRATEGIES', () => {
   describe('checkbox', () => {
@@ -163,5 +196,50 @@ describe('applyFilters', () => {
   it('handles unregistered column filter gracefully (skips it)', () => {
     const result = applyFilters(data, { unknownColumn: 'value' }, '', new Map(), {}, {})
     expect(result).toEqual(data)
+  })
+
+  describe('nested dot-path data', () => {
+    const nestedData = [
+      { id: '1', metadata: { name: 'alice' }, status: { state: 'Active', approval: 'Approved' } },
+      { id: '2', metadata: { name: 'bob' }, status: { state: 'Inactive', approval: 'Pending' } },
+      { id: '3', metadata: { name: 'charlie' }, status: { state: 'Active', approval: 'Pending' } },
+    ]
+
+    it('applies select filter on nested dot-path column', () => {
+      const registered = new Map([['status.state', 'select' as const]])
+      const result = applyFilters(nestedData, { 'status.state': 'Active' }, '', registered, {}, {})
+      expect(result).toHaveLength(2)
+      expect(result.map(r => r.id)).toEqual(['1', '3'])
+    })
+
+    it('applies checkbox filter on nested dot-path column', () => {
+      const registered = new Map([['status.approval', 'checkbox' as const]])
+      const result = applyFilters(nestedData, { 'status.approval': ['Pending'] }, '', registered, {}, {})
+      expect(result).toHaveLength(2)
+      expect(result.map(r => r.id)).toEqual(['2', '3'])
+    })
+
+    it('combines nested filters', () => {
+      const registered = new Map<string, 'select' | 'checkbox'>([
+        ['status.state', 'select'],
+        ['status.approval', 'checkbox'],
+      ])
+      const result = applyFilters(
+        nestedData,
+        { 'status.state': 'Active', 'status.approval': ['Pending'] },
+        '',
+        registered,
+        {},
+        {},
+      )
+      expect(result).toHaveLength(1)
+      expect(result[0]!.id).toBe('3')
+    })
+
+    it('searches nested dot-path searchableColumns', () => {
+      const result = applyFilters(nestedData, {}, 'bob', new Map(), {}, { searchableColumns: ['metadata.name'] })
+      expect(result).toHaveLength(1)
+      expect(result[0]!.id).toBe('2')
+    })
   })
 })

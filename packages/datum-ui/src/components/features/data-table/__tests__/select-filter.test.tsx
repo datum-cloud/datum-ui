@@ -1,11 +1,9 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
-import type { ReactNode } from 'react'
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import { DataTableStoreContext, TableInstanceContext } from '../core/data-table-context'
-import { createDataTableStore } from '../core/store'
 import { SelectFilter } from '../filters/select-filter'
+import { renderWithStore } from './test-helpers'
 
 const statusOptions = [
   { label: 'Running', value: 'running' },
@@ -13,55 +11,9 @@ const statusOptions = [
   { label: 'Failed', value: 'failed' },
 ]
 
-const mockTable = {
-  getCanNextPage: () => false,
-  getCanPreviousPage: () => false,
-  nextPage: vi.fn(),
-  previousPage: vi.fn(),
-  getPageCount: () => 1,
-  getRowModel: () => ({ rows: [] }),
-  getHeaderGroups: () => [],
-  getAllColumns: () => [],
-  getFilteredSelectedRowModel: () => ({ rows: [] }),
-  getState: () => ({ pagination: { pageIndex: 0, pageSize: 20 } }),
-  getFilteredRowModel: () => ({ rows: [] }),
-} as any
-
-function renderWithProvider(
-  ui: ReactNode,
-  overrides: {
-    readonly filters?: Record<string, unknown>
-    readonly setFilter?: (...args: any[]) => void
-    readonly clearFilter?: (...args: any[]) => void
-  } = {},
-) {
-  const { filters = {}, setFilter, clearFilter } = overrides
-
-  const store = createDataTableStore<Record<string, unknown>>({ data: [], mode: 'client', defaultFilters: filters })
-
-  if (setFilter) {
-    vi.spyOn(store, 'setFilter').mockImplementation(setFilter as any)
-  }
-  if (clearFilter) {
-    vi.spyOn(store, 'clearFilter').mockImplementation(clearFilter as any)
-  }
-
-  function Wrapper({ children }: { readonly children: ReactNode }) {
-    return (
-      <DataTableStoreContext value={store}>
-        <TableInstanceContext value={mockTable}>
-          {children}
-        </TableInstanceContext>
-      </DataTableStoreContext>
-    )
-  }
-
-  return render(<Wrapper>{ui}</Wrapper>)
-}
-
 describe('selectFilter', () => {
   it('renders trigger button with label', () => {
-    renderWithProvider(
+    renderWithStore(
       <SelectFilter column="status" label="Status" options={statusOptions} />,
     )
 
@@ -69,7 +21,7 @@ describe('selectFilter', () => {
   })
 
   it('renders trigger button with custom placeholder', () => {
-    renderWithProvider(
+    renderWithStore(
       <SelectFilter column="status" label="Status" options={statusOptions} placeholder="Pick one" />,
     )
 
@@ -79,7 +31,7 @@ describe('selectFilter', () => {
   it('shows popover with options on click', async () => {
     const user = userEvent.setup()
 
-    renderWithProvider(
+    renderWithStore(
       <SelectFilter column="status" label="Status" options={statusOptions} />,
     )
 
@@ -94,7 +46,7 @@ describe('selectFilter', () => {
     const user = userEvent.setup()
     const setFilter = vi.fn()
 
-    renderWithProvider(
+    renderWithStore(
       <SelectFilter column="status" label="Status" options={statusOptions} />,
       { setFilter },
     )
@@ -109,7 +61,7 @@ describe('selectFilter', () => {
     const user = userEvent.setup()
     const clearFilter = vi.fn()
 
-    renderWithProvider(
+    renderWithStore(
       <SelectFilter column="status" label="Status" options={statusOptions} />,
       { filters: { status: 'running' }, clearFilter },
     )
@@ -127,7 +79,7 @@ describe('selectFilter', () => {
   it('shows search input when searchable is true (default)', async () => {
     const user = userEvent.setup()
 
-    renderWithProvider(
+    renderWithStore(
       <SelectFilter column="status" label="Status" options={statusOptions} />,
     )
 
@@ -139,12 +91,20 @@ describe('selectFilter', () => {
   it('hides search input when searchable is false', async () => {
     const user = userEvent.setup()
 
-    renderWithProvider(
+    renderWithStore(
       <SelectFilter column="status" label="Status" options={statusOptions} searchable={false} />,
     )
 
     await user.click(screen.getByRole('combobox'))
 
     expect(screen.queryByPlaceholderText('Search status...')).not.toBeInTheDocument()
+  })
+
+  it('renders trigger as disabled when disabled prop is true', () => {
+    renderWithStore(
+      <SelectFilter column="status" label="Status" options={statusOptions} disabled />,
+    )
+
+    expect(screen.getByRole('combobox')).toBeDisabled()
   })
 })

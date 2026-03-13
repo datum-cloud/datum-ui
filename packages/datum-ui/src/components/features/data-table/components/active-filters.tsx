@@ -2,7 +2,7 @@
 
 import type { ActiveFiltersProps } from '../types'
 import { X } from 'lucide-react'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { cn } from '../../../../utils/cn'
 import { Badge } from '../../../base/badge'
 import { Button } from '../../../base/button'
@@ -42,6 +42,7 @@ const EMPTY_LABELS: Record<string, string> = {}
 
 function ActiveFiltersInner({
   label = 'Selected Filters',
+  excludeFilters,
   filterLabels = EMPTY_LABELS,
   formatFilterValue: formatter,
   clearAll = 'icon',
@@ -53,16 +54,23 @@ function ActiveFiltersInner({
   const { filters, setFilter, clearFilter, clearAllFilters } = useDataTableFilters()
   const { search, clearSearch } = useDataTableSearch()
 
-  const activeFilterEntries = Object.entries(filters).filter(
-    ([, value]) => value != null && value !== '' && !(Array.isArray(value) && value.length === 0),
+  const excludeSet = useMemo(
+    () => new Set(excludeFilters ?? []),
+    [excludeFilters],
   )
 
-  const hasSearch = search.length > 0
+  const activeFilterEntries = Object.entries(filters).filter(
+    ([key, value]) =>
+      !excludeSet.has(key)
+      && value != null && value !== '' && !(Array.isArray(value) && value.length === 0),
+  )
+
+  const showSearch = search.length > 0 && !excludeSet.has('search')
   const hasFilters = activeFilterEntries.length > 0
-  if (!hasSearch && !hasFilters)
+  if (!showSearch && !hasFilters)
     return null
 
-  const totalGroups = activeFilterEntries.length + (hasSearch ? 1 : 0)
+  const totalGroups = activeFilterEntries.length + (showSearch ? 1 : 0)
 
   const removeArrayItem = (column: string, items: string[], item: string) => {
     const remaining = items.filter(v => v !== item)
@@ -76,7 +84,7 @@ function ActiveFiltersInner({
 
   const handleClearAll = () => {
     clearAllFilters()
-    if (hasSearch)
+    if (search.length > 0)
       clearSearch()
   }
 
@@ -94,7 +102,7 @@ function ActiveFiltersInner({
         </span>
       )}
 
-      {hasSearch && (
+      {showSearch && (
         <FilterGroup label="Search" className={groupClassName}>
           <Badge type="muted" theme="solid" className={badgeCn}>
             <span>{search}</span>

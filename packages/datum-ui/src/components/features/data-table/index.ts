@@ -46,6 +46,7 @@ export type {
   DataTableStoreState,
   FilterCheckboxProps,
   FilterDatePickerProps,
+  FilterOption,
   FilterSelectProps,
   FilterStrategy,
   FilterValue,

@@ -47,4 +47,29 @@ describe('dataTableSearch', () => {
 
     expect(input).toHaveValue('hello')
   })
+
+  it('renders as disabled when disabled prop is true', () => {
+    render(
+      <TestWrapper>
+        <DataTableSearch placeholder="Search..." disabled />
+      </TestWrapper>,
+    )
+
+    expect(screen.getByPlaceholderText('Search...')).toBeDisabled()
+  })
+
+  it('does not accept input when disabled', async () => {
+    const user = userEvent.setup()
+
+    render(
+      <TestWrapper>
+        <DataTableSearch placeholder="Search..." disabled />
+      </TestWrapper>,
+    )
+
+    const input = screen.getByPlaceholderText('Search...')
+    await user.type(input, 'hello')
+
+    expect(input).toHaveValue('')
+  })
 })

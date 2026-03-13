@@ -15,6 +15,7 @@ export function DatePickerFilter({
   disablePast,
   minDate,
   maxDate,
+  disabled,
 }: FilterDatePickerProps) {
   const { filters, setFilter, clearFilter, registerFilter, unregisterFilter } = useDataTableFilters()
   const rawValue = filters[column] as string | undefined
@@ -41,6 +42,7 @@ export function DatePickerFilter({
         placeholder={label}
         triggerClassName={className}
         variant="outline"
+        disabled={disabled}
         disableFuture={disableFuture}
         disablePast={disablePast}
         minDate={minDate}

@@ -10,6 +10,7 @@ export function DataTableSearch({
   placeholder = 'Search...',
   debounceMs = DEFAULT_DEBOUNCE_MS,
   className,
+  disabled,
 }: SearchProps) {
   const { search, setSearch } = useDataTableSearch()
   const [inputValue, setInputValue] = useState(search)
@@ -34,6 +35,7 @@ export function DataTableSearch({
       value={inputValue}
       onChange={e => setInputValue(e.target.value)}
       className={className}
+      disabled={disabled}
       aria-label={placeholder}
       data-slot="dt-search"
     />

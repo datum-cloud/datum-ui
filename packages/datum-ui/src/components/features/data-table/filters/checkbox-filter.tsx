@@ -23,6 +23,7 @@ export function CheckboxFilter({
   options,
   className,
   checkboxPopoverClassName,
+  disabled,
 }: FilterCheckboxProps) {
   const { filters, setFilter, clearFilter, registerFilter, unregisterFilter } = useDataTableFilters()
   const [open, setOpen] = useState(false)
@@ -61,6 +62,7 @@ export function CheckboxFilter({
       <PopoverTrigger asChild>
         <Button
           theme="outline"
+          disabled={disabled}
           className={cn('justify-between gap-1', className)}
           data-slot="dt-filter"
           data-testid="dt-filter-trigger"

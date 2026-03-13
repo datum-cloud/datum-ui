@@ -22,6 +22,11 @@ export interface ActionItem<TData> {
 
 // ── Filter Types ──
 
+export interface FilterOption {
+  readonly label: string
+  readonly value: string
+}
+
 export type FilterValue = Record<string, unknown>
 
 // ── Pagination Types ──
@@ -180,7 +185,7 @@ export interface UseDataTableServerOptions<TResponse, TData> {
 
 // ── Component Props ──
 
-export interface DataTableClientProps<TData> {
+interface DataTableBaseProps<TData> {
   readonly data: TData[]
   readonly columns: ColumnDef<TData, any>[]
   readonly sorting: SortingState
@@ -194,51 +199,39 @@ export interface DataTableClientProps<TData> {
   readonly clearSearch: () => void
   readonly rowSelection: RowSelectionState
   readonly setRowSelection: (selection: RowSelectionState) => void
-  readonly pagination: ClientPaginationState
   readonly getRowId?: (row: TData) => string
   readonly enableRowSelection?: boolean | SelectionColumnOptions
-  readonly searchableColumns?: string[]
-  readonly searchFn?: (row: TData, search: string) => boolean
   readonly className?: string
   readonly children: ReactNode
 }
 
-export interface DataTableServerProps<TData> {
-  readonly data: TData[]
-  readonly columns: ColumnDef<TData, any>[]
+export interface DataTableClientProps<TData> extends DataTableBaseProps<TData> {
+  readonly pagination: ClientPaginationState
+  readonly searchableColumns?: string[]
+  readonly searchFn?: (row: TData, search: string) => boolean
+}
+
+export interface DataTableServerProps<TData> extends DataTableBaseProps<TData> {
   readonly isLoading: boolean
-  readonly sorting: SortingState
-  readonly setSorting: (sorting: SortingState) => void
-  readonly filters: FilterValue
-  readonly setFilter: (key: string, value: unknown) => void
-  readonly clearFilter: (key: string) => void
-  readonly clearAllFilters: () => void
-  readonly search: string
-  readonly setSearch: (search: string) => void
-  readonly clearSearch: () => void
-  readonly rowSelection: RowSelectionState
-  readonly setRowSelection: (selection: RowSelectionState) => void
   readonly pagination: ServerPaginationState
-  readonly getRowId?: (row: TData) => string
-  readonly enableRowSelection?: boolean | SelectionColumnOptions
-  readonly className?: string
-  readonly children: ReactNode
 }
 
 export interface SearchProps {
   readonly placeholder?: string
   readonly debounceMs?: number
   readonly className?: string
+  readonly disabled?: boolean
 }
 
 export interface FilterSelectProps {
   readonly column: string
   readonly label: string
-  readonly options: readonly { readonly label: string, readonly value: string }[]
+  readonly options: readonly FilterOption[]
   readonly placeholder?: string
   readonly searchable?: boolean
   readonly className?: string
   readonly selectPopoverClassName?: string
+  readonly disabled?: boolean
 }
 
 export interface FilterDatePickerProps {
@@ -250,14 +243,16 @@ export interface FilterDatePickerProps {
   readonly disablePast?: boolean
   readonly minDate?: Date
   readonly maxDate?: Date
+  readonly disabled?: boolean
 }
 
 export interface FilterCheckboxProps {
   readonly column: string
   readonly label: string
-  readonly options: readonly { readonly label: string, readonly value: string }[]
+  readonly options: readonly FilterOption[]
   readonly className?: string
   readonly checkboxPopoverClassName?: string
+  readonly disabled?: boolean
 }
 
 export interface ColumnHeaderProps<TData, TValue> {
@@ -298,6 +293,8 @@ export interface PaginationProps {
 export interface ActiveFiltersProps {
   /** Label shown before filter groups. Set to `null` to hide. Default: "Selected Filters" */
   readonly label?: string | null
+  /** Column keys to exclude from the active filters display. The filters still apply to data, they just won't appear as badges. Use `'search'` to hide the search badge. */
+  readonly excludeFilters?: readonly string[]
   /** Maps column keys to human-readable names */
   readonly filterLabels?: Record<string, string>
   /** Custom value formatter for badge display */

@@ -28,6 +28,7 @@ export function SelectFilter({
   searchable = true,
   className,
   selectPopoverClassName,
+  disabled,
 }: FilterSelectProps) {
   const { filters, setFilter, clearFilter, registerFilter, unregisterFilter } = useDataTableFilters()
   const [open, setOpen] = useState(false)
@@ -47,6 +48,7 @@ export function SelectFilter({
           theme="outline"
           role="combobox"
           aria-expanded={open}
+          disabled={disabled}
           className={cn('justify-between', className)}
           data-slot="dt-filter"
           data-testid="dt-filter-trigger"

@@ -173,6 +173,43 @@ Column headers render a click-to-sort control. Click once for ascending, again f
 
 Filters are autonomous composable components. Each filter reads and writes its own key in the shared filter state.
 
+### The `column` Prop
+
+The `column` prop is the **data path** used to look up the value in each row object. It supports dot notation for nested data:
+
+```tsx
+// Flat data: { status: 'active', role: 'admin' }
+<DataTable.SelectFilter column="status" ... />
+
+// Nested data: { status: { state: 'Active', approval: 'Approved' } }
+<DataTable.SelectFilter column="status.state" ... />
+<DataTable.CheckboxFilter column="status.approval" ... />
+```
+
+The same `column` string is used as the key in `filterLabels`, `formatFilterValue`, `excludeFilters`, and `defaultFilters`:
+
+```tsx
+// Column definition — accessorKey tells TanStack how to render the cell
+columnHelper.accessor('status.registrationApproval', {
+  id: 'registrationApproval',
+  header: ({ column }) => <DataTable.ColumnHeader column={column} title="Approval" />,
+})
+
+// Filter — column tells the filter engine how to look up the row value
+<DataTable.SelectFilter
+  column="status.registrationApproval"
+  label="Approval"
+  options={approvalOptions}
+/>
+
+// Active filters — filterLabels uses the same column key
+<DataTable.ActiveFilters
+  filterLabels={{ 'status.registrationApproval': 'Approval' }}
+/>
+```
+
+> **Note:** The filter `column` and the TanStack column `id` are independent. The column `id` identifies the column in the table (for sorting, visibility). The filter `column` is the data path used to read the row value for filtering. They can be different.
+
 ### Select Filter
 
 Combobox popover with search. Allows single-value selection with a clear button to reset. Use the `searchable` prop to enable filtering within the options list:
@@ -218,6 +255,41 @@ Popover with CalendarDatePicker integration. Supports optional `minDate` and `ma
 />
 ```
 
+### Custom Filter Functions (`filterFns`)
+
+For filtering logic that doesn't fit the built-in strategies (select, checkbox, date), use `filterFns` to provide custom filter functions per column. Each function receives the cell value and the filter value, and returns `true` to keep the row:
+
+```tsx
+<DataTable.Client
+  data={users}
+  columns={columns}
+  filterFns={{
+    // Case-insensitive partial match instead of exact select
+    'status.state': (cellValue, filterValue) =>
+      String(cellValue).toLowerCase().includes(String(filterValue).toLowerCase()),
+
+    // Numeric range filter
+    'metadata.generation': (cellValue, filterValue) => {
+      const { min, max } = filterValue as { min: number; max: number }
+      const val = Number(cellValue)
+      return val >= min && val <= max
+    },
+
+    // Custom array logic — match if cell value starts with any selected prefix
+    'spec.email': (cellValue, filterValue) => {
+      const prefixes = filterValue as string[]
+      return prefixes.some(prefix => String(cellValue).startsWith(prefix))
+    },
+  }}
+>
+  {/* ... */}
+</DataTable.Client>
+```
+
+`filterFns` takes priority over built-in strategies. If a column has both a registered strategy (from `SelectFilter`/`CheckboxFilter`) and a `filterFns` entry, the custom function wins.
+
+> **Naming:** `filterFns` is plural because it's a map of multiple functions (one per column). `searchFn` is singular because it's a single function that handles all search logic globally.
+
 ## Active Filters
 
 Display currently active filters as removable badges, grouped by category. Supports customizable label, clear-all behavior, and value formatting.
@@ -262,11 +334,66 @@ Display currently active filters as removable badges, grouped by category. Suppo
 />
 ```
 
+### Excluding Filters
+
+Hide specific filters or the search badge from the active filters display. The filters and search still apply to the data — they just won't appear as badges. Use the reserved key `'search'` to hide the search badge:
+
+```tsx
+{/* Hide specific column filters */}
+<DataTable.ActiveFilters
+  excludeFilters={['internalStatus', 'hiddenField']}
+  filterLabels={{ department: 'Department', role: 'Role' }}
+/>
+
+{/* Hide the search badge */}
+<DataTable.ActiveFilters
+  excludeFilters={['search']}
+  filterLabels={{ status: 'Status' }}
+/>
+
+{/* Hide both search and specific filters */}
+<DataTable.ActiveFilters
+  excludeFilters={['search', 'internalStatus']}
+  filterLabels={{ department: 'Department' }}
+/>
+```
+
+### Disabled State
+
+All filter and search components accept a `disabled` prop. Use this to prevent interaction while data is loading:
+
+```tsx
+const { data, isLoading } = useFetchData()
+
+<DataTable.Client data={data} columns={columns}>
+  <DataTable.Search placeholder="Search..." disabled={isLoading} />
+  <DataTable.SelectFilter
+    column="status"
+    label="Status"
+    options={statusOptions}
+    disabled={isLoading}
+  />
+  <DataTable.CheckboxFilter
+    column="department"
+    label="Department"
+    options={deptOptions}
+    disabled={isLoading}
+  />
+  <DataTable.DatePickerFilter
+    column="createdAt"
+    label="Created"
+    disabled={isLoading}
+  />
+  {isLoading ? <DataTable.Loading /> : <DataTable.Content />}
+</DataTable.Client>
+```
+
 ### ActiveFilters Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `label` | `string \| null` | `"Selected Filters"` | Label text before filter groups. Set to `null` to hide |
+| `excludeFilters` | `string[]` | -- | Keys to hide from display. Use column data paths for filters, `'search'` for the search badge |
 | `filterLabels` | `Record<string, string>` | `{}` | Maps column keys to display names |
 | `formatFilterValue` | `(column, value) => string \| undefined` | -- | Custom value formatter |
 | `clearAll` | `'icon' \| 'button' \| 'text'` | `'icon'` | Clear-all action style |
@@ -421,13 +548,13 @@ All options are passed as props directly to the provider component. The provider
 | `getRowId` | `(row: TData) => string` | -- | Custom row ID accessor |
 | `enableRowSelection` | `boolean \| SelectionColumnOptions` | `false` | Enable row selection with auto-injected checkbox column. Pass `true` for defaults or an options object for customization |
 | `defaultSort` | `SortingState` | `[]` | Initial sort state |
-| `defaultFilters` | `FilterValue` | `{}` | Initial filter state |
-| `searchableColumns` | `string[]` | -- | Columns to search in |
+| `defaultFilters` | `FilterValue` | `{}` | Initial filter state. Keys are data paths (supports dot notation for nested data) |
+| `searchableColumns` | `string[]` | -- | Data paths to search in. Supports dot notation (e.g. `['metadata.name', 'spec.email']`) |
 | `searchFn` | `(row, search) => boolean` | -- | Custom search function |
-| `filterFns` | `Record<string, (cellValue, filterValue) => boolean>` | -- | Custom filter functions per column |
+| `filterFns` | `Record<string, (cellValue, filterValue) => boolean>` | -- | Custom filter functions per column. Keys are data paths |
 | `stateAdapter` | `StateAdapter` | -- | URL state sync adapter |
 | `className` | `string` | -- | Class for the provider wrapper div |
-| `ssrFallback` | `ReactNode` | `null` | Rendered during SSR and first client paint. Provide a skeleton matching the table dimensions to avoid layout shift |
+| `ssrFallback` | `ReactNode \| null` | `<DataTable.Loading>` | Rendered during SSR and first client paint. Defaults to a skeleton table matching column count. Set to `null` to render nothing |
 | `children` | `ReactNode` | -- | Table content |
 
 ### `DataTable.Server` Props
@@ -444,26 +571,26 @@ All options are passed as props directly to the provider component. The provider
 | `defaultFilters` | `FilterValue` | `{}` | Initial filter state |
 | `stateAdapter` | `StateAdapter` | -- | URL state sync adapter |
 | `className` | `string` | -- | Class for the provider wrapper div |
-| `ssrFallback` | `ReactNode` | `null` | Rendered during SSR and first client paint. Provide a skeleton matching the table dimensions to avoid layout shift |
+| `ssrFallback` | `ReactNode \| null` | `<DataTable.Loading>` | Rendered during SSR and first client paint. Defaults to a skeleton table matching column count. Set to `null` to render nothing |
 | `children` | `ReactNode` | -- | Table content |
 
 ### `DataTable` Namespace
 
 | Component | Description |
 |-----------|-------------|
-| `DataTable.Client` | Client-mode provider — pass `data`, `columns`, and all options as props. SSR-safe with optional `ssrFallback` |
-| `DataTable.Server` | Server-mode provider — pass `columns`, `fetchFn`, `transform`, and all options as props. SSR-safe with optional `ssrFallback` |
+| `DataTable.Client` | Client-mode provider — pass `data`, `columns`, and all options as props. SSR-safe with automatic skeleton fallback |
+| `DataTable.Server` | Server-mode provider — pass `columns`, `fetchFn`, `transform`, and all options as props. SSR-safe with automatic skeleton fallback |
 | `DataTable.Content` | Table rendering with header, body, and empty state. Accepts sub-element className props (`tableClassName`, `headerClassName`, `headerRowClassName`, `headerCellClassName`, `bodyClassName`, `rowClassName`, `cellClassName`) |
 | `DataTable.ColumnHeader` | Click-to-sort column header |
 | `DataTable.Pagination` | Page navigation with page size selector |
-| `DataTable.Search` | Debounced search input |
+| `DataTable.Search` | Debounced search input. Accepts `disabled` prop |
 | `DataTable.RowActions` | Per-row action dropdown from `ActionItem[]` |
 | `DataTable.BulkActions` | Render prop for selected rows |
 | `DataTable.Loading` | Skeleton loading state |
 | `DataTable.InlineContent` | Render custom content inline within the table body. Supports `position` (`"top"` or `"row"`), `open`, `onClose`, and `rowId` props |
-| `DataTable.SelectFilter` | Combobox popover filter with single-select and optional `searchable` prop |
-| `DataTable.CheckboxFilter` | Multi-value checkbox popover filter with badges and clear button |
-| `DataTable.DatePickerFilter` | CalendarDatePicker filter with optional `minDate` and `maxDate` constraints |
+| `DataTable.SelectFilter` | Combobox popover filter with single-select. Accepts `searchable` and `disabled` props |
+| `DataTable.CheckboxFilter` | Multi-value checkbox popover filter with badges and clear button. Accepts `disabled` prop |
+| `DataTable.DatePickerFilter` | CalendarDatePicker filter with optional `minDate` and `maxDate` constraints. Accepts `disabled` prop |
 | `DataTable.ActiveFilters` | Displays active filters as grouped removable badges with customizable label and clear-all action |
 
 ### `createSelectionColumn(options?)`

@@ -2,6 +2,23 @@ import type { FilterStrategy } from '../types'
 
 type FilterFn = (cellValue: unknown, filterValue: unknown) => boolean
 
+/**
+ * Resolve a dot-path on an object (e.g. "status.registrationApproval").
+ * Falls back to a flat key lookup when the path has no dots.
+ */
+export function resolvePath(obj: unknown, path: string): unknown {
+  if (obj == null)
+    return undefined
+  const record = obj as Record<string, unknown>
+  // Fast path: no dot → flat lookup (most common case)
+  if (!path.includes('.'))
+    return record[path]
+  return path.split('.').reduce<unknown>(
+    (acc, key) => (acc != null ? (acc as Record<string, unknown>)[key] : undefined),
+    record,
+  )
+}
+
 interface FilterStrategies {
   'checkbox': FilterFn
   'select': FilterFn
@@ -83,7 +100,7 @@ export function applyFilters<TData>(
           console.warn(`[DataTable] No filter strategy registered for column "${column}". Filter ignored.`)
           continue
         }
-        const cellValue = (row as Record<string, unknown>)[column]
+        const cellValue = resolvePath(row, column)
         if (!fn(cellValue, value))
           return false
       }
@@ -96,7 +113,7 @@ export function applyFilters<TData>(
       }
       if (searchConfig.searchableColumns && searchConfig.searchableColumns.length > 0) {
         return searchConfig.searchableColumns.some((col) => {
-          const cellValue = (row as Record<string, unknown>)[col]
+          const cellValue = resolvePath(row, col)
           return cellValue != null && String(cellValue).toLowerCase().includes(query)
         })
       }

@@ -1,69 +1,19 @@
-import type { ReactNode } from 'react'
 /// <reference types="@testing-library/jest-dom/vitest" />
 import type { ActiveFiltersProps } from '../types'
-import { render, screen } from '@testing-library/react'
+import type { CreateTestStoreOptions } from './test-helpers'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { DataTableActiveFilters } from '../components/active-filters'
-import { DataTableStoreContext, TableInstanceContext } from '../core/data-table-context'
-import { createDataTableStore } from '../core/store'
+import { renderWithStore } from './test-helpers'
 
-const mockTable = {
-  getCanNextPage: () => false,
-  getCanPreviousPage: () => false,
-  nextPage: vi.fn(),
-  previousPage: vi.fn(),
-  getPageCount: () => 1,
-  getRowModel: () => ({ rows: [] }),
-  getHeaderGroups: () => [],
-  getAllColumns: () => [],
-  getFilteredSelectedRowModel: () => ({ rows: [] }),
-  getState: () => ({ pagination: { pageIndex: 0, pageSize: 20 } }),
-  getFilteredRowModel: () => ({ rows: [] }),
-} as any
-
-interface RenderOpts {
-  readonly filters?: Record<string, unknown>
-  readonly search?: string
-  readonly clearFilter?: (...args: any[]) => void
-  readonly clearAllFilters?: () => void
-  readonly clearSearch?: () => void
-  readonly setFilter?: (...args: any[]) => void
-  // Component props forwarded directly
+interface RenderOpts extends CreateTestStoreOptions {
   readonly props?: Partial<ActiveFiltersProps>
 }
 
 function renderActiveFilters(opts: RenderOpts = {}) {
-  const { filters = {}, search = '', props = {} } = opts
-
-  const store = createDataTableStore<Record<string, unknown>>({
-    data: [],
-    mode: 'client',
-    defaultFilters: filters,
-  })
-
-  if (search)
-    store.setSearch(search)
-  if (opts.clearFilter)
-    vi.spyOn(store, 'clearFilter').mockImplementation(opts.clearFilter as any)
-  if (opts.clearAllFilters)
-    vi.spyOn(store, 'clearAllFilters').mockImplementation(opts.clearAllFilters)
-  if (opts.clearSearch)
-    vi.spyOn(store, 'clearSearch').mockImplementation(opts.clearSearch)
-  if (opts.setFilter)
-    vi.spyOn(store, 'setFilter').mockImplementation(opts.setFilter as any)
-
-  function Wrapper({ children }: { readonly children: ReactNode }) {
-    return (
-      <DataTableStoreContext value={store}>
-        <TableInstanceContext value={mockTable}>
-          {children}
-        </TableInstanceContext>
-      </DataTableStoreContext>
-    )
-  }
-
-  return render(<DataTableActiveFilters {...props} />, { wrapper: Wrapper })
+  const { props = {}, ...storeOpts } = opts
+  return renderWithStore(<DataTableActiveFilters {...props} />, storeOpts)
 }
 
 describe('dataTableActiveFilters', () => {
@@ -203,6 +153,97 @@ describe('dataTableActiveFilters', () => {
     renderActiveFilters({ filters: { status: 'active' } })
 
     expect(screen.getByText('status')).toBeInTheDocument()
+  })
+
+  // ── Exclude filters ──
+
+  describe('excludeFilters', () => {
+    it('hides excluded filter keys from display', () => {
+      renderActiveFilters({
+        filters: { status: 'active', department: ['engineering'] },
+        props: {
+          excludeFilters: ['status'],
+          filterLabels: { status: 'Status', department: 'Department' },
+        },
+      })
+
+      expect(screen.queryByText('Status')).toBeNull()
+      expect(screen.getByText('Department')).toBeInTheDocument()
+      expect(screen.getByText('engineering')).toBeInTheDocument()
+    })
+
+    it('hides multiple excluded filter keys', () => {
+      renderActiveFilters({
+        filters: { status: 'active', department: ['engineering'], role: 'admin' },
+        props: {
+          excludeFilters: ['status', 'role'],
+          filterLabels: { status: 'Status', department: 'Department', role: 'Role' },
+        },
+      })
+
+      expect(screen.queryByText('Status')).toBeNull()
+      expect(screen.queryByText('Role')).toBeNull()
+      expect(screen.getByText('Department')).toBeInTheDocument()
+    })
+
+    it('renders nothing when all filters are excluded and no search', () => {
+      const { container } = renderActiveFilters({
+        filters: { status: 'active' },
+        props: { excludeFilters: ['status'] },
+      })
+
+      expect(container.querySelector('[data-slot="dt-active-filters"]')).toBeNull()
+    })
+
+    it('still shows search when all filters are excluded', () => {
+      renderActiveFilters({
+        filters: { status: 'active' },
+        search: 'hello',
+        props: { excludeFilters: ['status'] },
+      })
+
+      expect(screen.getByText('Search')).toBeInTheDocument()
+      expect(screen.getByText('hello')).toBeInTheDocument()
+      expect(screen.queryByText('status')).toBeNull()
+    })
+
+    it('does not affect clear-all group count', () => {
+      renderActiveFilters({
+        filters: { status: 'active', department: ['engineering'], role: 'admin' },
+        props: {
+          excludeFilters: ['status'],
+          filterLabels: { department: 'Department', role: 'Role' },
+        },
+      })
+
+      // 2 visible groups (department + role), so clear-all should appear
+      expect(screen.getByTestId('dt-clear-all-filters')).toBeInTheDocument()
+    })
+
+    it('hides search badge when "search" is in excludeFilters', () => {
+      renderActiveFilters({
+        filters: { status: 'active' },
+        search: 'hello',
+        props: {
+          excludeFilters: ['search'],
+          filterLabels: { status: 'Status' },
+        },
+      })
+
+      expect(screen.queryByText('Search')).toBeNull()
+      expect(screen.queryByText('hello')).toBeNull()
+      expect(screen.getByText('Status')).toBeInTheDocument()
+    })
+
+    it('renders nothing when all filters and search are excluded', () => {
+      const { container } = renderActiveFilters({
+        filters: { status: 'active' },
+        search: 'hello',
+        props: { excludeFilters: ['status', 'search'] },
+      })
+
+      expect(container.querySelector('[data-slot="dt-active-filters"]')).toBeNull()
+    })
   })
 
   // ── Customization tests ──

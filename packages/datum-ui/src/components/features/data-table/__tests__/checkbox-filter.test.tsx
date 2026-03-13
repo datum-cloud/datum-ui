@@ -1,11 +1,9 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
-import type { ReactNode } from 'react'
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import { DataTableStoreContext, TableInstanceContext } from '../core/data-table-context'
-import { createDataTableStore } from '../core/store'
 import { CheckboxFilter } from '../filters/checkbox-filter'
+import { renderWithStore } from './test-helpers'
 
 const statusOptions = [
   { label: 'Running', value: 'running' },
@@ -13,63 +11,20 @@ const statusOptions = [
   { label: 'Stopped', value: 'stopped' },
 ]
 
-const mockTable = {
-  getCanNextPage: () => false,
-  getCanPreviousPage: () => false,
-  nextPage: vi.fn(),
-  previousPage: vi.fn(),
-  getPageCount: () => 1,
-  getRowModel: () => ({ rows: [] }),
-  getHeaderGroups: () => [],
-  getAllColumns: () => [],
-  getFilteredSelectedRowModel: () => ({ rows: [] }),
-  getState: () => ({ pagination: { pageIndex: 0, pageSize: 20 } }),
-  getFilteredRowModel: () => ({ rows: [] }),
-} as any
-
-function renderFilter(props: {
-  readonly filters?: Record<string, unknown>
-  readonly setFilter?: (...args: any[]) => void
-  readonly clearFilter?: (...args: any[]) => void
-}) {
-  const { filters = {}, setFilter, clearFilter } = props
-
-  const store = createDataTableStore<Record<string, unknown>>({ data: [], mode: 'client', defaultFilters: filters })
-
-  if (setFilter) {
-    vi.spyOn(store, 'setFilter').mockImplementation(setFilter as any)
-  }
-  if (clearFilter) {
-    vi.spyOn(store, 'clearFilter').mockImplementation(clearFilter as any)
-  }
-
-  function Wrapper({ children }: { readonly children: ReactNode }) {
-    return (
-      <DataTableStoreContext value={store}>
-        <TableInstanceContext value={mockTable}>
-          {children}
-        </TableInstanceContext>
-      </DataTableStoreContext>
-    )
-  }
-
-  return render(
-    <Wrapper>
-      <CheckboxFilter column="status" label="Status" options={statusOptions} />
-    </Wrapper>,
-  )
-}
-
 describe('checkboxFilter', () => {
   it('renders trigger button with label when no selection', () => {
-    renderFilter({})
+    renderWithStore(
+      <CheckboxFilter column="status" label="Status" options={statusOptions} />,
+    )
 
     expect(screen.getByRole('button', { name: /status/i })).toBeInTheDocument()
   })
 
   it('opens popover and shows checkbox options', async () => {
     const user = userEvent.setup()
-    renderFilter({})
+    renderWithStore(
+      <CheckboxFilter column="status" label="Status" options={statusOptions} />,
+    )
 
     await user.click(screen.getByRole('button', { name: /status/i }))
 
@@ -81,7 +36,10 @@ describe('checkboxFilter', () => {
   it('calls setFilter when checkbox toggled', async () => {
     const setFilter = vi.fn()
     const user = userEvent.setup()
-    renderFilter({ setFilter })
+    renderWithStore(
+      <CheckboxFilter column="status" label="Status" options={statusOptions} />,
+      { setFilter },
+    )
 
     await user.click(screen.getByRole('button', { name: /status/i }))
     await user.click(screen.getByText('Running'))
@@ -91,7 +49,10 @@ describe('checkboxFilter', () => {
 
   it('shows badges for selected values', async () => {
     const user = userEvent.setup()
-    renderFilter({ filters: { status: ['running', 'pending'] } })
+    renderWithStore(
+      <CheckboxFilter column="status" label="Status" options={statusOptions} />,
+      { filters: { status: ['running', 'pending'] } },
+    )
 
     const trigger = screen.getByTestId('dt-filter-trigger')
     expect(trigger).toHaveTextContent('Running')
@@ -106,7 +67,10 @@ describe('checkboxFilter', () => {
   })
 
   it('shows +N more when selections exceed MAX_VISIBLE_BADGES', () => {
-    renderFilter({ filters: { status: ['running', 'pending', 'stopped'] } })
+    renderWithStore(
+      <CheckboxFilter column="status" label="Status" options={statusOptions} />,
+      { filters: { status: ['running', 'pending', 'stopped'] } },
+    )
 
     const trigger = screen.getByTestId('dt-filter-trigger')
     expect(trigger).toHaveTextContent('Running')
@@ -117,11 +81,22 @@ describe('checkboxFilter', () => {
   it('calls clearFilter when Clear button is clicked', async () => {
     const clearFilter = vi.fn()
     const user = userEvent.setup()
-    renderFilter({ filters: { status: ['running'] }, clearFilter })
+    renderWithStore(
+      <CheckboxFilter column="status" label="Status" options={statusOptions} />,
+      { filters: { status: ['running'] }, clearFilter },
+    )
 
     await user.click(screen.getByTestId('dt-filter-trigger'))
     await user.click(screen.getByText('Clear'))
 
     expect(clearFilter).toHaveBeenCalledWith('status')
+  })
+
+  it('renders trigger as disabled when disabled prop is true', () => {
+    renderWithStore(
+      <CheckboxFilter column="status" label="Status" options={statusOptions} disabled />,
+    )
+
+    expect(screen.getByTestId('dt-filter-trigger')).toBeDisabled()
   })
 })
