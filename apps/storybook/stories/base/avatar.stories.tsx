@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { Avatar, AvatarImage, AvatarFallback } from '@datum-cloud/datum-ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@datum-cloud/datum-ui/avatar'
 
 const meta: Meta<typeof Avatar> = {
   title: 'Base/Avatar',
