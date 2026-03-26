@@ -1,5 +1,13 @@
 # @datum-cloud/datum-ui
 
+## 0.4.0
+
+### Minor Changes
+
+- ce285b3: Expose Avatar component in base components
+
+  This change makes the Avatar component available for import from the main package. The Avatar component provides a user profile picture display with fallback support for initials.
+
 ## 0.2.0
 
 ### Minor Changes
