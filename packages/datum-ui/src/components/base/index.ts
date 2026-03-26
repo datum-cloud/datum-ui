@@ -6,8 +6,9 @@
 
 // Datum-customized base components
 export * from './alert'
-export * from './badge'
 // Re-exported shadcn components (not customized by datum-ui)
+export * from './avatar'
+export * from './badge'
 export * from './breadcrumb'
 export * from './button'
 export * from './button-group'

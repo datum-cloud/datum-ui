@@ -1,6 +1,82 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
-  ]
+    "config:recommended",
+    ":enablePreCommit",
+    ":maintainLockFilesWeekly",
+    "group:monorepos"
+  ],
+  "rangeStrategy": "bump",
+  "semanticCommits": "enabled",
+  "commitMessagePrefix": "chore(deps):",
+  "labels": ["renovate"],
+  "schedule": [
+    "before 3am on Monday"
+  ],
+  "ignoreDeps": [],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "schedule": [
+      "at any time"
+    ]
+  },
+  "packageRules": [
+    {
+      "description": "Group Turborepo updates",
+      "matchPackageNames": ["turbo"],
+      "groupName": "turborepo"
+    },
+    {
+      "description": "Group React ecosystem",
+      "matchPackagePatterns": ["^react", "^@types/react"],
+      "groupName": "react ecosystem"
+    },
+    {
+      "description": "Group TypeScript ecosystem",
+      "matchPackagePatterns": ["^typescript", "^@typescript-eslint", "^ts-"],
+      "groupName": "typescript ecosystem"
+    },
+    {
+      "description": "Group Storybook",
+      "matchPackagePatterns": ["^@storybook", "^storybook"],
+      "groupName": "storybook"
+    },
+    {
+      "description": "Group ESLint",
+      "matchPackagePatterns": ["^eslint", "^@eslint"],
+      "groupName": "eslint"
+    },
+    {
+      "description": "Group testing libraries",
+      "matchPackagePatterns": ["^@testing-library", "^vitest", "^@vitest"],
+      "groupName": "testing libraries"
+    },
+    {
+      "description": "Label major updates",
+      "matchUpdateTypes": ["major"],
+      "addLabels": ["major-update"]
+    },
+    {
+      "description": "Pin workspace protocol dependencies",
+      "matchDepTypes": ["dependencies", "devDependencies"],
+      "matchPackagePatterns": ["^@datum-cloud"],
+      "enabled": false
+    }
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": [
+      "before 3am on Monday"
+    ]
+  },
+  "prConcurrentLimit": 10,
+  "prCreation": "immediate",
+  "rebaseWhen": "behind-base-branch",
+  "postUpgradeTasks": {
+    "commands": [
+      "pnpm changeset add --empty"
+    ],
+    "fileFilters": [".changeset/**"],
+    "executionMode": "update"
+  }
 }

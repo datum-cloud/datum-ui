@@ -19,6 +19,7 @@ export default defineConfig({
 
     // Base components
     'alert/index': 'src/components/base/alert/index.ts',
+    'avatar/index': 'src/components/base/avatar/index.ts',
     'badge/index': 'src/components/base/badge/index.ts',
     'breadcrumb/index': 'src/components/base/breadcrumb/index.ts',
     'button/index': 'src/components/base/button/index.tsx',

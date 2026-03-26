@@ -45,6 +45,11 @@
       "types": "./dist/components/base/alert/index.d.ts",
       "default": "./dist/alert/index.mjs"
     },
+    "./avatar": {
+      "source": "./src/components/base/avatar/index.ts",
+      "types": "./dist/components/base/avatar/index.d.ts",
+      "default": "./dist/avatar/index.mjs"
+    },
     "./badge": {
       "source": "./src/components/base/badge/index.ts",
       "types": "./dist/components/base/badge/index.d.ts",
