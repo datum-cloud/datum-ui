@@ -210,23 +210,52 @@ pnpm --filter @datum-cloud/datum-ui typecheck
 pnpm --filter @datum-cloud/datum-ui lint
 pnpm --filter @datum-cloud/datum-ui test
 
-# 3. Commit and push
+# 3. Add a changeset to describe your changes
+pnpm changeset
+
+# Follow the prompts:
+# - Select packages that changed (usually @datum-cloud/datum-ui)
+# - Choose version bump type (patch/minor/major)
+# - Write a summary of changes (becomes changelog entry)
+
+# 4. Commit and push (include the changeset file)
 git add .
 git commit -m "feat: description of changes"
 git push -u origin feat/my-feature
 ```
 
-### Release Labels
+### Release Workflow
 
-When your PR is merged to `main`, the publish workflow automatically bumps the package version based on PR labels:
+This project uses [Changesets](https://github.com/changesets/changesets) for version management and releases.
 
-| Label | Version Bump | Example |
-|---|---|---|
-| `release:major` | Major | `0.3.0` → `1.0.0` |
-| `release:minor` | Minor | `0.2.1` → `0.3.0` |
-| _(no label)_ | Patch (default) | `0.2.1` → `0.2.2` |
+**For Contributors:**
 
-Add the appropriate label to your PR before merging to control the version bump.
+When making changes, add a changeset to document what changed:
+
+```bash
+pnpm changeset
+```
+
+Choose the version bump type:
+- **patch** — Bug fixes, minor updates (`0.3.2` → `0.3.3`)
+- **minor** — New features, backward-compatible (`0.3.2` → `0.4.0`)
+- **major** — Breaking changes (`0.3.2` → `1.0.0`)
+
+Commit the generated `.changeset/*.md` file with your PR.
+
+**For Maintainers:**
+
+1. After PRs are merged, a "Version Packages" PR is automatically created
+2. Review the PR to see version bumps and changelog
+3. When ready to release:
+   - Merge the "Version Packages" PR
+   - Create a [GitHub Release](https://github.com/datum-cloud/datum-ui/releases)
+   - GitHub Actions automatically publishes to npm
+
+**Renovate PRs:**
+Dependency update PRs from Renovate automatically include changesets — no manual action needed.
+
+For detailed workflow documentation, see [.github/RELEASE_WORKFLOW.md](.github/RELEASE_WORKFLOW.md).
 
 ## License
 

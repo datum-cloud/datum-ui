@@ -1,0 +1,252 @@
+---
+title: Avatar
+description: Display user profile images with automatic fallback support for missing or failed-to-load images.
+---
+
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui'
+
+## Overview
+
+Avatar displays a user's profile picture in a circular frame with built-in fallback handling. When an image fails to load or is not provided, a fallback element (typically initials or an icon) is displayed instead.
+
+## Dependencies
+
+This component uses `@radix-ui/react-avatar` for accessibility and fallback handling.
+
+## Usage
+
+<ComponentPreview name="Basic Avatar">
+  <Avatar>
+    <AvatarImage src="https://i.pravatar.cc/150?u=avatar1" alt="User Avatar" />
+    <AvatarFallback>AB</AvatarFallback>
+  </Avatar>
+</ComponentPreview>
+
+```tsx
+import { Avatar, AvatarImage, AvatarFallback } from '@datum-cloud/datum-ui/avatar'
+
+<Avatar>
+  <AvatarImage src="https://i.pravatar.cc/150?u=avatar1" alt="User Avatar" />
+  <AvatarFallback>AB</AvatarFallback>
+</Avatar>
+```
+
+## Examples
+
+### With Image
+
+Display a user avatar with a profile image.
+
+<ComponentPreview name="Avatar with Image">
+  <div className="flex items-center gap-4">
+    <Avatar>
+      <AvatarImage src="https://i.pravatar.cc/150?u=user1" alt="Alice Johnson" />
+      <AvatarFallback>AJ</AvatarFallback>
+    </Avatar>
+    <Avatar>
+      <AvatarImage src="https://i.pravatar.cc/150?u=user2" alt="Bob Smith" />
+      <AvatarFallback>BS</AvatarFallback>
+    </Avatar>
+    <Avatar>
+      <AvatarImage src="https://i.pravatar.cc/150?u=user3" alt="Charlie Brown" />
+      <AvatarFallback>CB</AvatarFallback>
+    </Avatar>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Avatar>
+  <AvatarImage src="https://i.pravatar.cc/150?u=user1" alt="Alice Johnson" />
+  <AvatarFallback>AJ</AvatarFallback>
+</Avatar>
+```
+
+### Fallback Only
+
+When no image is provided or the image fails to load, the fallback is displayed. Use initials, icons, or any custom content.
+
+<ComponentPreview name="Avatar Fallback">
+  <div className="flex items-center gap-4">
+    <Avatar>
+      <AvatarFallback>AJ</AvatarFallback>
+    </Avatar>
+    <Avatar>
+      <AvatarFallback>BS</AvatarFallback>
+    </Avatar>
+    <Avatar>
+      <AvatarFallback>CB</AvatarFallback>
+    </Avatar>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Avatar>
+  <AvatarFallback>AJ</AvatarFallback>
+</Avatar>
+```
+
+### Failed Image Loading
+
+The fallback is automatically displayed when an image fails to load.
+
+<ComponentPreview name="Avatar Failed Loading">
+  <div className="flex items-center gap-4">
+    <Avatar>
+      <AvatarImage src="https://invalid-url.example/image.jpg" alt="Failed" />
+      <AvatarFallback>FL</AvatarFallback>
+    </Avatar>
+    <Avatar>
+      <AvatarImage src="https://invalid-url.example/404.jpg" alt="Not Found" />
+      <AvatarFallback>NF</AvatarFallback>
+    </Avatar>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Avatar>
+  <AvatarImage src="https://invalid-url.example/image.jpg" alt="Failed" />
+  <AvatarFallback>FL</AvatarFallback>
+</Avatar>
+```
+
+### Custom Sizes
+
+Customize the avatar size using Tailwind classes.
+
+<ComponentPreview name="Avatar Sizes">
+  <div className="flex items-center gap-4">
+    <Avatar className="size-6">
+      <AvatarImage src="https://i.pravatar.cc/150?u=size1" alt="Small" />
+      <AvatarFallback className="text-xs">S</AvatarFallback>
+    </Avatar>
+    <Avatar className="size-8">
+      <AvatarImage src="https://i.pravatar.cc/150?u=size2" alt="Default" />
+      <AvatarFallback className="text-sm">D</AvatarFallback>
+    </Avatar>
+    <Avatar className="size-12">
+      <AvatarImage src="https://i.pravatar.cc/150?u=size3" alt="Medium" />
+      <AvatarFallback>M</AvatarFallback>
+    </Avatar>
+    <Avatar className="size-16">
+      <AvatarImage src="https://i.pravatar.cc/150?u=size4" alt="Large" />
+      <AvatarFallback className="text-lg">L</AvatarFallback>
+    </Avatar>
+    <Avatar className="size-24">
+      <AvatarImage src="https://i.pravatar.cc/150?u=size5" alt="XLarge" />
+      <AvatarFallback className="text-2xl">XL</AvatarFallback>
+    </Avatar>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Avatar className="size-6">
+  <AvatarImage src="..." alt="Small" />
+  <AvatarFallback className="text-xs">S</AvatarFallback>
+</Avatar>
+
+<Avatar className="size-8">
+  <AvatarImage src="..." alt="Default" />
+  <AvatarFallback className="text-sm">D</AvatarFallback>
+</Avatar>
+
+<Avatar className="size-12">
+  <AvatarImage src="..." alt="Medium" />
+  <AvatarFallback>M</AvatarFallback>
+</Avatar>
+
+<Avatar className="size-16">
+  <AvatarImage src="..." alt="Large" />
+  <AvatarFallback className="text-lg">L</AvatarFallback>
+</Avatar>
+
+<Avatar className="size-24">
+  <AvatarImage src="..." alt="XLarge" />
+  <AvatarFallback className="text-2xl">XL</AvatarFallback>
+</Avatar>
+```
+
+### Custom Fallback Content
+
+The fallback can contain any custom content, not just text initials.
+
+<ComponentPreview name="Avatar Custom Fallback">
+  <div className="flex items-center gap-4">
+    <Avatar>
+      <AvatarFallback className="bg-primary text-primary-foreground">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      </AvatarFallback>
+    </Avatar>
+    <Avatar>
+      <AvatarFallback className="bg-blue-500 text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      </AvatarFallback>
+    </Avatar>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Avatar>
+  <AvatarFallback className="bg-primary text-primary-foreground">
+    <UserIcon />
+  </AvatarFallback>
+</Avatar>
+```
+
+## Components
+
+### Avatar
+
+The root container for the avatar. By default, it renders as a circular frame with size-8 (32px).
+
+### AvatarImage
+
+The image element to display within the avatar. It supports all standard `img` attributes. When the image fails to load, it automatically falls back to the `AvatarFallback`.
+
+### AvatarFallback
+
+The fallback content displayed when no image is provided or when the image fails to load. Typically contains user initials or an icon.
+
+## Props
+
+### Avatar Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | -- | Additional CSS classes for the avatar container |
+| `...props` | `React.ComponentProps<typeof AvatarPrimitive.Root>` | -- | All Radix UI Avatar.Root props |
+
+### AvatarImage Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `string` | -- | Image URL to display |
+| `alt` | `string` | -- | Alternative text for the image |
+| `className` | `string` | -- | Additional CSS classes for the image |
+| `...props` | `React.ComponentProps<typeof AvatarPrimitive.Image>` | -- | All Radix UI Avatar.Image props |
+
+### AvatarFallback Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | -- | Content to display as fallback (e.g., initials, icon) |
+| `className` | `string` | -- | Additional CSS classes for the fallback |
+| `delayMs` | `number` | -- | Delay in milliseconds before showing the fallback |
+| `...props` | `React.ComponentProps<typeof AvatarPrimitive.Fallback>` | -- | All Radix UI Avatar.Fallback props |
+
+## Accessibility
+
+- The component uses Radix UI's Avatar primitive, which provides built-in accessibility features
+- Always provide an `alt` attribute for `AvatarImage` to ensure screen readers can describe the image
+- Fallback content should be meaningful (e.g., user initials) for screen reader users
+
+## Related Components
+
+- [AvatarStack](/docs/components/features/avatar-stack) - Display multiple overlapping avatars in a stack

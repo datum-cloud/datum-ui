@@ -8,6 +8,7 @@
 export * from './alert'
 export * from './badge'
 // Re-exported shadcn components (not customized by datum-ui)
+export * from './avatar'
 export * from './breadcrumb'
 export * from './button'
 export * from './button-group'
