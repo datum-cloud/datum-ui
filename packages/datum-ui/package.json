@@ -85,6 +85,11 @@
       "types": "./dist/components/base/chart/index.d.ts",
       "default": "./dist/chart/index.mjs"
     },
+    "./code-editor": {
+      "source": "./src/components/features/code-editor/index.ts",
+      "types": "./dist/components/features/code-editor/index.d.ts",
+      "default": "./dist/code-editor/index.mjs"
+    },
     "./checkbox": {
       "source": "./src/components/base/checkbox/index.ts",
       "types": "./dist/components/base/checkbox/index.d.ts",
@@ -329,16 +334,19 @@
   "peerDependencies": {
     "@conform-to/react": ">=1",
     "@conform-to/zod": ">=1",
+    "@monaco-editor/react": "^4.7.0",
     "@stepperize/react": ">=4",
     "@tanstack/react-table": ">=8",
     "@tanstack/react-virtual": ">=3",
     "date-fns": ">=4",
     "date-fns-tz": ">=3",
+    "js-yaml": "^4.1.0",
     "leaflet": ">=1.9",
     "leaflet-draw": ">=1",
     "leaflet.fullscreen": ">=5",
     "leaflet.markercluster": ">=1.5",
     "lucide-react": ">=0.400",
+    "monaco-editor": ">=0.44.0",
     "motion": ">=11",
     "nprogress": ">=0.2",
     "nuqs": ">=2",
@@ -360,6 +368,9 @@
     "@conform-to/zod": {
       "optional": true
     },
+    "@monaco-editor/react": {
+      "optional": true
+    },
     "@stepperize/react": {
       "optional": true
     },
@@ -375,6 +386,9 @@
     "date-fns-tz": {
       "optional": true
     },
+    "js-yaml": {
+      "optional": true
+    },
     "leaflet": {
       "optional": true
     },
@@ -388,6 +402,9 @@
       "optional": true
     },
     "lucide-react": {},
+    "monaco-editor": {
+      "optional": true
+    },
     "motion": {
       "optional": true
     },
@@ -448,6 +465,7 @@
   "devDependencies": {
     "@conform-to/react": "^1.17.1",
     "@conform-to/zod": "^1.17.1",
+    "@monaco-editor/react": "^4.7.0",
     "@repo/config": "workspace:*",
     "@repo/shadcn": "workspace:*",
     "@stepperize/react": "^6.1.0",
@@ -456,6 +474,7 @@
     "@testing-library/jest-dom": "^6",
     "@testing-library/react": "^16",
     "@testing-library/user-event": "^14",
+    "@types/js-yaml": "^4.0.9",
     "@types/leaflet": "^1.9.21",
     "@types/leaflet-draw": "^1.0.13",
     "@types/leaflet.fullscreen": "^5.2.0",
@@ -466,12 +485,14 @@
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "eslint": "^9.39.3",
+    "js-yaml": "^4.1.1",
     "jsdom": "^26",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
     "leaflet.fullscreen": "^5.3.0",
     "leaflet.markercluster": "^1.5.3",
     "lucide-react": "^0.556",
+    "monaco-editor": "^0.55.1",
     "motion": "^12.34.4",
     "nprogress": "^0.2.0",
     "nuqs": "^2.8.9",

@@ -1,0 +1,406 @@
+---
+title: Code Editor
+description: Monaco-based code editor with syntax highlighting, theme support, and JSON ↔ YAML conversion capabilities.
+---
+
+# Code Editor
+
+A Monaco Editor wrapper that provides a VS Code-like editing experience with automatic formatting, theme integration, and form compatibility. Includes a tabbed variant with automatic JSON ↔ YAML conversion.
+
+## Installation
+
+The Code Editor is included in the `@datum-cloud/datum-ui` package.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+@monaco-editor/react
+```
+
+## Usage
+
+```tsx
+import { CodeEditor, CodeEditorTabs } from '@datum-cloud/datum-ui/code-editor'
+```
+
+### Basic Code Editor
+
+The `CodeEditor` component provides a single-language Monaco editor with theme integration and form compatibility.
+
+```tsx
+import { CodeEditor } from '@datum-cloud/datum-ui/code-editor'
+import { useState } from 'react'
+
+function ConfigEditor() {
+  const [code, setCode] = useState('name: John Doe\nemail: john@example.com\nage: 30')
+
+  return (
+    <CodeEditor
+      value={code}
+      onChange={(newValue) => setCode(newValue)}
+      language="yaml"
+      minHeight="400px"
+    />
+  )
+}
+```
+
+### Tabbed Editor with Format Conversion
+
+The `CodeEditorTabs` component provides a dual-format editor with automatic JSON ↔ YAML conversion, validation, and tab switching protection.
+
+```tsx
+import { CodeEditorTabs } from '@datum-cloud/datum-ui/code-editor'
+import { useState } from 'react'
+
+function DualFormatEditor() {
+  const [config, setConfig] = useState('name: John Doe\nemail: john@example.com')
+  const [format, setFormat] = useState<'json' | 'yaml'>('yaml')
+
+  return (
+    <CodeEditorTabs
+      value={config}
+      format={format}
+      onChange={(value, format) => {
+        setConfig(value)
+        setFormat(format)
+      }}
+      onFormatChange={(format) => setFormat(format)}
+      name="configuration"
+      minHeight="500px"
+    />
+  )
+}
+```
+
+## Examples
+
+### Multiple Languages
+
+The `CodeEditor` supports multiple programming languages with full Monaco Editor syntax highlighting.
+
+```tsx
+// JSON
+<CodeEditor
+  value={'{\n  "name": "John Doe"\n}'}
+  onChange={setJsonCode}
+  language="json"
+/>
+
+// YAML
+<CodeEditor
+  value="name: John Doe"
+  onChange={setYamlCode}
+  language="yaml"
+/>
+
+// TypeScript
+<CodeEditor
+  value="interface User {\n  name: string\n}"
+  onChange={setTsCode}
+  language="typescript"
+/>
+
+// JavaScript
+<CodeEditor
+  value="const user = { name: 'John' }"
+  onChange={setJsCode}
+  language="javascript"
+/>
+
+// Python
+<CodeEditor
+  value="def hello():\n    print('Hello')"
+  onChange={setPythonCode}
+  language="python"
+/>
+
+// SQL
+<CodeEditor
+  value="SELECT * FROM users WHERE id = 1"
+  onChange={setSqlCode}
+  language="sql"
+/>
+```
+
+### Read-Only Mode
+
+Display code without allowing edits:
+
+```tsx
+<CodeEditor
+  value={configData}
+  language="yaml"
+  readOnly={true}
+  minHeight="300px"
+/>
+```
+
+### With Error State
+
+Show validation errors below the editor:
+
+```tsx
+<CodeEditor
+  value={invalidJson}
+  onChange={handleChange}
+  language="json"
+  error="Invalid JSON format: Expected comma at line 3"
+  minHeight="400px"
+/>
+```
+
+### Custom Height
+
+Control the editor height using the `minHeight` prop:
+
+```tsx
+<CodeEditor
+  value={code}
+  onChange={setCode}
+  language="yaml"
+  minHeight="600px"
+/>
+```
+
+### Form Integration
+
+The editor includes hidden inputs for seamless form integration:
+
+```tsx
+<form onSubmit={handleSubmit}>
+  <CodeEditor
+    value={formData.code}
+    onChange={(value) => setFormData({ ...formData, code: value })}
+    language="json"
+    id="user-config"
+    name="config"
+  />
+  <button type="submit">Save Configuration</button>
+</form>
+```
+
+### Tabbed Editor with React Hook Form
+
+Use with React Hook Form for managed form state:
+
+```tsx
+import { useForm } from 'react-hook-form'
+import { CodeEditorTabs } from '@datum-cloud/datum-ui/code-editor'
+
+function ConfigForm() {
+  const { watch, setValue } = useForm({
+    defaultValues: {
+      config: 'name: John Doe',
+      format: 'yaml',
+    },
+  })
+
+  return (
+    <CodeEditorTabs
+      value={watch('config')}
+      format={watch('format')}
+      onChange={(value, format) => {
+        setValue('config', value)
+        setValue('format', format)
+      }}
+      name="config"
+    />
+  )
+}
+```
+
+### Validation with Zod
+
+Use the provided schema helpers for form validation:
+
+```tsx
+import { z } from 'zod'
+import { createCodeEditorSchema } from '@datum-cloud/datum-ui/code-editor'
+
+const formSchema = z.object({
+  name: z.string(),
+  config: z.string(),
+  format: z.enum(['json', 'yaml']),
+}).and(createCodeEditorSchema('config'))
+
+// This validates that the config content is valid JSON or YAML
+// based on the format field
+```
+
+## Components
+
+### CodeEditor
+
+Single-language Monaco editor with theme integration.
+
+**Props:**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | -- | Editor content |
+| `onChange` | `(value: string) => void` | -- | Content change callback |
+| `language` | `EditorLanguage` | -- | Syntax highlighting language |
+| `id` | `string` | -- | Input element ID for form integration |
+| `name` | `string` | `'code-editor'` | Input element name for form submission |
+| `error` | `string` | -- | Error message to display below the editor |
+| `className` | `string` | -- | Additional CSS classes |
+| `readOnly` | `boolean` | `false` | Read-only mode |
+| `minHeight` | `string` | `'200px'` | Minimum editor height |
+
+**Supported Languages:**
+
+`'json' | 'yaml' | 'typescript' | 'javascript' | 'python' | 'sql' | 'html' | 'css' | 'markdown'`
+
+### CodeEditorTabs
+
+Dual-format editor with automatic JSON ↔ YAML conversion.
+
+**Props:**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | -- | Editor content |
+| `onChange` | `(value: string, format: EditorLanguage) => void` | -- | Content and format change callback |
+| `format` | `'json' \| 'yaml'` | `'yaml'` | Active format |
+| `onFormatChange` | `(format: EditorLanguage) => void` | -- | Format change callback |
+| `error` | `string` | -- | Error message to display below the editor |
+| `id` | `string` | -- | Input element ID for form integration |
+| `name` | `string` | `'code-editor'` | Input element name for form submission |
+| `minHeight` | `string` | `'300px'` | Minimum editor height |
+
+**Features:**
+
+- **Automatic Conversion**: Content is automatically converted when switching tabs
+- **Validation**: Prevents tab switching if content has syntax errors
+- **Error Toasts**: Shows user-friendly error messages for conversion failures
+- **Form Integration**: Includes hidden inputs for both content and format
+- **Bidirectional Sync**: Maintains sync between JSON and YAML representations
+
+**Hidden Form Fields:**
+
+The `CodeEditorTabs` component creates two hidden inputs:
+- `{name}`: Contains the current editor content
+- `{name}-format`: Contains the active format ('json' or 'yaml')
+
+## Features
+
+### Theme Integration
+
+Both components automatically adapt to the current theme (light/dark mode) using the `useTheme` hook. No additional configuration required.
+
+### Automatic Formatting
+
+The `CodeEditor` automatically formats code on mount using Monaco's built-in formatter for supported languages.
+
+### Form Compatibility
+
+Both components include hidden input fields that sync with the editor content, making them compatible with standard HTML forms and React Hook Form without additional setup.
+
+### Responsive Layout
+
+Monaco Editor's `automaticLayout` option is enabled by default, ensuring the editor resizes correctly when the container dimensions change.
+
+### Error Handling
+
+The `CodeEditorTabs` component includes comprehensive error handling:
+- Validates content before allowing tab switches
+- Shows error toasts when conversion fails
+- Silently syncs formats when possible
+- Maintains last valid state on error
+
+## Best Practices
+
+### Choose the Right Component
+
+- Use `CodeEditor` for single-language editing (configs, scripts, schemas)
+- Use `CodeEditorTabs` for data that can be represented in both JSON and YAML
+
+### Set Appropriate Heights
+
+```tsx
+// For small configs
+<CodeEditor minHeight="200px" />
+
+// For medium configs
+<CodeEditor minHeight="400px" />
+
+// For full-page editors
+<CodeEditor minHeight="calc(100vh - 200px)" />
+```
+
+### Handle Validation
+
+```tsx
+// Validate on change
+function ConfigEditor() {
+  const [code, setCode] = useState('')
+  const [error, setError] = useState<string>()
+
+  const handleChange = (newValue: string) => {
+    setCode(newValue)
+    try {
+      JSON.parse(newValue)
+      setError(undefined)
+    } catch (err) {
+      setError('Invalid JSON format')
+    }
+  }
+
+  return (
+    <CodeEditor
+      value={code}
+      onChange={handleChange}
+      language="json"
+      error={error}
+    />
+  )
+}
+```
+
+### Use with Form Libraries
+
+The components work seamlessly with form libraries like React Hook Form:
+
+```tsx
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+
+const schema = z.object({
+  config: z.string().min(1, 'Configuration is required'),
+})
+
+function ConfigForm() {
+  const { register, watch, setValue } = useForm({
+    resolver: zodResolver(schema),
+  })
+
+  return (
+    <form>
+      <CodeEditor
+        value={watch('config')}
+        onChange={(value) => setValue('config', value)}
+        language="yaml"
+        name="config"
+      />
+    </form>
+  )
+}
+```
+
+## Accessibility
+
+- Monaco Editor includes built-in keyboard navigation
+- Screen reader support through Monaco's accessibility layer
+- Error messages are announced to assistive technologies
+- Tab navigation works with standard keyboard shortcuts
+
+## Notes
+
+- The Monaco Editor bundle is lazy-loaded for optimal performance
+- Initial formatting runs after a 300ms delay to ensure Monaco is ready
+- The `CodeEditorTabs` component prevents data loss by blocking invalid tab switches
+- Conversion errors are logged to console for debugging

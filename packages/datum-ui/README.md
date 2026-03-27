@@ -141,6 +141,7 @@ Complex, fully-customized components with significant business logic.
 | `Autocomplete`                                                                                                                   | —                                             | Search autocomplete input                  |
 | `AvatarStack`                                                                                                                    | —                                             | Stacked avatar display                     |
 | `CalendarDatePicker`                                                                                                             | `react-day-picker`, `date-fns`                | Date/range picker with presets             |
+| `CodeEditor`, `CodeEditorTabs`                                                                                                   | `@monaco-editor/react`, `monaco-editor`       | Monaco-based code editor with VS Code UX   |
 | `DataTable`, `DataTableColumnHeader`, `DataTablePagination`, `DataTableToolbar`, `DataTableViewOptions`                          | `@tanstack/react-table`                       | Advanced data table with sorting/filtering |
 | `Dropdown`, `DropdownHeader`, `DropdownItem`, `DropdownSection`                                                                  | —                                             | Dropdown menu                              |
 | `Dropzone`                                                                                                                       | `react-dropzone`                              | File drag-and-drop upload area             |
@@ -371,6 +372,9 @@ npm install leaflet react-leaflet leaflet-draw leaflet.fullscreen leaflet.marker
 
 # Charts (ChartContainer, ChartTooltip, etc.)
 npm install recharts
+
+# Code editor (CodeEditor, CodeEditorTabs)
+npm install @monaco-editor/react monaco-editor
 
 # Date pickers (Calendar, CalendarDatePicker, TimeRangePicker)
 npm install react-day-picker date-fns date-fns-tz
