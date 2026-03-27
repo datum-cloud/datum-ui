@@ -51,6 +51,7 @@ export default defineConfig({
 
     // Grouped features (shared heavy deps)
     'chart/index': 'src/components/base/chart/index.ts',
+    'code-editor/index': 'src/components/features/code-editor/index.ts',
     'date-picker/index': 'src/components/features/date-picker/index.ts',
     'dropzone/index': 'src/components/features/dropzone/index.ts',
     'form/index': 'src/components/features/form/index.ts',
@@ -100,6 +101,10 @@ export default defineConfig({
       'react-number-format',
       'nuqs',
       'zod',
+      // Code editor optional peer deps
+      '@monaco-editor/react',
+      'monaco-editor',
+      'js-yaml',
       // Transitive deps from @repo/shadcn (heavy/optional only)
       'sonner',
       /^leaflet/,
