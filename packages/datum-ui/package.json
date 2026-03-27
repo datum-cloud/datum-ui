@@ -465,6 +465,7 @@
   "devDependencies": {
     "@conform-to/react": "^1.17.1",
     "@conform-to/zod": "^1.17.1",
+    "@monaco-editor/react": "^4.7.0",
     "@repo/config": "workspace:*",
     "@repo/shadcn": "workspace:*",
     "@stepperize/react": "^6.1.0",
@@ -491,6 +492,7 @@
     "leaflet.fullscreen": "^5.3.0",
     "leaflet.markercluster": "^1.5.3",
     "lucide-react": "^0.556",
+    "monaco-editor": "^0.55.1",
     "motion": "^12.34.4",
     "nprogress": "^0.2.0",
     "nuqs": "^2.8.9",

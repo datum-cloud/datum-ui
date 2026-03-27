@@ -250,9 +250,6 @@ importers:
 
   packages/datum-ui:
     dependencies:
-      '@monaco-editor/react':
-        specifier: ^4.7.0
-        version: 4.7.0(monaco-editor@0.55.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@radix-ui/react-avatar':
         specifier: ^1
         version: 1.1.11(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -310,9 +307,6 @@ importers:
       cmdk:
         specifier: ^1
         version: 1.1.1(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      monaco-editor:
-        specifier: '>=0.44.0'
-        version: 0.55.1
       recharts:
         specifier: '>=2'
         version: 3.7.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react-is@19.2.4)(react@19.2.4)(redux@5.0.1)
@@ -329,6 +323,9 @@ importers:
       '@conform-to/zod':
         specifier: ^1.17.1
         version: 1.17.1(zod@4.3.6)
+      '@monaco-editor/react':
+        specifier: ^4.7.0
+        version: 4.7.0(monaco-editor@0.55.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@repo/config':
         specifier: workspace:*
         version: link:../config
@@ -407,6 +404,9 @@ importers:
       lucide-react:
         specifier: ^0.556
         version: 0.556.0(react@19.2.4)
+      monaco-editor:
+        specifier: ^0.55.1
+        version: 0.55.1
       motion:
         specifier: ^12.34.4
         version: 12.34.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
