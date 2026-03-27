@@ -5,14 +5,14 @@ export type EditorLanguage = 'json' | 'yaml' | 'typescript' | 'javascript' | 'py
 
 /**
  * Props for the CodeEditor component.
- * 
+ *
  * Base Monaco Editor wrapper with single language support, theme integration,
  * and form compatibility.
- * 
+ *
  * @example
  * ```tsx
  * import { CodeEditor } from '@datum-cloud/datum-ui/code-editor'
- * 
+ *
  * <CodeEditor
  *   value={code}
  *   onChange={(newValue) => setCode(newValue)}
@@ -44,14 +44,14 @@ export interface CodeEditorProps {
 
 /**
  * Props for the CodeEditorTabs component.
- * 
+ *
  * Tabbed interface with JSON ↔ YAML conversion, validation, and automatic
  * bidirectional synchronization.
- * 
+ *
  * @example
  * ```tsx
  * import { CodeEditorTabs } from '@datum-cloud/datum-ui/code-editor'
- * 
+ *
  * <CodeEditorTabs
  *   value={config}
  *   format="yaml"

@@ -64,7 +64,7 @@ export const CustomHeight: Story = {
 }
 
 export const TabbedEditor: StoryObj<typeof CodeEditorTabs> = {
-  render: (args) => <CodeEditorTabs {...args} />,
+  render: args => <CodeEditorTabs {...args} />,
   args: {
     value: 'name: John Doe\nemail: john@example.com\nage: 30',
     format: 'yaml',
@@ -73,7 +73,7 @@ export const TabbedEditor: StoryObj<typeof CodeEditorTabs> = {
 }
 
 export const TabbedEditorJSON: StoryObj<typeof CodeEditorTabs> = {
-  render: (args) => <CodeEditorTabs {...args} />,
+  render: args => <CodeEditorTabs {...args} />,
   args: {
     value: '{\n  "name": "John Doe",\n  "email": "john@example.com",\n  "age": 30\n}',
     format: 'json',
