@@ -1,5 +1,11 @@
 # @datum-cloud/datum-ui
 
+## 0.5.0
+
+### Minor Changes
+
+- db5b71d: Add CodeEditor and CodeEditorTabs components - Monaco-based code editor with VS Code UX, dual-format JSON/YAML support, and form integration
+
 ## 0.4.0
 
 ### Minor Changes
