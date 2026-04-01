@@ -1,12 +1,27 @@
 /**
  * Datum Form Library
  *
- * A compound component pattern form library built on top of Conform.js and Zod
- * for easy form creation with built-in validation, error handling, and accessibility features.
+ * A compound component pattern form library with pluggable adapter support.
+ * Choose between Conform.js or React Hook Form as your form backend,
+ * with Zod for schema validation.
+ *
+ * ## Adapter Setup
+ *
+ * Wrap your app with an adapter provider:
+ *
+ * ```tsx
+ * // Conform adapter
+ * import { ConformAdapter } from '@datum-cloud/datum-ui/form/adapters/conform'
+ * <ConformAdapter><App /></ConformAdapter>
+ *
+ * // React Hook Form adapter
+ * import { RHFAdapter } from '@datum-cloud/datum-ui/form/adapters/rhf'
+ * <RHFAdapter><App /></RHFAdapter>
+ * ```
  *
  * @example Basic Usage
  * ```tsx
- * import { Form } from './';
+ * import { Form } from '@datum-cloud/datum-ui/form';
  * import { z } from 'zod';
  *
  * const userSchema = z.object({
@@ -29,19 +44,34 @@
  * }
  * ```
  *
- * @example Multi-Step Form
+ * @example Multi-Step Form (separate import)
  * ```tsx
+ * import { FormStepper, FormStep, StepperNavigation, StepperControls } from '@datum-cloud/datum-ui/form/stepper';
+ *
  * const steps = [
  *   { id: 'account', label: 'Account', schema: accountSchema },
  *   { id: 'profile', label: 'Profile', schema: profileSchema },
  * ];
  *
- * <Form.Stepper steps={steps} onComplete={handleComplete}>
- *   <Form.StepperNavigation />
- *   <Form.Step id="account">...</Form.Step>
- *   <Form.Step id="profile">...</Form.Step>
- *   <Form.StepperControls />
- * </Form.Stepper>
+ * <FormStepper steps={steps} onComplete={handleComplete}>
+ *   <StepperNavigation />
+ *   <FormStep id="account">...</FormStep>
+ *   <FormStep id="profile">...</FormStep>
+ *   <StepperControls />
+ * </FormStepper>
+ * ```
+ *
+ * @example Form State
+ * ```tsx
+ * <Form.Root schema={schema} onSubmit={handleSubmit}>
+ *   {({ isDirty, isValid, isSubmitted, submitCount }) => (
+ *     <>
+ *       <Form.Field name="name"><Form.Input /></Form.Field>
+ *       <Form.Submit disabled={!isDirty || !isValid}>Save</Form.Submit>
+ *       {isSubmitted && <p>Submitted {submitCount} time(s)</p>}
+ *     </>
+ *   )}
+ * </Form.Root>
  * ```
  *
  * @example Conditional Fields
@@ -61,37 +91,39 @@
 // Import all components
 import {
   FormAutocomplete,
+  FormAutosearch,
   FormButton,
   FormCheckbox,
+  FormCombobox,
   FormCopyBox,
   FormCustom,
+  FormDatePicker,
+  FormDateTimePicker,
   FormDescription,
   FormDialog,
   FormError,
   FormField,
   FormFieldArray,
   FormInput,
+  FormInputGroup,
   FormRadioGroup,
   FormRadioItem,
   FormRoot,
   FormSelect,
   FormSelectItem,
-  FormStep,
-  FormStepper,
   FormSubmit,
   FormSwitch,
   FormTextarea,
+  FormTimePicker,
+  FormTransfer,
   FormWhen,
-  StepperControls,
-  StepperNavigation,
 } from './components'
-import { FormInputGroup } from './components/form-input-group'
 // Import hooks
 import {
   useField,
   useFieldContext,
   useFormContext,
-  useStepper,
+  useFormState,
   useWatch,
   useWatchAll,
 } from './hooks'
@@ -99,36 +131,27 @@ import {
 /**
  * Form compound component
  *
- * Contains all form-related components as properties:
+ * Requires an adapter provider at the application root:
+ * - `<ConformAdapter>` from `@datum-cloud/datum-ui/form/adapters/conform`
+ * - `<RHFAdapter>` from `@datum-cloud/datum-ui/form/adapters/rhf`
+ *
+ * Components:
  * - Form.Root - Main form container
  * - Form.Field - Field wrapper with label and error handling
- * - Form.Input - Text input
- * - Form.Textarea - Multi-line text input
- * - Form.Select - Dropdown select
- * - Form.SelectItem - Select option
- * - Form.Checkbox - Checkbox input
- * - Form.Switch - Toggle switch
- * - Form.RadioGroup - Radio button group
- * - Form.RadioItem - Radio button option
- * - Form.Submit - Submit button with loading state
- * - Form.Error - Error display
- * - Form.Description - Helper text
- * - Form.Autocomplete - Searchable select with virtualization
+ * - Form.Input, Form.Textarea, Form.Select, Form.Checkbox, Form.Switch, Form.RadioGroup
+ * - Form.Autocomplete, Form.CopyBox, Form.InputGroup
  * - Form.When - Conditional rendering
  * - Form.FieldArray - Dynamic array of fields
  * - Form.Custom - Escape hatch for custom implementations
- * - Form.Stepper - Multi-step form container
- * - Form.Step - Individual step content
- * - Form.StepperNavigation - Step progress indicators
- * - Form.StepperControls - Previous/Next/Submit buttons
+ * - Form.Dialog - Form rendered inside a Dialog
+ * - Form.Submit, Form.Button, Form.Error, Form.Description
  *
- * Hooks available:
- * - Form.useFormContext - Access form context
- * - Form.useFieldContext - Access field context
- * - Form.useField - Access and control a specific field
- * - Form.useWatch - Watch a field's value
- * - Form.useWatchAll - Watch multiple fields
- * - Form.useStepper - Access stepper context
+ * Stepper (separate import):
+ * - `@datum-cloud/datum-ui/form/stepper` provides FormStepper, FormStep, StepperNavigation, StepperControls, useStepper
+ *
+ * Hooks:
+ * - Form.useFormContext, Form.useFormState, Form.useFieldContext, Form.useField
+ * - Form.useWatch, Form.useWatchAll
  */
 export const Form = {
   // Core
@@ -150,38 +173,42 @@ export const Form = {
   RadioItem: FormRadioItem,
   CopyBox: FormCopyBox,
   Autocomplete: FormAutocomplete,
+  Autosearch: FormAutosearch,
+  Combobox: FormCombobox,
   InputGroup: FormInputGroup,
+  DatePicker: FormDatePicker,
+  DateTimePicker: FormDateTimePicker,
+  TimePicker: FormTimePicker,
+  Transfer: FormTransfer,
 
   // Advanced
   When: FormWhen,
   FieldArray: FormFieldArray,
   Custom: FormCustom,
 
-  // Stepper
-  Stepper: FormStepper,
-  Step: FormStep,
-  StepperNavigation,
-  StepperControls,
-
   // Dialog
   Dialog: FormDialog,
 
   // Hooks
   useFormContext,
+  useFormState,
   useFieldContext,
   useField,
   useWatch,
   useWatchAll,
-  useStepper,
 } as const
 
 // Named exports for direct imports
 export {
   FormAutocomplete,
+  FormAutosearch,
   FormButton,
   FormCheckbox,
+  FormCombobox,
   FormCopyBox,
   FormCustom,
+  FormDatePicker,
+  FormDateTimePicker,
   FormDescription,
 
   // Dialog
@@ -197,28 +224,36 @@ export {
   FormRoot,
   FormSelect,
   FormSelectItem,
-
-  FormStep,
-  // Stepper
-  FormStepper,
   FormSubmit,
-
   FormSwitch,
   FormTextarea,
+  FormTimePicker,
+  FormTransfer,
   // Advanced
   FormWhen,
-  StepperControls,
-
-  StepperNavigation,
 
   useField,
   useFieldContext,
   // Hooks
   useFormContext,
-  useStepper,
+  useFormState,
   useWatch,
   useWatchAll,
 }
+
+// Export adapter context
+export { FormAdapterProvider, useAdapter } from './adapter-context'
+
+// Export adapter types
+export type {
+  CreateFormProps,
+  FormAdapter,
+  NormalizedFieldArray,
+  NormalizedFieldMeta,
+  NormalizedFieldState,
+  NormalizedFormInstance,
+  NormalizedFormState,
+} from './adapter-types'
 
 // Export types
 export type {
@@ -247,17 +282,11 @@ export type {
   FormRootRenderProps,
   FormSelectItemProps,
   FormSelectProps,
-  FormStepperProps,
-  FormStepProps,
   FormSubmitProps,
   FormSwitchProps,
   FormTelemetry,
   FormTextareaProps,
   FormWhenProps,
-  StepConfig,
-  StepperContextValue,
-  StepperControlsProps,
-  StepperNavigationProps,
   UseFieldReturn,
   UseWatchReturn,
 } from './types'

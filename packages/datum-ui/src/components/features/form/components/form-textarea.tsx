@@ -1,5 +1,4 @@
 import type { FormTextareaProps } from '../types'
-import { getTextareaProps } from '@conform-to/react'
 import * as React from 'react'
 import { cn } from '../../../../utils/cn'
 import { Textarea } from '../../../base/textarea'
@@ -18,22 +17,24 @@ import { useFieldContext } from '../context/field-context'
  * ```
  */
 export function FormTextarea({ ref, className, disabled, rows = 3, ...props }: FormTextareaProps & { ref?: React.RefObject<HTMLTextAreaElement | null> }) {
-  const { fieldMeta, disabled: fieldDisabled, errors } = useFieldContext()
-
-  const textareaProps = getTextareaProps(fieldMeta)
+  const { id, errors, disabled: fieldDisabled, fieldState } = useFieldContext()
   const isDisabled = disabled ?? fieldDisabled
   const hasErrors = errors && errors.length > 0
 
   return (
     <Textarea
-      ref={ref}
-      {...textareaProps}
       {...props}
+      ref={ref}
+      id={id}
+      name={fieldState?.name}
+      value={fieldState?.value as string ?? ''}
+      onChange={e => fieldState?.change(e.target.value)}
+      onBlur={() => fieldState?.blur()}
       rows={rows}
+      className={cn(className)}
       disabled={isDisabled}
       aria-invalid={hasErrors || undefined}
-      aria-describedby={hasErrors ? `${fieldMeta.id}-error` : undefined}
-      className={cn(className)}
+      aria-describedby={hasErrors ? `${id}-error` : undefined}
     />
   )
 }

@@ -24,14 +24,20 @@ import { useFormContext } from '../context/form-context'
  * ```
  */
 export function FormCustom({ children }: FormCustomProps) {
-  const { form, fields, isSubmitting, submit, reset } = useFormContext()
+  const ctx = useFormContext()
 
   const renderProps: FormCustomRenderProps = {
-    form: form as any,
-    fields: fields as any,
-    isSubmitting,
-    submit,
-    reset,
+    form: ctx.form as any,
+    fields: ctx.fields as any,
+    isSubmitting: ctx.isSubmitting,
+    isDirty: ctx.isDirty,
+    isValid: ctx.isValid,
+    isSubmitted: ctx.isSubmitted,
+    submitCount: ctx.submitCount,
+    dirtyFields: ctx.dirtyFields,
+    touchedFields: ctx.touchedFields,
+    submit: ctx.submit,
+    reset: ctx.reset,
   }
 
   return <>{children(renderProps)}</>

@@ -1,21 +1,68 @@
 ---
 title: Form
-description: A compound component form system built on Conform.js and Zod with validation, conditional fields, field arrays, and multi-step support.
+description: A compound component form system with pluggable adapter support for Conform.js or React Hook Form, powered by Zod schema validation.
 ---
 
 ## Overview
 
-The `Form` component is a compound component library that provides a declarative API for building forms. It integrates Conform.js for form state management and Zod for schema validation. All sub-components are accessed through the `Form` namespace (e.g., `Form.Root`, `Form.Field`, `Form.Input`).
+The `Form` component is a compound component library that provides a declarative API for building forms. It uses a **pluggable adapter system** -- you choose between Conform.js or React Hook Form as the form backend, while the component API stays the same. All sub-components are accessed through the `Form` namespace (e.g., `Form.Root`, `Form.Field`, `Form.Input`).
 
-## Dependencies
+## Adapter Setup
 
-This component requires the following packages:
+Wrap your application root with an adapter provider. This tells all `Form.*` components which form library to use.
+
+### Conform Adapter
 
 ```package-install
 @conform-to/react @conform-to/zod zod
 ```
 
+```tsx
+import { ConformAdapter } from '@datum-cloud/datum-ui/form/adapters/conform'
+
+function App() {
+  return (
+    <ConformAdapter>
+      <YourApp />
+    </ConformAdapter>
+  )
+}
+```
+
+### React Hook Form Adapter
+
+```package-install
+react-hook-form @hookform/resolvers zod
+```
+
+```tsx
+import { RHFAdapter } from '@datum-cloud/datum-ui/form/adapters/rhf'
+
+function App() {
+  return (
+    <RHFAdapter>
+      <YourApp />
+    </RHFAdapter>
+  )
+}
+```
+
+### Dependencies
+
+| Dependency | Conform | RHF | Notes |
+|---|---|---|---|
+| `zod` (>=4) | Required | Required | Schema validation |
+| `@conform-to/react` (>=1) | Required | -- | |
+| `@conform-to/zod` (>=1) | Required | -- | |
+| `react-hook-form` (>=7.55) | -- | Required | |
+| `@hookform/resolvers` (>=5) | -- | Required | |
+| `@stepperize/react` (>=4) | Optional | Optional | For `FormStepper` (separate import) |
+
+All form library dependencies are optional peer dependencies -- you only install what your chosen adapter needs.
+
 ## Usage
+
+The form API is **identical** regardless of which adapter you use.
 
 ```tsx
 import { Form } from '@datum-cloud/datum-ui/form'
@@ -139,46 +186,52 @@ Dynamically add and remove groups of fields with `Form.FieldArray`.
 </Form.FieldArray>
 ```
 
-### Multi-Step Form (Form.Stepper)
+### Multi-Step Form (Separate Import)
 
-Break a long form into validated steps using `Form.Stepper`. Each step has its own Zod schema and is validated before advancing.
+Break a long form into validated steps. The stepper is a **separate import** to avoid pulling in `@stepperize/react` for basic forms.
+
+```package-install
+@stepperize/react
+```
 
 ```tsx
+import { FormStepper, FormStep, StepperNavigation, StepperControls } from '@datum-cloud/datum-ui/form/stepper'
+
 const steps = [
   { id: 'account', label: 'Account', description: 'Set up credentials', schema: accountSchema },
   { id: 'profile', label: 'Profile', description: 'Personal details', schema: profileSchema },
   { id: 'preferences', label: 'Preferences', description: 'Choose your plan', schema: preferencesSchema },
 ]
 
-<Form.Stepper steps={steps} onComplete={(data) => console.log(data)}>
-  <Form.StepperNavigation />
+<FormStepper steps={steps} onComplete={(data) => console.log(data)}>
+  <StepperNavigation />
 
-  <Form.Step id="account">
+  <FormStep id="account">
     <Form.Field name="email" label="Email" required>
       <Form.Input type="email" placeholder="you@example.com" />
     </Form.Field>
     <Form.Field name="password" label="Password" required>
       <Form.Input type="password" placeholder="Min 8 characters" />
     </Form.Field>
-  </Form.Step>
+  </FormStep>
 
-  <Form.Step id="profile">
+  <FormStep id="profile">
     <Form.Field name="fullName" label="Full Name" required>
       <Form.Input placeholder="Jane Smith" />
     </Form.Field>
-  </Form.Step>
+  </FormStep>
 
-  <Form.Step id="preferences">
+  <FormStep id="preferences">
     <Form.Field name="plan" label="Plan" required>
       <Form.RadioGroup>
         <Form.RadioItem value="free" label="Free" />
         <Form.RadioItem value="pro" label="Pro - $10/mo" />
       </Form.RadioGroup>
     </Form.Field>
-  </Form.Step>
+  </FormStep>
 
-  <Form.StepperControls />
-</Form.Stepper>
+  <StepperControls />
+</FormStepper>
 ```
 
 ### Dialog Form
@@ -208,6 +261,27 @@ Render a form inside a dialog using `Form.Dialog`.
 </Form.Dialog>
 ```
 
+### Render Function Pattern
+
+Access form state directly using the render function pattern on `Form.Root`.
+
+```tsx
+<Form.Root schema={schema} defaultValues={{ name: 'John' }} onSubmit={handleSubmit}>
+  {({ reset, isSubmitting, isDirty, isValid, isSubmitted, submitCount, dirtyFields, touchedFields }) => (
+    <>
+      <Form.Field name="name" label="Name" required>
+        <Form.Input />
+      </Form.Field>
+      <div className="flex gap-2">
+        <Button onClick={() => reset()} disabled={isSubmitting}>Reset</Button>
+        <Form.Submit disabled={!isDirty || !isValid}>Save</Form.Submit>
+      </div>
+      {isSubmitted && <p>Submitted {submitCount} time(s)</p>}
+    </>
+  )}
+</Form.Root>
+```
+
 ## Sub-Components
 
 | Component | Description |
@@ -223,18 +297,29 @@ Render a form inside a dialog using `Form.Dialog`.
 | `Form.RadioGroup` | Radio button group |
 | `Form.RadioItem` | Radio option inside `Form.RadioGroup` |
 | `Form.Autocomplete` | Searchable select (see [Autocomplete](/docs/components/autocomplete)) |
+| `Form.Autosearch` | Alias for Autocomplete with search-first defaults |
+| `Form.DatePicker` | Date selection with calendar popover (see [DateTimePicker](/docs/components/features/date-time-picker)) |
+| `Form.TimePicker` | Time input field (see [DateTimePicker](/docs/components/features/date-time-picker)) |
+| `Form.DateTimePicker` | Combined date and time picker with timezone support (see [DateTimePicker](/docs/components/features/date-time-picker)) |
+| `Form.Transfer` | Dual-panel item transfer with drag-and-drop (see [Transfer](/docs/components/features/transfer)) |
 | `Form.CopyBox` | Read-only copy-to-clipboard field |
 | `Form.Submit` | Submit button with loading state |
+| `Form.Button` | Non-submit button (cancel, reset) |
 | `Form.Error` | Manual error display |
 | `Form.Description` | Helper text |
 | `Form.When` | Conditional rendering based on field value |
 | `Form.FieldArray` | Dynamic array of fields |
 | `Form.Custom` | Escape hatch for custom implementations |
 | `Form.Dialog` | Form rendered inside a Dialog |
-| `Form.Stepper` | Multi-step form container |
-| `Form.Step` | Individual step content |
-| `Form.StepperNavigation` | Step progress indicators |
-| `Form.StepperControls` | Previous/Next/Submit buttons |
+
+### Stepper Components (from `@datum-cloud/datum-ui/form/stepper`)
+
+| Component | Description |
+|-----------|-------------|
+| `FormStepper` | Multi-step form container |
+| `FormStep` | Individual step content |
+| `StepperNavigation` | Step progress indicators |
+| `StepperControls` | Previous/Next/Submit buttons |
 
 ## Key Props
 
@@ -260,7 +345,7 @@ Render a form inside a dialog using `Form.Dialog`.
 | `disabled` | `boolean` | `false` | Disable the field |
 | `children` | `ReactNode \| (props: FormFieldRenderProps) => ReactNode` | -- | Input or render function |
 
-### Form.Stepper
+### FormStepper (from `./form/stepper`)
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -271,11 +356,30 @@ Render a form inside a dialog using `Form.Dialog`.
 
 ## Hooks
 
-| Hook | Description |
+| Hook | Import | Description |
+|------|--------|-------------|
+| `Form.useFormContext()` | `@datum-cloud/datum-ui/form` | Access form metadata, fields, and submit/reset functions |
+| `Form.useFormState()` | `@datum-cloud/datum-ui/form` | Access isDirty, isValid, isSubmitted, submitCount, dirtyFields, touchedFields |
+| `Form.useFieldContext()` | `@datum-cloud/datum-ui/form` | Access current field metadata inside a `Form.Field` |
+| `Form.useField(name)` | `@datum-cloud/datum-ui/form` | Access and control a specific field by name |
+| `Form.useWatch(name)` | `@datum-cloud/datum-ui/form` | Watch a single field's value reactively |
+| `Form.useWatchAll()` | `@datum-cloud/datum-ui/form` | Watch all field values |
+| `useStepper()` | `@datum-cloud/datum-ui/form/stepper` | Access stepper context (current step, navigation) |
+
+## Adapter Types
+
+The adapter system exports types for building custom adapters:
+
+```tsx
+import type { FormAdapter, NormalizedFormInstance, NormalizedFieldState } from '@datum-cloud/datum-ui/form'
+```
+
+| Type | Description |
 |------|-------------|
-| `Form.useFormContext()` | Access form metadata, fields, and submit/reset functions |
-| `Form.useFieldContext()` | Access current field metadata inside a `Form.Field` |
-| `Form.useField(name)` | Access and control a specific field by name |
-| `Form.useWatch(name)` | Watch a single field's value reactively |
-| `Form.useWatchAll()` | Watch all field values |
-| `Form.useStepper()` | Access stepper context (current step, navigation, etc.) |
+| `FormAdapter` | Interface for implementing a custom adapter |
+| `NormalizedFormInstance` | Adapter-agnostic form instance returned by `useCreateForm` |
+| `NormalizedFieldState` | Adapter-agnostic field state returned by `useField` |
+| `NormalizedFieldMeta` | Base field metadata (id, errors, required) |
+| `NormalizedFieldArray` | Field array operations (items, append, remove, move) |
+| `NormalizedFormState` | Form-level state (isDirty, isValid, dirtyFields, touchedFields, etc.) |
+| `CreateFormProps` | Props passed to `useCreateForm` |

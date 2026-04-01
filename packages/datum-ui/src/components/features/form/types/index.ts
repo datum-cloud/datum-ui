@@ -1,6 +1,6 @@
-import type { FieldMetadata, FormMetadata } from '@conform-to/react'
 import type { z } from 'zod'
 import type { ButtonProps } from '../../..'
+import type { NormalizedFieldMeta, NormalizedFieldState, NormalizedFormInstance } from '../adapter-types'
 
 // ============================================================================
 // Telemetry Types
@@ -49,12 +49,24 @@ export interface FormTelemetry {
  * Render props passed to Form.Root when using render function pattern
  */
 export interface FormRootRenderProps {
-  /** Conform form metadata (for form.update, form.reset, etc.) */
-  form: FormMetadata<Record<string, unknown>>
-  /** All form fields with their metadata and values */
-  fields: Record<string, FieldMetadata<unknown>>
+  /** Normalized form instance */
+  form: NormalizedFormInstance
+  /** All form fields with their normalized metadata */
+  fields: Record<string, NormalizedFieldMeta>
   /** Whether the form is currently submitting */
   isSubmitting: boolean
+  /** Whether any field value differs from its default value */
+  isDirty: boolean
+  /** Whether the form currently passes validation */
+  isValid: boolean
+  /** Whether the form has been submitted at least once */
+  isSubmitted: boolean
+  /** Number of times the form has been submitted */
+  submitCount: number
+  /** Record of which fields have been modified from defaults */
+  dirtyFields: Record<string, boolean>
+  /** Record of which fields have been focused and blurred */
+  touchedFields: Record<string, boolean>
   /** Programmatically submit the form */
   submit: () => void
   /** Reset form to default values */
@@ -150,12 +162,12 @@ export interface FormRootProps<T extends z.ZodType> {
  * Render props passed to Form.Field when using render function pattern
  */
 export interface FormFieldRenderProps {
-  /** Current field's Conform metadata */
-  field: FieldMetadata<unknown>
+  /** Normalized field state with value and control methods */
+  field: NormalizedFieldState
   /** Input control for programmatic value updates */
   control: {
-    value: string | string[] | undefined
-    change: (value: string | string[]) => void
+    value: unknown
+    change: (value: unknown) => void
     blur: () => void
     focus: () => void
   }
@@ -163,14 +175,14 @@ export interface FormFieldRenderProps {
   meta: {
     name: string
     id: string
-    errors: string[] | undefined
+    errors: string[]
     required: boolean
     disabled: boolean
   }
-  /** Access to all form fields (for multi-field scenarios) */
-  fields: Record<string, FieldMetadata<unknown>>
-  /** Form metadata from Conform */
-  form: FormMetadata<Record<string, unknown>>
+  /** Access to all form fields */
+  fields: Record<string, NormalizedFieldMeta>
+  /** Form instance */
+  form: NormalizedFormInstance
   /** Whether form is currently submitting */
   isSubmitting: boolean
 }
@@ -231,13 +243,13 @@ export interface FormFieldContextValue {
   /** Field ID for accessibility */
   id: string
   /** Field errors */
-  errors?: string[]
+  errors: string[]
   /** Whether the field is required */
-  required?: boolean
+  required: boolean
   /** Whether the field is disabled */
-  disabled?: boolean
-  /** Conform field metadata */
-  fieldMeta: FieldMetadata<unknown>
+  disabled: boolean
+  /** Normalized field state (available when adapter provides it) */
+  fieldState: NormalizedFieldState | null
 }
 
 // ============================================================================
@@ -424,12 +436,24 @@ export interface FormCustomProps {
 }
 
 export interface FormCustomRenderProps {
-  /** Form metadata from Conform */
-  form: FormMetadata<Record<string, unknown>>
+  /** Normalized form instance */
+  form: NormalizedFormInstance
   /** All field metadata */
-  fields: Record<string, FieldMetadata<unknown>>
+  fields: Record<string, NormalizedFieldMeta>
   /** Whether form is currently submitting */
   isSubmitting: boolean
+  /** Whether any field value differs from its default value */
+  isDirty: boolean
+  /** Whether the form currently passes validation */
+  isValid: boolean
+  /** Whether the form has been submitted at least once */
+  isSubmitted: boolean
+  /** Number of times the form has been submitted */
+  submitCount: number
+  /** Record of which fields have been modified from defaults */
+  dirtyFields: Record<string, boolean>
+  /** Record of which fields have been focused and blurred */
+  touchedFields: Record<string, boolean>
   /** Submit the form programmatically */
   submit: () => void
   /** Reset the form */
@@ -562,13 +586,25 @@ export interface StepperContextValue {
 // Context Types
 // ============================================================================
 
-export interface FormContextValue<T extends Record<string, unknown> = Record<string, unknown>> {
-  /** Form metadata from Conform */
-  form: FormMetadata<T>
+export interface FormContextValue<_T extends Record<string, unknown> = Record<string, unknown>> {
+  /** Normalized form instance */
+  form: NormalizedFormInstance
   /** Field metadata accessor */
-  fields: Record<string, FieldMetadata<unknown>>
+  fields: Record<string, NormalizedFieldMeta>
   /** Whether form is currently submitting */
   isSubmitting: boolean
+  /** Whether any field value differs from its default value */
+  isDirty: boolean
+  /** Whether the form currently passes validation */
+  isValid: boolean
+  /** Whether the form has been submitted at least once */
+  isSubmitted: boolean
+  /** Number of times the form has been submitted */
+  submitCount: number
+  /** Record of which fields have been modified from defaults */
+  dirtyFields: Record<string, boolean>
+  /** Record of which fields have been focused and blurred */
+  touchedFields: Record<string, boolean>
   /** Submit the form */
   submit: () => void
   /** Reset the form */
@@ -582,12 +618,12 @@ export interface FormContextValue<T extends Record<string, unknown> = Record<str
 // ============================================================================
 
 export interface UseFieldReturn {
-  /** Field metadata */
-  field: FieldMetadata<unknown>
+  /** Normalized field state */
+  field: NormalizedFieldState
   /** Input control for programmatic updates */
   control: {
-    value: string | undefined
-    change: (value: string) => void
+    value: unknown
+    change: (value: unknown) => void
     blur: () => void
     focus: () => void
   }
@@ -595,12 +631,12 @@ export interface UseFieldReturn {
   meta: {
     name: string
     id: string
-    errors: string[] | undefined
+    errors: string[]
     required: boolean
     disabled: boolean
   }
   /** Field errors */
-  errors: string[] | undefined
+  errors: string[]
 }
 
 export interface UseWatchReturn<T = unknown> {

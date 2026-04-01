@@ -1,4 +1,3 @@
-import { useInputControl } from '@conform-to/react'
 import { CheckIcon, CopyIcon } from 'lucide-react'
 import * as React from 'react'
 import { Button, toast } from '../../..'
@@ -53,27 +52,19 @@ export function FormCopyBox({
   buttonClassName,
   placeholder = '',
 }: FormCopyBoxProps) {
-  const { fieldMeta } = useFieldContext()
-  // Cast to any to bypass TypeScript's strict checking for useInputControl
-  // This is safe because fieldMeta comes from Conform and has the right shape
-  const control = useInputControl(fieldMeta as any)
-  const [_, copy] = useCopyToClipboard()
-  const [copied, setCopied] = React.useState(false)
+  const { fieldState } = useFieldContext()
+  const [copied, copy] = useCopyToClipboard()
 
-  // Get the reactive value from input control
-  const value = control.value ?? placeholder
+  // Get the reactive value from field state
+  const value = fieldState?.value != null ? String(fieldState.value) : ''
+  const displayValue = value || placeholder
 
   const copyToClipboard = () => {
-    const stringValue = String(value)
-    if (!stringValue)
+    if (!value)
       return
 
-    copy(stringValue).then(() => {
+    copy(value).then(() => {
       toast.success('Copied to clipboard')
-      setCopied(true)
-      setTimeout(() => {
-        setCopied(false)
-      }, 2000)
     })
   }
 
@@ -90,7 +81,7 @@ export function FormCopyBox({
           contentClassName,
         )}
       >
-        <span className="truncate">{String(value)}</span>
+        <span className="truncate">{displayValue}</span>
       </div>
       <div className="flex items-center py-2 pr-3">
         {variant === 'icon-only'
@@ -122,3 +113,5 @@ export function FormCopyBox({
     </div>
   )
 }
+
+FormCopyBox.displayName = 'Form.CopyBox'

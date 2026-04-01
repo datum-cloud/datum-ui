@@ -15,3 +15,6 @@ CLAUDE.MD
 /docs/
 /specs/
 *.backup
+
+.opencode/
+.superpowers

@@ -1,17 +1,18 @@
 import type { FormFieldContextValue, FormFieldProps, FormFieldRenderProps } from '../types'
-import { useInputControl } from '@conform-to/react'
 import { CircleHelp } from 'lucide-react'
 import * as React from 'react'
 import { cn } from '../../../../utils/cn'
 import { Label } from '../../../base/label'
 import { Tooltip } from '../../../base/tooltip'
 import { Icon } from '../../../icons/icon-wrapper'
+import { useAdapter } from '../adapter-context'
 import { FieldProvider } from '../context/field-context'
 import { useFormContext } from '../context/form-context'
 
-/**
- * Internal FieldLabel component with hover-reveal tooltip
- */
+// ============================================================================
+// FieldLabel (internal - unchanged from original)
+// ============================================================================
+
 function FieldLabel({
   htmlFor,
   label,
@@ -66,36 +67,26 @@ function FieldLabel({
   )
 }
 
+// ============================================================================
+// FormField
+// ============================================================================
+
 /**
- * Form.Field - Field wrapper component
- *
- * Provides field context to children with:
- * - Automatic label rendering
- * - Error display
- * - Description text
- * - Required indicator
- * - Accessibility attributes
- *
- * Supports two patterns:
- * 1. ReactNode children - for standard Form inputs
- * 2. Render function - for custom components needing field access
+ * Form.Field - Field wrapper that provides label, errors, and description.
+ * Uses the active adapter to resolve field state by name.
  *
  * @example Standard usage
  * ```tsx
- * <Form.Field name="email" label="Email Address" required>
+ * <Form.Field name="email" label="Email" required>
  *   <Form.Input type="email" />
  * </Form.Field>
  * ```
  *
  * @example Render function for custom components
  * ```tsx
- * <Form.Field name="role" label="Role" required>
- *   {({ control, meta, fields }) => (
- *     <CustomSelect
- *       name={meta.name}
- *       value={control.value}
- *       onChange={control.change}
- *     />
+ * <Form.Field name="role" label="Role">
+ *   {({ control, meta }) => (
+ *     <CustomSelect value={control.value} onChange={control.change} />
  *   )}
  * </Form.Field>
  * ```
@@ -111,100 +102,61 @@ export function FormField({
   className,
   labelClassName,
 }: FormFieldProps) {
-  const { fields, form, isSubmitting } = useFormContext()
+  const adapter = useAdapter()
+  const { fields, isSubmitting, form } = useFormContext()
 
-  // Get field metadata - support nested paths
-  const fieldMeta = React.useMemo(() => {
-    const parts = name.split('.')
-    let current: any = fields
+  // Use the adapter to resolve the field by name
+  const fieldState = adapter.useField(name)
 
-    for (let i = 0; i < parts.length; i++) {
-      const part = parts[i]!
-      if (!current)
-        break
-
-      // Handle array access like "items.0.name"
-      if (/^\d+$/.test(part)) {
-        const fieldList = current.getFieldList?.()
-        if (fieldList) {
-          const item = fieldList[Number.parseInt(part, 10)]
-          // If there are more parts, get the fieldset
-          if (i < parts.length - 1 && item?.getFieldset) {
-            current = item.getFieldset()
-          }
-          else {
-            current = item
-          }
-        }
-        else {
-          current = current[part as keyof typeof current]
-        }
-      }
-      else {
-        // First check if it's a direct property (top-level field)
-        if (current[part as keyof typeof current] !== undefined) {
-          current = current[part as keyof typeof current]
-        }
-        else if (typeof current.getFieldset === 'function') {
-          // Try getFieldset for nested objects
-          current = current.getFieldset()[part as keyof ReturnType<typeof current.getFieldset>]
-        }
-        else {
-          current = undefined
-        }
-      }
-    }
-
-    return current
-  }, [fields, name])
-
-  // Derive values from fieldMeta (may be undefined)
-  const errors = fieldMeta?.errors
-  const hasErrors = errors && errors.length > 0
-  const fieldId = fieldMeta?.id ?? ''
+  // Derive values
+  const errors = fieldState.errors
+  const hasErrors = errors.length > 0
+  const fieldId = fieldState.id
   const descriptionId = description ? `${fieldId}-description` : undefined
   const errorId = hasErrors ? `${fieldId}-error` : undefined
 
-  // Context value - defined before early return to follow hooks rules
-  const contextValue: FormFieldContextValue = React.useMemo(
+  // Determine required: explicit prop takes precedence, then schema-derived
+  const fieldRequired = required || fieldState.required
+
+  // Context value for child components
+  const contextValue = React.useMemo<FormFieldContextValue>(
     () => ({
-      name: fieldMeta?.name ?? '',
+      name,
       id: fieldId,
       errors,
-      required,
+      required: fieldRequired,
       disabled,
-      fieldMeta,
+      fieldState,
     }),
-    [fieldMeta, fieldId, errors, required, disabled],
+    [name, fieldId, errors, fieldRequired, disabled, fieldState],
   )
 
-  // Early return after all hooks
-  if (!fieldMeta) {
-    console.warn(`Form.Field: Field "${name}" not found in form schema`)
-    return null
-  }
-
-  // Determine if children is a render function
+  // Render function support
   const isRenderFunction = typeof children === 'function'
 
-  // Render the field content
   const renderContent = () => {
     if (isRenderFunction) {
-      // Use the render function pattern
-      return (
-        <FormFieldRenderContent
-          fieldMeta={fieldMeta}
-          fields={fields}
-          form={form}
-          isSubmitting={isSubmitting}
-          required={required}
-          disabled={disabled}
-        >
-          {children}
-        </FormFieldRenderContent>
-      )
+      const renderProps: FormFieldRenderProps = {
+        field: fieldState,
+        control: {
+          value: fieldState.value,
+          change: fieldState.change,
+          blur: fieldState.blur,
+          focus: fieldState.focus,
+        },
+        meta: {
+          name,
+          id: fieldId,
+          errors,
+          required: fieldRequired,
+          disabled,
+        },
+        fields,
+        form,
+        isSubmitting,
+      }
+      return (children as (props: FormFieldRenderProps) => React.ReactNode)(renderProps)
     }
-    // Standard ReactNode children
     return children
   }
 
@@ -217,7 +169,7 @@ export function FormField({
             htmlFor={fieldId}
             label={label}
             hasErrors={hasErrors}
-            required={required}
+            required={fieldRequired}
             tooltip={tooltip}
             className={labelClassName}
           />
@@ -254,57 +206,6 @@ export function FormField({
       </div>
     </FieldProvider>
   )
-}
-
-/**
- * Internal component to handle render function pattern
- * This is needed because hooks (useInputControl) must be called unconditionally
- */
-function FormFieldRenderContent({
-  fieldMeta,
-  fields,
-  form,
-  isSubmitting,
-  required,
-  disabled,
-  children,
-}: {
-  fieldMeta: any
-  fields: Record<string, any>
-  form: any
-  isSubmitting: boolean
-  required: boolean
-  disabled: boolean
-  children: (props: FormFieldRenderProps) => React.ReactNode
-}) {
-  const control = useInputControl(fieldMeta)
-
-  const meta = React.useMemo(
-    () => ({
-      name: fieldMeta.name,
-      id: fieldMeta.id,
-      errors: fieldMeta.errors,
-      required,
-      disabled,
-    }),
-    [fieldMeta.name, fieldMeta.id, fieldMeta.errors, required, disabled],
-  )
-
-  const renderProps: FormFieldRenderProps = {
-    field: fieldMeta,
-    control: {
-      value: control.value,
-      change: control.change,
-      blur: control.blur,
-      focus: control.focus,
-    },
-    meta,
-    fields,
-    form,
-    isSubmitting,
-  }
-
-  return <>{children(renderProps)}</>
 }
 
 FormField.displayName = 'Form.Field'

@@ -1,36 +1,97 @@
 # Datum Form Library
 
-A compound component pattern form library built on top of Conform.js and Zod for easy form creation with built-in validation, error handling, and accessibility features.
+A compound component pattern form library with pluggable adapter support for form state management. Choose between **Conform.js** or **React Hook Form** as your form backend, with Zod for schema validation.
 
-## Installation
+## Adapter Setup
 
-The library is part of the datum-ui module. Import it directly:
+The form system requires an adapter to be set up at the root of your application. The adapter tells all `Form.*` components which form library to use internally.
+
+### Conform Adapter
+
+```bash
+npm install @conform-to/react @conform-to/zod zod
+```
 
 ```tsx
-import { Form } from '@datum-ui/components/form';
+import { ConformAdapter } from '@datum-cloud/datum-ui/form/adapters/conform'
+
+function App() {
+  return (
+    <ConformAdapter>
+      {/* All Form.* components use Conform.js internally */}
+      <YourApp />
+    </ConformAdapter>
+  )
+}
 ```
+
+### React Hook Form Adapter
+
+```bash
+npm install react-hook-form @hookform/resolvers zod
+```
+
+```tsx
+import { RHFAdapter } from '@datum-cloud/datum-ui/form/adapters/rhf'
+
+function App() {
+  return (
+    <RHFAdapter>
+      {/* All Form.* components use React Hook Form internally */}
+      <YourApp />
+    </RHFAdapter>
+  )
+}
+```
+
+### Missing Adapter
+
+If no adapter is provided, all `Form.*` components will throw a descriptive error:
+
+```
+useAdapter must be used within a FormAdapterProvider.
+Wrap your app with <ConformAdapter> or <RHFAdapter>.
+```
+
+## Dependencies
+
+| Dependency                  | Conform Adapter | RHF Adapter |
+| --------------------------- | --------------- | ----------- |
+| `zod` (>=4)                 | Required        | Required    |
+| `@conform-to/react` (>=1)   | Required        | --          |
+| `@conform-to/zod` (>=1)     | Required        | --          |
+| `react-hook-form` (>=7.55)  | --              | Required    |
+| `@hookform/resolvers` (>=5) | --              | Required    |
+
+All form library dependencies are **optional peer dependencies** -- you only install what your chosen adapter needs.
+
+Additional optional peer dependencies for specific components:
+
+| Dependency                | Component                               |
+| ------------------------- | --------------------------------------- |
+| `@stepperize/react` (>=4) | `FormStepper` (from `./form/stepper`)   |
+| `@tanstack/react-virtual` | `Form.Autocomplete` (virtualized lists) |
+| `sonner`                  | `Form.CopyBox` (toast notifications)    |
 
 ## Quick Start
 
-### Basic Form
-
 ```tsx
-import { Form } from '@datum-ui/components/form';
-import { z } from 'zod';
+import { Form } from '@datum-cloud/datum-ui/form'
+import { z } from 'zod'
 
 const userSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
   role: z.enum(['admin', 'user', 'viewer']),
-});
+})
 
 function UserForm() {
   return (
     <Form.Root
       schema={userSchema}
       onSubmit={async (data) => {
-        console.log('Form submitted:', data);
-        await saveUser(data);
+        console.log('Form submitted:', data)
+        await saveUser(data)
       }}>
       <Form.Field name="name" label="Full Name" required>
         <Form.Input placeholder="John Doe" />
@@ -50,9 +111,11 @@ function UserForm() {
 
       <Form.Submit>Create User</Form.Submit>
     </Form.Root>
-  );
+  )
 }
 ```
+
+> The form API is identical regardless of which adapter you use. Switch adapters by changing only the root provider -- no form code changes needed.
 
 ## Components
 
@@ -85,21 +148,17 @@ The root form component that provides context to all children. Supports two patt
 
 ```tsx
 <Form.Root schema={zodSchema} onSubmit={handleSubmit}>
-  {({ form, fields, isSubmitting, submit, reset }) => (
+  {({ form, fields, isSubmitting, isDirty, isValid, submit, reset }) => (
     <>
       <Form.Field name="email" label="Email">
         <Form.Input type="email" />
       </Form.Field>
 
-      {/* Direct access to form state - no Form.Custom needed */}
-      <Button disabled={isSubmitting} onClick={() => form.update({ value: { email: '' } })}>
-        Reset Email
+      <Button disabled={isSubmitting} onClick={() => reset()}>
+        Reset
       </Button>
 
-      {/* Access field values directly */}
-      {fields.email?.value && <p>Current: {fields.email.value}</p>}
-
-      <Form.Submit>Save</Form.Submit>
+      <Form.Submit disabled={!isDirty || !isValid}>Save</Form.Submit>
     </>
   )}
 </Form.Root>
@@ -107,9 +166,15 @@ The root form component that provides context to all children. Supports two patt
 
 The render function receives:
 
-- `form` - Conform form metadata (for `form.update()`, `form.reset()`, etc.)
-- `fields` - All form fields with their metadata and values
+- `form` - Normalized form instance (adapter-agnostic)
+- `fields` - All form fields metadata
 - `isSubmitting` - Whether the form is currently submitting
+- `isDirty` - Whether any field value differs from default
+- `isValid` - Whether the form currently passes validation
+- `isSubmitted` - Whether the form has been submitted at least once
+- `submitCount` - Number of times the form has been submitted
+- `dirtyFields` - Record of field names that have been changed
+- `touchedFields` - Record of field names that have been focused
 - `submit` - Function to programmatically submit the form
 - `reset` - Function to reset form to default values
 
@@ -138,7 +203,7 @@ Field wrapper with automatic label and error handling. Supports two patterns:
 
 ```tsx
 <Form.Field name="role" label="Role" required>
-  {({ control, meta, fields, field, form, isSubmitting }) => (
+  {({ control, meta, fields, form, isSubmitting }) => (
     <CustomSelect
       name={meta.name}
       id={meta.id}
@@ -152,33 +217,12 @@ Field wrapper with automatic label and error handling. Supports two patterns:
 
 The render function receives:
 
-- `field` - Conform field metadata
+- `field` - Normalized field state from the adapter
 - `control` - Input control with `value`, `change()`, `blur()`, `focus()`
 - `meta` - Field meta: `name`, `id`, `errors`, `required`, `disabled`
 - `fields` - All form fields (for multi-field scenarios)
-- `form` - Form metadata
+- `form` - Normalized form instance
 - `isSubmitting` - Whether form is submitting
-
-**Multi-Field Example** - When one field affects another:
-
-```tsx
-<Form.Field name="role" label="Role" required>
-  {({ control, meta, fields }) => {
-    // Access another field's control
-    const namespaceControl = useInputControl(fields.roleNamespace as any);
-
-    return (
-      <RoleSelect
-        value={control.value}
-        onSelect={(value) => {
-          control.change(value.role);
-          namespaceControl.change(value.namespace);
-        }}
-      />
-    );
-  }}
-</Form.Field>
-```
 
 #### `Form.Submit`
 
@@ -207,7 +251,7 @@ Non-submit button for actions like cancel, reset, etc. Automatically disabled du
 </Form.Button>
 
 // Reset button with custom styling
-<Form.Button onClick={() => form.reset()} type="secondary" theme="light">
+<Form.Button onClick={() => reset()} type="secondary" theme="light">
   Reset Form
 </Form.Button>
 
@@ -291,6 +335,88 @@ Props:
 </Form.Field>
 ```
 
+### Picker Components
+
+#### `Form.DatePicker`
+
+Date selection with calendar popover:
+
+```tsx
+<Form.Field name="birthDate" label="Birth Date" required>
+  <Form.DatePicker placeholder="Select date" />
+</Form.Field>
+```
+
+**Schema:** `z.string()` (ISO date string)
+**Props:** All CalendarDatePicker props
+
+#### `Form.TimePicker`
+
+Time input (HH:mm format):
+
+```tsx
+<Form.Field name="availableTime" label="Available Time" required>
+  <Form.TimePicker />
+</Form.Field>
+```
+
+**Schema:** `z.string()` (HH:mm format)
+**Props:** min, max, step, disabled
+
+#### `Form.DateTimePicker`
+
+Combined date and time selection:
+
+```tsx
+<Form.Field name="appointmentTime" label="Appointment" required>
+  <Form.DateTimePicker showTimezoneIndicator />
+</Form.Field>
+```
+
+**Schema:** `z.string()` (ISO 8601 datetime string)
+**Props:** timezone, showTimezoneIndicator, disabled
+
+#### `Form.Transfer`
+
+Dual-panel item selector with search:
+
+```tsx
+<Form.Field name="assignedUsers" label="Assigned Users" required>
+  <Form.Transfer
+    items={users}
+    itemKey="id"
+    itemLabel="name"
+    itemGroup="role"
+  />
+</Form.Field>
+```
+
+**Schema:** `z.array(z.string())` (array of selected keys)
+**Props:** items, itemKey, itemLabel, itemGroup, searchable
+
+#### `Form.Combobox`
+
+Searchable single-select dropdown:
+
+```tsx
+<Form.Field name="country" label="Country" required>
+  <Form.Combobox
+    options={[
+      { value: 'us', label: 'United States' },
+      { value: 'uk', label: 'United Kingdom' },
+    ]}
+    placeholder="Select country"
+  />
+</Form.Field>
+```
+
+**Schema:** `z.string()`
+**Props:** options, placeholder, searchable, clearable
+
+#### `Form.Autosearch`
+
+Alias for `Form.Autocomplete` (virtualized search dropdown). See Autocomplete documentation for details.
+
 ### Advanced Components
 
 #### `Form.When` - Conditional Rendering
@@ -362,14 +488,24 @@ Access raw form context for complex use cases.
       fields={fields}
       onCustomAction={() => {
         // Custom logic
-        submit();
+        submit()
       }}
     />
   )}
 </Form.Custom>
 ```
 
-### Stepper Components
+### Stepper Components (Separate Import)
+
+The stepper is shipped as a separate entry point to avoid pulling in `@stepperize/react` for basic forms.
+
+```bash
+npm install @stepperize/react
+```
+
+```tsx
+import { FormStepper, FormStep, StepperNavigation, StepperControls } from '@datum-cloud/datum-ui/form/stepper'
+```
 
 #### Multi-Step Form
 
@@ -378,47 +514,47 @@ const steps = [
   { id: 'account', label: 'Account', description: 'Create your account', schema: accountSchema },
   { id: 'profile', label: 'Profile', schema: profileSchema },
   { id: 'confirm', label: 'Confirm', schema: confirmSchema },
-];
+]
 
-<Form.Stepper
+<FormStepper
   steps={steps}
   onComplete={async (data) => {
-    console.log('All data:', data);
-    await submitForm(data);
+    console.log('All data:', data)
+    await submitForm(data)
   }}
   onStepChange={(stepId, direction) => {
-    console.log(`Moving ${direction} to step: ${stepId}`);
+    console.log(`Moving ${direction} to step: ${stepId}`)
   }}
   initialStep="account">
-  <Form.StepperNavigation variant="horizontal" labelOrientation="vertical" />
+  <StepperNavigation variant="horizontal" labelOrientation="vertical" />
 
-  <Form.Step id="account">
+  <FormStep id="account">
     <Form.Field name="email" label="Email" required>
       <Form.Input type="email" />
     </Form.Field>
     <Form.Field name="password" label="Password" required>
       <Form.Input type="password" />
     </Form.Field>
-  </Form.Step>
+  </FormStep>
 
-  <Form.Step id="profile">
+  <FormStep id="profile">
     <Form.Field name="name" label="Full Name" required>
       <Form.Input />
     </Form.Field>
     <Form.Field name="bio" label="Bio">
       <Form.Textarea rows={4} />
     </Form.Field>
-  </Form.Step>
+  </FormStep>
 
-  <Form.Step id="confirm">
+  <FormStep id="confirm">
     <p>Please review your information before submitting.</p>
-  </Form.Step>
+  </FormStep>
 
-  <Form.StepperControls
+  <StepperControls
     prevLabel={(isFirst) => (isFirst ? 'Cancel' : 'Previous')}
     nextLabel={(isLast) => (isLast ? 'Submit' : 'Next')}
   />
-</Form.Stepper>;
+</FormStepper>
 ```
 
 ## Hooks
@@ -429,13 +565,13 @@ Access the form context from any component inside `Form.Root`.
 
 ```tsx
 function MyComponent() {
-  const { form, fields, isSubmitting, submit, reset } = Form.useFormContext();
+  const { form, fields, isSubmitting, submit, reset } = Form.useFormContext()
 
   return (
     <button onClick={submit} disabled={isSubmitting}>
       Submit
     </button>
-  );
+  )
 }
 ```
 
@@ -445,7 +581,7 @@ Access the current field context from inside `Form.Field`.
 
 ```tsx
 function MyInput() {
-  const { name, id, errors, required, disabled, fieldMeta } = Form.useFieldContext();
+  const { name, id, errors, required, disabled, fieldState } = Form.useFieldContext()
 
   return (
     <input
@@ -455,7 +591,7 @@ function MyInput() {
       disabled={disabled}
       aria-invalid={!!errors?.length}
     />
-  );
+  )
 }
 ```
 
@@ -465,7 +601,7 @@ Access and control a specific field by name.
 
 ```tsx
 function MyCustomField({ name }: { name: string }) {
-  const { field, control, meta, errors } = Form.useField(name);
+  const { field, control, meta, errors } = Form.useField(name)
 
   return (
     <input
@@ -474,7 +610,7 @@ function MyCustomField({ name }: { name: string }) {
       onChange={(e) => control.change(e.target.value)}
       onBlur={control.blur}
     />
-  );
+  )
 }
 ```
 
@@ -484,28 +620,59 @@ Watch a field's value and re-render when it changes.
 
 ```tsx
 function PriceDisplay() {
-  const quantity = Form.useWatch('quantity');
-  const price = Form.useWatch('price');
+  const quantity = Form.useWatch('quantity')
+  const price = Form.useWatch('price')
 
-  const total = (Number(quantity) || 0) * (Number(price) || 0);
+  const total = (Number(quantity) || 0) * (Number(price) || 0)
 
-  return <p>Total: ${total.toFixed(2)}</p>;
+  return <p>Total: ${total.toFixed(2)}</p>
 }
 ```
 
-### `Form.useStepper()`
+### `Form.useFormState()`
 
-Access stepper context inside `Form.Stepper`.
+Access form state (dirty, valid, submitted, touched fields) from any component inside `Form.Root`.
 
 ```tsx
+function SaveButton() {
+  const { isDirty, isValid, isSubmitting, isSubmitted, submitCount, dirtyFields, touchedFields } = Form.useFormState()
+
+  return (
+    <div>
+      <button type="submit" disabled={!isDirty || !isValid || isSubmitting}>
+        {isSubmitting ? 'Saving...' : 'Save'}
+      </button>
+      {isSubmitted && <p>Form submitted {submitCount} time(s)</p>}
+    </div>
+  )
+}
+```
+
+Returns:
+
+- `isDirty` - Whether any field value differs from its default
+- `isValid` - Whether the form currently passes schema validation
+- `isSubmitting` - Whether a submission is in progress
+- `isSubmitted` - Whether the form has been submitted at least once
+- `submitCount` - Number of times the form has been submitted
+- `dirtyFields` - `Record<string, boolean>` of fields that have been changed
+- `touchedFields` - `Record<string, boolean>` of fields that have been focused
+
+### `useStepper()` (Separate Import)
+
+Access stepper context inside `FormStepper`. Imported from `@datum-cloud/datum-ui/form/stepper`.
+
+```tsx
+import { useStepper } from '@datum-cloud/datum-ui/form/stepper'
+
 function StepIndicator() {
-  const { current, currentIndex, steps, isFirst, isLast } = Form.useStepper();
+  const { current, currentIndex, steps, isFirst, isLast } = useStepper()
 
   return (
     <p>
       Step {currentIndex + 1} of {steps.length}: {current.label}
     </p>
-  );
+  )
 }
 ```
 
@@ -514,45 +681,45 @@ function StepIndicator() {
 All components are fully typed. Import types directly:
 
 ```tsx
-import { Form } from '@datum-ui/components/form';
-import type { FormRootProps, FormFieldProps, StepConfig } from '@datum-ui/components/form';
+import { Form } from '@datum-cloud/datum-ui/form'
+import type {
+  FormAdapter,
+  FormRootProps,
+  FormFieldProps,
+  NormalizedFieldState,
+  NormalizedFormInstance,
+  StepConfig,
+} from '@datum-cloud/datum-ui/form'
 ```
 
-## Migration from Old Form System
+## Adapter Architecture
 
-### Before
+The form system uses a pluggable adapter pattern (similar to nuqs). The adapter is set once at the application root and all `Form.*` components use it transparently.
 
-```tsx
-const [form, fields] = useForm({
-  id: 'user-form',
-  constraint: getZodConstraint(userSchema),
-  shouldValidate: 'onBlur',
-  shouldRevalidate: 'onInput',
-  onValidate({ formData }) {
-    return parseWithZod(formData, { schema: userSchema });
-  },
-});
-
-<FormProvider context={form.context}>
-  <Form {...getFormProps(form)} method="POST">
-    <AuthenticityTokenInput />
-    <Field isRequired label="Name" errors={fields.name.errors}>
-      <Input {...getInputProps(fields.name, { type: 'text' })} />
-    </Field>
-    <Button type="submit">Submit</Button>
-  </Form>
-</FormProvider>;
+```
+<ConformAdapter>        or        <RHFAdapter>
+  └── Form.Root                     └── Form.Root
+       ├── Form.Field                    ├── Form.Field
+       │   └── Form.Input               │   └── Form.Input
+       └── Form.Submit                  └── Form.Submit
 ```
 
-### After
+### Creating a Custom Adapter
+
+Implement the `FormAdapter` interface:
 
 ```tsx
-<Form.Root schema={userSchema} onSubmit={handleSubmit}>
-  <Form.Field name="name" label="Name" required>
-    <Form.Input />
-  </Form.Field>
-  <Form.Submit>Submit</Form.Submit>
-</Form.Root>
+import type { FormAdapter } from '@datum-cloud/datum-ui/form'
+
+const myAdapter: FormAdapter = {
+  name: 'my-adapter',
+  useCreateForm: (props) => { /* ... */ },
+  useField: (name) => { /* ... */ },
+  useWatch: (name) => { /* ... */ },
+  useWatchAll: (names) => { /* ... */ },
+  useFieldArray: (name) => { /* ... */ },
+  FormProvider: ({ instance, children }) => { /* ... */ },
+}
 ```
 
 ## Accessibility
@@ -564,11 +731,3 @@ All components include built-in accessibility features:
 - Keyboard navigation support
 - Required field indicators
 - Focus management
-
-## Dependencies
-
-- `@conform-to/react` - Form state management
-- `@conform-to/zod` - Zod integration
-- `zod` - Schema validation
-- `@radix-ui/*` - UI primitives
-- `@shadcn/lib/utils` - Utility functions

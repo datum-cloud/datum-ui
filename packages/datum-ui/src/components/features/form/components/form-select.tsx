@@ -1,5 +1,4 @@
 import type { FormSelectItemProps, FormSelectProps } from '../types'
-import { useInputControl } from '@conform-to/react'
 import * as React from 'react'
 import { cn } from '../../../../utils/cn'
 import {
@@ -28,31 +27,30 @@ import { useFieldContext } from '../context/field-context'
  * ```
  */
 export function FormSelect({ placeholder, disabled, className, children }: FormSelectProps) {
-  const { fieldMeta, disabled: fieldDisabled, errors } = useFieldContext()
-
-  const control = useInputControl(fieldMeta as any)
+  const { id, errors, disabled: fieldDisabled, fieldState } = useFieldContext()
   const isDisabled = disabled ?? fieldDisabled
   const hasErrors = errors && errors.length > 0
 
-  // Ensure value is always a string for Select
-  const selectValue = Array.isArray(control.value) ? control.value[0] : control.value
+  const value = fieldState?.value != null ? String(fieldState.value) : undefined
 
   return (
     <Select
-      name={fieldMeta.name}
-      value={selectValue ?? ''}
-      onValueChange={control.change}
+      value={value}
+      onValueChange={val => fieldState?.change(val)}
       disabled={isDisabled}
     >
       <SelectTrigger
-        id={fieldMeta.id}
-        aria-invalid={hasErrors || undefined}
-        aria-describedby={hasErrors ? `${fieldMeta.id}-error` : undefined}
+        id={id}
         className={cn(className)}
+        aria-invalid={hasErrors || undefined}
+        aria-describedby={hasErrors ? `${id}-error` : undefined}
+        onBlur={() => fieldState?.blur()}
       >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent>{children}</SelectContent>
+      <SelectContent>
+        {children}
+      </SelectContent>
     </Select>
   )
 }

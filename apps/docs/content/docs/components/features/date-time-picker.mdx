@@ -1,0 +1,230 @@
+---
+title: DateTimePicker
+description: Combined date and time selection with timezone support and form integration.
+---
+
+import { DateTimePicker } from '@/components/ui'
+
+## Overview
+
+The `DateTimePicker` component provides a combined date and time input with calendar popover for date selection and a time input field. It supports timezone-aware datetime handling, storing values in UTC while displaying them in the user's local timezone.
+
+## Dependencies
+
+This component requires the following packages:
+
+```package-install
+react-day-picker date-fns date-fns-tz
+```
+
+## Usage
+
+### Standalone
+
+```tsx
+import { DateTimePicker } from '@datum-cloud/datum-ui/date-time-picker'
+import { useState } from 'react'
+
+const [value, setValue] = useState<string>()
+
+<DateTimePicker
+  value={value}
+  onChange={setValue}
+  showTimezoneIndicator
+/>
+```
+
+### With Forms
+
+The DateTimePicker integrates seamlessly with the Form system:
+
+```tsx
+import { Form } from '@datum-cloud/datum-ui/form'
+import { z } from 'zod'
+
+const schema = z.object({
+  appointmentTime: z.string().optional(),
+})
+
+<Form.Root schema={schema} onSubmit={handleSubmit}>
+  <Form.Field name="appointmentTime" label="Appointment Time">
+    <Form.DateTimePicker showTimezoneIndicator />
+  </Form.Field>
+  <Form.Submit>Submit</Form.Submit>
+</Form.Root>
+```
+
+## Variants
+
+### DatePicker (Date Only)
+
+Select only a date without time:
+
+```tsx
+import { DateTimePicker } from '@datum-cloud/datum-ui/date-time-picker'
+
+<DateTimePicker
+  mode="date"
+  value={value}
+  onChange={setValue}
+  placeholder="Select a date"
+/>
+
+// Or use Form.DatePicker
+<Form.Field name="birthDate" label="Birth Date">
+  <Form.DatePicker placeholder="Select your birth date" />
+</Form.Field>
+```
+
+### TimePicker (Time Only)
+
+Select only a time:
+
+```tsx
+<DateTimePicker
+  mode="time"
+  value={value}
+  onChange={setValue}
+  placeholder="Select a time"
+/>
+
+// Or use Form.TimePicker
+<Form.Field name="availableTime" label="Available Time">
+  <Form.TimePicker />
+</Form.Field>
+```
+
+### DateTimePicker (Date and Time)
+
+Select both date and time:
+
+```tsx
+<DateTimePicker
+  mode="datetime"
+  value={value}
+  onChange={setValue}
+  showTimezoneIndicator
+/>
+
+// Or use Form.DateTimePicker
+<Form.Field name="appointmentTime" label="Appointment">
+  <Form.DateTimePicker showTimezoneIndicator />
+</Form.Field>
+```
+
+## Examples
+
+### With Timezone Indicator
+
+Display the user's timezone next to the time input:
+
+```tsx
+<DateTimePicker
+  mode="datetime"
+  value={value}
+  onChange={setValue}
+  showTimezoneIndicator
+/>
+```
+
+### With Date Constraints
+
+Limit selectable dates using min/max dates or disable future/past:
+
+```tsx
+<DateTimePicker
+  mode="date"
+  value={value}
+  onChange={setValue}
+  minDate={new Date('2024-01-01')}
+  maxDate={new Date('2024-12-31')}
+/>
+
+<DateTimePicker
+  mode="date"
+  value={value}
+  onChange={setValue}
+  disableFuture
+/>
+```
+
+### Form Integration with Schema Constraints
+
+When used with Forms, the component automatically extracts min/max date constraints from your Zod schema:
+
+```tsx
+const schema = z.object({
+  startDate: z.string()
+    .refine(date => new Date(date) >= new Date('2024-01-01'), 'Must be after 2024')
+    .refine(date => new Date(date) <= new Date('2024-12-31'), 'Must be before 2025'),
+})
+
+<Form.Root schema={schema} onSubmit={handleSubmit}>
+  <Form.Field name="startDate" label="Start Date">
+    <Form.DatePicker />
+  </Form.Field>
+</Form.Root>
+```
+
+## Timezone Handling
+
+The DateTimePicker stores all datetime values in **UTC ISO 8601 format** (e.g., `2024-03-15T14:30:00.000Z`) while displaying them in the user's local timezone.
+
+**Storage:** `2024-03-15T14:30:00.000Z` (UTC)  
+**Display:** `3/15/2024, 9:30 AM` (EST) or `3/15/2024, 2:30 PM` (GMT)
+
+This ensures consistent datetime handling across different timezones and server-side processing.
+
+## Props
+
+### DateTimePicker
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | -- | Current value in UTC ISO 8601 format |
+| `onChange` | `(value: string \| undefined) => void` | -- | Callback when value changes |
+| `mode` | `'date' \| 'time' \| 'datetime'` | `'datetime'` | Picker mode |
+| `placeholder` | `string` | `'Select date and time'` | Input placeholder |
+| `disabled` | `boolean` | `false` | Disable the picker |
+| `showTimezoneIndicator` | `boolean` | `false` | Show timezone label (e.g., "EST") |
+| `minDate` | `Date` | -- | Earliest selectable date |
+| `maxDate` | `Date` | -- | Latest selectable date |
+| `disableFuture` | `boolean` | `false` | Prevent selecting future dates |
+| `disablePast` | `boolean` | `false` | Prevent selecting past dates |
+| `className` | `string` | -- | Additional CSS classes |
+
+### Form.DatePicker
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `placeholder` | `string` | -- | Input placeholder |
+| `disabled` | `boolean` | `false` | Disable the picker |
+| `className` | `string` | -- | Additional CSS classes |
+| `numberOfMonths` | `1 \| 2` | `1` | Number of calendar months |
+| `minDate` | `Date` | -- | Override schema min date |
+| `maxDate` | `Date` | -- | Override schema max date |
+| `disableFuture` | `boolean` | `false` | Prevent future dates |
+| `disablePast` | `boolean` | `false` | Prevent past dates |
+
+### Form.TimePicker
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `placeholder` | `string` | `'--:--'` | Input placeholder |
+| `disabled` | `boolean` | `false` | Disable the picker |
+| `className` | `string` | -- | Additional CSS classes |
+
+### Form.DateTimePicker
+
+Combines all props from Form.DatePicker and Form.TimePicker, plus:
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `showTimezoneIndicator` | `boolean` | `false` | Show timezone label |
+
+## Accessibility
+
+- Full keyboard navigation support for calendar
+- ARIA labels for screen readers
+- Focus management when opening/closing popover
+- Time input accepts both 12-hour and 24-hour formats

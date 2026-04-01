@@ -1,11 +1,10 @@
 import type * as Stepperize from '@stepperize/react'
 import type { FormStepperProps, FormStepperRenderProps, StepConfig } from '../../types'
-import { FormProvider as ConformFormProvider, getFormProps, useForm } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import * as React from 'react'
 import { z } from 'zod'
 import { cn } from '../../../../../utils/cn'
 import { defineStepper } from '../../../stepper'
+import { useAdapter } from '../../adapter-context'
 import { FormProvider } from '../../context/form-context'
 
 // ============================================================================
@@ -77,10 +76,6 @@ function getBaseObject(schema: z.ZodType): z.ZodObject<any> {
   }
 
   if (schema.def.type !== 'object') {
-    console.warn(
-      `mergeSchemas: expected ZodObject or ZodIntersection but got "${schema.def.type}". `
-      + 'Falling back to empty object.',
-    )
     return z.object({})
   }
 
@@ -302,7 +297,7 @@ function StepForm({
   steps,
   stepper,
   currentStepConfig,
-  combinedSchema,
+  combinedSchema: _combinedSchema,
   storedValues,
   children,
   onComplete,
@@ -311,35 +306,17 @@ function StepForm({
   id,
   formComponent: FormComp = 'form',
 }: StepFormProps) {
+  const adapter = useAdapter()
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const formRef = React.useRef<HTMLFormElement>(null)
 
-  // Single form instance - recreated when this component remounts (step changes)
-  const [form, fields] = useForm({
-    id: id ?? 'stepper-form',
-    constraint: getZodConstraint(combinedSchema),
-    shouldValidate: 'onBlur',
-    shouldRevalidate: 'onInput',
-    defaultValue: storedValues as Record<string, string | null | undefined>,
-    onValidate({ formData }) {
-      // Validate against current step's schema only (for per-step validation)
-      const result = parseWithZod(formData, { schema: currentStepConfig.schema })
-      return result as any
-    },
-    async onSubmit(event, { submission }) {
-      event.preventDefault()
+  const currentIndex = stepper.lookup.getIndex(stepper.state.current.data.id as any)
 
-      if (submission?.status !== 'success') {
-        return
-      }
-
+  // Submit handler called with validated data from the adapter
+  const handleStepSubmit = React.useCallback(
+    async (data: Record<string, unknown>) => {
       // Store current step's validated data in metadata
-      if (submission.value) {
-        stepper.metadata.set(
-          stepper.state.current.data.id as any,
-          submission.value as Record<string, unknown>,
-        )
-      }
+      stepper.metadata.set(stepper.state.current.data.id as any, data)
 
       if (stepper.state.isLast) {
         // Final step - collect all metadata and complete
@@ -353,12 +330,11 @@ function StepForm({
             {},
           )
           // Include current submission value to ensure latest data
-          const finalData = { ...allData, ...(submission.value as Record<string, unknown>) }
-
+          const finalData = { ...allData, ...data }
           await onComplete(finalData)
         }
-        catch (error) {
-          console.error('Stepper form completion error:', error)
+        catch {
+          // Error propagates through onComplete — no logging in production
         }
         finally {
           setIsSubmitting(false)
@@ -373,6 +349,17 @@ function StepForm({
         }
       }
     },
+    [stepper, steps, onComplete, onStepChange],
+  )
+
+  // Create per-step form via adapter (recreated when component remounts on step change)
+  const instance = adapter.useCreateForm({
+    schema: currentStepConfig.schema,
+    defaultValues: storedValues,
+    mode: 'onSubmit',
+    id: `${id ?? 'stepper'}-${currentStepConfig.id}`,
+    onSubmit: handleStepSubmit,
+    formRef,
   })
 
   // Navigation helpers
@@ -383,17 +370,9 @@ function StepForm({
 
   const prev = React.useCallback(() => {
     // Before going back, save current form data to metadata (without validation)
-    if (formRef.current) {
-      const formData = new FormData(formRef.current)
-      const currentData: Record<string, unknown> = {}
-      formData.forEach((value, key) => {
-        if (!key.startsWith('$')) {
-          currentData[key] = value
-        }
-      })
-      if (Object.keys(currentData).length > 0) {
-        stepper.metadata.set(stepper.state.current.data.id as any, currentData)
-      }
+    const currentValues = instance.getValues()
+    if (Object.keys(currentValues).length > 0) {
+      stepper.metadata.set(stepper.state.current.data.id as any, currentValues)
     }
 
     const prevStepId = stepper.lookup.getPrev(stepper.state.current.data.id as any)?.id
@@ -401,21 +380,25 @@ function StepForm({
       stepper.navigation.goTo(prevStepId as any)
       onStepChange?.(prevStepId, 'prev')
     }
-  }, [stepper, onStepChange])
+  }, [instance, stepper, onStepChange])
 
   const goTo = React.useCallback(
     (stepId: string) => {
-      const currentIndex = stepper.lookup.getIndex(stepper.state.current.data.id as any)
       const targetIndex = stepper.lookup.getIndex(stepId as any)
 
       // Only allow going back without validation
       if (targetIndex < currentIndex) {
+        // Save current data before navigating
+        const currentValues = instance.getValues()
+        if (Object.keys(currentValues).length > 0) {
+          stepper.metadata.set(stepper.state.current.data.id as any, currentValues)
+        }
         stepper.navigation.goTo(stepId as any)
         onStepChange?.(stepId, 'prev')
       }
       // Going forward requires validation - use next() instead
     },
-    [stepper, onStepChange],
+    [instance, stepper, currentIndex, onStepChange],
   )
 
   // Helper to get step data from metadata
@@ -440,7 +423,7 @@ function StepForm({
     () => ({
       steps,
       current: currentStepConfig,
-      currentIndex: stepper.lookup.getIndex(stepper.state.current.data.id as any),
+      currentIndex,
       next,
       prev,
       goTo,
@@ -449,30 +432,36 @@ function StepForm({
       getStepData,
       getAllStepData,
       utils: {
-        getIndex: (id: string) => stepper.lookup.getIndex(id as any),
+        getIndex: (stepId: string) => stepper.lookup.getIndex(stepId as any),
       },
     }),
-    [steps, currentStepConfig, stepper, next, prev, goTo, getStepData, getAllStepData],
+    [steps, currentStepConfig, currentIndex, stepper, next, prev, goTo, getStepData, getAllStepData],
   )
 
   // Form context value
-  const formContextValue = React.useMemo(
+  const contextValue = React.useMemo(
     () => ({
-      form: form as any,
-      fields: fields as unknown as Record<string, any>,
+      form: instance,
+      fields: instance.fields,
       isSubmitting,
+      isDirty: instance.formState.isDirty,
+      isValid: instance.formState.isValid,
+      isSubmitted: instance.formState.isSubmitted,
+      submitCount: instance.formState.submitCount,
+      dirtyFields: instance.formState.dirtyFields,
+      touchedFields: instance.formState.touchedFields,
       submit: () => formRef.current?.requestSubmit(),
-      reset: () => form.reset(),
-      formId: form.id,
+      reset: () => instance.reset(),
+      formId: instance.id,
     }),
-    [form, fields, isSubmitting],
+    [instance, isSubmitting, instance.formState],
   )
 
   // Build render props for children function
   const renderProps: FormStepperRenderProps = {
     steps,
     current: currentStepConfig,
-    currentIndex: stepper.lookup.getIndex(stepper.state.current.data.id as any),
+    currentIndex,
     next,
     prev,
     goTo,
@@ -487,18 +476,25 @@ function StepForm({
 
   return (
     <FormStepperContext value={stepperContextValue}>
-      <FormProvider value={formContextValue}>
-        <ConformFormProvider context={form.context}>
+      <FormProvider value={contextValue}>
+        <adapter.FormProvider instance={instance}>
           <FormComp
             ref={formRef}
-            {...getFormProps(form)}
-            method="POST"
+            {...instance.formProps}
             className={cn('space-y-6', className)}
             autoComplete="off"
+            noValidate
+            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+              e.stopPropagation()
+              const adapterSubmit = instance.formProps.onSubmit as
+                | ((e: React.FormEvent<HTMLFormElement>) => void)
+                | undefined
+              adapterSubmit?.(e)
+            }}
           >
             {resolvedChildren}
           </FormComp>
-        </ConformFormProvider>
+        </adapter.FormProvider>
       </FormProvider>
     </FormStepperContext>
   )

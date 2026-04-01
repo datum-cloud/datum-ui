@@ -1,5 +1,4 @@
 import type { FormInputProps } from '../types'
-import { getInputProps } from '@conform-to/react'
 import * as React from 'react'
 import { cn } from '../../../../utils/cn'
 import { Input } from '../../../base/input'
@@ -18,22 +17,24 @@ import { useFieldContext } from '../context/field-context'
  * ```
  */
 export function FormInput({ ref, type = 'text', className, disabled, ...props }: FormInputProps & { ref?: React.RefObject<HTMLInputElement | null> }) {
-  const { fieldMeta, disabled: fieldDisabled, errors } = useFieldContext()
-
-  const inputProps = getInputProps(fieldMeta, { type })
+  const { id, errors, disabled: fieldDisabled, fieldState } = useFieldContext()
   const isDisabled = disabled ?? fieldDisabled
   const hasErrors = errors && errors.length > 0
 
   return (
     <Input
-      ref={ref}
-      {...inputProps}
       {...props}
+      ref={ref}
+      id={id}
+      name={fieldState?.name}
       type={type}
+      value={fieldState?.value as string ?? ''}
+      onChange={e => fieldState?.change(e.target.value)}
+      onBlur={() => fieldState?.blur()}
+      className={cn('!text-xs', className)}
       disabled={isDisabled}
       aria-invalid={hasErrors || undefined}
-      aria-describedby={hasErrors ? `${fieldMeta.id}-error` : undefined}
-      className={cn('!text-xs', className)}
+      aria-describedby={hasErrors ? `${id}-error` : undefined}
     />
   )
 }
