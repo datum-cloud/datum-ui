@@ -93,6 +93,7 @@ export function FormDatePicker({
     (range: { from: Date, to: Date } | undefined) => {
       if (!range) {
         fieldState?.change(undefined)
+        fieldState?.blur()
         return
       }
 
@@ -107,6 +108,7 @@ export function FormDatePicker({
           to: range.to?.toISOString(),
         })
       }
+      fieldState?.blur()
     },
     [fieldState, numberOfMonths],
   )

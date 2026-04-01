@@ -67,6 +67,8 @@ export interface FormRootRenderProps {
   dirtyFields: Record<string, boolean>
   /** Record of which fields have been focused and blurred */
   touchedFields: Record<string, boolean>
+  /** Validation mode controlling when errors are displayed */
+  mode: 'onChange' | 'onBlur' | 'onSubmit'
   /** Programmatically submit the form */
   submit: () => void
   /** Reset form to default values */
@@ -605,6 +607,14 @@ export interface FormContextValue<_T extends Record<string, unknown> = Record<st
   dirtyFields: Record<string, boolean>
   /** Record of which fields have been focused and blurred */
   touchedFields: Record<string, boolean>
+  /** Validation mode controlling when errors are displayed */
+  mode: 'onChange' | 'onBlur' | 'onSubmit'
+  /** Array of field names that are display-touched (for error filtering) */
+  displayTouchedFields: string[]
+  /** Mark a field as display-touched */
+  markFieldTouched: (fieldName: string) => void
+  /** Mark all fields as display-touched */
+  markAllFieldsTouched: () => void
   /** Submit the form */
   submit: () => void
   /** Reset the form */

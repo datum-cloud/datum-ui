@@ -29,29 +29,29 @@ export function Transfer<T,>({
   })
 
   // Select item (move to target)
-  const handleSelect = (key: string) => {
+  const handleSelect = React.useCallback((key: string) => {
     if (value.includes(key))
       return
     onChange([...value, key])
-  }
+  }, [value, onChange])
 
   // Deselect item (remove from target)
-  const handleDeselect = (key: string) => {
+  const handleDeselect = React.useCallback((key: string) => {
     onChange(value.filter(k => k !== key))
-  }
+  }, [value, onChange])
 
   // Select all filtered items
-  const handleSelectAll = () => {
+  const handleSelectAll = React.useCallback(() => {
     const sourceKeys = state.filteredSourceItems.map(item => item.key)
     const existing = new Set(value)
     const newKeys = sourceKeys.filter(k => !existing.has(k))
     onChange([...value, ...newKeys])
-  }
+  }, [state.filteredSourceItems, value, onChange])
 
   // Clear all selected items
-  const handleClearAll = () => {
+  const handleClearAll = React.useCallback(() => {
     onChange([])
-  }
+  }, [onChange])
 
   return (
     <div className={cn('flex h-[400px]', className)}>

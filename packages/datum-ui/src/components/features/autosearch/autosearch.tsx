@@ -13,6 +13,7 @@ import {
 } from '../../base/command'
 import { Input } from '../../base/input'
 import { Popover, PopoverContent, PopoverTrigger } from '../../base/popover'
+import { Tooltip } from '../../base/tooltip'
 import { defaultAutosearchValue } from './autosearch.types'
 
 /**
@@ -222,9 +223,11 @@ export function Autosearch({
 
                   {/* No results indicator */}
                   {showNoResults && (
-                    <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2">
-                      <AlertCircle className="text-destructive h-4 w-4" />
-                    </div>
+                    <Tooltip message={emptyMessage}>
+                      <span className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2">
+                        <AlertCircle className="text-destructive h-4 w-4" />
+                      </span>
+                    </Tooltip>
                   )}
                 </div>
               </PopoverTrigger>

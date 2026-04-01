@@ -85,6 +85,9 @@ describe('adapter contract types', () => {
       submit: () => {},
       reset: () => {},
       getValues: () => ({}),
+      touchedFields: [],
+      markFieldTouched: () => {},
+      markAllFieldsTouched: () => {},
       raw: null,
     }
     expect(instance.id).toBe('form-1')

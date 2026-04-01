@@ -52,7 +52,10 @@ export function FormAutosearch({
       name={fieldState?.name}
       id={id}
       value={value}
-      onValueChange={val => fieldState?.change(val)}
+      onValueChange={(val) => {
+        fieldState?.change(val)
+        fieldState?.blur()
+      }}
       disabled={isDisabled}
       inputClassName={cn(hasErrors && 'border-destructive', inputClassName)}
       className={className}

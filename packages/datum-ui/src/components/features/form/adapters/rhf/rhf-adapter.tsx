@@ -17,6 +17,7 @@ import {
   useFormContext as useRHFFormContext,
   useWatch as useRHFWatch,
 } from 'react-hook-form'
+import { useDisplayTouched } from '../../hooks/use-display-touched'
 import { getFieldConstraints } from '../../utils/get-field-constraints'
 import { getSchemaDefaults } from '../../utils/get-schema-defaults'
 
@@ -29,12 +30,6 @@ const RHFFormIdContext = React.createContext<string>('form')
 /** Create a React Hook Form instance and normalize it to the adapter interface. */
 function useRHFCreateForm(props: CreateFormProps): NormalizedFormInstance {
   const { schema, defaultValues, mode, id, onSubmit, formRef } = props
-
-  const modeMap = {
-    onBlur: 'onBlur' as const,
-    onChange: 'onChange' as const,
-    onSubmit: 'onSubmit' as const,
-  }
 
   // Always provide defaultValues to RHF so isDirty tracking works correctly.
   // Without explicit defaults, RHF uses `{}` as the baseline, making isDirty
@@ -50,7 +45,8 @@ function useRHFCreateForm(props: CreateFormProps): NormalizedFormInstance {
   const form = useForm({
     resolver: zodResolver(schema as any),
     defaultValues: mergedDefaults as Record<string, any>,
-    mode: modeMap[mode],
+    mode, // Honour the caller's validation mode (onBlur, onChange, onSubmit)
+    reValidateMode: 'onChange', // After first validation, re-validate on change for quick error clearing
   })
 
   // Destructure formState properties to subscribe to RHF's Proxy
@@ -115,6 +111,9 @@ function useRHFCreateForm(props: CreateFormProps): NormalizedFormInstance {
     [id, handleSubmit],
   )
 
+  // Display-level touched tracking (shared across adapters)
+  const { displayTouchedFields, markFieldTouched, markAllFieldsTouched } = useDisplayTouched(schema)
+
   return React.useMemo(() => ({
     id: id ?? 'form',
     fields: normalizedFields,
@@ -123,8 +122,11 @@ function useRHFCreateForm(props: CreateFormProps): NormalizedFormInstance {
     submit: () => formRef?.current?.requestSubmit(),
     reset: () => form.reset(),
     getValues: () => form.getValues(),
+    touchedFields: displayTouchedFields,
+    markFieldTouched,
+    markAllFieldsTouched,
     raw: form,
-  }), [id, normalizedFields, formProps, formState, form, formRef])
+  }), [id, normalizedFields, formProps, formState, form, formRef, displayTouchedFields, markFieldTouched, markAllFieldsTouched])
 }
 
 /** Resolve a field by name and return its normalized state. */

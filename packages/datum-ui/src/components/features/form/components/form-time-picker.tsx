@@ -40,6 +40,7 @@ export function FormTimePicker({
   const handleChange = React.useCallback(
     (value: string) => {
       fieldState?.change(value || undefined)
+      fieldState?.blur()
     },
     [fieldState],
   )

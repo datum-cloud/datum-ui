@@ -36,7 +36,10 @@ export function FormRadioGroup({
   return (
     <RadioGroup
       value={value}
-      onValueChange={val => fieldState?.change(val)}
+      onValueChange={(val) => {
+        fieldState?.change(val)
+        fieldState?.blur()
+      }}
       disabled={isDisabled}
       aria-invalid={hasErrors || undefined}
       aria-describedby={hasErrors ? `${id}-error` : undefined}

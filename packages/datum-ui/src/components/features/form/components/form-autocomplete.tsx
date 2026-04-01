@@ -58,7 +58,10 @@ export function FormAutocomplete<T extends AutocompleteOption = AutocompleteOpti
       name={fieldState?.name}
       id={id}
       value={value}
-      onValueChange={val => fieldState?.change(val)}
+      onValueChange={(val) => {
+        fieldState?.change(val)
+        fieldState?.blur()
+      }}
       disabled={isDisabled}
       triggerClassName={cn(hasErrors && 'border-destructive', props.triggerClassName)}
       className={className}

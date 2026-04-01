@@ -30,7 +30,10 @@ export function FormCheckbox({ label, disabled, className }: FormCheckboxProps) 
       <Checkbox
         id={id}
         checked={checked}
-        onCheckedChange={value => fieldState?.change(Boolean(value))}
+        onCheckedChange={(value) => {
+          fieldState?.change(Boolean(value))
+          fieldState?.blur()
+        }}
         disabled={isDisabled}
         aria-invalid={hasErrors || undefined}
         aria-describedby={hasErrors ? `${id}-error` : undefined}

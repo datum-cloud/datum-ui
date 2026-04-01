@@ -77,6 +77,12 @@ export interface NormalizedFormInstance {
   reset: () => void
   /** Get all current form values (for stepper prev() save-without-validate) */
   getValues: () => Record<string, unknown>
+  /** Array of field names that have been touched (focused and blurred or modified) */
+  touchedFields: string[]
+  /** Mark a field as touched */
+  markFieldTouched: (fieldName: string) => void
+  /** Mark all fields as touched (used when submit is clicked with validation errors) */
+  markAllFieldsTouched: () => void
   /** The raw underlying library instance (opaque - never read by shared components) */
   raw: unknown
 }

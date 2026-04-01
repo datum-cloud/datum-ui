@@ -37,7 +37,7 @@ export function FormRoot<T extends z.ZodType>({
   id,
   name,
   defaultValues,
-  mode = 'onBlur',
+  mode = 'onChange',
   isSubmitting: externalIsSubmitting,
   onError,
   onSuccess,
@@ -104,34 +104,39 @@ export function FormRoot<T extends z.ZodType>({
       submitCount,
       dirtyFields: formState.dirtyFields,
       touchedFields: formState.touchedFields,
+      mode,
+      displayTouchedFields: instance.touchedFields,
+      markFieldTouched: instance.markFieldTouched,
+      markAllFieldsTouched: instance.markAllFieldsTouched,
       submit: () => formRef.current?.requestSubmit(),
       reset: () => instance.reset(),
       formId: instance.id,
     }),
-    [instance, isSubmitting, formState, isSubmitted, submitCount],
+    [instance, isSubmitting, formState, isSubmitted, submitCount, mode],
   )
 
   // Render function support
   const isRenderFunction = typeof children === 'function'
-  const renderProps: FormRootRenderProps = React.useMemo(() => ({
-    form: instance,
-    fields: instance.fields,
-    isSubmitting,
-    isDirty: formState.isDirty,
-    isValid: formState.isValid,
-    isSubmitted,
-    submitCount,
-    dirtyFields: formState.dirtyFields,
-    touchedFields: formState.touchedFields,
-    submit: () => formRef.current?.requestSubmit(),
-    reset: () => instance.reset(),
-  }), [instance, isSubmitting, formState, isSubmitted, submitCount])
 
   const renderChildren = () => {
-    if (isRenderFunction) {
-      return (children as (props: FormRootRenderProps) => React.ReactNode)(renderProps)
+    if (!isRenderFunction) {
+      return children
     }
-    return children
+    const renderProps: FormRootRenderProps = {
+      form: instance,
+      fields: instance.fields,
+      isSubmitting,
+      isDirty: formState.isDirty,
+      isValid: formState.isValid,
+      isSubmitted,
+      submitCount,
+      dirtyFields: formState.dirtyFields,
+      touchedFields: formState.touchedFields,
+      mode,
+      submit: () => formRef.current?.requestSubmit(),
+      reset: () => instance.reset(),
+    }
+    return (children as (props: FormRootRenderProps) => React.ReactNode)(renderProps)
   }
 
   return (
@@ -146,7 +151,18 @@ export function FormRoot<T extends z.ZodType>({
           autoComplete="off"
           noValidate
           onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            const submitEvent = e.nativeEvent as SubmitEvent
+            const submitter = submitEvent.submitter as HTMLButtonElement | null
             e.stopPropagation()
+
+            // Only mark fields as touched for visible submit button clicks (not Conform's hidden validation buttons)
+            // Conform uses hidden buttons with name="__intent__" for field validation during initialization
+            // Real user submit buttons are visible (not hidden)
+            const isUserSubmit = submitter && !submitter.hidden
+            if (isUserSubmit) {
+              // On submit attempt, always mark all fields as display-touched so errors become visible
+              instance.markAllFieldsTouched()
+            }
             telemetry?.onSubmit?.({ formName: name ?? '', formId: id })
             const adapterSubmit = instance.formProps.onSubmit as
               | ((e: React.FormEvent<HTMLFormElement>) => void)

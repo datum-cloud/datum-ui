@@ -103,14 +103,47 @@ export function FormField({
   labelClassName,
 }: FormFieldProps) {
   const adapter = useAdapter()
-  const { fields, isSubmitting, form } = useFormContext()
+  const { fields, isSubmitting, form, mode, displayTouchedFields, markFieldTouched } = useFormContext()
 
   // Use the adapter to resolve the field by name
   const fieldState = adapter.useField(name)
 
-  // Derive values
-  const errors = fieldState.errors
+  // Filter errors based on mode and display-touched state
+  const isDisplayTouched = displayTouchedFields.includes(name)
+  const rawErrors = fieldState.errors
+  const errors = isDisplayTouched ? rawErrors : []
   const hasErrors = errors.length > 0
+
+  // Guard: only mark display-touched after a real user focus.
+  // Conform's useInputControl fires programmatic change events on mount
+  // (via hidden inputs) which would otherwise mark fields touched immediately.
+  const hasFocusedRef = React.useRef(false)
+
+  // Reset when field name changes (e.g. in field arrays where component is reused)
+  React.useEffect(() => {
+    hasFocusedRef.current = false
+  }, [name])
+
+  const handleFocus = React.useCallback((e: React.FocusEvent) => {
+    // Only mark as focused if the target is NOT a hidden input
+    // This prevents Conform's hidden inputs from triggering touched state
+    const target = e.target as HTMLInputElement
+    if (target.type !== 'hidden') {
+      hasFocusedRef.current = true
+    }
+  }, [])
+
+  const handleChange = React.useCallback(() => {
+    if (mode === 'onChange' && hasFocusedRef.current) {
+      markFieldTouched(name)
+    }
+  }, [mode, name, markFieldTouched])
+
+  const handleBlur = React.useCallback(() => {
+    if ((mode === 'onChange' || mode === 'onBlur') && hasFocusedRef.current) {
+      markFieldTouched(name)
+    }
+  }, [mode, name, markFieldTouched])
   const fieldId = fieldState.id
   const descriptionId = description ? `${fieldId}-description` : undefined
   const errorId = hasErrors ? `${fieldId}-error` : undefined
@@ -162,7 +195,12 @@ export function FormField({
 
   return (
     <FieldProvider value={contextValue}>
-      <div className={cn('flex flex-col space-y-2', className)}>
+      <div
+        className={cn('flex flex-col space-y-2', className)}
+        onFocusCapture={handleFocus}
+        onChange={handleChange}
+        onBlur={handleBlur}
+      >
         {/* Label */}
         {label && (
           <FieldLabel

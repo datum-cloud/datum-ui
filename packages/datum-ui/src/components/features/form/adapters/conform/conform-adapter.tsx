@@ -18,6 +18,7 @@ import {
 import { isDirty, useFormData } from '@conform-to/react/future'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import * as React from 'react'
+import { useDisplayTouched } from '../../hooks/use-display-touched'
 import { getFieldConstraints } from '../../utils/get-field-constraints'
 
 /**
@@ -106,13 +107,14 @@ function convertFromString(value: string | string[] | undefined): unknown {
   // Checkbox/Switch components handle boolean conversion via Boolean(value).
   if (value === 'on')
     return true
-  // Deserialize JSON arrays (from Transfer, multi-select, etc.)
-  if (value.startsWith('[') && value.endsWith(']')) {
+  // Deserialize JSON arrays serialized by convertToString (Transfer, multi-select).
+  // Only attempt parse when the string looks like a JSON array (starts with `["`).
+  // Plain strings like "[hello]" are returned as-is.
+  if (value.startsWith('["') && value.endsWith(']')) {
     try {
       return JSON.parse(value)
     }
     catch {
-      // If JSON parse fails, return as-is
       return value
     }
   }
@@ -289,6 +291,9 @@ function useConformCreateForm(props: CreateFormProps): NormalizedFormInstance {
     [form],
   )
 
+  // Display-level touched tracking (shared across adapters)
+  const { displayTouchedFields, markFieldTouched, markAllFieldsTouched } = useDisplayTouched(schema)
+
   return React.useMemo(() => ({
     id: form.id,
     fields: normalizedFields,
@@ -306,8 +311,11 @@ function useConformCreateForm(props: CreateFormProps): NormalizedFormInstance {
       }
       return values
     },
+    touchedFields: displayTouchedFields,
+    markFieldTouched,
+    markAllFieldsTouched,
     raw: { form, fields, touchedFieldsRef },
-  }), [form, fields, normalizedFields, conformFormProps, formState, formRef])
+  }), [form, fields, normalizedFields, conformFormProps, formState, formRef, displayTouchedFields, markFieldTouched, markAllFieldsTouched])
 }
 
 /** Resolve a field by dot-notation path and return its normalized state. */

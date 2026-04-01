@@ -88,7 +88,7 @@ const schema = z.object({
 
 ### With Validation
 
-Zod validation runs automatically. Required fields show an asterisk and error messages appear below the input.
+Zod validation runs automatically on every change. Required fields show an asterisk and error messages appear below the input. By default (`mode="onChange"`), errors display as soon as a field value changes.
 
 ```tsx
 const schema = z.object({
@@ -104,6 +104,32 @@ const schema = z.object({
     <Form.Input type="email" placeholder="user@example.com" />
   </Form.Field>
   <Form.Submit>Register</Form.Submit>
+</Form.Root>
+```
+
+### Validation Modes
+
+Validation always runs on every change so that `isValid` and `isDirty` are always accurate. The `mode` prop controls **when error messages are displayed to the user**, not when validation runs.
+
+| Mode | Default | Validation | Errors shown | Use case |
+|------|---------|------------|--------------|----------|
+| `onChange` | Yes | Every change | After first change to a field | Real-time feedback as the user types |
+| `onBlur` | -- | Every change | After the field loses focus | Less noisy; useful with `isValid` to gate submit |
+| `onSubmit` | -- | Every change | After the first submit attempt | Minimal interruption until the user submits |
+
+In all modes, form state (`isValid`, `isDirty`, `dirtyFields`, `touchedFields`) updates continuously. Only the visibility of error messages differs.
+
+```tsx
+// Errors appear after blur, but isValid updates on every keystroke
+<Form.Root schema={schema} mode="onBlur" onSubmit={handleSubmit}>
+  {({ isValid }) => (
+    <>
+      <Form.Field name="email" label="Email" required>
+        <Form.Input type="email" />
+      </Form.Field>
+      <Form.Submit disabled={!isValid}>Save</Form.Submit>
+    </>
+  )}
 </Form.Root>
 ```
 
@@ -352,7 +378,7 @@ Access form state directly using the render function pattern on `Form.Root`.
 | `schema` | `ZodType` | -- | Zod schema for validation |
 | `onSubmit` | `(data) => void \| Promise<void>` | -- | Submit handler with validated data |
 | `defaultValues` | `Partial<z.infer<T>>` | -- | Default field values |
-| `mode` | `'onBlur' \| 'onChange' \| 'onSubmit'` | -- | Validation timing |
+| `mode` | `'onChange' \| 'onBlur' \| 'onSubmit'` | `'onChange'` | Controls when error messages are displayed (validation always runs on every change) |
 | `children` | `ReactNode \| (props: FormRootRenderProps) => ReactNode` | -- | Form content or render function |
 | `className` | `string` | -- | Additional CSS classes |
 

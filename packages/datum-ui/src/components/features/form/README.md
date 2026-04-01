@@ -134,7 +134,7 @@ The root form component that provides context to all children. Supports two patt
   action="/api/users" // OR: React Router action path
   method="POST" // HTTP method (default: POST)
   defaultValues={{ role: 'user' }} // Default form values
-  mode="onBlur" // Validation mode: onBlur | onChange | onSubmit
+  mode="onChange" // When to show error messages: onChange | onBlur | onSubmit
   isSubmitting={false} // External submitting state (e.g., from useFetcher)
   onError={(errors) => {}} // Validation error callback
   onSuccess={(data) => {}} // Success callback
@@ -143,6 +143,18 @@ The root form component that provides context to all children. Supports two patt
   {children}
 </Form.Root>
 ```
+
+#### Validation Mode
+
+Validation always runs on every change so `isValid` and `isDirty` stay accurate. The `mode` prop controls when error messages appear to the user, not when validation runs.
+
+| Mode       | Validation runs | Errors shown                   | Use case                                   |
+| ---------- | --------------- | ------------------------------ | ------------------------------------------ |
+| `onChange` | Every change    | After first change to a field  | Default. Immediate feedback as user types. |
+| `onBlur`   | Every change    | After a field loses focus      | Less noisy for complex fields.             |
+| `onSubmit` | Every change    | After the first submit attempt | Minimal interruption until user submits.   |
+
+Default: `'onChange'`
 
 **Render Function Pattern** - For accessing form state:
 

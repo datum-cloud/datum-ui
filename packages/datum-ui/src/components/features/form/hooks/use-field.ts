@@ -5,6 +5,10 @@ import { useAdapter } from '../adapter-context'
  * Hook to access and control a specific field.
  * Delegates to the active adapter's useField implementation.
  *
+ * Note: `meta.disabled` is always `false` because this hook operates
+ * independently of Form.Field. If you need disabled state, read it
+ * from your component props or from the Form.Field context via `useFieldContext()`.
+ *
  * @example
  * ```tsx
  * function MyCustomInput({ name }: { name: string }) {

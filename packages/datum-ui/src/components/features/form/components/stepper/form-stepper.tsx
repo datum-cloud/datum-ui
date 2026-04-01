@@ -1,7 +1,6 @@
 import type * as Stepperize from '@stepperize/react'
 import type { FormStepperProps, FormStepperRenderProps, StepConfig } from '../../types'
 import * as React from 'react'
-import { z } from 'zod'
 import { cn } from '../../../../../utils/cn'
 import { defineStepper } from '../../../stepper'
 import { useAdapter } from '../../adapter-context'
@@ -50,57 +49,6 @@ export function useFormStepperContext(): FormStepperContextValue {
     throw new Error('useFormStepperContext must be used within a Form.Stepper component')
   }
   return context
-}
-
-// ============================================================================
-// Schema Utilities
-// ============================================================================
-
-/**
- * Recursively unwrap ZodIntersection (from .and()) to extract the base ZodObject.
- *
- * Zod v4 schema types use `def.type` as a string discriminant:
- * - "intersection" (from .and()): merge left + right base objects
- * - "object": return directly
- *
- * Note: In Zod v4, .superRefine() and .refine() return `this` (no wrapper),
- * so only ZodIntersection needs unwrapping.
- */
-function getBaseObject(schema: z.ZodType): z.ZodObject<any> {
-  if (schema.def.type === 'intersection') {
-    // Zod v4's `def` is typed as an opaque union; cast to access `left`/`right` branches.
-    const intersectionDef = schema.def as unknown as { left: z.ZodType, right: z.ZodType }
-    const left = getBaseObject(intersectionDef.left)
-    const right = getBaseObject(intersectionDef.right)
-    return left.merge(right)
-  }
-
-  if (schema.def.type !== 'object') {
-    return z.object({})
-  }
-
-  return schema as z.ZodObject<any>
-}
-
-/**
- * Merge multiple zod schemas into one ZodObject for HTML constraint generation.
- * Handles ZodIntersection (.and()) by unwrapping to base ZodObject shapes.
- * Per-step validation still uses the original schemas with all refinements intact.
- */
-function mergeSchemas(steps: StepConfig[]): z.ZodObject<any> {
-  if (steps.length === 0) {
-    throw new Error('Form.Stepper requires at least one step')
-  }
-
-  return steps.reduce((acc, step, index) => {
-    const base = getBaseObject(step.schema)
-
-    if (index === 0) {
-      return base
-    }
-
-    return acc.merge(base)
-  }, {} as z.ZodObject<any>)
 }
 
 /**
@@ -160,10 +108,13 @@ export function FormStepper({
   defaultValues,
   id,
   formComponent,
+  mode = 'onSubmit',
 }: FormStepperProps & {
   defaultValues?: Record<string, unknown>
   id?: string
   formComponent?: React.ElementType
+  /** Validation mode for each step form (default: onSubmit) */
+  mode?: 'onBlur' | 'onChange' | 'onSubmit'
 }) {
   // Create stepperize definition - memoized to prevent recreation
   const stepperDef = React.useMemo(() => {
@@ -196,6 +147,7 @@ export function FormStepper({
         defaultValues={defaultValues}
         id={id}
         formComponent={formComponent}
+        mode={mode}
       >
         {children}
       </FormStepperContent>
@@ -219,6 +171,7 @@ interface FormStepperContentProps {
   defaultValues?: Record<string, unknown>
   id?: string
   formComponent?: React.ElementType
+  mode: 'onBlur' | 'onChange' | 'onSubmit'
 }
 
 function FormStepperContent({
@@ -231,6 +184,7 @@ function FormStepperContent({
   defaultValues,
   id,
   formComponent,
+  mode,
 }: FormStepperContentProps) {
   const { useStepper } = stepperDef
   const stepper = useStepper()
@@ -240,9 +194,6 @@ function FormStepperContent({
     () => steps.find(s => s.id === stepper.state.current.data.id) ?? steps[0]!,
     [steps, stepper.state.current.data.id],
   )
-
-  // Merge all schemas into one combined schema
-  const combinedSchema = React.useMemo(() => mergeSchemas(steps), [steps])
 
   // Collect all stored metadata as default values
   const storedValues = React.useMemo(() => {
@@ -262,13 +213,13 @@ function FormStepperContent({
       steps={steps}
       stepper={stepper}
       currentStepConfig={currentStepConfig}
-      combinedSchema={combinedSchema}
       storedValues={storedValues}
       onComplete={onComplete}
       onStepChange={onStepChange}
       className={className}
       id={id}
       formComponent={formComponent}
+      mode={mode}
     >
       {children}
     </StepForm>
@@ -283,7 +234,6 @@ interface StepFormProps {
   steps: StepConfig[]
   stepper: any
   currentStepConfig: StepConfig
-  combinedSchema: z.ZodObject<any>
   storedValues: Record<string, unknown>
   children: React.ReactNode | ((props: FormStepperRenderProps) => React.ReactNode)
   onComplete: FormStepperProps['onComplete']
@@ -291,13 +241,13 @@ interface StepFormProps {
   className?: string
   id?: string
   formComponent?: React.ElementType
+  mode: 'onBlur' | 'onChange' | 'onSubmit'
 }
 
 function StepForm({
   steps,
   stepper,
   currentStepConfig,
-  combinedSchema: _combinedSchema,
   storedValues,
   children,
   onComplete,
@@ -305,9 +255,12 @@ function StepForm({
   className,
   id,
   formComponent: FormComp = 'form',
+  mode,
 }: StepFormProps) {
   const adapter = useAdapter()
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const [isSubmitted, setIsSubmitted] = React.useState(false)
+  const [submitCount, setSubmitCount] = React.useState(0)
   const formRef = React.useRef<HTMLFormElement>(null)
 
   const currentIndex = stepper.lookup.getIndex(stepper.state.current.data.id as any)
@@ -315,6 +268,9 @@ function StepForm({
   // Submit handler called with validated data from the adapter
   const handleStepSubmit = React.useCallback(
     async (data: Record<string, unknown>) => {
+      setIsSubmitted(true)
+      setSubmitCount(prev => prev + 1)
+
       // Store current step's validated data in metadata
       stepper.metadata.set(stepper.state.current.data.id as any, data)
 
@@ -356,7 +312,7 @@ function StepForm({
   const instance = adapter.useCreateForm({
     schema: currentStepConfig.schema,
     defaultValues: storedValues,
-    mode: 'onSubmit',
+    mode,
     id: `${id ?? 'stepper'}-${currentStepConfig.id}`,
     onSubmit: handleStepSubmit,
     formRef,
@@ -446,15 +402,19 @@ function StepForm({
       isSubmitting,
       isDirty: instance.formState.isDirty,
       isValid: instance.formState.isValid,
-      isSubmitted: instance.formState.isSubmitted,
-      submitCount: instance.formState.submitCount,
+      isSubmitted,
+      submitCount,
       dirtyFields: instance.formState.dirtyFields,
       touchedFields: instance.formState.touchedFields,
+      mode,
+      displayTouchedFields: instance.touchedFields,
+      markFieldTouched: instance.markFieldTouched,
+      markAllFieldsTouched: instance.markAllFieldsTouched,
       submit: () => formRef.current?.requestSubmit(),
       reset: () => instance.reset(),
       formId: instance.id,
     }),
-    [instance, isSubmitting, instance.formState],
+    [instance, isSubmitting, isSubmitted, submitCount, mode, instance.formState],
   )
 
   // Build render props for children function

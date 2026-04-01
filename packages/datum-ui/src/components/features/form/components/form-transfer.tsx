@@ -44,6 +44,7 @@ export function FormTransfer<T>({ disabled, minItems, maxItems, ...props }: Form
 
   const handleChange = React.useCallback((newValue: string[]) => {
     fieldState?.change(newValue)
+    fieldState?.blur()
   }, [fieldState])
 
   return (
@@ -60,7 +61,7 @@ export function FormTransfer<T>({ disabled, minItems, maxItems, ...props }: Form
         />
       </div>
       {(minItems != null || maxItems != null) && (
-        <p className="text-sm text-muted-foreground mt-2">
+        <p className="text-ring text-xs text-wrap mt-2">
           {minItems != null && maxItems != null
             ? `Select between ${minItems} and ${maxItems} items`
             : minItems != null
