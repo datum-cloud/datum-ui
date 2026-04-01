@@ -90,4 +90,11 @@ export interface ComboboxProps {
    * Test ID
    */
   'data-testid'?: string
+
+  /**
+   * Whether the popover is modal (prevents interaction with elements outside)
+   * Required when using inside a Dialog/Modal component
+   * @default true
+   */
+  'modal'?: boolean
 }

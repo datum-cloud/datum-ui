@@ -68,6 +68,8 @@ export interface AutocompleteProps<T extends AutocompleteOption = AutocompleteOp
   itemSize?: number
   /** External loading state */
   loading?: boolean
+  /** Popover modal mode - required when using inside a Dialog/Modal component (default: true) */
+  modal?: boolean
 
   // State
   /** Disable the component */

@@ -34,6 +34,8 @@ export interface FormDateTimePickerProps {
   disabled?: boolean
   /** Additional CSS classes */
   className?: string
+  /** Whether the popover is modal (required when using inside a Dialog/Modal) */
+  modal?: boolean
 }
 
 export function FormDateTimePicker({
@@ -45,6 +47,7 @@ export function FormDateTimePicker({
   placeholder,
   disabled,
   className,
+  modal,
 }: FormDateTimePickerProps) {
   const { id, errors, disabled: fieldDisabled, fieldState } = useFieldContext()
   const isDisabled = disabled ?? fieldDisabled
@@ -85,6 +88,7 @@ export function FormDateTimePicker({
       showTimezoneIndicator={showTimezoneIndicator}
       placeholder={placeholder}
       disabled={isDisabled}
+      modal={modal}
       className={cn(className)}
       aria-invalid={hasErrors || undefined}
       aria-describedby={hasErrors ? `${id}-error` : undefined}

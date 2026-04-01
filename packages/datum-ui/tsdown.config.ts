@@ -62,6 +62,7 @@ export default defineConfig({
 
     // Standalone features
     'autocomplete/index': 'src/components/features/autocomplete/index.ts',
+    'autosearch/index': 'src/components/features/autosearch/index.ts',
     'combobox/index': 'src/components/features/combobox/index.ts',
     'avatar-stack/index': 'src/components/features/avatar-stack/index.ts',
     'dropdown/index': 'src/components/features/dropdown/index.ts',

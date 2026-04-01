@@ -14,7 +14,7 @@ import {
 
 const DEFAULT_TIMEZONE = getBrowserTimezone()
 
-export function DateTimePicker({ ref, value, onChange, minDate, maxDate, disabledDates, timezone = DEFAULT_TIMEZONE, showTimezoneIndicator = false, placeholder = 'Select date and time', disabled = false, className }: DateTimePickerProps & { ref?: React.RefObject<HTMLDivElement | null> }) {
+export function DateTimePicker({ ref, value, onChange, minDate, maxDate, disabledDates, timezone = DEFAULT_TIMEZONE, showTimezoneIndicator = false, placeholder = 'Select date and time', disabled = false, className, modal = false }: DateTimePickerProps & { ref?: React.RefObject<HTMLDivElement | null> }) {
   // Derive initial state from value prop
   const initialState = React.useMemo<DateTimeState>(() => {
     if (!value) {
@@ -75,7 +75,7 @@ export function DateTimePicker({ ref, value, onChange, minDate, maxDate, disable
 
   return (
     <div ref={ref} className={className}>
-      <Popover>
+      <Popover modal={modal}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"

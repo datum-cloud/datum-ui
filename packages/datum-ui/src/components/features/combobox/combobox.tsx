@@ -49,6 +49,7 @@ export function Combobox({
   clearable = false,
   id,
   'data-testid': testId,
+  modal = true,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -85,7 +86,7 @@ export function Combobox({
   )
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={modal}>
       <PopoverTrigger asChild>
         <button
           type="button"
@@ -120,7 +121,7 @@ export function Combobox({
         </button>
       </PopoverTrigger>
       <PopoverContent
-        className={cn('w-[--radix-popover-trigger-width] p-0', contentClassName)}
+        className={cn('popover-content-width-full p-0', contentClassName)}
         align="start"
       >
         <Command>

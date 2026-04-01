@@ -289,6 +289,7 @@ export function Autocomplete<T extends AutocompleteOption = AutocompleteOption>(
   virtualize = false,
   itemSize = 36,
   loading = false,
+  modal = false,
   disabled = false,
   name,
   id,
@@ -367,7 +368,7 @@ export function Autocomplete<T extends AutocompleteOption = AutocompleteOption>(
 
   return (
     <div className={cn('relative', className)}>
-      <Popover open={open} onOpenChange={handleOpenChange} modal>
+      <Popover open={open} onOpenChange={handleOpenChange} modal={modal}>
         <PopoverTrigger asChild>
           <Trigger
             selectedOption={displayOption}

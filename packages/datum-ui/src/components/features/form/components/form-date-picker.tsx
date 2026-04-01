@@ -36,6 +36,8 @@ export interface FormDatePickerProps {
   disableFuture?: boolean
   /** Disable past dates */
   disablePast?: boolean
+  /** Whether the popover is modal (required when using inside a Dialog/Modal) */
+  modal?: boolean
 }
 
 export function FormDatePicker({
@@ -48,6 +50,7 @@ export function FormDatePicker({
   maxDate: maxDateProp,
   disableFuture,
   disablePast,
+  modal,
 }: FormDatePickerProps) {
   const { id, errors, disabled: fieldDisabled, fieldState } = useFieldContext()
   const isDisabled = disabled ?? fieldDisabled
@@ -121,6 +124,7 @@ export function FormDatePicker({
       disableFuture={disableFuture}
       disablePast={disablePast}
       variant="outline"
+      modal={modal}
       className={cn(className)}
       triggerClassName={cn(triggerClassName)}
       aria-invalid={hasErrors || undefined}

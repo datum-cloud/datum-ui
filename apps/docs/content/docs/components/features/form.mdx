@@ -261,6 +261,28 @@ Render a form inside a dialog using `Form.Dialog`.
 </Form.Dialog>
 ```
 
+#### Using Popover Components in Dialogs
+
+When using form components with popovers (DatePicker, DateTimePicker, Combobox, Autocomplete, Autosearch) inside dialogs, they work correctly by default with `modal={false}`:
+
+```tsx
+<Form.Dialog open={open} onOpenChange={setOpen} title="Schedule Event" schema={schema} onSubmit={handleSubmit}>
+  <Form.Field name="eventDate" label="Event Date" required>
+    {/* Works by default! */}
+    <Form.DatePicker />
+  </Form.Field>
+  <Form.Field name="category" label="Category" required>
+    <Form.Combobox options={categories} />
+  </Form.Field>
+</Form.Dialog>
+```
+
+The `modal` prop controls popover behavior:
+- **`modal={false}`** (default): Allows interactions with the parent dialog and other elements
+- **`modal={true}`**: Blocks interactions outside the popover (traps focus)
+
+Only set `modal={true}` if you need to prevent all interactions outside the popover.
+
 ### Render Function Pattern
 
 Access form state directly using the render function pattern on `Form.Root`.

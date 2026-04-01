@@ -72,6 +72,9 @@
   "prConcurrentLimit": 10,
   "prCreation": "immediate",
   "rebaseWhen": "behind-base-branch",
+  "allowedPostUpgradeCommands": [
+    "^pnpm changeset add --empty$"
+  ],
   "postUpgradeTasks": {
     "commands": [
       "pnpm changeset add --empty"

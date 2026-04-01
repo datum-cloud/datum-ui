@@ -335,6 +335,35 @@ Props:
 </Form.Field>
 ```
 
+### Using Form Components in Modals/Dialogs
+
+Components that use popovers (DatePicker, DateTimePicker, Combobox, Autocomplete, Autosearch) support a `modal` prop to control their behavior inside Dialog/Modal components.
+
+**Default behavior (modal={false}):**
+Components work correctly inside Dialogs without any configuration:
+
+```tsx
+<Dialog>
+  <DialogContent>
+    <Form.Field name="date" label="Select Date">
+      {/* Works by default! */}
+      <Form.DatePicker />
+    </Form.Field>
+  </DialogContent>
+</Dialog>
+```
+
+**Prevent outside interactions (modal={true}):**
+Set `modal={true}` to prevent clicking outside the popover:
+
+```tsx
+<Form.Field name="country" label="Country">
+  <Form.Combobox options={countries} modal={true} />
+</Form.Field>
+```
+
+**Note:** The default `modal={false}` is correct for most use cases. Only set `modal={true}` if you need to block interactions outside the popover.
+
 ### Picker Components
 
 #### `Form.DatePicker`
@@ -348,7 +377,7 @@ Date selection with calendar popover:
 ```
 
 **Schema:** `z.string()` (ISO date string)
-**Props:** All CalendarDatePicker props
+**Props:** All CalendarDatePicker props (numberOfMonths, minDate, maxDate, disableFuture, disablePast, modal)
 
 #### `Form.TimePicker`
 
@@ -374,7 +403,7 @@ Combined date and time selection:
 ```
 
 **Schema:** `z.string()` (ISO 8601 datetime string)
-**Props:** timezone, showTimezoneIndicator, disabled
+**Props:** timezone, showTimezoneIndicator, minDate, maxDate, disabledDates, modal, disabled
 
 #### `Form.Transfer`
 
@@ -411,11 +440,25 @@ Searchable single-select dropdown:
 ```
 
 **Schema:** `z.string()`
-**Props:** options, placeholder, searchable, clearable
+**Props:** options, placeholder, searchable, clearable, modal
 
 #### `Form.Autosearch`
 
-Alias for `Form.Autocomplete` (virtualized search dropdown). See Autocomplete documentation for details.
+Search-first input with dropdown results (type to search):
+
+```tsx
+<Form.Field name="userId" label="User" required>
+  <Form.Autosearch
+    options={searchResults}
+    onSearch={handleSearch}
+    loading={isSearching}
+    placeholder="Type to search users..."
+  />
+</Form.Field>
+```
+
+**Schema:** `z.string()` (selected value)
+**Props:** options, onSearch, loading, searchDebounceMs, modal, placeholder, emptyMessage
 
 ### Advanced Components
 

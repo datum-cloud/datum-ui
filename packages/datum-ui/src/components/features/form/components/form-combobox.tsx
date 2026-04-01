@@ -84,6 +84,11 @@ export interface FormComboboxProps {
    * Test ID
    */
   'data-testid'?: string
+
+  /**
+   * Whether the popover is modal (required when using inside a Dialog/Modal)
+   */
+  'modal'?: boolean
 }
 
 export function FormCombobox({
@@ -99,6 +104,7 @@ export function FormCombobox({
   showDropdownArrow = true,
   clearable = false,
   'data-testid': testId,
+  modal,
 }: FormComboboxProps) {
   const { id, errors, disabled: fieldDisabled, fieldState } = useFieldContext()
   const isDisabled = disabled ?? fieldDisabled
@@ -124,6 +130,7 @@ export function FormCombobox({
       searchable={searchable}
       showDropdownArrow={showDropdownArrow}
       clearable={clearable}
+      modal={modal}
       className={className}
       triggerClassName={cn(hasErrors && 'border-destructive', triggerClassName)}
       contentClassName={contentClassName}

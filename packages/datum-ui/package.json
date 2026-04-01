@@ -205,6 +205,11 @@
       "types": "./dist/components/features/autocomplete/index.d.ts",
       "default": "./dist/autocomplete/index.mjs"
     },
+    "./autosearch": {
+      "source": "./src/components/features/autosearch/index.ts",
+      "types": "./dist/components/features/autosearch/index.d.ts",
+      "default": "./dist/autosearch/index.mjs"
+    },
     "./combobox": {
       "source": "./src/components/features/combobox/index.ts",
       "types": "./dist/components/features/combobox/index.d.ts",

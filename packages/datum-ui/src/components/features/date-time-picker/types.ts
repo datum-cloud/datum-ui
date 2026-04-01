@@ -51,6 +51,13 @@ export interface DateTimePickerProps {
    * Additional CSS class
    */
   className?: string
+
+  /**
+   * Whether the popover is modal (prevents interaction with elements outside)
+   * Required when using inside a Dialog/Modal component
+   * @default true
+   */
+  modal?: boolean
 }
 
 /**

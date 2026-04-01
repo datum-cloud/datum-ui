@@ -191,6 +191,7 @@ This ensures consistent datetime handling across different timezones and server-
 | `maxDate` | `Date` | -- | Latest selectable date |
 | `disableFuture` | `boolean` | `false` | Prevent selecting future dates |
 | `disablePast` | `boolean` | `false` | Prevent selecting past dates |
+| `modal` | `boolean` | `false` | Whether the popover is modal (prevents interaction outside) |
 | `className` | `string` | -- | Additional CSS classes |
 
 ### Form.DatePicker
@@ -205,6 +206,7 @@ This ensures consistent datetime handling across different timezones and server-
 | `maxDate` | `Date` | -- | Override schema max date |
 | `disableFuture` | `boolean` | `false` | Prevent future dates |
 | `disablePast` | `boolean` | `false` | Prevent past dates |
+| `modal` | `boolean` | `false` | Whether the popover is modal (required inside Dialog/Modal) |
 
 ### Form.TimePicker
 
@@ -221,6 +223,7 @@ Combines all props from Form.DatePicker and Form.TimePicker, plus:
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `showTimezoneIndicator` | `boolean` | `false` | Show timezone label |
+| `modal` | `boolean` | `false` | Whether the popover is modal (required inside Dialog/Modal) |
 
 ## Accessibility
 
