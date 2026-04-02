@@ -128,10 +128,6 @@ export function FormDialog<T extends z.ZodType>({
         await onSubmit?.(data)
         onSuccess?.(data)
       }
-      catch (error) {
-        console.error('Form submission error:', error)
-        throw error
-      }
       finally {
         if (loading === undefined) {
           setInternalIsSubmitting(false)

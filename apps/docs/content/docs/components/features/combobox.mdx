@@ -1,0 +1,161 @@
+---
+title: Combobox
+description: A single-select dropdown with search functionality for simple selection scenarios.
+---
+
+## Overview
+
+The `Combobox` component is a simpler alternative to [Autocomplete](/docs/components/features/autocomplete) for basic select scenarios. It supports flat or grouped options with built-in search filtering.
+
+## Dependencies
+
+```package-install
+@datum-cloud/datum-ui
+```
+
+## Usage
+
+### Basic
+
+```tsx
+import { Combobox } from '@datum-cloud/datum-ui/combobox'
+
+const options = [
+  { value: 'apple', label: 'Apple' },
+  { value: 'banana', label: 'Banana' },
+  { value: 'orange', label: 'Orange' },
+]
+
+<Combobox
+  value={value}
+  onChange={setValue}
+  options={options}
+  placeholder="Select a fruit..."
+/>
+```
+
+### With Form Integration
+
+```tsx
+import { Form } from '@datum-cloud/datum-ui/form'
+import { z } from 'zod'
+
+const schema = z.object({
+  country: z.string().min(1, 'Please select a country'),
+})
+
+<Form.Root schema={schema} onSubmit={handleSubmit}>
+  <Form.Field name="country" label="Country" required>
+    <Form.Combobox
+      options={countries}
+      placeholder="Select country..."
+      searchable
+    />
+  </Form.Field>
+</Form.Root>
+```
+
+### Grouped Options
+
+```tsx
+const groupedOptions = [
+  {
+    label: 'Fruits',
+    options: [
+      { value: 'apple', label: 'Apple' },
+      { value: 'banana', label: 'Banana' },
+    ],
+  },
+  {
+    label: 'Vegetables',
+    options: [
+      { value: 'carrot', label: 'Carrot' },
+      { value: 'broccoli', label: 'Broccoli' },
+    ],
+  },
+]
+
+<Combobox options={groupedOptions} value={value} onChange={setValue} />
+```
+
+### Clearable
+
+```tsx
+<Combobox
+  options={options}
+  value={value}
+  onChange={setValue}
+  clearable
+  placeholder="Select or clear..."
+/>
+```
+
+### Inside Dialog/Modal
+
+The `modal` prop controls popover behavior when used inside dialogs:
+
+```tsx
+<Dialog>
+  <DialogContent>
+    <Form.Field name="category" label="Category">
+      {/* Works by default with modal={false} */}
+      <Form.Combobox options={categories} />
+    </Form.Field>
+  </DialogContent>
+</Dialog>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `options` | `ComboboxOption[] \| ComboboxGroup[]` | -- | Flat or grouped options |
+| `value` | `string` | -- | Controlled selected value |
+| `onChange` | `(value: string \| undefined) => void` | -- | Callback when selection changes |
+| `placeholder` | `string` | `'Select option...'` | Trigger placeholder text |
+| `searchPlaceholder` | `string` | `'Search...'` | Search input placeholder |
+| `emptyMessage` | `string` | `'No options found.'` | Message when no matches |
+| `searchable` | `boolean` | `true` | Enable search functionality |
+| `clearable` | `boolean` | `false` | Allow clearing the selection |
+| `showDropdownArrow` | `boolean` | `true` | Show chevron icon |
+| `modal` | `boolean` | `false` | Whether the popover is modal (required inside Dialog/Modal) |
+| `disabled` | `boolean` | `false` | Disable the component |
+| `className` | `string` | -- | Root wrapper classes |
+| `triggerClassName` | `string` | -- | Trigger button classes |
+| `contentClassName` | `string` | -- | Popover content classes |
+
+### ComboboxOption
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `value` | `string` | Unique identifier |
+| `label` | `string` | Display text |
+| `disabled` | `boolean` | Disable this option |
+
+### ComboboxGroup
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `label` | `string` | Group heading |
+| `options` | `ComboboxOption[]` | Options in this group |
+
+## Accessibility
+
+- Full keyboard navigation (Arrow keys, Enter, Escape)
+- Screen reader announcements
+- Focus management
+- ARIA attributes
+
+## Combobox vs Autocomplete
+
+Use **Combobox** when:
+- You have a simple list of options
+- Built-in search filtering is sufficient
+- You don't need virtualization
+- You don't need custom rendering
+
+Use **Autocomplete** when:
+- You need virtualization for large lists (1000+ items)
+- You need async/external search
+- You need custom option rendering
+- You need creatable options

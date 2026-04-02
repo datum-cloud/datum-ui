@@ -1,5 +1,4 @@
 import type { FormRadioGroupProps, FormRadioItemProps } from '../types'
-import { useInputControl } from '@conform-to/react'
 import * as React from 'react'
 import { cn } from '../../../../utils/cn'
 import { Label } from '../../../base/label'
@@ -28,23 +27,22 @@ export function FormRadioGroup({
   className,
   children,
 }: FormRadioGroupProps) {
-  const { fieldMeta, disabled: fieldDisabled, errors } = useFieldContext()
-
-  const control = useInputControl(fieldMeta as any)
+  const { id, errors, disabled: fieldDisabled, fieldState } = useFieldContext()
   const isDisabled = disabled ?? fieldDisabled
   const hasErrors = errors && errors.length > 0
 
-  // Ensure value is always a string for RadioGroup
-  const radioValue = Array.isArray(control.value) ? control.value[0] : control.value
+  const value = fieldState?.value != null ? String(fieldState.value) : undefined
 
   return (
     <RadioGroup
-      name={fieldMeta.name}
-      value={radioValue ?? ''}
-      onValueChange={control.change}
+      value={value}
+      onValueChange={(val) => {
+        fieldState?.change(val)
+        fieldState?.blur()
+      }}
       disabled={isDisabled}
       aria-invalid={hasErrors || undefined}
-      aria-describedby={hasErrors ? `${fieldMeta.id}-error` : undefined}
+      aria-describedby={hasErrors ? `${id}-error` : undefined}
       className={cn(
         orientation === 'horizontal' ? 'flex flex-row space-x-4' : 'flex flex-col space-y-2',
         className,
@@ -66,7 +64,8 @@ FormRadioGroup.displayName = 'Form.RadioGroup'
  * ```
  */
 export function FormRadioItem({ value, label, description, disabled }: FormRadioItemProps) {
-  const radioId = `radio-${value}`
+  const { id: fieldId } = useFieldContext()
+  const radioId = `${fieldId}-radio-${value}`
 
   return (
     <div className="flex items-start space-x-2">

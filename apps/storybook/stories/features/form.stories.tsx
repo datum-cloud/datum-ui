@@ -1,12 +1,21 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import { Button } from '@datum-cloud/datum-ui/button'
 import { Form } from '@datum-cloud/datum-ui/form'
+import { ConformAdapter } from '@datum-cloud/datum-ui/form/adapters/conform'
+import { FormStep, FormStepper, StepperControls, StepperNavigation } from '@datum-cloud/datum-ui/form/stepper'
 import { PlusIcon, TrashIcon } from 'lucide-react'
 import { useState } from 'react'
 import { z } from 'zod'
 
 const meta: Meta = {
   title: 'Features/Form',
+  decorators: [
+    Story => (
+      <ConformAdapter>
+        <Story />
+      </ConformAdapter>
+    ),
+  ],
 }
 
 export default meta
@@ -379,7 +388,7 @@ export const WithRenderFunction: Story = {
       }}
       className="max-w-md space-y-4"
     >
-      {({ form, isSubmitting }) => (
+      {({ reset, isSubmitting }) => (
         <>
           <Form.Field name="name" label="Name" required>
             <Form.Input />
@@ -391,11 +400,7 @@ export const WithRenderFunction: Story = {
             <Button
               type="quaternary"
               theme="outline"
-              onClick={() => {
-                form.update({
-                  value: { name: 'John Doe', email: 'john@example.com' },
-                })
-              }}
+              onClick={() => reset()}
               disabled={isSubmitting}
             >
               Reset
@@ -587,33 +592,33 @@ const stepperSteps = [
 export const MultiStepForm: Story = {
   render: () => (
     <div className="max-w-lg">
-      <Form.Stepper
+      <FormStepper
         steps={stepperSteps}
-        onComplete={(data) => {
+        onComplete={(data: Record<string, unknown>) => {
           alert(JSON.stringify(data, null, 2))
         }}
       >
-        <Form.StepperNavigation />
+        <StepperNavigation />
 
-        <Form.Step id="account">
+        <FormStep id="account">
           <Form.Field name="email" label="Email" required>
             <Form.Input type="email" placeholder="you@example.com" />
           </Form.Field>
           <Form.Field name="password" label="Password" required>
             <Form.Input type="password" placeholder="Min 8 characters" />
           </Form.Field>
-        </Form.Step>
+        </FormStep>
 
-        <Form.Step id="profile">
+        <FormStep id="profile">
           <Form.Field name="fullName" label="Full Name" required>
             <Form.Input placeholder="Jane Smith" />
           </Form.Field>
           <Form.Field name="bio" label="Bio">
             <Form.Textarea placeholder="Tell us about yourself..." rows={3} />
           </Form.Field>
-        </Form.Step>
+        </FormStep>
 
-        <Form.Step id="preferences">
+        <FormStep id="preferences">
           <Form.Field name="plan" label="Plan" required>
             <Form.RadioGroup>
               <Form.RadioItem value="free" label="Free" />
@@ -624,11 +629,63 @@ export const MultiStepForm: Story = {
           <Form.Field name="newsletter">
             <Form.Checkbox label="Subscribe to product updates" />
           </Form.Field>
-        </Form.Step>
+        </FormStep>
 
-        <Form.StepperControls />
-      </Form.Stepper>
+        <StepperControls />
+      </FormStepper>
     </div>
+  ),
+}
+
+// ---------------------------------------------------------------------------
+// WithFormState (live form state panel)
+// ---------------------------------------------------------------------------
+
+const formStateSchema = z.object({
+  username: z.string().min(3, 'Username must be at least 3 characters'),
+  email: z.string().email('Enter a valid email'),
+  agree: z.string().optional(),
+})
+
+export const WithFormState: Story = {
+  render: () => (
+    <Form.Root
+      schema={formStateSchema}
+      onSubmit={(data) => {
+        alert(JSON.stringify(data, null, 2))
+      }}
+      className="max-w-lg space-y-4"
+    >
+      {({ isDirty, isValid, isSubmitted, submitCount, dirtyFields, touchedFields }) => (
+        <>
+          <Form.Field name="username" label="Username" required>
+            <Form.Input placeholder="Enter username (min 3 chars)" />
+          </Form.Field>
+          <Form.Field name="email" label="Email" required>
+            <Form.Input type="email" placeholder="user@example.com" />
+          </Form.Field>
+          <Form.Field name="agree">
+            <Form.Checkbox label="I agree to terms" />
+          </Form.Field>
+
+          <div className="rounded-md border p-4 space-y-2 bg-muted/30">
+            <h4 className="text-sm font-semibold">Live Form State</h4>
+            <pre className="text-xs font-mono">
+              {JSON.stringify({
+                isDirty,
+                isValid,
+                isSubmitted,
+                submitCount,
+                dirtyFields,
+                touchedFields,
+              }, null, 2)}
+            </pre>
+          </div>
+
+          <Form.Submit disabled={!isDirty || !isValid}>Save</Form.Submit>
+        </>
+      )}
+    </Form.Root>
   ),
 }
 
@@ -702,6 +759,82 @@ export const KitchenSink: Story = {
       </Form.Field>
 
       <Form.Submit>Save Everything</Form.Submit>
+    </Form.Root>
+  ),
+}
+
+// ---------------------------------------------------------------------------
+// WithDateTimePickers
+// ---------------------------------------------------------------------------
+
+const datePickerSchema = z.object({
+  birthDate: z.string().optional(),
+  availableTime: z.string().optional(),
+  appointmentTime: z.string().optional(),
+})
+
+export const WithDateTimePickers: Story = {
+  render: () => (
+    <Form.Root
+      schema={datePickerSchema}
+      onSubmit={(data) => {
+        alert(JSON.stringify(data, null, 2))
+      }}
+      className="max-w-md space-y-4"
+    >
+      <Form.Field name="birthDate" label="Birth Date">
+        <Form.DatePicker placeholder="Select your birth date" />
+      </Form.Field>
+
+      <Form.Field name="availableTime" label="Available Time">
+        <Form.TimePicker />
+      </Form.Field>
+
+      <Form.Field name="appointmentTime" label="Appointment Time">
+        <Form.DateTimePicker showTimezoneIndicator />
+      </Form.Field>
+
+      <Form.Submit>Submit</Form.Submit>
+    </Form.Root>
+  ),
+}
+
+// ---------------------------------------------------------------------------
+// WithTransfer
+// ---------------------------------------------------------------------------
+
+interface User {
+  id: string
+  name: string
+  role: string
+}
+
+const users: User[] = [
+  { id: '1', name: 'Alice Johnson', role: 'Admin' },
+  { id: '2', name: 'Bob Smith', role: 'User' },
+  { id: '3', name: 'Charlie Brown', role: 'Admin' },
+  { id: '4', name: 'David Lee', role: 'User' },
+  { id: '5', name: 'Emma Davis', role: 'User' },
+]
+
+const transferSchema = z.object({
+  assignedUsers: z.array(z.string()).optional(),
+})
+
+export const WithTransfer: Story = {
+  render: () => (
+    <Form.Root
+      schema={transferSchema}
+      onSubmit={(data) => {
+        alert(JSON.stringify(data, null, 2))
+      }}
+      className="max-w-4xl space-y-4"
+    >
+      <Form.Field name="assignedUsers" label="Assigned Users">
+        <Form.Transfer items={users} itemKey="id" itemLabel="name" itemGroup="role" />
+      </Form.Field>
+
+      <Form.Submit>Save Selection</Form.Submit>
     </Form.Root>
   ),
 }

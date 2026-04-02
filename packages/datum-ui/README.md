@@ -88,7 +88,7 @@ Some components with shared heavy dependencies are grouped under a single subpat
 | `@datum-cloud/datum-ui/map`         | `Map`, `PlaceAutocomplete`, + map controls | `leaflet`, `react-leaflet`, + leaflet plugins |
 | `@datum-cloud/datum-ui/dropzone`    | `Dropzone`, `FileInputButton`              | `react-dropzone`                              |
 | `@datum-cloud/datum-ui/chart`       | `ChartContainer`, `ChartTooltip`, etc.     | `recharts`                                    |
-| `@datum-cloud/datum-ui/form`        | `Form`, `FormField`, `FormInput`, etc.     | `@conform-to/react`, `@conform-to/zod`, `zod` |
+| `@datum-cloud/datum-ui/form`        | `Form`, `FormField`, `FormInput`, etc.     | See [Form Adapters](#form-adapters) below     |
 
 ## Components
 
@@ -136,31 +136,35 @@ Thin wrappers around shadcn/Radix primitives with Datum styling. **Radix UI depe
 
 Complex, fully-customized components with significant business logic.
 
-| Component                                                                                                                        | Additional Dependencies                       | Description                                |
-| -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------ |
-| `Autocomplete`                                                                                                                   | —                                             | Search autocomplete input                  |
-| `AvatarStack`                                                                                                                    | —                                             | Stacked avatar display                     |
-| `CalendarDatePicker`                                                                                                             | `react-day-picker`, `date-fns`                | Date/range picker with presets             |
-| `CodeEditor`, `CodeEditorTabs`                                                                                                   | `@monaco-editor/react`, `monaco-editor`       | Monaco-based code editor with VS Code UX   |
-| `DataTable`, `DataTableColumnHeader`, `DataTablePagination`, `DataTableToolbar`, `DataTableViewOptions`                          | `@tanstack/react-table`                       | Advanced data table with sorting/filtering |
-| `Dropdown`, `DropdownHeader`, `DropdownItem`, `DropdownSection`                                                                  | —                                             | Dropdown menu                              |
-| `Dropzone`                                                                                                                       | `react-dropzone`                              | File drag-and-drop upload area             |
-| `EmptyContent`                                                                                                                   | —                                             | Empty state placeholder                    |
-| `FileInputButton`                                                                                                                | —                                             | File upload button                         |
-| `Form`, `FormField`, `FormInput`, `FormTextarea`, `FormSelect`, `FormCheckbox`, `FormSwitch`, `FormRadioGroup`, `FormFieldArray` | `@conform-to/react`, `@conform-to/zod`, `zod` | Form system with validation                |
-| `Grid`                                                                                                                           | `@tanstack/react-virtual`                     | Virtualized data grid                      |
-| `InputNumber`                                                                                                                    | `react-number-format`                         | Numeric input with formatting              |
-| `InputWithAddons`                                                                                                                | —                                             | Input with prefix/suffix addons            |
-| `LoaderOverlay`                                                                                                                  | —                                             | Full-screen loading overlay                |
-| `MoreActions`                                                                                                                    | —                                             | Three-dot actions menu                     |
-| `NProgress`                                                                                                                      | `nprogress`                                   | Page navigation progress bar               |
-| `PageTitle`                                                                                                                      | —                                             | Page header with breadcrumbs               |
-| `Sidebar`, `SidebarHeader`, `SidebarContent`, `SidebarFooter`, `SidebarMenu`, `SidebarMenuItem`, `SidebarMenuButton`             | —                                             | App sidebar navigation                     |
-| `Stepper`                                                                                                                        | `@stepperize/react`                           | Multi-step wizard                          |
-| `TagInput`                                                                                                                       | —                                             | Tag/chip input                             |
-| `TaskQueue`, `TaskQueueProvider`, `TaskQueueDropdown`, `TaskPanelHeader`, `TaskSummaryDialog`                                    | —                                             | Background task queue with progress UI     |
-| `TimeRangePicker`                                                                                                                | `date-fns`, `date-fns-tz`                     | Time range selector with timezone support  |
-| `Toast`, `Toaster`, `useToast`                                                                                                   | `sonner`                                      | Toast notifications                        |
+| Component                                                                                                                        | Additional Dependencies                   | Description                                |
+| -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------ |
+| `Autocomplete`                                                                                                                   | —                                         | Search autocomplete input                  |
+| `Autosearch`                                                                                                                     | —                                         | Search-first input with async results      |
+| `AvatarStack`                                                                                                                    | —                                         | Stacked avatar display                     |
+| `CalendarDatePicker`                                                                                                             | `react-day-picker`, `date-fns`            | Date/range picker with presets             |
+| `Combobox`                                                                                                                       | —                                         | Searchable single-select dropdown          |
+| `CodeEditor`, `CodeEditorTabs`                                                                                                   | `@monaco-editor/react`, `monaco-editor`   | Monaco-based code editor with VS Code UX   |
+| `DataTable`, `DataTableColumnHeader`, `DataTablePagination`, `DataTableToolbar`, `DataTableViewOptions`                          | `@tanstack/react-table`                   | Advanced data table with sorting/filtering |
+| `DateTimePicker`, `TimePicker`                                                                                                   | `date-fns`, `date-fns-tz`                 | Date/time picker with timezone support     |
+| `Dropdown`, `DropdownHeader`, `DropdownItem`, `DropdownSection`                                                                  | —                                         | Dropdown menu                              |
+| `Dropzone`                                                                                                                       | `react-dropzone`                          | File drag-and-drop upload area             |
+| `EmptyContent`                                                                                                                   | —                                         | Empty state placeholder                    |
+| `FileInputButton`                                                                                                                | —                                         | File upload button                         |
+| `Form`, `FormField`, `FormInput`, `FormTextarea`, `FormSelect`, `FormCheckbox`, `FormSwitch`, `FormRadioGroup`, `FormFieldArray` | See [Form Adapters](#form-adapters) below | Form system with pluggable adapter support |
+| `Grid`                                                                                                                           | `@tanstack/react-virtual`                 | Virtualized data grid                      |
+| `InputNumber`                                                                                                                    | `react-number-format`                     | Numeric input with formatting              |
+| `InputWithAddons`                                                                                                                | —                                         | Input with prefix/suffix addons            |
+| `LoaderOverlay`                                                                                                                  | —                                         | Full-screen loading overlay                |
+| `MoreActions`                                                                                                                    | —                                         | Three-dot actions menu                     |
+| `NProgress`                                                                                                                      | `nprogress`                               | Page navigation progress bar               |
+| `PageTitle`                                                                                                                      | —                                         | Page header with breadcrumbs               |
+| `Sidebar`, `SidebarHeader`, `SidebarContent`, `SidebarFooter`, `SidebarMenu`, `SidebarMenuItem`, `SidebarMenuButton`             | —                                         | App sidebar navigation                     |
+| `Stepper`                                                                                                                        | `@stepperize/react`                       | Multi-step wizard                          |
+| `TagInput`                                                                                                                       | —                                         | Tag/chip input                             |
+| `TaskQueue`, `TaskQueueProvider`, `TaskQueueDropdown`, `TaskPanelHeader`, `TaskSummaryDialog`                                    | —                                         | Background task queue with progress UI     |
+| `TimeRangePicker`                                                                                                                | `date-fns`, `date-fns-tz`                 | Time range selector with timezone support  |
+| `Transfer`                                                                                                                       | —                                         | Dual-panel item selector with search       |
+| `Toast`, `Toaster`, `useToast`                                                                                                   | `sonner`                                  | Toast notifications                        |
 
 ## Usage Examples
 
@@ -212,26 +216,45 @@ import { Title, Text, Paragraph, Code } from '@datum-cloud/datum-ui/typography'
 
 ### Form with Validation
 
+The form system uses a pluggable adapter pattern. Wrap your app with an adapter, then use `Form.*` components as usual:
+
 ```tsx
-import { Form, FormField, FormInput, FormSelect } from '@datum-cloud/datum-ui/form'
+import { Form } from '@datum-cloud/datum-ui/form'
+import { ConformAdapter } from '@datum-cloud/datum-ui/form/adapters/conform'
+// or: import { RHFAdapter } from '@datum-cloud/datum-ui/form/adapters/rhf'
 import { z } from 'zod'
 
 const schema = z.object({
-  name: z.string().min(1),
+  name: z.string().min(1, 'Name is required'),
   role: z.enum(['admin', 'user']),
 })
 
-<Form schema={schema} onSubmit={handleSubmit}>
-  <FormField name="name">
-    <FormInput label="Name" />
-  </FormField>
-  <FormField name="role">
-    <FormSelect label="Role" options={[
-      { label: 'Admin', value: 'admin' },
-      { label: 'User', value: 'user' },
-    ]} />
-  </FormField>
-</Form>
+// Wrap your app once with an adapter
+function App() {
+  return (
+    <ConformAdapter>
+      <MyForm />
+    </ConformAdapter>
+  )
+}
+
+// Form code is identical regardless of adapter
+function MyForm() {
+  return (
+    <Form.Root schema={schema} onSubmit={handleSubmit}>
+      <Form.Field name="name" label="Name" required>
+        <Form.Input />
+      </Form.Field>
+      <Form.Field name="role" label="Role" required>
+        <Form.Select placeholder="Select a role">
+          <Form.SelectItem value="admin">Admin</Form.SelectItem>
+          <Form.SelectItem value="user">User</Form.SelectItem>
+        </Form.Select>
+      </Form.Field>
+      <Form.Submit>Save</Form.Submit>
+    </Form.Root>
+  )
+}
 ```
 
 ### Map
@@ -364,8 +387,11 @@ Many components require additional packages. Install only what you use:
 > Replace `npm install` with `yarn add`, `pnpm add`, or `bun add` for your package manager.
 
 ```bash
-# Forms (Form, FormField, FormInput, etc.)
+# Forms — Conform adapter
 npm install @conform-to/react @conform-to/zod zod
+
+# Forms — React Hook Form adapter (alternative)
+npm install react-hook-form @hookform/resolvers zod
 
 # Maps (Map, MapMarker, MapPopup, etc.)
 npm install leaflet react-leaflet leaflet-draw leaflet.fullscreen leaflet.markercluster react-leaflet-markercluster
@@ -406,6 +432,19 @@ npm install nuqs
 # Animations (motion components)
 npm install motion
 ```
+
+## Form Adapters
+
+The form system supports pluggable adapters. Choose one and wrap your app:
+
+| Adapter             | Import Path                                   | Dependencies                                                         |
+| ------------------- | --------------------------------------------- | -------------------------------------------------------------------- |
+| **Conform.js**      | `@datum-cloud/datum-ui/form/adapters/conform` | `@conform-to/react`, `@conform-to/zod`, `zod` (>=4)                  |
+| **React Hook Form** | `@datum-cloud/datum-ui/form/adapters/rhf`     | `react-hook-form` (>=7.55), `@hookform/resolvers` (>=5), `zod` (>=4) |
+
+The `Form.*` component API is identical with either adapter. Switch adapters by changing only the root provider -- no form code changes needed.
+
+See the [Form README](./src/components/features/form/README.md) for detailed documentation.
 
 ## Tech Stack
 

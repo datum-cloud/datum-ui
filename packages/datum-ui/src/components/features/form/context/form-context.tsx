@@ -1,4 +1,4 @@
-import type { FieldMetadata } from '@conform-to/react'
+import type { NormalizedFieldMeta } from '../adapter-types'
 import type { FormContextValue } from '../types'
 import * as React from 'react'
 
@@ -28,7 +28,7 @@ export function useFormContext<
 /**
  * Get a specific field from the form context
  */
-export function useFormField(name: string): FieldMetadata<unknown> | undefined {
+export function useFormField(name: string): NormalizedFieldMeta | undefined {
   const { fields } = useFormContext()
   return fields[name]
 }

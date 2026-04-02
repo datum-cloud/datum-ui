@@ -1,5 +1,4 @@
 import type { AutocompleteOption, FormAutocompleteProps } from '../../autocomplete/autocomplete.types'
-import { useInputControl } from '@conform-to/react'
 import { cn } from '../../../../utils/cn'
 import { Autocomplete } from '../../autocomplete'
 import { useFieldContext } from '../context/field-context'
@@ -47,22 +46,22 @@ export function FormAutocomplete<T extends AutocompleteOption = AutocompleteOpti
   className,
   ...props
 }: FormAutocompleteProps<T>) {
-  const { fieldMeta, disabled: fieldDisabled, errors } = useFieldContext()
-  const control = useInputControl(fieldMeta as any)
-
+  const { id, errors, disabled: fieldDisabled, fieldState } = useFieldContext()
   const isDisabled = disabled ?? fieldDisabled
   const hasErrors = errors && errors.length > 0
 
-  // Ensure value is always a string
-  const selectValue = Array.isArray(control.value) ? control.value[0] : control.value
+  const value = fieldState?.value != null ? String(fieldState.value) : ''
 
   return (
     <Autocomplete<T>
       {...props}
-      name={fieldMeta.name}
-      id={fieldMeta.id}
-      value={selectValue ?? ''}
-      onValueChange={control.change}
+      name={fieldState?.name}
+      id={id}
+      value={value}
+      onValueChange={(val) => {
+        fieldState?.change(val)
+        fieldState?.blur()
+      }}
       disabled={isDisabled}
       triggerClassName={cn(hasErrors && 'border-destructive', props.triggerClassName)}
       className={className}

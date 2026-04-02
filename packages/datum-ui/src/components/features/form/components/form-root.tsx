@@ -1,27 +1,17 @@
 import type { z } from 'zod'
 import type { FormRootProps, FormRootRenderProps } from '../types'
-import { FormProvider as ConformFormProvider, getFormProps, useForm } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import * as React from 'react'
 import { cn } from '../../../../utils/cn'
+import { useAdapter } from '../adapter-context'
 import { FormProvider } from '../context/form-context'
 
 /**
- * Form.Root - The root form component
- *
- * Provides form context to all children with built-in:
- * - Zod schema validation
- * - Conform integration
- * - Optional telemetry callbacks
- *
- * Supports two patterns:
- * 1. ReactNode children - for standard forms
- * 2. Render function - for forms needing access to form state
+ * Form.Root - Root form container that integrates with the active adapter.
  *
  * @example Standard usage
  * ```tsx
- * <Form.Root schema={userSchema} onSubmit={handleSubmit}>
- *   <Form.Field name="email" label="Email" required>
+ * <Form.Root schema={schema} onSubmit={handleSubmit}>
+ *   <Form.Field name="email" label="Email">
  *     <Form.Input type="email" />
  *   </Form.Field>
  *   <Form.Submit>Save</Form.Submit>
@@ -30,20 +20,9 @@ import { FormProvider } from '../context/form-context'
  *
  * @example Render function for form state access
  * ```tsx
- * <Form.Root schema={userSchema} onSubmit={handleSubmit}>
+ * <Form.Root schema={schema}>
  *   {({ form, fields, isSubmitting }) => (
- *     <>
- *       <Form.Field name="email" label="Email" required>
- *         <Form.Input type="email" />
- *       </Form.Field>
- *       <Button
- *         disabled={isSubmitting}
- *         onClick={() => form.update({ value: { email: '' } })}
- *       >
- *         Cancel
- *       </Button>
- *       <Form.Submit>Save</Form.Submit>
- *     </>
+ *     <Form.Field name="email"><Form.Input /></Form.Field>
  *   )}
  * </Form.Root>
  * ```
@@ -58,159 +37,142 @@ export function FormRoot<T extends z.ZodType>({
   id,
   name,
   defaultValues,
-  mode = 'onBlur',
+  mode = 'onChange',
   isSubmitting: externalIsSubmitting,
   onError,
   onSuccess,
   telemetry,
   className,
 }: FormRootProps<T>) {
+  const adapter = useAdapter()
+
   const [internalIsSubmitting, setInternalIsSubmitting] = React.useState(false)
-  // Use external isSubmitting if provided, otherwise use internal state
   const isSubmitting = externalIsSubmitting ?? internalIsSubmitting
+
+  // Track submission state (shared across all adapters)
+  const [isSubmitted, setIsSubmitted] = React.useState(false)
+  const [submitCount, setSubmitCount] = React.useState(0)
+
   const formRef = React.useRef<HTMLFormElement>(null)
 
-  // Map mode to Conform's expected values
-  const shouldValidate = mode === 'onChange' ? 'onInput' : mode
+  // Wrap onSubmit with telemetry + state management
+  const wrappedOnSubmit = React.useCallback(
+    async (data: Record<string, unknown>) => {
+      setInternalIsSubmitting(true)
+      setIsSubmitted(true)
+      setSubmitCount(prev => prev + 1)
+      try {
+        await onSubmit?.(data as any)
+        telemetry?.onSuccess?.({ formName: name ?? '', formId: id })
+        onSuccess?.(data as any)
+      }
+      catch (error) {
+        const err = error instanceof Error ? error : new Error(String(error))
+        telemetry?.onError?.({ formName: name ?? '', formId: id, error: err })
+        telemetry?.captureError?.(err, { formName: name ?? '', formId: id })
+        onError?.(error as any)
+      }
+      finally {
+        setInternalIsSubmitting(false)
+      }
+    },
+    [onSubmit, onSuccess, onError, telemetry, name, id],
+  )
 
-  const [form, fields] = useForm({
+  // Create form instance via the adapter
+  const instance = adapter.useCreateForm({
+    schema,
+    defaultValues: defaultValues as Record<string, unknown>,
+    mode,
     id,
-    constraint: getZodConstraint(schema),
-    shouldValidate,
-    shouldRevalidate: mode === 'onSubmit' ? 'onSubmit' : 'onInput',
-    defaultValue: defaultValues as any,
-    onValidate({ formData }) {
-      return parseWithZod(formData, { schema }) as any
-    },
-    async onSubmit(event, { submission }) {
-      const formName = name || id || 'unnamed-form'
-
-      // Track form submission attempt
-      telemetry?.onSubmit?.({ formName, formId: id })
-
-      // If no onSubmit handler is provided, let React Router handle the submission
-      // This allows the form to submit to the current route's action or a specified action
-      if (!onSubmit) {
-        // Set submitting state for UI feedback
-        setInternalIsSubmitting(true)
-        return
-      }
-
-      // Client-side submission - prevent default to handle it ourselves
-      event.preventDefault()
-
-      if (submission?.status === 'success') {
-        setInternalIsSubmitting(true)
-        try {
-          await onSubmit(submission.value as z.infer<T>)
-          onSuccess?.(submission.value as z.infer<T>)
-          telemetry?.onSuccess?.({ formName, formId: id })
-        }
-        catch (error) {
-          telemetry?.onError?.({ formName, formId: id, error: error as Error })
-          telemetry?.captureError?.(error as Error, {
-            message: `Form submission error: ${formName}`,
-            tags: { 'form.name': formName, 'form.id': id || 'unknown' },
-          })
-          onError?.(error as z.ZodError<z.infer<T>>)
-        }
-        finally {
-          setInternalIsSubmitting(false)
-        }
-      }
-      else if (submission?.status === 'error') {
-        // Track validation errors
-        telemetry?.onValidationError?.({
-          formName,
-          formId: id,
-          fieldErrors: (submission.error as Record<string, string[]>) ?? {},
-        })
-
-        if (onError) {
-          // Handle validation errors
-          const { ZodError } = await import('zod')
-          const zodError = new ZodError(
-            Object.entries(submission.error ?? {}).flatMap(([path, messages]) =>
-              (messages ?? []).map(message => ({
-                code: 'custom' as const,
-                path: path.split('.'),
-                message,
-              })),
-            ),
-          )
-          onError(zodError as z.ZodError<z.infer<T>>)
-        }
-      }
-    },
+    onSubmit: onSubmit ? wrappedOnSubmit : undefined,
+    formRef,
   })
 
-  const submit = React.useCallback(() => {
-    formRef.current?.requestSubmit()
-  }, [])
+  // Merge adapter-provided formState with Form.Root-tracked submission state
+  const { formState } = instance
 
-  const reset = React.useCallback(() => {
-    form.reset()
-  }, [form])
-
+  // Context value
   const contextValue = React.useMemo(
     () => ({
-      form: form as any,
-      fields: fields as unknown as Record<string, any>,
+      form: instance,
+      fields: instance.fields,
       isSubmitting,
-      submit,
-      reset,
-      formId: form.id,
+      isDirty: formState.isDirty,
+      isValid: formState.isValid,
+      isSubmitted,
+      submitCount,
+      dirtyFields: formState.dirtyFields,
+      touchedFields: formState.touchedFields,
+      mode,
+      displayTouchedFields: instance.touchedFields,
+      markFieldTouched: instance.markFieldTouched,
+      markAllFieldsTouched: instance.markAllFieldsTouched,
+      submit: () => formRef.current?.requestSubmit(),
+      reset: () => instance.reset(),
+      formId: instance.id,
     }),
-    [form, fields, isSubmitting, submit, reset],
+    [instance, isSubmitting, formState, isSubmitted, submitCount, mode],
   )
 
-  // Determine if children is a render function
+  // Render function support
   const isRenderFunction = typeof children === 'function'
 
-  // Create render props for render function pattern
-  const renderProps: FormRootRenderProps = React.useMemo(
-    () => ({
-      form: form as any,
-      fields: fields as unknown as Record<string, any>,
-      isSubmitting,
-      submit,
-      reset,
-    }),
-    [form, fields, isSubmitting, submit, reset],
-  )
-
-  // Render children - either as ReactNode or render function
   const renderChildren = () => {
-    if (isRenderFunction) {
-      return (children as (props: FormRootRenderProps) => React.ReactNode)(renderProps)
+    if (!isRenderFunction) {
+      return children
     }
-    return children
+    const renderProps: FormRootRenderProps = {
+      form: instance,
+      fields: instance.fields,
+      isSubmitting,
+      isDirty: formState.isDirty,
+      isValid: formState.isValid,
+      isSubmitted,
+      submitCount,
+      dirtyFields: formState.dirtyFields,
+      touchedFields: formState.touchedFields,
+      mode,
+      submit: () => formRef.current?.requestSubmit(),
+      reset: () => instance.reset(),
+    }
+    return (children as (props: FormRootRenderProps) => React.ReactNode)(renderProps)
   }
-
-  // Extract Conform's onSubmit so we can wrap it with stopPropagation.
-  // This prevents nested forms (e.g. Form.Dialog inside another form)
-  // from triggering the parent form's Conform handler via React's
-  // synthetic event bubbling through portals.
-  const { onSubmit: conformOnSubmit, ...conformFormProps } = getFormProps(form)
 
   return (
     <FormProvider value={contextValue}>
-      <ConformFormProvider context={form.context}>
+      <adapter.FormProvider instance={instance}>
         <FormComp
           ref={formRef}
-          {...conformFormProps}
-          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-            e.stopPropagation()
-            conformOnSubmit(e)
-          }}
+          {...instance.formProps}
           method={method}
           action={action}
           className={cn('space-y-6', className)}
           autoComplete="off"
+          noValidate
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            const submitEvent = e.nativeEvent as SubmitEvent
+            const submitter = submitEvent.submitter as HTMLButtonElement | null
+            e.stopPropagation()
+
+            // Only mark fields as touched for visible submit button clicks (not Conform's hidden validation buttons)
+            // Conform uses hidden buttons with name="__intent__" for field validation during initialization
+            // Real user submit buttons are visible (not hidden)
+            const isUserSubmit = submitter && !submitter.hidden
+            if (isUserSubmit) {
+              // On submit attempt, always mark all fields as display-touched so errors become visible
+              instance.markAllFieldsTouched()
+            }
+            telemetry?.onSubmit?.({ formName: name ?? '', formId: id })
+            const adapterSubmit = instance.formProps.onSubmit as
+              | ((e: React.FormEvent<HTMLFormElement>) => void)
+              | undefined
+            adapterSubmit?.(e)
+          }}
         >
           {renderChildren()}
         </FormComp>
-      </ConformFormProvider>
+      </adapter.FormProvider>
     </FormProvider>
   )
 }

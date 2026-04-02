@@ -205,6 +205,16 @@
       "types": "./dist/components/features/autocomplete/index.d.ts",
       "default": "./dist/autocomplete/index.mjs"
     },
+    "./autosearch": {
+      "source": "./src/components/features/autosearch/index.ts",
+      "types": "./dist/components/features/autosearch/index.d.ts",
+      "default": "./dist/autosearch/index.mjs"
+    },
+    "./combobox": {
+      "source": "./src/components/features/combobox/index.ts",
+      "types": "./dist/components/features/combobox/index.d.ts",
+      "default": "./dist/combobox/index.mjs"
+    },
     "./avatar-stack": {
       "source": "./src/components/features/avatar-stack/index.ts",
       "types": "./dist/components/features/avatar-stack/index.d.ts",
@@ -234,6 +244,21 @@
       "source": "./src/components/features/form/index.ts",
       "types": "./dist/components/features/form/index.d.ts",
       "default": "./dist/form/index.mjs"
+    },
+    "./form/adapters/conform": {
+      "source": "./src/components/features/form/adapters/conform/index.ts",
+      "types": "./dist/components/features/form/adapters/conform/index.d.ts",
+      "default": "./dist/form/adapters/conform/index.mjs"
+    },
+    "./form/adapters/rhf": {
+      "source": "./src/components/features/form/adapters/rhf/index.ts",
+      "types": "./dist/components/features/form/adapters/rhf/index.d.ts",
+      "default": "./dist/form/adapters/rhf/index.mjs"
+    },
+    "./form/stepper": {
+      "source": "./src/components/features/form/stepper/index.ts",
+      "types": "./dist/components/features/form/stepper/index.d.ts",
+      "default": "./dist/form/stepper/index.mjs"
     },
     "./grid": {
       "types": "./dist/components/features/grid/index.d.ts",
@@ -309,6 +334,21 @@
       "source": "./src/components/features/data-table/index.ts",
       "types": "./dist/components/features/data-table/index.d.ts",
       "default": "./dist/data-table/index.mjs"
+    },
+    "./date-time-picker": {
+      "source": "./src/components/features/date-time-picker/index.ts",
+      "types": "./dist/components/features/date-time-picker/index.d.ts",
+      "default": "./dist/date-time-picker/index.mjs"
+    },
+    "./time-picker": {
+      "source": "./src/components/features/time-picker/index.ts",
+      "types": "./dist/components/features/time-picker/index.d.ts",
+      "default": "./dist/time-picker/index.mjs"
+    },
+    "./transfer": {
+      "source": "./src/components/features/transfer/index.ts",
+      "types": "./dist/components/features/transfer/index.d.ts",
+      "default": "./dist/transfer/index.mjs"
     }
   },
   "main": "./dist/index.mjs",
@@ -334,6 +374,9 @@
   "peerDependencies": {
     "@conform-to/react": ">=1",
     "@conform-to/zod": ">=1",
+    "@dnd-kit/core": ">=6",
+    "@dnd-kit/sortable": ">=8",
+    "@hookform/resolvers": ">=5",
     "@monaco-editor/react": "^4.7.0",
     "@stepperize/react": ">=4",
     "@tanstack/react-table": ">=8",
@@ -354,18 +397,28 @@
     "react-day-picker": ">=9",
     "react-dom": ">=19",
     "react-dropzone": ">=14",
+    "react-hook-form": ">=7.55",
     "react-leaflet": ">=5",
     "react-leaflet-markercluster": ">=5.0.0-rc.0",
     "react-number-format": ">=5",
     "recharts": ">=2",
     "sonner": ">=2",
-    "zod": ">=3"
+    "zod": ">=4"
   },
   "peerDependenciesMeta": {
     "@conform-to/react": {
       "optional": true
     },
     "@conform-to/zod": {
+      "optional": true
+    },
+    "@dnd-kit/core": {
+      "optional": true
+    },
+    "@dnd-kit/sortable": {
+      "optional": true
+    },
+    "@hookform/resolvers": {
       "optional": true
     },
     "@monaco-editor/react": {
@@ -420,6 +473,9 @@
     "react-dropzone": {
       "optional": true
     },
+    "react-hook-form": {
+      "optional": true
+    },
     "react-leaflet": {
       "optional": true
     },
@@ -440,6 +496,7 @@
     }
   },
   "dependencies": {
+    "@dnd-kit/utilities": "^3.2.2",
     "@radix-ui/react-avatar": "^1",
     "@radix-ui/react-checkbox": "^1",
     "@radix-ui/react-collapsible": "^1",
@@ -465,6 +522,9 @@
   "devDependencies": {
     "@conform-to/react": "^1.17.1",
     "@conform-to/zod": "^1.17.1",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@hookform/resolvers": "^5.2.2",
     "@monaco-editor/react": "^4.7.0",
     "@repo/config": "workspace:*",
     "@repo/shadcn": "workspace:*",
@@ -500,6 +560,7 @@
     "react-day-picker": "^9.14.0",
     "react-dom": "^19",
     "react-dropzone": "^15.0.0",
+    "react-hook-form": "^7.71.2",
     "react-leaflet": "^5.0.0",
     "react-leaflet-markercluster": "5.0.0-rc.0",
     "react-number-format": "^5.4.4",

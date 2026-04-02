@@ -1,5 +1,4 @@
 import type { FormCheckboxProps } from '../types'
-import { useInputControl } from '@conform-to/react'
 import * as React from 'react'
 import { cn } from '../../../../utils/cn'
 import { Checkbox } from '../../../base/checkbox'
@@ -19,35 +18,29 @@ import { useFieldContext } from '../context/field-context'
  * ```
  */
 export function FormCheckbox({ label, disabled, className }: FormCheckboxProps) {
-  const { fieldMeta, disabled: fieldDisabled, errors } = useFieldContext()
-
-  const control = useInputControl(fieldMeta as any)
+  const { id, errors, disabled: fieldDisabled, fieldState } = useFieldContext()
   const isDisabled = disabled ?? fieldDisabled
   const hasErrors = errors && errors.length > 0
 
-  // Convert string value to boolean
-  const isChecked = control.value === 'on' || control.value === 'true'
-
-  const handleCheckedChange = (checked: boolean) => {
-    control.change(checked ? 'on' : '')
-  }
-
-  const checkboxId = fieldMeta.id
+  // Native boolean from adapter (no string conversion needed)
+  const checked = Boolean(fieldState?.value)
 
   return (
     <div className={cn('flex items-center space-x-2', className)}>
       <Checkbox
-        id={checkboxId}
-        name={fieldMeta.name}
-        checked={isChecked}
-        onCheckedChange={handleCheckedChange}
+        id={id}
+        checked={checked}
+        onCheckedChange={(value) => {
+          fieldState?.change(Boolean(value))
+          fieldState?.blur()
+        }}
         disabled={isDisabled}
         aria-invalid={hasErrors || undefined}
-        aria-describedby={hasErrors ? `${fieldMeta.id}-error` : undefined}
+        aria-describedby={hasErrors ? `${id}-error` : undefined}
       />
       {label && (
         <Label
-          htmlFor={checkboxId}
+          htmlFor={id}
           className={cn(
             'cursor-pointer text-sm font-normal',
             isDisabled && 'cursor-not-allowed opacity-70',
