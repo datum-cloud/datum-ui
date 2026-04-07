@@ -5,6 +5,14 @@ import { RadioGroup, RadioGroupItem } from '@datum-cloud/datum-ui/radio-group'
 const meta: Meta<typeof RadioGroup> = {
   title: 'Base/RadioGroup',
   component: RadioGroup,
+  argTypes: {
+    disabled: { control: 'boolean' },
+    defaultValue: { control: 'text' },
+  },
+  args: {
+    disabled: false,
+    defaultValue: 'option-1',
+  },
 }
 
 export default meta
@@ -12,8 +20,8 @@ export default meta
 type Story = StoryObj<typeof RadioGroup>
 
 export const Default: Story = {
-  render: () => (
-    <RadioGroup>
+  render: args => (
+    <RadioGroup {...args}>
       <div className="flex items-center gap-2">
         <RadioGroupItem value="option-1" id="option-1" />
         <Label htmlFor="option-1">Option One</Label>
@@ -25,44 +33,6 @@ export const Default: Story = {
       <div className="flex items-center gap-2">
         <RadioGroupItem value="option-3" id="option-3" />
         <Label htmlFor="option-3">Option Three</Label>
-      </div>
-    </RadioGroup>
-  ),
-}
-
-export const WithDefaultValue: Story = {
-  render: () => (
-    <RadioGroup defaultValue="option-2">
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="option-1" id="default-1" />
-        <Label htmlFor="default-1">Option One</Label>
-      </div>
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="option-2" id="default-2" />
-        <Label htmlFor="default-2">Option Two</Label>
-      </div>
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="option-3" id="default-3" />
-        <Label htmlFor="default-3">Option Three</Label>
-      </div>
-    </RadioGroup>
-  ),
-}
-
-export const Disabled: Story = {
-  render: () => (
-    <RadioGroup disabled defaultValue="option-1">
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="option-1" id="disabled-1" />
-        <Label htmlFor="disabled-1">Option One</Label>
-      </div>
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="option-2" id="disabled-2" />
-        <Label htmlFor="disabled-2">Option Two</Label>
-      </div>
-      <div className="flex items-center gap-2">
-        <RadioGroupItem value="option-3" id="disabled-3" />
-        <Label htmlFor="disabled-3">Option Three</Label>
       </div>
     </RadioGroup>
   ),

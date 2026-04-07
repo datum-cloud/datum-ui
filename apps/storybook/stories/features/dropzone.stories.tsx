@@ -2,25 +2,23 @@ import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@datum-cloud/datum-ui/dropzone'
 import { useState } from 'react'
 
-const meta: Meta = {
+interface DropzoneStoryArgs {
+  disabled: boolean
+}
+
+const meta: Meta<DropzoneStoryArgs> = {
   title: 'Features/Dropzone',
   argTypes: {
-    disabled: {
-      control: { type: 'boolean' },
-    },
-    maxFiles: {
-      control: { type: 'number' },
-    },
+    disabled: { control: 'boolean' },
   },
   args: {
     disabled: false,
-    maxFiles: 1,
   },
 }
 
 export default meta
 
-type Story = StoryObj
+type Story = StoryObj<DropzoneStoryArgs>
 
 export const Default: Story = {
   render: (args) => {
@@ -28,7 +26,7 @@ export const Default: Story = {
     return (
       <div className="max-w-md">
         <Dropzone
-          {...args}
+          disabled={args.disabled}
           src={files}
           onDrop={accepted => setFiles(accepted)}
           onError={err => alert(err.message)}
@@ -42,42 +40,4 @@ export const Default: Story = {
       </div>
     )
   },
-}
-
-export const WithContent: Story = {
-  render: () => {
-    const [files, setFiles] = useState<File[] | undefined>(undefined)
-    return (
-      <div className="max-w-md">
-        <Dropzone
-          src={files}
-          onDrop={accepted => setFiles(accepted)}
-          onError={err => alert(err.message)}
-          accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.gif'] }}
-          maxSize={5 * 1024 * 1024}
-          maxFiles={3}
-        >
-          <DropzoneEmptyState
-            label="Upload images"
-            description="PNG, JPG, GIF up to 5MB"
-            showCaption
-          />
-          <DropzoneContent description="Drag and drop or click to replace" />
-        </Dropzone>
-      </div>
-    )
-  },
-}
-
-export const Disabled: Story = {
-  render: () => (
-    <div className="max-w-md">
-      <Dropzone disabled>
-        <DropzoneEmptyState
-          label="Upload disabled"
-          description="This dropzone is currently disabled"
-        />
-      </Dropzone>
-    </div>
-  ),
 }

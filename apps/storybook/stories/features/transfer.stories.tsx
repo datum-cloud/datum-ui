@@ -22,100 +22,33 @@ const users: User[] = [
 const meta: Meta<typeof Transfer<User>> = {
   title: 'Features/Transfer',
   component: Transfer,
-  tags: ['autodocs'],
+  argTypes: {
+    searchable: { control: 'boolean' },
+    disabled: { control: 'boolean' },
+  },
+  args: {
+    searchable: true,
+    disabled: false,
+  },
 }
 
 export default meta
+
 type Story = StoryObj<typeof Transfer<User>>
 
 export const Default: Story = {
-  render: () => {
+  render: (args) => {
     const [value, setValue] = useState<string[]>([])
-
     return (
-      <div className="space-y-4">
-        <Transfer
-          items={users}
-          value={value}
-          onChange={setValue}
-          itemKey="id"
-          itemLabel="name"
-          itemGroup="role"
-        />
-        <pre className="text-xs">
-          Selected:
-          {JSON.stringify(value, null, 2)}
-        </pre>
-      </div>
-    )
-  },
-}
-
-export const WithPreselected: Story = {
-  render: () => {
-    const [value, setValue] = useState<string[]>(['1', '3', '7'])
-
-    return (
-      <div className="space-y-4">
-        <Transfer
-          items={users}
-          value={value}
-          onChange={setValue}
-          itemKey="id"
-          itemLabel="name"
-          itemGroup="role"
-        />
-        <pre className="text-xs">
-          Selected:
-          {JSON.stringify(value, null, 2)}
-        </pre>
-      </div>
-    )
-  },
-}
-
-export const WithSearch: Story = {
-  render: () => {
-    const [value, setValue] = useState<string[]>([])
-
-    return (
-      <div className="space-y-4">
-        <Transfer
-          items={users}
-          value={value}
-          onChange={setValue}
-          itemKey="id"
-          itemLabel="name"
-          itemGroup="role"
-          searchable={true}
-        />
-        <pre className="text-xs">
-          Selected:
-          {JSON.stringify(value, null, 2)}
-        </pre>
-      </div>
-    )
-  },
-}
-
-export const NoGrouping: Story = {
-  render: () => {
-    const [value, setValue] = useState<string[]>([])
-
-    return (
-      <div className="space-y-4">
-        <Transfer
-          items={users}
-          value={value}
-          onChange={setValue}
-          itemKey="id"
-          itemLabel="name"
-        />
-        <pre className="text-xs">
-          Selected:
-          {JSON.stringify(value, null, 2)}
-        </pre>
-      </div>
+      <Transfer
+        {...args}
+        items={users}
+        value={value}
+        onChange={setValue}
+        itemKey="id"
+        itemLabel="name"
+        itemGroup="role"
+      />
     )
   },
 }

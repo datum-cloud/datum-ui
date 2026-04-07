@@ -4,14 +4,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@datum-cloud/datum-ui/
 const meta: Meta<typeof Tabs> = {
   title: 'Base/Tabs',
   component: Tabs,
+  argTypes: {
+    defaultValue: { control: 'text' },
+  },
+  args: {
+    defaultValue: 'overview',
+  },
 }
 
 export default meta
+
 type Story = StoryObj<typeof Tabs>
 
 export const Default: Story = {
-  render: () => (
-    <Tabs defaultValue="overview">
+  render: args => (
+    <Tabs {...args}>
       <TabsList>
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="settings">Settings</TabsTrigger>
@@ -19,56 +26,17 @@ export const Default: Story = {
       </TabsList>
       <TabsContent value="overview">
         <div className="rounded-md border p-4">
-          <p className="text-sm text-muted-foreground">
-            Overview content goes here. This is the first tab panel.
-          </p>
+          <p className="text-muted-foreground text-sm">Overview content goes here.</p>
         </div>
       </TabsContent>
       <TabsContent value="settings">
         <div className="rounded-md border p-4">
-          <p className="text-sm text-muted-foreground">
-            Settings content goes here. Manage your preferences in this panel.
-          </p>
+          <p className="text-muted-foreground text-sm">Settings content goes here.</p>
         </div>
       </TabsContent>
       <TabsContent value="analytics">
         <div className="rounded-md border p-4">
-          <p className="text-sm text-muted-foreground">
-            Analytics content goes here. View metrics and insights.
-          </p>
-        </div>
-      </TabsContent>
-    </Tabs>
-  ),
-}
-
-export const WithDefaultValue: Story = {
-  render: () => (
-    <Tabs defaultValue="settings">
-      <TabsList>
-        <TabsTrigger value="general">General</TabsTrigger>
-        <TabsTrigger value="settings">Settings</TabsTrigger>
-        <TabsTrigger value="notifications">Notifications</TabsTrigger>
-      </TabsList>
-      <TabsContent value="general">
-        <div className="rounded-md border p-4">
-          <p className="text-sm text-muted-foreground">
-            General settings panel. This is not the default tab.
-          </p>
-        </div>
-      </TabsContent>
-      <TabsContent value="settings">
-        <div className="rounded-md border p-4">
-          <p className="text-sm text-muted-foreground">
-            This tab is selected by default via the defaultValue prop.
-          </p>
-        </div>
-      </TabsContent>
-      <TabsContent value="notifications">
-        <div className="rounded-md border p-4">
-          <p className="text-sm text-muted-foreground">
-            Notification preferences panel.
-          </p>
+          <p className="text-muted-foreground text-sm">Analytics content goes here.</p>
         </div>
       </TabsContent>
     </Tabs>

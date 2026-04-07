@@ -1,20 +1,20 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import { Calendar } from '@datum-cloud/datum-ui/calendar'
-import * as React from 'react'
 
 const meta: Meta<typeof Calendar> = {
   title: 'Base/Calendar',
   component: Calendar,
   argTypes: {
     showOutsideDays: {
-      control: { type: 'boolean' },
+      control: 'boolean',
     },
     numberOfMonths: {
-      control: { type: 'number' },
+      control: 'number',
     },
   },
   args: {
     showOutsideDays: true,
+    numberOfMonths: 1,
   },
 }
 
@@ -24,18 +24,4 @@ type Story = StoryObj<typeof Calendar>
 
 export const Default: Story = {
   render: args => <Calendar {...args} />,
-}
-
-export const WithSelectedDate: Story = {
-  render: () => {
-    const [date, setDate] = React.useState<Date | undefined>(new Date())
-
-    return (
-      <Calendar
-        mode="single"
-        selected={date}
-        onSelect={setDate}
-      />
-    )
-  },
 }

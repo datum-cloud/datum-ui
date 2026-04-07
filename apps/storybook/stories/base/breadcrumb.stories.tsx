@@ -7,15 +7,15 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@datum-cloud/datum-ui/breadcrumb'
-import { Slash } from 'lucide-react'
 
-const meta: Meta = {
+const meta: Meta<typeof Breadcrumb> = {
   title: 'Base/Breadcrumb',
+  component: Breadcrumb,
 }
 
 export default meta
 
-type Story = StoryObj
+type Story = StoryObj<typeof Breadcrumb>
 
 export const Default: Story = {
   render: () => (
@@ -31,30 +31,6 @@ export const Default: Story = {
         <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbPage>Current Page</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  ),
-}
-
-export const WithSeparator: Story = {
-  render: () => (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator>
-          <Slash size={14} />
-        </BreadcrumbSeparator>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/settings">Settings</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator>
-          <Slash size={14} />
-        </BreadcrumbSeparator>
-        <BreadcrumbItem>
-          <BreadcrumbPage>Profile</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

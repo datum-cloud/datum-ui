@@ -47,7 +47,7 @@ function StepperDemo({ initialStep }: { initialStep?: string }) {
             <button
               type="button"
               className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm"
-              onClick={() => methods.state.isLast ? console.log('Done!') : methods.navigation.next()}
+              onClick={() => methods.state.isLast ? alert('Done!') : methods.navigation.next()}
             >
               {methods.state.isLast ? 'Complete' : 'Next'}
             </button>
@@ -63,7 +63,7 @@ const meta: Meta = {
   component: StepperDemo,
   argTypes: {
     initialStep: {
-      control: { type: 'select' },
+      control: 'select',
       options: ['step-1', 'step-2', 'step-3'],
     },
   },
@@ -78,8 +78,4 @@ type Story = StoryObj
 
 export const Default: Story = {
   render: (args: Record<string, unknown>) => <StepperDemo initialStep={args.initialStep as string} />,
-}
-
-export const WithActiveStep: Story = {
-  render: () => <StepperDemo initialStep="step-2" />,
 }

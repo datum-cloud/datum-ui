@@ -1,23 +1,21 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import { Button } from '@datum-cloud/datum-ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@datum-cloud/datum-ui/popover'
-import { Settings } from 'lucide-react'
 
-const meta: Meta = {
+const meta: Meta<typeof Popover> = {
   title: 'Base/Popover',
+  component: Popover,
 }
 
 export default meta
 
-type Story = StoryObj
+type Story = StoryObj<typeof Popover>
 
 export const Default: Story = {
-  render: () => (
-    <Popover>
+  render: args => (
+    <Popover {...args}>
       <PopoverTrigger asChild>
-        <Button type="secondary" theme="outline" icon={<Settings size={16} />}>
-          Open Popover
-        </Button>
+        <Button type="secondary" theme="outline">Open Popover</Button>
       </PopoverTrigger>
       <PopoverContent>
         <div className="flex flex-col gap-3">
@@ -25,16 +23,6 @@ export const Default: Story = {
           <p className="text-muted-foreground text-sm">
             Configure your preferences for this workspace.
           </p>
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" defaultChecked />
-              Enable notifications
-            </label>
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" />
-              Dark mode
-            </label>
-          </div>
         </div>
       </PopoverContent>
     </Popover>

@@ -5,23 +5,18 @@ const meta: Meta<typeof InputNumber> = {
   title: 'Features/InputNumber',
   component: InputNumber,
   argTypes: {
-    min: {
-      control: { type: 'number' },
-    },
-    max: {
-      control: { type: 'number' },
-    },
-    stepper: {
-      control: { type: 'number' },
-    },
-    disabled: {
-      control: { type: 'boolean' },
-    },
+    min: { control: 'number' },
+    max: { control: 'number' },
+    stepper: { control: 'number' },
+    disabled: { control: 'boolean' },
+    placeholder: { control: 'text' },
   },
   args: {
+    min: 0,
+    max: 100,
     stepper: 1,
-    placeholder: 'Enter number',
     disabled: false,
+    placeholder: 'Enter number',
   },
 }
 
@@ -30,20 +25,3 @@ export default meta
 type Story = StoryObj<typeof InputNumber>
 
 export const Default: Story = {}
-
-export const WithMinMax: Story = {
-  args: {
-    min: 0,
-    max: 100,
-    stepper: 5,
-    defaultValue: 50,
-    placeholder: '0 - 100',
-  },
-}
-
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-    defaultValue: 42,
-  },
-}
