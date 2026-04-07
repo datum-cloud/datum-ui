@@ -1,21 +1,29 @@
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import { Col, Row } from '@datum-cloud/datum-ui/grid'
 
-const meta: Meta = {
+interface GridStoryArgs {
+  gutter: number
+  columns: number
+}
+
+const meta: Meta<GridStoryArgs> = {
   title: 'Features/Grid',
   argTypes: {
-    gutter: {
-      control: { type: 'number' },
+    gutter: { control: { type: 'number', min: 0, max: 64 } },
+    columns: {
+      control: 'select',
+      options: [3, 4, 6],
     },
   },
   args: {
     gutter: 16,
+    columns: 3,
   },
 }
 
 export default meta
 
-type Story = StoryObj
+type Story = StoryObj<GridStoryArgs>
 
 const colStyle: React.CSSProperties = {
   padding: '16px',
@@ -26,55 +34,22 @@ const colStyle: React.CSSProperties = {
   borderRadius: '6px',
 }
 
+const colors = ['#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#ec4899', '#f43f5e']
+
 export const Default: Story = {
-  render: (args: Record<string, unknown>) => (
-    <Row type="flex" gutter={args.gutter as number}>
-      <Col span={8}>
-        <div style={{ ...colStyle, background: '#3b82f6' }}>Col 8</div>
-      </Col>
-      <Col span={8}>
-        <div style={{ ...colStyle, background: '#6366f1' }}>Col 8</div>
-      </Col>
-      <Col span={8}>
-        <div style={{ ...colStyle, background: '#8b5cf6' }}>Col 8</div>
-      </Col>
-    </Row>
-  ),
-}
-
-export const ResponsiveGrid: Story = {
-  args: {
-    gutter: 32,
+  render: (args) => {
+    const cols = args.columns ?? 3
+    const span = Math.floor(24 / cols)
+    return (
+      <Row type="flex" gutter={args.gutter}>
+        {Array.from({ length: cols }, (_, i) => (
+          <Col key={`col-${i}`} span={span}>
+            <div style={{ ...colStyle, background: colors[i % colors.length] }}>
+              {`Col ${span}`}
+            </div>
+          </Col>
+        ))}
+      </Row>
+    )
   },
-
-  render: (args: Record<string, unknown>) => (
-    <div className="flex flex-col gap-4">
-      <Row type="flex" gutter={args.gutter as number}>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <div style={{ ...colStyle, background: '#3b82f6' }}>xs=24 sm=12 md=8 lg=6</div>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <div style={{ ...colStyle, background: '#6366f1' }}>xs=24 sm=12 md=8 lg=6</div>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <div style={{ ...colStyle, background: '#8b5cf6' }}>xs=24 sm=12 md=8 lg=6</div>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <div style={{ ...colStyle, background: '#a855f7' }}>xs=24 sm=12 md=8 lg=6</div>
-        </Col>
-      </Row>
-
-      <Row type="flex" gutter={args.gutter as number}>
-        <Col span={6}>
-          <div style={{ ...colStyle, background: '#14b8a6' }}>Col 6</div>
-        </Col>
-        <Col span={12}>
-          <div style={{ ...colStyle, background: '#06b6d4' }}>Col 12</div>
-        </Col>
-        <Col span={6}>
-          <div style={{ ...colStyle, background: '#0ea5e9' }}>Col 6</div>
-        </Col>
-      </Row>
-    </div>
-  ),
 }

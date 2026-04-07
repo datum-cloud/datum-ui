@@ -6,12 +6,8 @@ const meta: Meta<typeof Switch> = {
   title: 'Base/Switch',
   component: Switch,
   argTypes: {
-    disabled: {
-      control: { type: 'boolean' },
-    },
-    defaultChecked: {
-      control: { type: 'boolean' },
-    },
+    disabled: { control: 'boolean' },
+    defaultChecked: { control: 'boolean' },
   },
   args: {
     disabled: false,
@@ -23,21 +19,7 @@ export default meta
 
 type Story = StoryObj<typeof Switch>
 
-export const Default: Story = {}
-
-export const Checked: Story = {
-  args: {
-    defaultChecked: true,
-  },
-}
-
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-  },
-}
-
-export const WithLabel: Story = {
+export const Default: Story = {
   render: args => (
     <div className="flex items-center gap-2">
       <Switch id="airplane-mode" {...args} />

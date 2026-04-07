@@ -1,0 +1,41 @@
+import { create } from 'storybook/theming/create'
+
+export const datumLight = create({
+  base: 'light',
+  brandTitle: 'Datum UI',
+  brandUrl: 'https://github.com/datum-cloud/datum-ui',
+  brandImage: '/datum-logo-light.svg',
+  colorPrimary: '#a46969',
+  colorSecondary: '#a46969',
+  appBg: '#fcfdf7',
+  appContentBg: '#ffffff',
+  appBorderColor: '#eeefe6',
+  appBorderRadius: 8,
+  textColor: '#0c1d31',
+  textInverseColor: '#fcfdf7',
+  barBg: '#fcfdf7',
+  barTextColor: '#0c1d31',
+  barSelectedColor: '#a46969',
+  fontBase: '"Alliance No1", ui-sans-serif, system-ui, sans-serif',
+  fontCode: '"Menlo", "Consolas", monospace',
+})
+
+export const datumDark = create({
+  base: 'dark',
+  brandTitle: 'Datum UI',
+  brandUrl: 'https://github.com/datum-cloud/datum-ui',
+  brandImage: '/datum-logo-dark.svg',
+  colorPrimary: '#e6f59e',
+  colorSecondary: '#e6f59e',
+  appBg: '#0c1d31',
+  appContentBg: '#0c1d31',
+  appBorderColor: '#1e2d3d',
+  appBorderRadius: 8,
+  textColor: '#fcfdf7',
+  textInverseColor: '#0c1d31',
+  barBg: '#0c1d31',
+  barTextColor: '#fcfdf7',
+  barSelectedColor: '#e6f59e',
+  fontBase: '"Alliance No1", ui-sans-serif, system-ui, sans-serif',
+  fontCode: '"Menlo", "Consolas", monospace',
+})

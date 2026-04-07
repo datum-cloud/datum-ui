@@ -1,0 +1,45 @@
+name: Publish Storybook
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/storybook/**'
+      - 'packages/datum-ui/**'
+      - 'packages/shadcn/**'
+
+  release:
+    types: ["published"]
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish-container-image:
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+      attestations: write
+    uses: datum-cloud/actions/.github/workflows/publish-docker.yaml@v1.13.1
+    with:
+      image-name: datum-storybook
+      dockerfile-path: apps/storybook/Dockerfile
+    secrets: inherit
+
+  publish-kustomize-bundles:
+    needs: [publish-container-image]
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+    uses: datum-cloud/actions/.github/workflows/publish-kustomize-bundle.yaml@v1.13.1
+    with:
+      bundle-name: ghcr.io/datum-cloud/datum-storybook-kustomize
+      bundle-path: apps/storybook/config/base
+      image-overlays: apps/storybook/config/base
+      image-name: ghcr.io/datum-cloud/datum-storybook
+    secrets: inherit

@@ -7,19 +7,17 @@ const meta: Meta<typeof PageTitle> = {
   title: 'Features/PageTitle',
   component: PageTitle,
   argTypes: {
-    title: {
-      control: { type: 'text' },
-    },
-    description: {
-      control: { type: 'text' },
-    },
+    title: { control: 'text' },
+    description: { control: 'text' },
     actionsPosition: {
-      control: { type: 'select' },
+      control: 'select',
       options: ['inline', 'bottom'],
     },
+    actions: { control: false },
   },
   args: {
     title: 'Dashboard',
+    description: 'Manage your resources and configurations.',
     actionsPosition: 'inline',
   },
 }
@@ -29,26 +27,12 @@ export default meta
 type Story = StoryObj<typeof PageTitle>
 
 export const Default: Story = {
-  args: {
-    title: 'Dashboard',
-  },
-}
-
-export const WithDescription: Story = {
-  args: {
-    title: 'Team Members',
-    description: 'Manage your team members and their roles.',
-  },
-}
-
-export const WithActions: Story = {
-  render: () => (
+  render: args => (
     <PageTitle
-      title="Projects"
-      description="View and manage all your projects."
+      {...args}
       actions={(
         <Button type="primary" icon={<Plus size={16} />}>
-          New Project
+          New Item
         </Button>
       )}
     />

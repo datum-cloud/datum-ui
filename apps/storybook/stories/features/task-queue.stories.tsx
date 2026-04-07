@@ -1,26 +1,11 @@
-import type { Task, TaskSummaryItem } from '@datum-cloud/datum-ui/task-queue'
+import type { Task } from '@datum-cloud/datum-ui/task-queue'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import {
   TaskPanelHeader,
   TaskPanelItem,
   TaskQueueProvider,
-  TaskSummaryDialog,
-  useTaskQueue,
 } from '@datum-cloud/datum-ui/task-queue'
 import { FileText, Upload } from 'lucide-react'
-import { useState } from 'react'
-
-const meta: Meta = {
-  title: 'Features/TaskQueue',
-}
-
-export default meta
-
-type Story = StoryObj
-
-// ---------------------------------------------------------------------------
-// Static UI preview -- renders the TaskPanel pieces with hardcoded tasks
-// ---------------------------------------------------------------------------
 
 const sampleTasks: Array<{ task: Task, contextLabel?: string }> = [
   {
@@ -129,6 +114,14 @@ const sampleTasks: Array<{ task: Task, contextLabel?: string }> = [
   },
 ]
 
+const meta: Meta = {
+  title: 'Features/TaskQueue',
+}
+
+export default meta
+
+type Story = StoryObj
+
 export const Default: Story = {
   render: () => (
     <TaskQueueProvider>
@@ -145,168 +138,6 @@ export const Default: Story = {
           ))}
         </div>
       </div>
-    </TaskQueueProvider>
-  ),
-}
-
-// ---------------------------------------------------------------------------
-// Interactive story using the real TaskQueueProvider
-// ---------------------------------------------------------------------------
-
-function InteractiveTaskDemo() {
-  const { enqueue, tasks, cancel, dismissAll } = useTaskQueue()
-
-  const handleAddTask = () => {
-    const batchItems = Array.from({ length: 5 }, (_, i) => ({ id: `item-${i}` }))
-    enqueue({
-      title: `Processing batch ${tasks.length + 1}`,
-      cancelable: true,
-      items: batchItems,
-      processItem: async (_item, ctx) => {
-        await new Promise(resolve => setTimeout(resolve, 800))
-        if (!ctx.cancelled) {
-          ctx.succeed()
-        }
-      },
-    })
-  }
-
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-3">
-        <button
-          type="button"
-          onClick={handleAddTask}
-          className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm"
-        >
-          Add Task
-        </button>
-        <button
-          type="button"
-          onClick={dismissAll}
-          className="bg-secondary text-secondary-foreground rounded-md px-4 py-2 text-sm"
-        >
-          Dismiss All
-        </button>
-      </div>
-      {tasks.length > 0 && (
-        <div className="border-border/50 w-96 overflow-hidden rounded-xl border shadow-xl shadow-black/10">
-          <TaskPanelHeader />
-          <div className="max-h-96 overflow-y-auto">
-            {tasks.map(task => (
-              <TaskPanelItem
-                key={task.id}
-                task={task}
-                onCancel={() => cancel(task.id)}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-export const Interactive: Story = {
-  render: () => (
-    <TaskQueueProvider>
-      <InteractiveTaskDemo />
-    </TaskQueueProvider>
-  ),
-}
-
-// ---------------------------------------------------------------------------
-// TaskSummaryDialog -- Default table
-// ---------------------------------------------------------------------------
-
-const sampleSummaryItems: TaskSummaryItem[] = [
-  { id: '1', label: 'record-a.example.com', status: 'success' },
-  { id: '2', label: 'record-b.example.com', status: 'success' },
-  { id: '3', label: 'record-c.example.com', status: 'failed', message: 'Invalid format' },
-  { id: '4', label: 'record-d.example.com', status: 'success' },
-  { id: '5', label: 'record-e.example.com', status: 'failed', message: 'Duplicate entry' },
-]
-
-function SummaryDialogDemo() {
-  const [open, setOpen] = useState(true)
-
-  return (
-    <div>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm"
-      >
-        Open Summary
-      </button>
-      <TaskSummaryDialog
-        open={open}
-        onOpenChange={setOpen}
-        title="Import Results"
-        items={sampleSummaryItems}
-      />
-    </div>
-  )
-}
-
-export const SummaryDialog: Story = {
-  render: () => (
-    <TaskQueueProvider>
-      <SummaryDialogDemo />
-    </TaskQueueProvider>
-  ),
-}
-
-// ---------------------------------------------------------------------------
-// TaskSummaryDialog -- Custom renderContent
-// ---------------------------------------------------------------------------
-
-function CustomRenderDemo() {
-  const [open, setOpen] = useState(true)
-
-  return (
-    <div>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm"
-      >
-        Open Custom Summary
-      </button>
-      <TaskSummaryDialog
-        open={open}
-        onOpenChange={setOpen}
-        title="Custom Render Content"
-        items={sampleSummaryItems}
-        renderContent={items => (
-          <div className="space-y-2">
-            {items.map(item => (
-              <div
-                key={item.id}
-                className={`flex items-center justify-between rounded-lg border p-3 ${
-                  item.status === 'failed' ? 'border-destructive/30 bg-destructive/5' : 'border-border'
-                }`}
-              >
-                <span className="text-sm font-medium">{item.label}</span>
-                <span className={`text-xs font-medium ${
-                  item.status === 'failed' ? 'text-destructive' : 'text-green-600'
-                }`}
-                >
-                  {item.status === 'failed' ? item.message : 'OK'}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      />
-    </div>
-  )
-}
-
-export const SummaryDialogCustomRender: Story = {
-  render: () => (
-    <TaskQueueProvider>
-      <CustomRenderDemo />
     </TaskQueueProvider>
   ),
 }

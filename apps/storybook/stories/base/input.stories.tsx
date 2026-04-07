@@ -5,21 +5,25 @@ const meta: Meta<typeof Input> = {
   title: 'Base/Input',
   component: Input,
   argTypes: {
+    type: {
+      control: 'select',
+      options: ['text', 'email', 'password', 'number', 'search', 'tel', 'url'],
+    },
     placeholder: {
-      control: { type: 'text' },
+      control: 'text',
     },
     disabled: {
-      control: { type: 'boolean' },
+      control: 'boolean',
     },
-    type: {
-      control: { type: 'select' },
-      options: ['text', 'email', 'password', 'number'],
+    readOnly: {
+      control: 'boolean',
     },
   },
   args: {
+    type: 'text',
     placeholder: 'Enter text...',
     disabled: false,
-    type: 'text',
+    readOnly: false,
   },
 }
 
@@ -28,17 +32,3 @@ export default meta
 type Story = StoryObj<typeof Input>
 
 export const Default: Story = {}
-
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-    placeholder: 'Disabled input',
-  },
-}
-
-export const WithPlaceholder: Story = {
-  args: {
-    placeholder: 'you@example.com',
-    type: 'email',
-  },
-}

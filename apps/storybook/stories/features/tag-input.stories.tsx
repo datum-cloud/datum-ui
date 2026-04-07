@@ -5,6 +5,12 @@ import { useState } from 'react'
 const meta: Meta<typeof TagsInput> = {
   title: 'Features/TagInput',
   component: TagsInput,
+  argTypes: {
+    placeholder: { control: 'text' },
+  },
+  args: {
+    placeholder: 'Type and press Enter...',
+  },
 }
 
 export default meta
@@ -12,40 +18,16 @@ export default meta
 type Story = StoryObj<typeof TagsInput>
 
 export const Default: Story = {
-  render: () => {
-    const [tags, setTags] = useState<string[]>([])
+  render: (args) => {
+    const [tags, setTags] = useState<string[]>(['React', 'TypeScript'])
     return (
-      <TagsInput
-        value={tags}
-        onValueChange={setTags}
-        placeholder="Type and press Enter..."
-      />
-    )
-  },
-}
-
-export const WithDefaultTags: Story = {
-  render: () => {
-    const [tags, setTags] = useState<string[]>(['React', 'TypeScript', 'Storybook'])
-    return (
-      <TagsInput
-        value={tags}
-        onValueChange={setTags}
-        placeholder="Add more tags..."
-      />
-    )
-  },
-}
-
-export const WithPlaceholder: Story = {
-  render: () => {
-    const [tags, setTags] = useState<string[]>([])
-    return (
-      <TagsInput
-        value={tags}
-        onValueChange={setTags}
-        placeholder="Add email addresses..."
-      />
+      <div className="w-80">
+        <TagsInput
+          {...args}
+          value={tags}
+          onValueChange={setTags}
+        />
+      </div>
     )
   },
 }

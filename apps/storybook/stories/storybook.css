@@ -1,14 +1,23 @@
 /**
  * Storybook CSS entry point.
  *
- * Uses package imports to dogfood the real consumer experience.
- * Run `pnpm --filter @datum-cloud/datum-ui build` before starting storybook.
+ * Imports source CSS directly to avoid dependency on datum-ui dist
+ * (which gets wiped by tsdown clean during watch-mode rebuilds).
+ * The @repo/shadcn alias is resolved via a symlink in node_modules.
  */
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'tailwind-scrollbar-hide/v4';
-@import '@datum-cloud/datum-ui/styles';
-@import '@datum-cloud/datum-ui/grid';
-@import '@datum-cloud/datum-ui/nprogress';
+
+/* Source styles — resolved relative to this file */
+@import '../../../packages/datum-ui/src/styles/fonts.css';
+@import '../../../packages/datum-ui/src/styles/tokens/figma-tokens.css';
+@import '../../../packages/shadcn/styles/shadcn.css';
+@import '../../../packages/datum-ui/src/styles/themes/alpha.css';
+
+/* Component CSS */
+@import '../../../packages/datum-ui/src/components/features/grid/style.css';
+@import '../../../packages/datum-ui/src/components/features/nprogress/nprogress.css';
 
 @source "./";
+@source "../../../packages/datum-ui/dist/*.mjs";

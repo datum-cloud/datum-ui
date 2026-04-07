@@ -2,29 +2,35 @@ import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@datum-cloud/datum-ui/hover-card'
 import { CalendarDays } from 'lucide-react'
 
-const meta: Meta = {
+const meta: Meta<typeof HoverCard> = {
   title: 'Base/HoverCard',
+  component: HoverCard,
+  argTypes: {
+    openDelay: { control: 'number' },
+    closeDelay: { control: 'number' },
+  },
+  args: {
+    openDelay: 700,
+    closeDelay: 300,
+  },
 }
 
 export default meta
 
-type Story = StoryObj
+type Story = StoryObj<typeof HoverCard>
 
 export const Default: Story = {
-  render: () => (
+  render: args => (
     <div className="flex items-center justify-center py-16">
-      <HoverCard>
+      <HoverCard {...args}>
         <HoverCardTrigger asChild>
-          <a
-            href="#"
-            className="text-primary text-sm font-medium underline underline-offset-4"
-          >
+          <a href="#" className="text-primary text-sm font-medium underline underline-offset-4">
             @datum-cloud
           </a>
         </HoverCardTrigger>
         <HoverCardContent className="w-80">
           <div className="flex gap-4">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-200 text-sm font-bold">
+            <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-bold">
               D
             </div>
             <div className="flex flex-col gap-2">
