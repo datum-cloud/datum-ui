@@ -5,8 +5,10 @@ page-fallback = "/public/index.html"
 log-level = "info"
 
 [advanced]
+
 [[advanced.headers]]
 source = "**/*"
+
 [advanced.headers.headers]
 X-Frame-Options = ""
 Content-Security-Policy = "frame-ancestors 'self' https://*.datum.net"
