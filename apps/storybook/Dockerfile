@@ -21,9 +21,8 @@ RUN pnpm --filter @repo/storybook build
 
 FROM joseluisq/static-web-server:2-alpine
 COPY --from=builder /app/apps/storybook/storybook-static /public
-ENV SERVER_PORT=8080
-ENV SERVER_ROOT=/public
-ENV SERVER_FALLBACK_PAGE=/public/index.html
+COPY apps/storybook/sws.toml /etc/sws/config.toml
+ENV SERVER_CONFIG_FILE=/etc/sws/config.toml
 
 # Run as non-root user (sws default user)
 USER 1000
