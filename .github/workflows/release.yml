@@ -13,6 +13,8 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    outputs:
+      hasChangesets: ${{ steps.changesets.outputs.hasChangesets }}
     permissions:
       contents: write
       pull-requests: write
@@ -75,3 +77,33 @@ jobs:
             --body "${{ steps.pr-body.outputs.body }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  tag-storybook:
+    name: Tag Storybook Release
+    needs: [release]
+    if: needs.release.outputs.hasChangesets == 'false'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check and create storybook tag
+        run: |
+          VERSION=$(node -p "require('./apps/storybook/package.json').version")
+          TAG="storybook-v${VERSION}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists, skipping"
+          else
+            git tag "$TAG"
+            git push origin "$TAG"
+            echo "Created and pushed $TAG"
+          fi

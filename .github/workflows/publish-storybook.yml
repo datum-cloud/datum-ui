@@ -3,13 +3,7 @@ name: Publish Storybook
 on:
   push:
     branches: [main]
-    paths:
-      - 'apps/storybook/**'
-      - 'packages/datum-ui/**'
-      - 'packages/shadcn/**'
-
-  release:
-    types: ["published"]
+    tags: ['storybook-v*']
 
   workflow_dispatch:
 
