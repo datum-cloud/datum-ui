@@ -19,15 +19,20 @@ or `packages/shadcn/` automatically publishes a pre-release build to staging.
 
 3. The "Version Packages" PR is created automatically. Review and merge it.
 
-4. On merge, a `storybook-v{version}` git tag is created and the
-   production build is published automatically.
+4. Create a GitHub Release manually:
+   - Go to [Releases](https://github.com/datum-cloud/datum-ui/releases/new)
+   - Tag: `storybook-v{version}` (e.g., `storybook-v1.0.1`)
+   - Target: `main`
+   - Click "Publish release"
+
+5. The `release: published` event triggers the publish workflow automatically.
 
 ## Environments
 
 | Environment | URL                             | Trigger           |
 | ----------- | ------------------------------- | ----------------- |
 | Staging     | storybook.staging.env.datum.net | Push to main      |
-| Production  | storybook.datum.net             | storybook-v\* tag |
+| Production  | storybook.prod.env.datum.net    | GitHub Release    |
 
 ## Architecture
 

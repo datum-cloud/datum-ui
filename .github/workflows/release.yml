@@ -13,8 +13,6 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    outputs:
-      hasChangesets: ${{ steps.changesets.outputs.hasChangesets }}
     permissions:
       contents: write
       pull-requests: write
@@ -77,25 +75,3 @@ jobs:
             --body "${{ steps.pr-body.outputs.body }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  release-storybook:
-    name: Release Storybook
-    needs: [release]
-    if: needs.release.outputs.hasChangesets == 'false'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Create storybook release
-        run: |
-          VERSION=$(node -p "require('./apps/storybook/package.json').version")
-          TAG="storybook-v${VERSION}"
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "Release $TAG already exists, skipping"
-          else
-            gh release create "$TAG" --title "$TAG" --generate-notes
-            echo "Created release $TAG"
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GIT_PAT }}
