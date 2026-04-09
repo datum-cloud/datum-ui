@@ -29,10 +29,10 @@ or `packages/shadcn/` automatically publishes a pre-release build to staging.
 
 ## Environments
 
-| Environment | URL                             | Trigger           |
-| ----------- | ------------------------------- | ----------------- |
-| Staging     | storybook.staging.env.datum.net | Push to main      |
-| Production  | storybook.prod.env.datum.net    | GitHub Release    |
+| Environment | URL                             | Trigger        |
+| ----------- | ------------------------------- | -------------- |
+| Staging     | storybook.staging.env.datum.net | Push to main   |
+| Production  | storybook.prod.env.datum.net    | GitHub Release |
 
 ## Architecture
 
