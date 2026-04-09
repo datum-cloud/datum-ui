@@ -78,32 +78,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  tag-storybook:
-    name: Tag Storybook Release
+  release-storybook:
+    name: Release Storybook
     needs: [release]
     if: needs.release.outputs.hasChangesets == 'false'
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Configure git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Check and create storybook tag
+      - name: Create storybook release
         run: |
           VERSION=$(node -p "require('./apps/storybook/package.json').version")
           TAG="storybook-v${VERSION}"
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG already exists, skipping"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists, skipping"
           else
-            git tag "$TAG"
-            git push origin "$TAG"
-            echo "Created and pushed $TAG"
+            gh release create "$TAG" --title "$TAG" --generate-notes
+            echo "Created release $TAG"
           fi
+        env:
+          GH_TOKEN: ${{ secrets.GIT_PAT }}
