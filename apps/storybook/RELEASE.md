@@ -21,7 +21,7 @@ or `packages/shadcn/` automatically publishes a pre-release build to staging.
 
 4. Create a GitHub Release manually:
    - Go to [Releases](https://github.com/datum-cloud/datum-ui/releases/new)
-   - Tag: `storybook-v{version}` (e.g., `storybook-v1.0.1`)
+   - Tag: `v{version}` (e.g., `v1.0.1`)
    - Target: `main`
    - Click "Publish release"
 
