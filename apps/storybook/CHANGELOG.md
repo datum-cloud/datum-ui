@@ -1,5 +1,11 @@
 # @repo/storybook
 
+## 1.0.1
+
+### Patch Changes
+
+- 2441eef: test production release flow with GIT_PAT
+
 ## 1.0.0
 
 ### Major Changes
