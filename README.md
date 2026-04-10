@@ -259,4 +259,4 @@ For detailed workflow documentation, see [.github/RELEASE_WORKFLOW.md](.github/R
 
 ## License
 
-MIT
+Datum UI is licensed under the [MIT License](https://github.com/lmsqueezy/wedges/blob/main/LICENSE).
