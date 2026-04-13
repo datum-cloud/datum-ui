@@ -192,7 +192,7 @@ importers:
         specifier: ^1
         version: 1.7.3
       '@rsbuild/plugin-react':
-        specifier: ^1
+        specifier: ^1.4.6
         version: 1.4.6(@rsbuild/core@1.7.3)
       '@storybook/addon-a11y':
         specifier: ^10.2.14
