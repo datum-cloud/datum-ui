@@ -1,0 +1,60 @@
+name: Renovate Changeset
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  add-empty-changeset:
+    name: Add empty changeset
+    if: >-
+      github.actor == 'renovate[bot]' ||
+      github.actor == 'mend[bot]' ||
+      startsWith(github.head_ref, 'renovate/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          # GIT_PAT is an org-level secret. Using a PAT (vs GITHUB_TOKEN)
+          # lets the pushed commit re-trigger pull_request workflows so CI
+          # runs on the latest commit.
+          token: ${{ secrets.GIT_PAT }}
+
+      - name: Skip if changeset already present
+        id: check
+        run: |
+          existing=$(find .changeset -maxdepth 1 -name '*.md' ! -name 'README.md' | head -n 1)
+          if [ -n "$existing" ]; then
+            echo "Changeset already present: $existing"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create empty changeset
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          filename=".changeset/renovate-pr-${{ github.event.pull_request.number }}.md"
+          printf -- '---\n---\n' > "$filename"
+          echo "Created $filename"
+
+      - name: Commit and push
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .changeset
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+          git commit -m "chore: add empty changeset for renovate"
+          git push
