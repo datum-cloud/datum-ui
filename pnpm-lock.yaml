@@ -327,7 +327,7 @@ importers:
         specifier: ^1
         version: 1.2.4(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       class-variance-authority:
-        specifier: ^0.7
+        specifier: ^0.7.1
         version: 0.7.1
       clsx:
         specifier: ^2.1.1
@@ -562,7 +562,7 @@ importers:
         specifier: ^1
         version: 1.5.6
       class-variance-authority:
-        specifier: ^0.7
+        specifier: ^0.7.1
         version: 0.7.1
       clsx:
         specifier: ^2.1.1
