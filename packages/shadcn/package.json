@@ -23,7 +23,7 @@
   "dependencies": {
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.4.0",
-    "@hookform/resolvers": "^5",
+    "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-avatar": "^1",
     "@radix-ui/react-checkbox": "^1",
     "@radix-ui/react-collapsible": "^1",
@@ -40,7 +40,7 @@
     "@radix-ui/react-tabs": "^1",
     "@radix-ui/react-tooltip": "^1",
     "@radix-ui/react-visually-hidden": "^1",
-    "class-variance-authority": "^0.7",
+    "class-variance-authority": "^0.7.1",
     "cmdk": "^1",
     "date-fns": "^4",
     "embla-carousel-react": "^8",
@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
-    "@types/geojson": "^7946",
+    "@types/geojson": "^7946.0.16",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
@@ -72,7 +72,7 @@
     "leaflet-draw": "^1.0.4",
     "@types/leaflet-draw": "^1",
     "leaflet.fullscreen": "^5.3.0",
-    "@types/leaflet.fullscreen": "^3",
+    "@types/leaflet.fullscreen": "^3.0.3",
     "leaflet.markercluster": "^1.5.3",
     "@types/leaflet.markercluster": "^1",
     "react-leaflet-markercluster": ">=5.0.0-rc.0"
