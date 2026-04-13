@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
-    "@types/geojson": "^7946",
+    "@types/geojson": "^7946.0.16",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
