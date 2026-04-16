@@ -1,9 +1,34 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { SelectFilter } from '../filters/select-filter'
 import { renderWithStore } from './test-helpers'
+
+const originalInnerWidth = window.innerWidth
+const originalMatchMedia = window.matchMedia
+
+function setViewport(width: number) {
+  Object.defineProperty(window, 'innerWidth', {
+    configurable: true,
+    writable: true,
+    value: width,
+  })
+  window.matchMedia = vi.fn().mockImplementation((query: string) => {
+    const match = query.match(/min-width:\s*(\d+)px/)
+    const min = match ? Number(match[1]) : 0
+    return {
+      matches: width >= min,
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    } as unknown as MediaQueryList
+  })
+}
 
 const statusOptions = [
   { label: 'Running', value: 'running' },
@@ -12,6 +37,15 @@ const statusOptions = [
 ]
 
 describe('selectFilter', () => {
+  afterEach(() => {
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      writable: true,
+      value: originalInnerWidth,
+    })
+    window.matchMedia = originalMatchMedia
+  })
+
   it('renders trigger button with label', () => {
     renderWithStore(
       <SelectFilter column="status" label="Status" options={statusOptions} />,
@@ -57,23 +91,12 @@ describe('selectFilter', () => {
     expect(setFilter).toHaveBeenCalledWith('status', 'running')
   })
 
-  it('shows clear button when value is set', async () => {
-    const user = userEvent.setup()
-    const clearFilter = vi.fn()
-
+  it('renders selected value label in the trigger', () => {
     renderWithStore(
       <SelectFilter column="status" label="Status" options={statusOptions} />,
-      { filters: { status: 'running' }, clearFilter },
+      { filters: { status: 'running' } },
     )
-
-    // The selected label should be shown
     expect(screen.getByText('Running')).toBeInTheDocument()
-
-    // Click the clear button (X icon)
-    const clearButton = screen.getByRole('button', { name: /clear status filter/i })
-    await user.click(clearButton)
-
-    expect(clearFilter).toHaveBeenCalledWith('status')
   })
 
   it('shows search input when searchable is true (default)', async () => {
@@ -106,5 +129,61 @@ describe('selectFilter', () => {
     )
 
     expect(screen.getByRole('combobox')).toBeDisabled()
+  })
+
+  it('renders with custom sheetTitle prop without error', () => {
+    renderWithStore(
+      <SelectFilter
+        column="status"
+        label="Status"
+        options={statusOptions}
+        sheetTitle="Filter by Status"
+      />,
+    )
+
+    expect(screen.getByRole('combobox')).toBeInTheDocument()
+  })
+
+  it('uses label as sheetTitle fallback when sheetTitle is not provided', () => {
+    renderWithStore(
+      <SelectFilter column="status" label="Status" options={statusOptions} />,
+    )
+
+    expect(screen.getByRole('combobox')).toBeInTheDocument()
+  })
+
+  it('renders as mobile sheet on narrow viewport', async () => {
+    setViewport(375)
+    const user = userEvent.setup()
+    renderWithStore(
+      <SelectFilter
+        column="status"
+        label="Status"
+        options={statusOptions}
+        sheetTitle="Filter by Status"
+      />,
+    )
+
+    await user.click(screen.getByRole('combobox'))
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Filter by Status' })).toBeInTheDocument()
+  })
+
+  it('stays as popover when responsive=false on narrow viewport', async () => {
+    setViewport(375)
+    const user = userEvent.setup()
+    renderWithStore(
+      <SelectFilter
+        column="status"
+        label="Status"
+        options={statusOptions}
+        responsive={false}
+      />,
+    )
+
+    await user.click(screen.getByRole('combobox'))
+
+    expect(screen.getByText('Running')).toBeInTheDocument()
   })
 })

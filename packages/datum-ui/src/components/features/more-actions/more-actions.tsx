@@ -1,18 +1,21 @@
+import type { ActionItem } from './types'
 import { Ellipsis } from 'lucide-react'
 import { useState } from 'react'
-import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Tooltip } from '../..'
+import { Button, Tooltip } from '../..'
 import { cn } from '../../../utils/cn'
+import { ResponsiveDropdown } from '../../base/responsive-dropdown'
+import { ActionRow } from './action-row'
 
-export interface MoreActionsProps<TData> {
-  key: string
-  label: string
-  variant?: 'default' | 'destructive'
-  icon?: React.ReactNode
+export type { ActionItem }
+
+export interface MoreActionsComponentProps<TData> {
+  row?: TData
+  actions: ActionItem<TData>[]
   className?: string
-  action: (row?: TData) => void | Promise<void>
-  disabled?: (row?: TData) => boolean
-  hidden?: (row?: TData) => boolean
-  tooltip?: string | ((row?: TData) => string) // Tooltip text - can be static string or function that receives row data
+  disabled?: boolean
+  iconClassName?: string
+  responsive?: boolean
+  sheetTitle?: string
 }
 
 export function MoreActions<TData,>({
@@ -21,80 +24,79 @@ export function MoreActions<TData,>({
   className,
   disabled = false,
   iconClassName,
-}: {
-  row?: TData
-  actions: MoreActionsProps<TData>[]
-  className?: string
-  disabled?: boolean
-  iconClassName?: string
-}) {
+  responsive = true,
+  sheetTitle = 'Actions',
+}: MoreActionsComponentProps<TData>) {
   const [open, setOpen] = useState<boolean>(false)
+
   // Filter visible actions
-  const visibleActions = actions.filter(action => !action.hidden?.(row))
+  const visibleActions = actions.filter((action) => {
+    if (action.hidden === undefined)
+      return true
+    return typeof action.hidden === 'function'
+      ? !action.hidden(row as TData)
+      : !action.hidden
+  })
 
   // Hide if no visible actions remain
   if (visibleActions.length === 0) {
     return null
   }
 
+  const trigger = (
+    <Button
+      onClick={() => setOpen(!open)}
+      type="quaternary"
+      theme="borderless"
+      size="icon"
+      disabled={disabled}
+      className={cn(
+        'data-[state=open]:bg-accent size-7 p-0 focus-visible:ring-0 focus-visible:ring-offset-0',
+        className,
+      )}
+    >
+      <Ellipsis className={cn('size-5', iconClassName)} />
+    </Button>
+  )
+
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          onClick={() => setOpen(!open)}
-          type="quaternary"
-          theme="borderless"
-          size="icon"
-          disabled={disabled}
-          className={cn(
-            'data-[state=open]:bg-accent size-7 p-0 focus-visible:ring-0 focus-visible:ring-offset-0',
-            className,
-          )}
-        >
-          <Ellipsis className={cn('size-5', iconClassName)} />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {visibleActions.map((action) => {
-          // Generate tooltip text from action config or fallback to label
-          const tooltipText
-            = typeof action.tooltip === 'function'
-              ? action.tooltip(row)
-              : (action.tooltip ?? action.label)
+    <ResponsiveDropdown
+      open={open}
+      onOpenChange={setOpen}
+      trigger={trigger}
+      sheetTitle={sheetTitle}
+      align="end"
+      responsive={responsive}
+    >
+      {visibleActions.map((action, index) => {
+        const key = action.key ?? action.label ?? String(index)
 
-          const menuItem = (
-            <DropdownMenuItem
-              onClick={(event) => {
-                event.preventDefault()
-                event.stopPropagation()
-                setOpen(false)
-                action.action(row)
-              }}
-              className={cn(
-                'cursor-pointer text-xs',
-                action.variant === 'destructive'
-                && 'text-destructive [&_svg]:!text-destructive hover:!text-destructive hover:[&_svg]:!text-destructive',
-                action.className,
-              )}
-              disabled={action.disabled?.(row) ?? false}
-            >
-              {action.icon}
-              {action.label}
-            </DropdownMenuItem>
+        // Generate tooltip text from action config or fallback to label
+        const tooltipText
+          = typeof action.tooltip === 'function'
+            ? action.tooltip(row as TData)
+            : (action.tooltip ?? action.label)
+
+        const rowEl = (
+          <ActionRow
+            key={key}
+            action={action}
+            data={row as TData}
+            onSelect={() => setOpen(false)}
+          />
+        )
+
+        // Wrap with tooltip if tooltip text differs from label (shows additional context)
+        if (tooltipText && tooltipText !== action.label) {
+          return (
+            <Tooltip key={key} message={tooltipText}>
+              {rowEl}
+            </Tooltip>
           )
+        }
 
-          // Wrap with tooltip if tooltip text differs from label (shows additional context)
-          if (tooltipText && tooltipText !== action.label) {
-            return (
-              <Tooltip key={action.key} message={tooltipText}>
-                {menuItem}
-              </Tooltip>
-            )
-          }
-
-          return <div key={action.key}>{menuItem}</div>
-        })}
-      </DropdownMenuContent>
-    </DropdownMenu>
+        return <div key={key}>{rowEl}</div>
+      })}
+    </ResponsiveDropdown>
   )
 }

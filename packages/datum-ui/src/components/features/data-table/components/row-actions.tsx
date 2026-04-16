@@ -1,22 +1,23 @@
 'use client'
 
 import type { RowActionsProps } from '../types'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@repo/shadcn/ui/dropdown-menu'
 import { MoreHorizontal } from 'lucide-react'
+import { useState } from 'react'
 import { Button } from '../../../base/button'
+import { ResponsiveDropdown } from '../../../base/responsive-dropdown'
+import { ActionRow } from '../../more-actions/action-row'
 
 export function DataTableRowActions<TData>({
   row,
   actions,
   isLoading = false,
   className,
+  responsive = true,
+  sheetTitle = 'Actions',
 }: RowActionsProps<TData>) {
+  const [open, setOpen] = useState(false)
   const data = row.original
+
   const visibleActions = actions.filter((action) => {
     if (action.hidden === undefined)
       return true
@@ -26,40 +27,37 @@ export function DataTableRowActions<TData>({
   if (visibleActions.length === 0)
     return null
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          theme="borderless"
-          size="small"
-          className={className}
-          disabled={isLoading}
-          data-slot="dt-row-actions"
-        >
-          <MoreHorizontal className="size-4" />
-          <span className="sr-only">Open menu</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {visibleActions.map((action) => {
-          const isDisabled
-            = typeof action.disabled === 'function'
-              ? action.disabled(data)
-              : action.disabled ?? false
+  const trigger = (
+    <Button
+      theme="borderless"
+      size="small"
+      className={className}
+      disabled={isLoading}
+      data-slot="dt-row-actions"
+      onClick={() => setOpen(!open)}
+    >
+      <MoreHorizontal className="size-4" />
+      <span className="sr-only">Open menu</span>
+    </Button>
+  )
 
-          return (
-            <DropdownMenuItem
-              key={action.label}
-              disabled={isDisabled}
-              onClick={() => action.onClick(data)}
-              className={action.variant === 'destructive' ? 'text-destructive' : undefined}
-            >
-              {action.icon && <action.icon className="mr-2 size-4" />}
-              {action.label}
-            </DropdownMenuItem>
-          )
-        })}
-      </DropdownMenuContent>
-    </DropdownMenu>
+  return (
+    <ResponsiveDropdown
+      open={open}
+      onOpenChange={setOpen}
+      trigger={trigger}
+      sheetTitle={sheetTitle}
+      align="end"
+      responsive={responsive}
+    >
+      {visibleActions.map(action => (
+        <ActionRow
+          key={action.label}
+          action={action}
+          data={data}
+          onSelect={() => setOpen(false)}
+        />
+      ))}
+    </ResponsiveDropdown>
   )
 }

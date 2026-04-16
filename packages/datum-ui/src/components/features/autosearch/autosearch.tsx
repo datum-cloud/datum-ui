@@ -1,20 +1,13 @@
 import type { AutocompleteOption } from '../autocomplete/autocomplete.types'
 import type { AutosearchProps } from './autosearch.types'
-import { AlertCircle, Check, Loader2, X } from 'lucide-react'
+import { AlertCircle, Loader2, X } from 'lucide-react'
 import * as React from 'react'
 import { cn } from '../../../utils/cn'
 import { Button } from '../../base/button'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from '../../base/command'
 import { Input } from '../../base/input'
-import { Popover, PopoverContent, PopoverTrigger } from '../../base/popover'
+import { OptionList, useOptionPicker } from '../../base/option-picker'
+import { ResponsivePopover } from '../../base/responsive-popover'
 import { Tooltip } from '../../base/tooltip'
-import { defaultAutosearchValue } from './autosearch.types'
 
 /**
  * Autosearch - Search-first input with dropdown results
@@ -56,7 +49,6 @@ export function Autosearch({
   // Search
   onSearch,
   searchDebounceMs = 300,
-  getValue = defaultAutosearchValue,
 
   // Rendering
   placeholder = 'Search for an option',
@@ -66,6 +58,8 @@ export function Autosearch({
   // Behavior
   loading = false,
   modal = false,
+  responsive = true,
+  sheetTitle,
 
   // State
   disabled = false,
@@ -78,41 +72,38 @@ export function Autosearch({
   contentClassName,
   selectedClassName,
 }: AutosearchProps) {
-  const [searchQuery, setSearchQuery] = React.useState('')
   const [open, setOpen] = React.useState(false)
   const [persistedOption, setPersistedOption] = React.useState<AutocompleteOption | null>(null)
   const [searchExecuted, setSearchExecuted] = React.useState(false)
 
   const searchDebounceRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // ===== Search handling =====
+  // ===== Debounced onSearch forwarding =====
+  // The engine's onSearchChange disables internal filtering (correct — consumer owns results).
+  // We wrap it so the actual onSearch callback fires after the debounce delay.
+  const onSearchChangeForEngine = React.useCallback(
+    (query: string) => {
+      const normalized = query.trim()
 
-  const handleSearchChange = (inputValue: string) => {
-    setSearchQuery(inputValue)
-    const normalized = inputValue.trim()
+      if (searchDebounceRef.current) {
+        clearTimeout(searchDebounceRef.current)
+        searchDebounceRef.current = null
+      }
 
-    // Clear existing timeout
-    if (searchDebounceRef.current) {
-      clearTimeout(searchDebounceRef.current)
-      searchDebounceRef.current = null
-    }
+      if (!normalized) {
+        onSearch?.('')
+        setSearchExecuted(false)
+        return
+      }
 
-    // Empty search - close popover and reset
-    if (!normalized) {
-      onSearch?.('')
-      setOpen(false)
-      setSearchExecuted(false)
-      return
-    }
-
-    // Open popover and schedule search
-    setOpen(true)
-    searchDebounceRef.current = setTimeout(() => {
-      setSearchExecuted(true)
-      onSearch?.(normalized)
-      searchDebounceRef.current = null
-    }, searchDebounceMs)
-  }
+      searchDebounceRef.current = setTimeout(() => {
+        setSearchExecuted(true)
+        onSearch?.(normalized)
+        searchDebounceRef.current = null
+      }, searchDebounceMs)
+    },
+    [onSearch, searchDebounceMs],
+  )
 
   // Cleanup timeout on unmount
   React.useEffect(() => {
@@ -124,52 +115,74 @@ export function Autosearch({
     }
   }, [])
 
-  // ===== Selection handling =====
-
-  const handleSelect = React.useCallback(
-    (option: AutocompleteOption) => {
+  // ===== Engine =====
+  const picker = useOptionPicker<AutocompleteOption>({
+    multiple: false,
+    options,
+    value,
+    onValueChange: (selected: string) => {
+      const option = options.find(o => o.value === selected) ?? null
       setPersistedOption(option)
-      onValueChange?.(option.value)
-      setSearchQuery('')
+      onValueChange?.(selected)
+      picker.setSearch('')
       onSearch?.('')
-      setOpen(false)
       setSearchExecuted(false)
     },
-    [onValueChange, onSearch],
-  )
+    // Passing onSearchChange disables internal filtering — consumer owns the results list.
+    onSearchChange: onSearchChangeForEngine,
+    closeOnSelect: true,
+    open,
+    onOpenChange: setOpen,
+  })
 
+  // ===== Open / close logic =====
+  // Open only when there's a search query, no value selected, and results > 1
+  const hasSearch = Boolean(picker.search.trim())
+  const showResults = hasSearch && !value && options.length > 1
+  const showNoResults = hasSearch && !loading && options.length === 0 && searchExecuted
+
+  // Open popover when input has content
+  React.useEffect(() => {
+    if (hasSearch && !value) {
+      setOpen(true)
+    }
+    else if (!hasSearch) {
+      setOpen(false)
+    }
+  }, [hasSearch, value])
+
+  // Auto-select single result
+  React.useEffect(() => {
+    if (value || !hasSearch)
+      return
+
+    if (options.length === 1 && !options[0]!.disabled) {
+      const option = options[0]!
+      setPersistedOption(option)
+      onValueChange?.(option.value)
+      picker.setSearch('')
+      onSearch?.('')
+      setSearchExecuted(false)
+      setOpen(false)
+    }
+  }, [options, value, hasSearch]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ===== Clear =====
   const handleClear = React.useCallback(() => {
     setPersistedOption(null)
-    setSearchQuery('')
+    picker.setSearch('')
     onSearch?.('')
     setOpen(false)
     setSearchExecuted(false)
     onValueChange?.('')
-  }, [onValueChange, onSearch])
-
-  // Auto-select single result
-  React.useEffect(() => {
-    const normalized = searchQuery.trim()
-    if (value || !normalized)
-      return
-
-    if (options.length === 1 && !options[0]!.disabled) {
-      handleSelect(options[0]!)
-    }
-  }, [searchQuery, options, value, handleSelect])
+  }, [onValueChange, onSearch, picker])
 
   // ===== Derived state =====
-
-  const normalizedQuery = searchQuery.trim()
-  const hasSearch = Boolean(normalizedQuery)
-  const showResults = hasSearch && !value && options.length > 1
   const selectedOption = options.find(opt => opt.value === value) ?? persistedOption
   const selectedLabel = selectedOption?.label ?? ''
   const selectedDescription = selectedOption?.description ?? ''
-  const showNoResults = hasSearch && !loading && options.length === 0 && searchExecuted
 
   // ===== Render =====
-
   return (
     <div className={cn('relative', className)}>
       {/* Hidden input for form submission */}
@@ -203,14 +216,25 @@ export function Autosearch({
           )
         : (
           /* Search state: Show input with popover */
-            <Popover open={open && showResults} onOpenChange={setOpen} modal={modal}>
-              <PopoverTrigger asChild>
+            <ResponsivePopover
+              open={open && showResults}
+              onOpenChange={setOpen}
+              responsive={responsive}
+              modal={modal}
+              sheetTitle={sheetTitle ?? placeholder ?? 'Search'}
+              align="start"
+              side="bottom"
+              contentClassName={cn('popover-content-width-full', contentClassName)}
+              onOpenAutoFocus={event => event.preventDefault()}
+              trigger={(
                 <div className="relative">
                   <Input
                     id={id}
                     placeholder={placeholder}
-                    value={searchQuery}
-                    onChange={e => handleSearchChange(e.target.value)}
+                    value={picker.search}
+                    onChange={(e) => {
+                      picker.setSearch(e.target.value)
+                    }}
                     disabled={disabled}
                     autoComplete="off"
                     className={cn('w-full pr-10', inputClassName)}
@@ -230,53 +254,15 @@ export function Autosearch({
                     </Tooltip>
                   )}
                 </div>
-              </PopoverTrigger>
-
-              <PopoverContent
-                className={cn('popover-content-width-full p-0', contentClassName)}
-                side="bottom"
-                align="start"
-                onOpenAutoFocus={event => event.preventDefault()}
-              >
-                <Command>
-                  <CommandList>
-                    {loading
-                      ? (
-                          <CommandEmpty>Searching...</CommandEmpty>
-                        )
-                      : options.length === 0
-                        ? (
-                            <CommandEmpty>{emptyContent ?? emptyMessage}</CommandEmpty>
-                          )
-                        : (
-                            <CommandGroup>
-                              {options.map(option => (
-                                <CommandItem
-                                  key={option.value}
-                                  value={getValue(option)}
-                                  onSelect={() => handleSelect(option)}
-                                  disabled={option.disabled}
-                                >
-                                  <div className="flex flex-col">
-                                    <span className="font-medium">{option.label}</span>
-                                    {option.description && (
-                                      <span className="text-muted-foreground text-xs">{option.description}</span>
-                                    )}
-                                  </div>
-                                  <Check
-                                    className={cn(
-                                      'ml-auto h-4 w-4',
-                                      value === option.value ? 'opacity-100' : 'opacity-0',
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          )}
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
+              )}
+            >
+              <OptionList<AutocompleteOption>
+                picker={picker}
+                disableSearch
+                emptyContent={emptyContent ?? emptyMessage}
+                loading={loading}
+              />
+            </ResponsivePopover>
           )}
     </div>
   )

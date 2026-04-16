@@ -7,18 +7,12 @@ import type {
   SortingState,
   Table,
 } from '@tanstack/react-table'
-import type { ComponentType, ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import type { ActionItem } from '../more-actions/types'
 
 // ── Action Types ──
 
-export interface ActionItem<TData> {
-  readonly label: string
-  readonly icon?: ComponentType<{ className?: string }>
-  readonly variant?: 'default' | 'destructive'
-  readonly onClick: (row: TData) => void | Promise<void>
-  readonly disabled?: boolean | ((row: TData) => boolean)
-  readonly hidden?: boolean | ((row: TData) => boolean)
-}
+export type { ActionItem } from '../more-actions/types'
 
 // ── Filter Types ──
 
@@ -232,6 +226,9 @@ export interface FilterSelectProps {
   readonly className?: string
   readonly selectPopoverClassName?: string
   readonly disabled?: boolean
+  readonly responsive?: boolean
+  readonly sheetTitle?: string
+  readonly modal?: boolean
 }
 
 export interface FilterDatePickerProps {
@@ -253,6 +250,9 @@ export interface FilterCheckboxProps {
   readonly className?: string
   readonly checkboxPopoverClassName?: string
   readonly disabled?: boolean
+  readonly responsive?: boolean
+  readonly sheetTitle?: string
+  readonly modal?: boolean
 }
 
 export interface ColumnHeaderProps<TData, TValue> {
@@ -266,6 +266,8 @@ export interface RowActionsProps<TData> {
   readonly actions: readonly ActionItem<TData>[]
   readonly isLoading?: boolean
   readonly className?: string
+  readonly responsive?: boolean
+  readonly sheetTitle?: string
 }
 
 export interface BulkActionsProps<TData> {
