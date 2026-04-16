@@ -38,3 +38,37 @@ export const Default: Story = {
     />
   ),
 }
+
+export const LongDescription: Story = {
+  args: {
+    title: 'Network Policies',
+    description:
+      'Configure and manage network policies that control traffic between services in your cluster. Policies define ingress and egress rules based on pod selectors, namespace selectors, and IP blocks, giving you fine-grained control over east-west communication within your infrastructure.',
+  },
+  render: args => (
+    <div className="space-y-2">
+      <PageTitle
+        {...args}
+        actions={(
+          <Button type="primary" icon={<Plus size={16} />}>
+            New Policy
+          </Button>
+        )}
+      />
+      <p className="text-muted-foreground text-xs">
+        The title uses the
+        {' '}
+        <code>font-title</code>
+        {' '}
+        utility (see
+        {' '}
+        <code>@datum-cloud/datum-ui/styles/canela</code>
+        ). The description is
+        constrained to
+        <code>max-w-2xl</code>
+        {' '}
+        to keep long text readable.
+      </p>
+    </div>
+  ),
+}

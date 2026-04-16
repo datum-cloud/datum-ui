@@ -15,6 +15,12 @@
 @import '../../../packages/shadcn/styles/shadcn.css';
 @import '../../../packages/datum-ui/src/styles/themes/alpha.css';
 
+/* Optional Canela title font — opt-in for datum-branded surfaces.
+ * Without this import the font-title utility falls back to the system
+ * sans stack declared in figma-tokens.css. Storybook imports it so
+ * PageTitle and other font-title consumers render in Canela. */
+@import '../../../packages/datum-ui/src/styles/canela.css';
+
 /* Component CSS */
 @import '../../../packages/datum-ui/src/components/features/grid/style.css';
 @import '../../../packages/datum-ui/src/components/features/nprogress/nprogress.css';
