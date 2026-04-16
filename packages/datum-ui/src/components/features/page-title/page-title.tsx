@@ -35,10 +35,17 @@ export function PageTitle({
         className={cn('flex', isInline ? 'flex-col justify-start gap-1' : 'w-full flex-col gap-1')}
       >
         {title && (
-          <span className={cn('text-2xl leading-none font-medium', titleClassName)}>{title}</span>
+          <span
+            data-e2e="page-title"
+            className={cn('font-title text-3xl leading-none', titleClassName)}
+          >
+            {title}
+          </span>
         )}
         {description && (
-          <div className={cn('text-sm font-normal', descriptionClassName)}>{description}</div>
+          <div className={cn('max-w-2xl text-sm font-normal', descriptionClassName)}>
+            {description}
+          </div>
         )}
       </div>
       {actions && (

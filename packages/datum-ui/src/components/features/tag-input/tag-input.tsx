@@ -18,12 +18,26 @@ const SPLITTER_REGEX = /[\n\t;,|]+/
  */
 const FORMATTING_REGEX = /^[\s"'<>]+|[\s"'<>]+$/g
 
+/** Default keys that confirm the current input as a tag */
+const DEFAULT_DELIMITERS = ['Enter', ',']
+
 interface TagsInputProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string[]
   onValueChange: (value: string[]) => void
   placeholder?: string
   maxItems?: number
   minItems?: number
+  /**
+   * Keys that trigger tag confirmation. Defaults to ['Enter', ','].
+   * Extend for specific use cases, e.g. [',', 'Enter', ';', ' '] for emails.
+   */
+  delimiters?: string[]
+  /**
+   * Optional function to normalize a tag value before validation and adding.
+   * Runs after trimming. Returning a falsy value rejects the tag.
+   * Useful for case normalization, e.g. (v) => v.toLowerCase()
+   */
+  normalizer?: (value: string) => string | null
   /**
    * Optional Zod schema for validating individual tag values
    */
@@ -62,7 +76,7 @@ interface TagsInputContextProps {
 
 const TagInputContext = React.createContext<TagsInputContextProps | null>(null)
 
-export function TagsInput({ ref, value, onValueChange, placeholder, maxItems, minItems, className, dir, validator, onValidationError, error, showValidationErrors = true, name, key, ...props }: TagsInputProps & { ref?: React.RefObject<HTMLDivElement | null> }) {
+export function TagsInput({ ref, value, onValueChange, placeholder, maxItems, minItems, className, dir, delimiters = DEFAULT_DELIMITERS, normalizer, validator, onValidationError, error, showValidationErrors = true, name, key, ...props }: TagsInputProps & { ref?: React.RefObject<HTMLDivElement | null> }) {
   const [activeIndex, setActiveIndex] = React.useState(-1)
   const [inputValue, setInputValue] = React.useState('')
   const [disableInput, setDisableInput] = React.useState(false)
@@ -86,12 +100,16 @@ export function TagsInput({ ref, value, onValueChange, placeholder, maxItems, mi
 
       setError(null)
 
-      // Skip empty values
-      if (!val.trim())
+      // Always trim, then apply optional normalizer (e.g. lowercase for emails)
+      const trimmed = val.trim()
+      const normalized = normalizer ? normalizer(trimmed) : trimmed
+
+      // Skip empty or normalizer-rejected values
+      if (!normalized)
         return
 
       // Check for duplicates and max items
-      if (value.includes(val)) {
+      if (value.includes(normalized)) {
         setError('This tag already exists')
         return
       }
@@ -104,8 +122,8 @@ export function TagsInput({ ref, value, onValueChange, placeholder, maxItems, mi
       // Validate with Zod schema if provided
       if (validator) {
         try {
-          validator.parse(val)
-          onValueChange([...value, val])
+          validator.parse(normalized)
+          onValueChange([...value, normalized])
         }
         catch (error) {
           if (error instanceof z.ZodError) {
@@ -119,10 +137,10 @@ export function TagsInput({ ref, value, onValueChange, placeholder, maxItems, mi
       }
       else {
         // No validator, just add the value
-        onValueChange([...value, val])
+        onValueChange([...value, normalized])
       }
     },
-    [value, validator, parseMaxItems],
+    [value, validator, parseMaxItems, normalizer],
   )
 
   const RemoveValue = React.useCallback(
@@ -319,9 +337,17 @@ export function TagsInput({ ref, value, onValueChange, placeholder, maxItems, mi
           break
         }
 
-        case 'Enter':
-        case ',': {
+        case 'Tab': {
           if (inputValue.trim() !== '') {
+            e.preventDefault()
+            onValueChangeHandler(inputValue)
+            setInputValue('')
+          }
+          break
+        }
+
+        default: {
+          if (delimiters.includes(e.key) && inputValue.trim() !== '') {
             e.preventDefault()
             onValueChangeHandler(inputValue)
             setInputValue('')
@@ -339,6 +365,7 @@ export function TagsInput({ ref, value, onValueChange, placeholder, maxItems, mi
       selectedValue,
       isValueSelected,
       onValueChangeHandler,
+      delimiters,
     ],
   )
 
@@ -353,18 +380,25 @@ export function TagsInput({ ref, value, onValueChange, placeholder, maxItems, mi
 
   const handleBlur = React.useCallback(
     (e: React.FocusEvent<HTMLInputElement>) => {
-      // Don't add tag on blur if we're submitting the form
-      // Check if the related target (element receiving focus) is a submit button
-      const relatedTarget = e.relatedTarget as HTMLElement
-      const isSubmitButton
-        = relatedTarget?.tagName === 'BUTTON'
-          && (relatedTarget?.getAttribute('type') === 'submit'
-            || relatedTarget?.closest('button[type="submit"]'))
+      if (inputValue.trim() === '')
+        return
 
-      // Only add tag if we're not submitting the form
-      if (!isSubmitButton && inputValue.trim() !== '') {
-        onValueChangeHandler(inputValue)
-        setInputValue('')
+      onValueChangeHandler(inputValue)
+      setInputValue('')
+
+      // When blur is caused by clicking a submit button, the state update
+      // from adding the tag swallows the click. Re-trigger the submit after
+      // React processes the new value.
+      const relatedTarget = e.relatedTarget as HTMLElement | null
+      const submitButton
+        = relatedTarget?.getAttribute('type') === 'submit'
+          ? relatedTarget
+          : relatedTarget?.closest<HTMLElement>('button[type="submit"]')
+
+      if (submitButton) {
+        requestAnimationFrame(() => {
+          submitButton.click()
+        })
       }
     },
     [inputValue, onValueChangeHandler],

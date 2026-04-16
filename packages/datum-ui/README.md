@@ -462,3 +462,13 @@ See the [Form README](./src/components/features/form/README.md) for detailed doc
 ## License
 
 MIT
+
+## Optional: Canela font
+
+Datum-branded surfaces can opt into Canela Text for the `font-title` Tailwind utility:
+
+```ts
+import '@datum-cloud/datum-ui/styles/canela'
+```
+
+Consumers who do not import this file use the default system font stack declared in tokens — no visual degradation.

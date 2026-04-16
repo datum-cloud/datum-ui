@@ -20,6 +20,11 @@ fs.copyFileSync(
   path.join(DIST_STYLES, 'fonts.css'),
 )
 
+fs.copyFileSync(
+  path.join(SRC_STYLES, 'canela.css'),
+  path.join(DIST_STYLES, 'canela.css'),
+)
+
 fs.cpSync(
   path.join(SRC_STYLES, 'fonts'),
   path.join(DIST_STYLES, 'fonts'),

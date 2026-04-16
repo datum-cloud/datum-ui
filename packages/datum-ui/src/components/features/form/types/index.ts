@@ -231,6 +231,8 @@ export interface FormFieldProps {
   required?: boolean
   /** Disable the field */
   disabled?: boolean
+  /** Whether to render field errors (default: true) */
+  showErrors?: boolean
 
   // Styling
   /** Additional CSS classes for the field wrapper */
@@ -716,6 +718,10 @@ export interface FormDialogProps<T extends z.ZodType> {
   formComponent?: React.ElementType
   /** Optional telemetry callbacks for form submission tracking */
   telemetry?: FormTelemetry
+
+  // Header close button
+  /** Whether to show the header close (X) button (default: true) */
+  showHeaderClose?: boolean
 
   // Styling
   /** Dialog content className */

@@ -31,7 +31,7 @@ function FieldLabel({
   const [isTooltipVisible, setIsTooltipVisible] = React.useState(false)
 
   return (
-    <div className="relative flex w-fit items-center space-x-2">
+    <div className="relative flex w-fit items-start space-x-2">
       <Label
         htmlFor={htmlFor}
         className={cn(
@@ -53,7 +53,7 @@ function FieldLabel({
           open={isTooltipVisible}
           onOpenChange={setIsTooltipVisible}
           side="bottom"
-          contentClassName="max-w-xs text-wrap"
+          contentClassName="w-[calc(100vw-2rem)] whitespace-normal break-words sm:w-auto sm:max-w-xs"
         >
           <Icon
             icon={CircleHelp}
@@ -99,6 +99,7 @@ export function FormField({
   tooltip,
   required = false,
   disabled = false,
+  showErrors = true,
   className,
   labelClassName,
 }: FormFieldProps) {
@@ -224,7 +225,7 @@ export function FormField({
         )}
 
         {/* Errors */}
-        {hasErrors && (
+        {showErrors && hasErrors && (
           <ul
             id={errorId}
             className={cn(

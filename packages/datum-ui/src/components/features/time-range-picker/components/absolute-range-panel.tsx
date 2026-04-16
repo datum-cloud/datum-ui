@@ -1,9 +1,9 @@
-import { Popover, PopoverContent, PopoverTrigger } from '@repo/shadcn/ui/popover'
 import { format } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Button, Calendar, Input } from '../../..'
 import { cn } from '../../../../utils/cn'
+import { ResponsivePopover } from '../../../base/responsive-popover'
 // app/modules/datum-ui/components/time-range-picker/components/absolute-range-panel.tsx
 import { utcStringToZonedDate, zonedDateToUtcString } from '../utils/timezone'
 
@@ -233,32 +233,37 @@ export function CustomRangePanel({
     <div className={cn('flex flex-col gap-2', className)}>
       <p className="text-muted-foreground text-xs font-medium">Custom Range</p>
 
-      {/* Inline layout: Start — End */}
-      <div className="flex items-center gap-2">
+      {/* Start / End date+time — stacked on mobile, inline on desktop */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         {/* Start Date + Time */}
         <div className="flex items-center gap-1.5">
-          <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
-            <PopoverTrigger asChild>
+          <span className="text-muted-foreground w-10 shrink-0 text-xs sm:hidden">From</span>
+          <ResponsivePopover
+            open={startDateOpen}
+            onOpenChange={setStartDateOpen}
+            sheetTitle="Select start date"
+            align="start"
+            contentClassName="w-auto"
+            trigger={(
               <Button
                 type="quaternary"
                 theme="outline"
                 id={startDateId}
-                className="h-8 w-full justify-start gap-1.5 px-2 text-xs font-normal"
+                className="h-8 min-w-0 flex-1 justify-start gap-1.5 px-2 text-xs font-normal sm:w-full sm:flex-initial"
               >
                 <CalendarIcon className="h-3.5 w-3.5 shrink-0 opacity-50" />
                 <span className="truncate">{format(startDate, 'MMM d, yyyy')}</span>
               </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={startDate}
-                onSelect={handleStartDateSelect}
-                disabled={disableFuture ? date => date > new Date() : undefined}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+            )}
+          >
+            <Calendar
+              mode="single"
+              selected={startDate}
+              onSelect={handleStartDateSelect}
+              disabled={disableFuture ? date => date > new Date() : undefined}
+              initialFocus
+            />
+          </ResponsivePopover>
 
           <Input
             type="time"
@@ -273,37 +278,42 @@ export function CustomRangePanel({
           />
         </div>
 
-        {/* Separator */}
-        <span className="text-muted-foreground text-sm">—</span>
+        {/* Separator — hidden on mobile (label replaces it) */}
+        <span className="text-muted-foreground hidden text-sm sm:block">—</span>
 
         {/* End Date + Time */}
         <div className="flex items-center gap-1.5">
-          <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
-            <PopoverTrigger asChild>
+          <span className="text-muted-foreground w-10 shrink-0 text-xs sm:hidden">To</span>
+          <ResponsivePopover
+            open={endDateOpen}
+            onOpenChange={setEndDateOpen}
+            sheetTitle="Select end date"
+            align="start"
+            contentClassName="w-auto"
+            trigger={(
               <Button
                 type="quaternary"
                 theme="outline"
                 id={endDateId}
-                className="h-8 w-full justify-start gap-1.5 px-2 text-xs font-normal"
+                className="h-8 min-w-0 flex-1 justify-start gap-1.5 px-2 text-xs font-normal sm:w-full sm:flex-initial"
               >
                 <CalendarIcon className="h-3.5 w-3.5 shrink-0 opacity-50" />
                 <span className="truncate">{format(endDate, 'MMM d, yyyy')}</span>
               </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={endDate}
-                onSelect={handleEndDateSelect}
-                disabled={
-                  disableFuture
-                    ? date => date > new Date() || date < startDate
-                    : date => date < startDate
-                }
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+            )}
+          >
+            <Calendar
+              mode="single"
+              selected={endDate}
+              onSelect={handleEndDateSelect}
+              disabled={
+                disableFuture
+                  ? date => date > new Date() || date < startDate
+                  : date => date < startDate
+              }
+              initialFocus
+            />
+          </ResponsivePopover>
 
           <Input
             type="time"
