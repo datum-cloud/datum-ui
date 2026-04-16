@@ -1,10 +1,11 @@
 import type { DateTimePickerProps, DateTimeState } from './types'
 import { Button } from '@repo/shadcn/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@repo/shadcn/ui/popover'
 import { CalendarIcon } from 'lucide-react'
 import * as React from 'react'
 import { cn } from '../../../utils/cn'
 import { Calendar } from '../../base/calendar/calendar'
+import { useDateConstraints } from '../../base/date-picker'
+import { ResponsivePopover } from '../../base/responsive-popover'
 import { formatDate } from './utils/format'
 import {
   getBrowserTimezone,
@@ -14,7 +15,8 @@ import {
 
 const DEFAULT_TIMEZONE = getBrowserTimezone()
 
-export function DateTimePicker({ ref, value, onChange, minDate, maxDate, disabledDates, timezone = DEFAULT_TIMEZONE, showTimezoneIndicator = false, placeholder = 'Select date and time', disabled = false, className, modal = false }: DateTimePickerProps & { ref?: React.RefObject<HTMLDivElement | null> }) {
+export function DateTimePicker({ ref, value, onChange, minDate, maxDate, disabledDates, disablePast, disableFuture, timezone = DEFAULT_TIMEZONE, showTimezoneIndicator = false, placeholder = 'Select date and time', disabled = false, className, modal = false, sheetTitle, sheetDescription, responsive = true }: DateTimePickerProps & { ref?: React.RefObject<HTMLDivElement | null> }) {
+  const [open, setOpen] = React.useState(false)
   // Derive initial state from value prop
   const initialState = React.useMemo<DateTimeState>(() => {
     if (!value) {
@@ -25,6 +27,13 @@ export function DateTimePicker({ ref, value, onChange, minDate, maxDate, disable
 
   // Track local state
   const [state, setState] = React.useState<DateTimeState>(initialState)
+
+  const { effectiveMinDate, effectiveMaxDate, isDateDisabled: isConstraintDisabled } = useDateConstraints({
+    minDate,
+    maxDate,
+    disablePast,
+    disableFuture,
+  })
 
   // Sync with external value changes
   const prevValue = React.useRef(value)
@@ -73,59 +82,77 @@ export function DateTimePicker({ ref, value, onChange, minDate, maxDate, disable
     return formatDate(state.date)
   }
 
+  const triggerButton = (
+    <Button
+      variant="outline"
+      className={cn(
+        'w-full justify-start text-left font-normal',
+        !state.date && 'text-muted-foreground',
+      )}
+      disabled={disabled}
+    >
+      <CalendarIcon className="mr-2 h-4 w-4" />
+      <span className="flex-1">{formatDisplayValue()}</span>
+      {showTimezoneIndicator && state.date && state.time && (
+        <span className="text-muted-foreground ml-2 text-xs">
+          {timezone}
+        </span>
+      )}
+    </Button>
+  )
+
   return (
     <div ref={ref} className={className}>
-      <Popover modal={modal}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            className={cn(
-              'w-full justify-start text-left font-normal',
-              !state.date && 'text-muted-foreground',
-            )}
-            disabled={disabled}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            <span className="flex-1">{formatDisplayValue()}</span>
-            {showTimezoneIndicator && state.date && state.time && (
-              <span className="text-muted-foreground ml-2 text-xs">
-                {timezone}
-              </span>
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <div className="p-3">
-            <Calendar
-              mode="single"
-              selected={state.date}
-              onSelect={handleDateChange}
-              disabled={disabledDates}
-              fromDate={minDate}
-              toDate={maxDate}
-            />
+      <ResponsivePopover
+        open={open}
+        onOpenChange={setOpen}
+        trigger={triggerButton}
+        sheetTitle={sheetTitle ?? placeholder ?? 'Pick date & time'}
+        sheetDescription={sheetDescription}
+        align="start"
+        contentClassName="w-full sm:w-auto"
+        modal={modal}
+        responsive={responsive}
+      >
+        <div className="p-3">
+          <Calendar
+            mode="single"
+            selected={state.date}
+            onSelect={handleDateChange}
+            className="w-full sm:w-auto"
+            disabled={(date) => {
+              if (isConstraintDisabled(date))
+                return true
+              if (typeof disabledDates === 'function')
+                return disabledDates(date)
+              if (Array.isArray(disabledDates))
+                return disabledDates.some(d => d.getTime() === date.getTime())
+              return false
+            }}
+            fromDate={effectiveMinDate}
+            toDate={effectiveMaxDate}
+          />
 
-            {/* Time Input inside popover */}
-            <div className="mt-3">
-              <label className="mb-1 block text-sm font-medium">Time</label>
-              <input
-                type="time"
-                aria-label="Select time"
-                value={state.time}
-                onChange={handleTimeChange}
-                disabled={disabled || !state.date}
-                className={cn(
-                  'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1',
-                  'text-sm shadow-sm transition-colors',
-                  'placeholder:text-muted-foreground',
-                  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
-                  'disabled:cursor-not-allowed disabled:opacity-50',
-                )}
-              />
-            </div>
+          {/* Time Input inside popover */}
+          <div className="mt-3">
+            <label className="mb-1 block text-sm font-medium">Time</label>
+            <input
+              type="time"
+              aria-label="Select time"
+              value={state.time}
+              onChange={handleTimeChange}
+              disabled={disabled || !state.date}
+              className={cn(
+                'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1',
+                'text-sm shadow-sm transition-colors',
+                'placeholder:text-muted-foreground',
+                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
+                'disabled:cursor-not-allowed disabled:opacity-50',
+              )}
+            />
           </div>
-        </PopoverContent>
-      </Popover>
+        </div>
+      </ResponsivePopover>
     </div>
   )
 }

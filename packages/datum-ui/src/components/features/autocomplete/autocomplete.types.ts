@@ -1,26 +1,13 @@
 import type * as React from 'react'
+import type { OptionPickerGroup, OptionPickerOption } from '../../base/option-picker'
 
 // ============================================================================
-// Option Types
+// Option Types — aliases of engine types
 // ============================================================================
 
-export interface AutocompleteOption {
-  /** Unique identifier, submitted to form */
-  value: string
-  /** Display text, used for built-in search filtering */
-  label: string
-  /** Optional secondary text shown below label */
-  description?: string
-  /** Disable selection of this option */
-  disabled?: boolean
-}
+export type AutocompleteOption = OptionPickerOption
 
-export interface AutocompleteGroup<T extends AutocompleteOption = AutocompleteOption> {
-  /** Group heading label */
-  label: string
-  /** Options within this group */
-  options: T[]
-}
+export type AutocompleteGroup<T extends AutocompleteOption = AutocompleteOption> = OptionPickerGroup<T>
 
 // ============================================================================
 // Primitive Props
@@ -70,6 +57,10 @@ export interface AutocompleteProps<T extends AutocompleteOption = AutocompleteOp
   loading?: boolean
   /** Popover modal mode - required when using inside a Dialog/Modal component (default: true) */
   modal?: boolean
+  /** Force desktop popover even on mobile. Default: true (responsive). */
+  responsive?: boolean
+  /** Title shown in the mobile sheet header. Default: placeholder ?? 'Search'. */
+  sheetTitle?: string
 
   // State
   /** Disable the component */

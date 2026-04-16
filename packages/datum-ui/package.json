@@ -20,6 +20,10 @@
       "style": "./dist/styles/root.css",
       "default": "./dist/styles/root.css"
     },
+    "./styles/canela": {
+      "style": "./dist/styles/canela.css",
+      "default": "./dist/styles/canela.css"
+    },
     "./theme": {
       "source": "./src/components/themes/index.ts",
       "types": "./dist/components/themes/index.d.ts",
@@ -140,6 +144,21 @@
       "types": "./dist/components/base/radio-group/index.d.ts",
       "default": "./dist/radio-group/index.mjs"
     },
+    "./responsive-dropdown": {
+      "source": "./src/components/base/responsive-dropdown/index.ts",
+      "types": "./dist/components/base/responsive-dropdown/index.d.ts",
+      "default": "./dist/responsive-dropdown/index.mjs"
+    },
+    "./responsive-popover": {
+      "source": "./src/components/base/responsive-popover/index.ts",
+      "types": "./dist/components/base/responsive-popover/index.d.ts",
+      "default": "./dist/responsive-popover/index.mjs"
+    },
+    "./rich-text-editor": {
+      "source": "./src/components/features/rich-text-editor/index.ts",
+      "types": "./dist/components/features/rich-text-editor/index.d.ts",
+      "default": "./dist/rich-text-editor/index.mjs"
+    },
     "./select": {
       "source": "./src/components/base/select/index.ts",
       "types": "./dist/components/base/select/index.d.ts",
@@ -209,11 +228,6 @@
       "source": "./src/components/features/autosearch/index.ts",
       "types": "./dist/components/features/autosearch/index.d.ts",
       "default": "./dist/autosearch/index.mjs"
-    },
-    "./combobox": {
-      "source": "./src/components/features/combobox/index.ts",
-      "types": "./dist/components/features/combobox/index.d.ts",
-      "default": "./dist/combobox/index.mjs"
     },
     "./avatar-stack": {
       "source": "./src/components/features/avatar-stack/index.ts",
@@ -285,6 +299,11 @@
       "types": "./dist/exports/map.d.ts",
       "default": "./dist/map/index.mjs"
     },
+    "./mobile-sheet": {
+      "source": "./src/components/base/mobile-sheet/index.ts",
+      "types": "./dist/components/base/mobile-sheet/index.d.ts",
+      "default": "./dist/mobile-sheet/index.mjs"
+    },
     "./more-actions": {
       "source": "./src/components/features/more-actions/index.ts",
       "types": "./dist/components/features/more-actions/index.d.ts",
@@ -349,6 +368,11 @@
       "source": "./src/components/features/transfer/index.ts",
       "types": "./dist/components/features/transfer/index.d.ts",
       "default": "./dist/transfer/index.mjs"
+    },
+    "./multi-select": {
+      "source": "./src/components/features/multi-select/index.ts",
+      "types": "./dist/components/features/multi-select/index.d.ts",
+      "default": "./dist/multi-select/index.mjs"
     }
   },
   "main": "./dist/index.mjs",
@@ -381,6 +405,12 @@
     "@stepperize/react": ">=4",
     "@tanstack/react-table": ">=8",
     "@tanstack/react-virtual": ">=3",
+    "@tiptap/extension-character-count": ">=3",
+    "@tiptap/extension-link": ">=3",
+    "@tiptap/extension-placeholder": ">=3",
+    "@tiptap/extension-underline": ">=3",
+    "@tiptap/react": ">=3",
+    "@tiptap/starter-kit": ">=3",
     "date-fns": ">=4",
     "date-fns-tz": ">=3",
     "js-yaml": "^4.1.0",
@@ -431,6 +461,24 @@
       "optional": true
     },
     "@tanstack/react-virtual": {
+      "optional": true
+    },
+    "@tiptap/extension-character-count": {
+      "optional": true
+    },
+    "@tiptap/extension-link": {
+      "optional": true
+    },
+    "@tiptap/extension-placeholder": {
+      "optional": true
+    },
+    "@tiptap/extension-underline": {
+      "optional": true
+    },
+    "@tiptap/react": {
+      "optional": true
+    },
+    "@tiptap/starter-kit": {
       "optional": true
     },
     "date-fns": {
@@ -516,6 +564,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1",
+    "isomorphic-dompurify": "^3.8.0",
     "tailwind-merge": "^3.5.0",
     "tw-animate-css": "^1"
   },
@@ -534,6 +583,12 @@
     "@testing-library/jest-dom": "^6",
     "@testing-library/react": "^16",
     "@testing-library/user-event": "^14",
+    "@tiptap/extension-character-count": "^3.22.3",
+    "@tiptap/extension-link": "^3.22.3",
+    "@tiptap/extension-placeholder": "^3.22.3",
+    "@tiptap/extension-underline": "^3.22.3",
+    "@tiptap/react": "^3.22.3",
+    "@tiptap/starter-kit": "^3.22.3",
     "@types/js-yaml": "^4.0.9",
     "@types/leaflet": "^1.9.21",
     "@types/leaflet-draw": "^1.0.13",

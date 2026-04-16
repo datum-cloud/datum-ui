@@ -45,8 +45,8 @@ describe.each(adapters)('form.TimePicker ($name adapter)', ({ Adapter }) => {
       </Adapter>,
     )
 
-    const input = screen.getByLabelText('Appointment Time')
-    expect(input).toBeInTheDocument()
-    expect(input).toHaveAttribute('type', 'time')
+    // TimePicker now renders a combobox trigger button instead of <input type="time">
+    const trigger = screen.getByRole('combobox')
+    expect(trigger).toBeInTheDocument()
   })
 })

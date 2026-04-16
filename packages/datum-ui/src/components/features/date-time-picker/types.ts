@@ -26,6 +26,16 @@ export interface DateTimePickerProps {
   disabledDates?: Date[] | ((date: Date) => boolean)
 
   /**
+   * Disable dates before today
+   */
+  disablePast?: boolean
+
+  /**
+   * Disable dates after today
+   */
+  disableFuture?: boolean
+
+  /**
    * Timezone for display (defaults to browser timezone)
    * @example "America/New_York"
    */
@@ -58,6 +68,24 @@ export interface DateTimePickerProps {
    * @default true
    */
   modal?: boolean
+
+  /**
+   * Title shown in the mobile sheet header.
+   * Falls back to placeholder then 'Pick date & time'.
+   */
+  sheetTitle?: string
+
+  /**
+   * Description shown in the mobile sheet header.
+   */
+  sheetDescription?: string
+
+  /**
+   * Enable responsive mobile sheet behaviour.
+   * Set to false to always render a desktop popover.
+   * @default true
+   */
+  responsive?: boolean
 }
 
 /**

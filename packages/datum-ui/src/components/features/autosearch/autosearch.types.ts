@@ -49,6 +49,10 @@ export interface AutosearchProps {
   loading?: boolean
   /** Popover modal mode */
   modal?: boolean
+  /** Render as mobile sheet on small viewports (default: true) */
+  responsive?: boolean
+  /** Title shown in the mobile sheet header (falls back to placeholder then 'Search') */
+  sheetTitle?: string
 
   // State
   /** Disable the component */

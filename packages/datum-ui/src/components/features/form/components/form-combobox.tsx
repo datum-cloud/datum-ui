@@ -1,13 +1,14 @@
-import type { ComboboxGroup, ComboboxOption } from '../../combobox'
+import type { AutocompleteGroup, AutocompleteOption } from '../../autocomplete/autocomplete.types'
 import * as React from 'react'
 import { cn } from '../../../../utils/cn'
-import { Combobox } from '../../combobox'
+import { Autocomplete } from '../../autocomplete'
 import { useFieldContext } from '../context/field-context'
 
 /**
  * Form.Combobox - Single-select dropdown with search for forms
  *
  * Automatically wired to the parent Form.Field context.
+ * Internally delegates to Autocomplete.
  *
  * @example
  * ```tsx
@@ -21,73 +22,25 @@ import { useFieldContext } from '../context/field-context'
  * </Form.Field>
  * ```
  */
+
+/** @deprecated Use `AutocompleteOption` from `@datum-cloud/datum-ui/autocomplete`. */
+export type ComboboxOption = AutocompleteOption
+/** @deprecated Use `AutocompleteGroup` from `@datum-cloud/datum-ui/autocomplete`. */
+export type ComboboxGroup = AutocompleteGroup
+
 export interface FormComboboxProps {
-  /**
-   * Available options (flat or grouped)
-   */
   'options': ComboboxOption[] | ComboboxGroup[]
-
-  /**
-   * Placeholder for trigger button
-   */
   'placeholder'?: string
-
-  /**
-   * Placeholder for search input
-   */
   'searchPlaceholder'?: string
-
-  /**
-   * Message shown when no options match
-   */
   'emptyMessage'?: string
-
-  /**
-   * Disable the combobox
-   */
   'disabled'?: boolean
-
-  /**
-   * Additional CSS classes
-   */
   'className'?: string
-
-  /**
-   * Additional CSS classes for trigger button
-   */
   'triggerClassName'?: string
-
-  /**
-   * Additional CSS classes for popover content
-   */
   'contentClassName'?: string
-
-  /**
-   * Enable search functionality
-   * @default true
-   */
   'searchable'?: boolean
-
-  /**
-   * Show dropdown arrow icon
-   * @default true
-   */
   'showDropdownArrow'?: boolean
-
-  /**
-   * Allow clearing the selection
-   * @default false
-   */
   'clearable'?: boolean
-
-  /**
-   * Test ID
-   */
   'data-testid'?: string
-
-  /**
-   * Whether the popover is modal (required when using inside a Dialog/Modal)
-   */
   'modal'?: boolean
 }
 
@@ -101,9 +54,7 @@ export function FormCombobox({
   triggerClassName,
   contentClassName,
   searchable = true,
-  showDropdownArrow = true,
-  clearable = false,
-  'data-testid': testId,
+  'data-testid': _testId,
   modal,
 }: FormComboboxProps) {
   const { id, errors, disabled: fieldDisabled, fieldState } = useFieldContext()
@@ -111,7 +62,7 @@ export function FormCombobox({
   const hasErrors = errors && errors.length > 0
 
   const handleChange = React.useCallback(
-    (value: string | undefined) => {
+    (value: string) => {
       fieldState?.change(value ?? '')
       fieldState?.blur()
     },
@@ -119,23 +70,20 @@ export function FormCombobox({
   )
 
   return (
-    <Combobox
+    <Autocomplete
       id={id}
       options={options}
       value={(fieldState?.value as string) ?? ''}
-      onChange={handleChange}
+      onValueChange={handleChange}
       placeholder={placeholder}
       searchPlaceholder={searchPlaceholder}
-      emptyMessage={emptyMessage}
+      emptyContent={emptyMessage}
       disabled={isDisabled}
-      searchable={searchable}
-      showDropdownArrow={showDropdownArrow}
-      clearable={clearable}
+      disableSearch={!searchable}
       modal={modal}
       className={className}
       triggerClassName={cn(hasErrors && 'border-destructive', triggerClassName)}
       contentClassName={contentClassName}
-      data-testid={testId}
     />
   )
 }

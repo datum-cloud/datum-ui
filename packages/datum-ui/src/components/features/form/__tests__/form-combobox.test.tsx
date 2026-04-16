@@ -1,4 +1,4 @@
-import type { ComboboxOption } from '../../combobox'
+import type { AutocompleteOption } from '../../autocomplete/autocomplete.types'
 /// <reference types="@testing-library/jest-dom/vitest" />
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
@@ -6,6 +6,8 @@ import { z } from 'zod'
 import { ConformAdapter } from '../adapters/conform'
 import { RHFAdapter } from '../adapters/rhf'
 import { Form } from '../index'
+
+type ComboboxOption = AutocompleteOption
 
 const items: ComboboxOption[] = [
   { value: '1', label: 'Item 1' },

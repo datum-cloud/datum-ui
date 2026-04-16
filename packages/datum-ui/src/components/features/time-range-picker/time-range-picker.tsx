@@ -5,7 +5,9 @@ import { Separator } from '@repo/shadcn/ui/separator'
 import { Calendar as CalendarIcon, Globe, X } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Calendar, Icon } from '../..'
+import { useBreakpoint } from '../../../hooks/use-breakpoint'
 import { cn } from '../../../utils/cn'
+import { MobileSheet } from '../../base/mobile-sheet'
 // app/modules/datum-ui/components/time-range-picker/time-range-picker.tsx
 import { CustomRangePanel } from './components/absolute-range-panel'
 import { QuickRangesPanel } from './components/quick-ranges-panel'
@@ -67,6 +69,8 @@ export function TimeRangePicker({
   side = 'bottom',
 }: TimeRangePickerProps) {
   const [open, setOpen] = useState(false)
+  const breakpoint = useBreakpoint()
+  const isMobile = breakpoint === 'mobile'
 
   // Effective timezone
   const timezone = timezoneProp ?? getBrowserTimezone()
@@ -258,108 +262,138 @@ export function TimeRangePicker({
   // Show clear button only when there's a value and onClear is provided
   const showClearButton = value && onClear
 
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <div className="relative inline-flex">
-        <PopoverTrigger asChild>
-          <Button
-            type="quaternary"
-            theme="outline"
-            disabled={disabled}
-            className={cn(
-              'text-foreground min-w-[200px] items-center justify-between gap-2 px-3 font-normal',
-              className,
-            )}
-          >
-            <div className="flex flex-1 items-center gap-2">
-              <Icon icon={CalendarIcon} size={16} />
-              <span className="truncate text-xs">{displayText}</span>
-            </div>
-
-            {showClearButton && (
-              <div
-                onClick={(e) => {
-                  e.stopPropagation()
-                  e.preventDefault()
-                  handleClear(e)
-                }}
-                className={cn(
-                  'size-[14px] shrink-0 p-0 hover:bg-transparent',
-                  'hover:text-destructive text-icon-quaternary hover:bg-transparent dark:text-white',
-                  'focus:ring-ring focus:ring-2 focus:ring-offset-1 focus:outline-none',
-                  'disabled:pointer-events-none disabled:opacity-50',
-                  'transition-colors',
-                )}
-                aria-label="Clear time range"
-              >
-                <Icon icon={X} size={14} />
-              </div>
-            )}
-          </Button>
-        </PopoverTrigger>
+  // Shared trigger button
+  const triggerButton = (
+    <Button
+      type="quaternary"
+      theme="outline"
+      disabled={disabled}
+      className={cn(
+        'text-foreground min-w-[200px] items-center justify-between gap-2 px-3 font-normal',
+        className,
+      )}
+    >
+      <div className="flex flex-1 items-center gap-2">
+        <Icon icon={CalendarIcon} size={16} />
+        <span className="truncate text-xs">{displayText}</span>
       </div>
 
-      <PopoverContent className="w-auto rounded-xl p-0" align={align} side={side} sideOffset={4}>
-        {/* Main content: Calendar (left) + Presets (right) */}
-        <div className="divide-border flex flex-col divide-x sm:flex-row">
-          {/* Calendar */}
-          <div className="flex-1 px-0">
-            <Calendar
-              className="w-full"
-              mode="range"
-              defaultMonth={calendarRange?.from}
-              selected={calendarRange}
-              onSelect={handleCalendarSelect}
-              onDayClick={handleDayClick}
-              numberOfMonths={1}
-              disabled={(date) => {
-                if (effectiveMaxDate && date > effectiveMaxDate)
-                  return true
-                if (minDate && date < minDate)
-                  return true
-                return false
-              }}
-              initialFocus
-            />
-          </div>
-
-          {/* Separator */}
-          {/* <Separator orientation="vertical" className="hidden h-auto sm:block" />
-          <Separator orientation="horizontal" className="sm:hidden" /> */}
-
-          {/* Presets */}
-          <div className="p-3">
-            <QuickRangesPanel
-              presets={presets}
-              value={effectiveValue}
-              onPresetSelect={handlePresetSelect}
-            />
-          </div>
+      {showClearButton && (
+        <div
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            handleClear(e)
+          }}
+          className={cn(
+            'size-[14px] shrink-0 p-0 hover:bg-transparent',
+            'hover:text-destructive text-icon-quaternary hover:bg-transparent dark:text-white',
+            'focus:ring-ring focus:ring-2 focus:ring-offset-1 focus:outline-none',
+            'disabled:pointer-events-none disabled:opacity-50',
+            'transition-colors',
+          )}
+          aria-label="Clear time range"
+        >
+          <Icon icon={X} size={14} />
         </div>
+      )}
+    </Button>
+  )
 
-        <Separator />
-
-        {/* Custom range inputs */}
-        <div className="p-3">
-          <CustomRangePanel
-            fromUtc={currentFromUtc}
-            toUtc={currentToUtc}
-            timezone={timezone}
-            onRangeChange={handleCustomRangeChange}
-            disableFuture={disableFuture}
+  // Shared picker content
+  const pickerContent = (
+    <>
+      {/* Main content: Calendar (left) + Presets (right) */}
+      <div className="divide-border flex flex-col divide-x sm:flex-row">
+        {/* Calendar */}
+        <div className="flex-1 px-0">
+          <Calendar
+            className="w-full"
+            mode="range"
+            defaultMonth={calendarRange?.from}
+            selected={calendarRange}
+            onSelect={handleCalendarSelect}
+            onDayClick={handleDayClick}
+            numberOfMonths={1}
+            disabled={(date) => {
+              if (effectiveMaxDate && date > effectiveMaxDate)
+                return true
+              if (minDate && date < minDate)
+                return true
+              return false
+            }}
+            initialFocus
           />
         </div>
 
-        <Separator />
+        {/* Separator */}
+        {/* <Separator orientation="vertical" className="hidden h-auto sm:block" />
+        <Separator orientation="horizontal" className="sm:hidden" /> */}
 
-        {/* Timezone indicator */}
-        <div className="text-muted-foreground bg-muted/30 flex items-center gap-2 px-3 py-2 text-xs">
-          <Globe className="h-3.5 w-3.5" />
-          <span>
-            Your timezone:
-            {formatTimezoneLabel(timezone)}
-          </span>
+        {/* Presets */}
+        <div className="p-3">
+          <QuickRangesPanel
+            presets={presets}
+            value={effectiveValue}
+            onPresetSelect={handlePresetSelect}
+          />
         </div>
+      </div>
+
+      <Separator />
+
+      {/* Custom range inputs */}
+      <div className="p-3">
+        <CustomRangePanel
+          fromUtc={currentFromUtc}
+          toUtc={currentToUtc}
+          timezone={timezone}
+          onRangeChange={handleCustomRangeChange}
+          disableFuture={disableFuture}
+        />
+      </div>
+
+      <Separator />
+
+      {/* Timezone indicator */}
+      <div className="text-muted-foreground bg-muted/30 flex items-center gap-2 px-3 py-2 text-xs">
+        <Globe className="h-3.5 w-3.5" />
+        <span>
+          Your timezone:
+          {formatTimezoneLabel(timezone)}
+        </span>
+      </div>
+    </>
+  )
+
+  // Mobile: bottom sheet
+  if (isMobile) {
+    return (
+      <>
+        <div className="relative inline-flex" onClick={() => setOpen(true)}>
+          {triggerButton}
+        </div>
+        <MobileSheet
+          open={open}
+          onOpenChange={setOpen}
+          title="Select time range"
+          description="Choose a preset or custom date range"
+        >
+          {pickerContent}
+        </MobileSheet>
+      </>
+    )
+  }
+
+  // Desktop/Tablet: popover
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <div className="relative inline-flex">
+        <PopoverTrigger asChild>{triggerButton}</PopoverTrigger>
+      </div>
+
+      <PopoverContent className="w-auto rounded-xl p-0" align={align} side={side} sideOffset={4}>
+        {pickerContent}
       </PopoverContent>
     </Popover>
   )

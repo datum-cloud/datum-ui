@@ -1,10 +1,6 @@
 import { CheckCircle2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '../../dropdown'
+import { ResponsiveDropdown } from '../../../base/responsive-dropdown'
 // Context labels are always shown because the dropdown is global (visible from any page).
 // This is intentional — unlike the old TaskPanel which used useTasksWithLabels() to hide
 // labels when all tasks matched the current scope.
@@ -48,49 +44,49 @@ export function TaskQueueDropdown() {
 
   return (
     <>
-      <DropdownMenu open={open} onOpenChange={setOpen}>
-        <DropdownMenuTrigger asChild>
-          <TaskQueueTrigger tasks={tasks} />
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent
-          align="end"
-          className="w-96 rounded-lg p-0"
-          onCloseAutoFocus={e => e.preventDefault()}
-        >
+      <ResponsiveDropdown
+        open={open}
+        onOpenChange={setOpen}
+        sheetTitle="Tasks"
+        sheetDescription="View running and completed tasks"
+        contentClassName="w-[calc(100vw-2rem)] sm:w-96"
+        onCloseAutoFocus={e => e.preventDefault()}
+        trigger={<TaskQueueTrigger tasks={tasks} />}
+      >
+        <div className="hidden md:block">
           <TaskPanelHeader />
-          <div className="max-h-[350px] overflow-y-auto">
-            {tasks.length === 0 && !activeSummary
-              ? (
-                  <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
-                    <CheckCircle2 className="text-muted-foreground/30 mb-3 h-12 w-12" />
-                    <p className="text-muted-foreground text-sm">No tasks currently scheduled</p>
-                  </div>
-                )
-              : (
-                  tasks.map(task => (
-                    <TaskPanelItem
-                      key={task.id}
-                      task={task}
-                      contextLabel={getContextLabel(task.metadata)}
-                      onCancel={() => cancel(task.id)}
-                    />
-                  ))
-                )}
-          </div>
-          {hasDismissable && (
-            <button
-              type="button"
-              onClick={() => {
-                dismissAll()
-              }}
-              className="border-border hover:bg-accent flex w-full cursor-pointer items-center justify-center gap-2 border-t px-3 py-2 transition-colors"
-            >
-              <span className="text-destructive text-xs">Clear tasks</span>
-            </button>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        </div>
+        <div className="max-h-[350px] overflow-y-auto">
+          {tasks.length === 0 && !activeSummary
+            ? (
+                <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
+                  <CheckCircle2 className="text-muted-foreground/30 mb-3 h-12 w-12" />
+                  <p className="text-muted-foreground text-sm">No tasks currently scheduled</p>
+                </div>
+              )
+            : (
+                tasks.map(task => (
+                  <TaskPanelItem
+                    key={task.id}
+                    task={task}
+                    contextLabel={getContextLabel(task.metadata)}
+                    onCancel={() => cancel(task.id)}
+                  />
+                ))
+              )}
+        </div>
+        {hasDismissable && (
+          <button
+            type="button"
+            onClick={() => {
+              dismissAll()
+            }}
+            className="border-border hover:bg-accent flex w-full cursor-pointer items-center justify-center gap-2 border-t px-3 py-2 transition-colors"
+          >
+            <span className="text-destructive text-xs">Clear tasks</span>
+          </button>
+        )}
+      </ResponsiveDropdown>
 
       {activeSummary && (
         <TaskSummaryDialog

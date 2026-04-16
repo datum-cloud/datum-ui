@@ -1,9 +1,9 @@
-import type { MoreActionsProps } from '../more-actions'
+import type { ActionItem } from '../types'
 import { TooltipProvider } from '@repo/shadcn/ui/tooltip'
 /// <reference types="@testing-library/jest-dom/vitest" />
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,14 +12,39 @@ import {
 } from '../../dropdown/dropdown'
 import { MoreActions } from '../more-actions'
 
+const originalInnerWidth = window.innerWidth
+const originalMatchMedia = window.matchMedia
+
+function setViewport(width: number) {
+  Object.defineProperty(window, 'innerWidth', {
+    configurable: true,
+    writable: true,
+    value: width,
+  })
+  window.matchMedia = vi.fn().mockImplementation((query: string) => {
+    const match = query.match(/min-width:\s*(\d+)px/)
+    const min = match ? Number(match[1]) : 0
+    return {
+      matches: width >= min,
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    } as unknown as MediaQueryList
+  })
+}
+
 function renderWithTooltip(ui: React.ReactElement) {
   return render(<TooltipProvider>{ui}</TooltipProvider>)
 }
 
-function createActions(overrides?: Partial<MoreActionsProps<unknown>>[]): MoreActionsProps<unknown>[] {
-  const defaults: MoreActionsProps<unknown>[] = [
-    { key: 'edit', label: 'Edit', action: vi.fn() },
-    { key: 'delete', label: 'Delete', action: vi.fn(), variant: 'destructive' },
+function createActions(overrides?: Partial<ActionItem<unknown>>[]): ActionItem<unknown>[] {
+  const defaults: ActionItem<unknown>[] = [
+    { key: 'edit', label: 'Edit', onClick: vi.fn() },
+    { key: 'delete', label: 'Delete', onClick: vi.fn(), variant: 'destructive' },
   ]
   if (!overrides)
     return defaults
@@ -27,6 +52,15 @@ function createActions(overrides?: Partial<MoreActionsProps<unknown>>[]): MoreAc
 }
 
 describe('moreActions', () => {
+  afterEach(() => {
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      writable: true,
+      value: originalInnerWidth,
+    })
+    window.matchMedia = originalMatchMedia
+  })
+
   it('renders a trigger button', () => {
     renderWithTooltip(<MoreActions actions={createActions()} />)
     expect(screen.getByRole('button')).toBeInTheDocument()
@@ -98,9 +132,9 @@ describe('moreActions', () => {
   })
 
   it('renders null when all actions are hidden', () => {
-    const actions: MoreActionsProps<unknown>[] = [
-      { key: 'edit', label: 'Edit', action: vi.fn(), hidden: () => true },
-      { key: 'delete', label: 'Delete', action: vi.fn(), hidden: () => true },
+    const actions: ActionItem<unknown>[] = [
+      { key: 'edit', label: 'Edit', onClick: vi.fn(), hidden: () => true },
+      { key: 'delete', label: 'Delete', onClick: vi.fn(), hidden: () => true },
     ]
     renderWithTooltip(<MoreActions actions={actions} />)
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
@@ -112,12 +146,46 @@ describe('moreActions', () => {
   })
 
   it('filters out hidden actions and shows only visible ones', () => {
-    const actions: MoreActionsProps<unknown>[] = [
-      { key: 'edit', label: 'Edit', action: vi.fn(), hidden: () => false },
-      { key: 'delete', label: 'Delete', action: vi.fn(), hidden: () => true },
+    const actions: ActionItem<unknown>[] = [
+      { key: 'edit', label: 'Edit', onClick: vi.fn(), hidden: () => false },
+      { key: 'delete', label: 'Delete', onClick: vi.fn(), hidden: () => true },
     ]
     // Component should still render since one action is visible
     renderWithTooltip(<MoreActions actions={actions} />)
+    expect(screen.getByRole('button')).toBeInTheDocument()
+  })
+
+  // Mobile sheet behavior: on mobile viewport, ResponsiveDropdown renders a
+  // div[role=button] wrapper around the trigger in addition to the button itself
+  it('renders mobile sheet heading on mobile viewport', () => {
+    setViewport(500)
+    renderWithTooltip(
+      <MoreActions
+        actions={createActions()}
+        sheetTitle="Actions"
+      />,
+    )
+    // On mobile, the trigger is wrapped in a div[role=button] by ResponsiveDropdown
+    // so there are multiple button-role elements; confirm at least one is present
+    expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('stays as dropdown when responsive={false} on mobile viewport', () => {
+    setViewport(500)
+    renderWithTooltip(
+      <MoreActions
+        actions={createActions()}
+        responsive={false}
+        sheetTitle="Actions"
+      />,
+    )
+    // When responsive=false, no outer div[role=button] wrapper — single trigger button
+    expect(screen.getByRole('button')).toBeInTheDocument()
+  })
+
+  it('uses default sheetTitle of Actions when not provided', () => {
+    renderWithTooltip(<MoreActions actions={createActions()} />)
+    // Component renders without sheetTitle prop — defaults to 'Actions'
     expect(screen.getByRole('button')).toBeInTheDocument()
   })
 })

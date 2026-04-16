@@ -125,6 +125,10 @@
   --potted-olive: oklch(0.776 0.02 152.7); /* #c2ddb6 */
   --white: oklch(1 0 0); /* #ffffff */
 
+  /* Title font — default fallback. Consumers opt into Canela via
+   * @datum-cloud/datum-ui/styles/canela, which overrides this via :root. */
+  --font-title: ui-sans-serif, system-ui, sans-serif;
+
   /* Collection: Typography */
   --app-body-font-family: var(--font-families-alliance);
   --app-body-font-size: var(--text-sizes-13px);

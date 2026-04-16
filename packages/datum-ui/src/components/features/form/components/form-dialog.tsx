@@ -13,6 +13,7 @@ import { Dialog } from '../../../base/dialog'
  * - Built-in header with title and description
  * - Built-in footer with submit and cancel buttons
  * - Auto-close on successful submission
+ * - Optional header close (X) via showHeaderClose
  * - Prevents accidental close during submission
  * - Supports render function pattern for form state access
  *
@@ -90,6 +91,9 @@ export function FormDialog<T extends z.ZodType>({
   className,
   formClassName,
 
+  // Header close button
+  showHeaderClose = true,
+
   // Children
   children,
 }: FormDialogProps<T>) {
@@ -162,7 +166,7 @@ export function FormDialog<T extends z.ZodType>({
               <Dialog.Header
                 title={title}
                 description={description}
-                onClose={handleCancel}
+                onClose={showHeaderClose ? handleCancel : undefined}
                 className="border-b"
                 descriptionClassName="text-foreground/80"
               />

@@ -1,8 +1,33 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { DateTimePicker } from '../date-time-picker'
+
+const originalInnerWidth = window.innerWidth
+const originalMatchMedia = window.matchMedia
+
+function setViewport(width: number) {
+  Object.defineProperty(window, 'innerWidth', {
+    configurable: true,
+    writable: true,
+    value: width,
+  })
+  window.matchMedia = vi.fn().mockImplementation((query: string) => {
+    const match = query.match(/min-width:\s*(\d+)px/)
+    const min = match ? Number(match[1]) : 0
+    return {
+      matches: width >= min,
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    } as unknown as MediaQueryList
+  })
+}
 
 // Helper to open the popover
 async function openPopover() {
@@ -282,5 +307,62 @@ describe('dateTimePicker', () => {
 
     // onChange should never be called because the time input can't be interacted with
     expect(onChange).not.toHaveBeenCalled()
+  })
+})
+
+describe('dateTimePicker — responsive', () => {
+  afterEach(() => {
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      writable: true,
+      value: originalInnerWidth,
+    })
+    window.matchMedia = originalMatchMedia
+  })
+
+  it('renders mobile sheet heading with placeholder as title on mobile viewport', async () => {
+    setViewport(500)
+    render(
+      <DateTimePicker
+        placeholder="Pick date & time"
+      />,
+    )
+    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    expect(screen.getByRole('heading', { name: 'Pick date & time' })).toBeInTheDocument()
+  })
+
+  it('uses sheetTitle over placeholder when provided', async () => {
+    setViewport(500)
+    render(
+      <DateTimePicker
+        placeholder="Pick date & time"
+        sheetTitle="Custom date title"
+      />,
+    )
+    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    expect(screen.getByRole('heading', { name: 'Custom date title' })).toBeInTheDocument()
+  })
+
+  it('stays as popover when responsive={false}', async () => {
+    setViewport(500)
+    render(
+      <DateTimePicker
+        placeholder="Pick date & time"
+        responsive={false}
+      />,
+    )
+    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    expect(screen.queryByRole('heading', { name: 'Pick date & time' })).not.toBeInTheDocument()
+  })
+
+  it('falls back to "Pick date & time" when no placeholder or sheetTitle', async () => {
+    setViewport(500)
+    render(
+      <DateTimePicker />,
+    )
+    // DateTimePicker has a built-in default placeholder 'Select date and time',
+    // so sheetTitle falls back to that placeholder, not the generic sentinel
+    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    expect(screen.getByRole('heading', { name: 'Select date and time' })).toBeInTheDocument()
   })
 })

@@ -4,6 +4,14 @@ import { Tooltip } from '@datum-cloud/datum-ui/tooltip'
 const meta: Meta<typeof Tooltip> = {
   title: 'Base/Tooltip',
   component: Tooltip,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '**Mobile long-press support**: On touch devices the tooltip activates after a 500 ms press and auto-dismisses after 1 500 ms. No tap-away is needed. This behaviour cannot be demoed directly in Storybook because the canvas does not simulate touch events — use a real mobile device or browser DevTools touch emulation to verify it.',
+      },
+    },
+  },
   argTypes: {
     message: { control: 'text' },
     side: {

@@ -1,31 +1,33 @@
 /**
- * TimePicker - Simple time input component
+ * TimePicker - Scrollable time-slot dropdown
  *
- * Provides a native HTML time input for selecting hours and minutes.
- * Value format: "HH:mm" (e.g., "14:30")
+ * Renders a ResponsivePopover with selectable time slots generated
+ * from min/max/step. Value format: "HH:mm" (e.g., "14:30").
  */
 
 export interface TimePickerProps {
   /** Current time value in HH:mm format (e.g., "14:30") */
-  'value'?: string
+  value?: string
   /** Called when time changes */
-  'onChange'?: (value: string) => void
+  onChange?: (value: string) => void
   /** Minimum selectable time in HH:mm format */
-  'min'?: string
+  min?: string
   /** Maximum selectable time in HH:mm format */
-  'max'?: string
-  /** Step interval in minutes (default: 1) */
-  'step'?: number
+  max?: string
+  /** Step interval in minutes (default: 15) */
+  step?: number
   /** Placeholder text */
-  'placeholder'?: string
-  /** Disable the input */
-  'disabled'?: boolean
+  placeholder?: string
+  /** Disable the picker */
+  disabled?: boolean
   /** Additional CSS classes */
-  'className'?: string
+  className?: string
   /** Input ID */
-  'id'?: string
-  /** ARIA invalid state */
-  'aria-invalid'?: boolean
-  /** ARIA described by */
-  'aria-describedby'?: string
+  id?: string
+  /** HTML name attribute for hidden input */
+  name?: string
+  /** Force desktop popover even on mobile. Default: true. */
+  responsive?: boolean
+  /** Title shown in the mobile sheet header. */
+  sheetTitle?: string
 }

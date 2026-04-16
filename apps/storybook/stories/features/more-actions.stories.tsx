@@ -1,33 +1,33 @@
-import type { MoreActionsProps } from '@datum-cloud/datum-ui/more-actions'
+import type { ActionItem } from '@datum-cloud/datum-ui/more-actions'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import { MoreActions } from '@datum-cloud/datum-ui/more-actions'
 import { CopyIcon, DownloadIcon, PencilIcon, TrashIcon } from 'lucide-react'
 
-const actions: MoreActionsProps<unknown>[] = [
+const actions: ActionItem<unknown>[] = [
   {
     key: 'edit',
     label: 'Edit',
     icon: <PencilIcon />,
-    action: () => {},
+    onClick: () => {},
   },
   {
     key: 'duplicate',
     label: 'Duplicate',
     icon: <CopyIcon />,
-    action: () => {},
+    onClick: () => {},
   },
   {
     key: 'download',
     label: 'Download',
     icon: <DownloadIcon />,
-    action: () => {},
+    onClick: () => {},
   },
   {
     key: 'delete',
     label: 'Delete',
     variant: 'destructive',
     icon: <TrashIcon />,
-    action: () => {},
+    onClick: () => {},
   },
 ]
 
