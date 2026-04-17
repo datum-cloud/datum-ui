@@ -460,7 +460,7 @@ export function NavMenu({ ref, className, items, currentPath, linkComponent: Lin
               }}
               className="group/collapsible"
             >
-              <SidebarMenuItem>
+              <SidebarMenuItem className="[&>*:first-child]:w-full">
                 <CollapsibleTrigger asChild className="w-full">
                   <NavSidebarMenuButton
                     item={item}
@@ -560,7 +560,7 @@ export function NavMenu({ ref, className, items, currentPath, linkComponent: Lin
           }}
           className="group/collapsible"
         >
-          <SidebarMenuItem key={`collapsible-sidebar-${currentItem.title}-${currentLevel}`}>
+          <SidebarMenuItem key={`collapsible-sidebar-${currentItem.title}-${currentLevel}`} className="[&>*:first-child]:w-full">
             <CollapsibleTrigger asChild className="w-full">
               <NavSidebarMenuButton
                 item={currentItem}
@@ -605,7 +605,7 @@ export function NavMenu({ ref, className, items, currentPath, linkComponent: Lin
       <Fragment key={itemKey}>
         {item.showSeparatorAbove && <SidebarSeparator className="my-2" />}
         <SidebarMenu className={cn(`level_${level} px-2`)}>
-          <SidebarMenuItem>
+          <SidebarMenuItem className="[&>*:first-child]:w-full">
             <NavSidebarMenuButton
               asChild
               item={item}

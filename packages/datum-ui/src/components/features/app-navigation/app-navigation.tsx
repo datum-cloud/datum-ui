@@ -22,7 +22,7 @@ function NavSkeleton() {
     <ul className="flex h-full w-full min-w-0 flex-col gap-0.5 py-2" data-sidebar="menu">
       {/* Home - first item, mimics active state with subtle background */}
       <SidebarMenu className="px-2">
-        <SidebarMenuItem>
+        <SidebarMenuItem className="[&>*:first-child]:w-full">
           <SidebarMenuSkeleton
             showIcon
             className="bg-sidebar-accent/60 h-8 rounded-xl **:data-[sidebar=menu-skeleton-text]:max-w-12"
@@ -35,7 +35,7 @@ function NavSkeleton() {
       {/* AI Edge, Connectors, DNS, Domains, Metrics, Secrets */}
       {[1, 2, 3, 4, 5, 6].map(i => (
         <SidebarMenu key={i} className="px-2">
-          <SidebarMenuItem>
+          <SidebarMenuItem className="[&>*:first-child]:w-full">
             <SidebarMenuSkeleton showIcon className="h-8 rounded-xl" />
           </SidebarMenuItem>
         </SidebarMenu>
@@ -45,7 +45,7 @@ function NavSkeleton() {
 
       {/* Project Settings */}
       <SidebarMenu className="px-2">
-        <SidebarMenuItem>
+        <SidebarMenuItem className="[&>*:first-child]:w-full">
           <SidebarMenuSkeleton
             showIcon
             className="h-8 rounded-xl [&_[data-sidebar=menu-skeleton-text]]:max-w-28"
