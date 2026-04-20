@@ -411,7 +411,7 @@
     "@tiptap/extension-underline": ">=3",
     "@tiptap/react": ">=3",
     "@tiptap/starter-kit": ">=3",
-    "date-fns": ">=4",
+    "date-fns": ">=4.1.0",
     "date-fns-tz": ">=3",
     "js-yaml": "^4.1.0",
     "leaflet": ">=1.9",

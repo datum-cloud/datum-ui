@@ -42,7 +42,7 @@
     "@radix-ui/react-visually-hidden": "^1",
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1",
-    "date-fns": "^4",
+    "date-fns": "^4.1.0",
     "embla-carousel-react": "^8",
     "input-otp": "^1",
     "lucide-react": "^0.556",
