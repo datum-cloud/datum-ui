@@ -411,7 +411,7 @@
     "@tiptap/extension-underline": ">=3",
     "@tiptap/react": ">=3",
     "@tiptap/starter-kit": ">=3",
-    "date-fns": ">=4",
+    "date-fns": ">=4.1.0",
     "date-fns-tz": ">=3",
     "js-yaml": "^4.1.0",
     "leaflet": ">=1.9",
@@ -563,7 +563,7 @@
     "@radix-ui/react-visually-hidden": "^1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cmdk": "^1",
+    "cmdk": "^1.1.1",
     "isomorphic-dompurify": "^3.8.0",
     "tailwind-merge": "^3.5.0",
     "tw-animate-css": "^1"
