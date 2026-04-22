@@ -1,5 +1,31 @@
 # @datum-cloud/datum-ui
 
+## 0.8.1
+
+### Patch Changes
+
+- abd07f0: Bump `cmdk` dependency floor from `^1` to `^1.1.1`. Within-major range tightening; no behavior change for consumers already on `^1`.
+- abd07f0: Bump `date-fns` peer dependency floor from `>=4` to `>=4.1.0`. v4.1.0 is additive (time-zone support in `format`/`formatISO`/`formatISO9075`/`formatRelative`/`formatRFC3339`, plus `constructFrom` null-arg bugfix). Within-major range tightening; no breaking change.
+- 45e1024: Fix Tailwind v4 CSS resolver recursion on the `@datum-cloud/datum-ui/nprogress` import.
+
+  **Problem**
+
+  Consumers importing `@datum-cloud/datum-ui/nprogress` from a Tailwind v4 stylesheet could hit:
+
+  ```
+  [@tailwindcss/vite:generate:build] Exceeded maximum recursion depth while
+  resolving `nprogress/nprogress.css` in
+  `.../node_modules/@datum-cloud/datum-ui/dist/nprogress`
+  ```
+
+  The shipped `dist/nprogress/nprogress.css` began with `@import 'nprogress/nprogress.css';` to pull in the upstream nprogress library styles. Under certain `node_modules` layouts, Tailwind v4's CSS resolver interpreted that bare specifier as colliding with the file's own containing directory (`.../nprogress/nprogress.css`) and recursed into itself.
+
+  **Fix**
+
+  Inline the upstream nprogress@0.2.0 base styles directly into `src/components/features/nprogress/nprogress.css`. The custom theme overrides (`--color-primary` bar, spinner, peg) are preserved below the inlined base. Visual output is unchanged.
+
+  No API changes — consumers keep `@import '@datum-cloud/datum-ui/nprogress'` as-is.
+
 ## 0.8.0
 
 ### Minor Changes
