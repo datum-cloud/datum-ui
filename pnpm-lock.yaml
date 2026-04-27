@@ -601,7 +601,7 @@ importers:
         specifier: ^8
         version: 8.6.0(react@19.2.4)
       input-otp:
-        specifier: ^1
+        specifier: ^1.4.2
         version: 1.4.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       leaflet:
         specifier: ^1.9.4
