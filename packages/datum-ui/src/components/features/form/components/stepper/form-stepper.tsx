@@ -136,7 +136,7 @@ export function FormStepper({
   const providerProps = initialStepIndex ? { initialStep: initialStepIndex as any } : {}
 
   return (
-    // eslint-disable-next-line react/no-context-provider -- Stepperize's Stepper is not a React Context; .Provider is required
+
     <Stepper.Provider {...providerProps}>
       <FormStepperContent
         steps={steps}

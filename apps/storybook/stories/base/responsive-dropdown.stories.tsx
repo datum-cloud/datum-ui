@@ -55,90 +55,94 @@ function MenuRow({
   )
 }
 
-export const Default: Story = {
-  render: () => {
-    const [open, setOpen] = useState(false)
-    return (
-      <div className="flex items-center justify-center p-10">
-        <ResponsiveDropdown
-          open={open}
-          onOpenChange={setOpen}
-          sheetTitle="Account"
-          trigger={(
-            <Button type="secondary" theme="outline">
-              My Account
-            </Button>
-          )}
-        >
-          <div className="flex flex-col p-1">
-            <div className="text-muted-foreground px-3 py-2 text-xs font-semibold">
-              My Account
-            </div>
-            <div className="bg-border -mx-1 my-1 h-px" />
-            <MenuRow
-              icon={<CreditCardIcon size={14} />}
-              label="Billing"
-              onSelect={() => setOpen(false)}
-            />
-            <MenuRow
-              icon={<SettingsIcon size={14} />}
-              label="Settings"
-              onSelect={() => setOpen(false)}
-            />
-            <div className="bg-border -mx-1 my-1 h-px" />
-            <MenuRow
-              icon={<LogOutIcon size={14} />}
-              label="Log out"
-              variant="destructive"
-              onSelect={() => setOpen(false)}
-            />
+function DefaultStory() {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="flex items-center justify-center p-10">
+      <ResponsiveDropdown
+        open={open}
+        onOpenChange={setOpen}
+        sheetTitle="Account"
+        trigger={(
+          <Button type="secondary" theme="outline">
+            My Account
+          </Button>
+        )}
+      >
+        <div className="flex flex-col p-1">
+          <div className="text-muted-foreground px-3 py-2 text-xs font-semibold">
+            My Account
           </div>
-        </ResponsiveDropdown>
-      </div>
-    )
-  },
+          <div className="bg-border -mx-1 my-1 h-px" />
+          <MenuRow
+            icon={<CreditCardIcon size={14} />}
+            label="Billing"
+            onSelect={() => setOpen(false)}
+          />
+          <MenuRow
+            icon={<SettingsIcon size={14} />}
+            label="Settings"
+            onSelect={() => setOpen(false)}
+          />
+          <div className="bg-border -mx-1 my-1 h-px" />
+          <MenuRow
+            icon={<LogOutIcon size={14} />}
+            label="Log out"
+            variant="destructive"
+            onSelect={() => setOpen(false)}
+          />
+        </div>
+      </ResponsiveDropdown>
+    </div>
+  )
+}
+
+function WithCustomContentStory() {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="flex items-center justify-center p-10">
+      <ResponsiveDropdown
+        open={open}
+        onOpenChange={setOpen}
+        sheetTitle="Filters"
+        sheetDescription="Refine the visible results"
+        contentClassName="w-80 rounded-xl p-4"
+        trigger={(
+          <Button type="secondary" theme="outline">
+            Open filters
+          </Button>
+        )}
+      >
+        <div className="space-y-4 p-4 sm:p-0">
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold">Filter by status</h3>
+            <p className="text-muted-foreground text-xs">
+              Arbitrary content is allowed here — the component just hands your
+              children to a Popover on desktop or a bottom sheet on mobile.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button type="secondary" theme="outline" size="small">
+              Active
+            </Button>
+            <Button type="secondary" theme="outline" size="small">
+              Pending
+            </Button>
+            <Button type="secondary" theme="outline" size="small">
+              Archived
+            </Button>
+          </div>
+        </div>
+      </ResponsiveDropdown>
+    </div>
+  )
+}
+
+export const Default: Story = {
+  render: () => <DefaultStory />,
 }
 
 export const WithCustomContent: Story = {
   name: 'WithCustomContent (rich panel)',
-  render: () => {
-    const [open, setOpen] = useState(false)
-    return (
-      <div className="flex items-center justify-center p-10">
-        <ResponsiveDropdown
-          open={open}
-          onOpenChange={setOpen}
-          sheetTitle="Filters"
-          sheetDescription="Refine the visible results"
-          contentClassName="w-80 rounded-xl p-4"
-          trigger={(
-            <Button type="secondary" theme="outline">
-              Open filters
-            </Button>
-          )}
-        >
-          <div className="space-y-4 p-4 sm:p-0">
-            <div className="space-y-1">
-              <h3 className="text-sm font-semibold">Filter by status</h3>
-              <p className="text-muted-foreground text-xs">
-                Arbitrary content is allowed here — the component just hands your
-                children to a Popover on desktop or a bottom sheet on mobile.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button type="secondary" theme="outline" size="small">
-                Active
-              </Button>
-              <Button type="secondary" theme="outline" size="small">
-                Pending
-              </Button>
-              <Button type="secondary" theme="outline" size="small">
-                Archived
-              </Button>
-            </div>
-          </div>
-        </ResponsiveDropdown>
-      </div>
-    )
-  },
+  render: () => <WithCustomContentStory />,
 }

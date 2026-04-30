@@ -12,5 +12,15 @@ export function createConfig(options?: { react?: boolean, markdown?: boolean }):
       semi: false,
     },
     ignores: ['dist/**', 'storybook-static/**', '.next/**', 'coverage/**', '**/CLAUDE.md'],
+  }).append({
+    rules: {
+      // Demoted to warn after the @antfu/eslint-config 4 → 8 jump promoted
+      // these. Library code is not HMR'd; factory and test-harness patterns
+      // are intentional. Re-tighten case-by-case in follow-up PRs.
+      'react-refresh/only-export-components': 'warn',
+      'react/component-hook-factories': 'warn',
+      'react/exhaustive-deps': 'warn',
+      'react/set-state-in-effect': 'warn',
+    },
   }) as unknown as Linter.Config[]
 }

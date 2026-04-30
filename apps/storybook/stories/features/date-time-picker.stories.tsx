@@ -21,17 +21,19 @@ export default meta
 
 type Story = StoryObj<typeof DateTimePicker>
 
+function DefaultStory(args: React.ComponentProps<typeof DateTimePicker>) {
+  const [value, setValue] = React.useState<string | undefined>(undefined)
+  return (
+    <div className="w-72">
+      <DateTimePicker
+        {...args}
+        value={value}
+        onChange={setValue}
+      />
+    </div>
+  )
+}
+
 export const Default: Story = {
-  render: (args) => {
-    const [value, setValue] = React.useState<string | undefined>(undefined)
-    return (
-      <div className="w-72">
-        <DateTimePicker
-          {...args}
-          value={value}
-          onChange={setValue}
-        />
-      </div>
-    )
-  },
+  render: args => <DefaultStory {...args} />,
 }

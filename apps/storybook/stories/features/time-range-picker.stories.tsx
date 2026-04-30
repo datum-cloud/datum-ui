@@ -1,4 +1,5 @@
 import type { TimeRangeValue } from '@datum-cloud/datum-ui/date-picker'
+import type { ComponentProps } from 'react'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import { TimeRangePicker } from '@datum-cloud/datum-ui/date-picker'
 import { useState } from 'react'
@@ -30,16 +31,18 @@ export default meta
 
 type Story = StoryObj<typeof TimeRangePicker>
 
+function DefaultStory(args: ComponentProps<typeof TimeRangePicker>) {
+  const [value, setValue] = useState<TimeRangeValue | null>(null)
+  return (
+    <TimeRangePicker
+      {...args}
+      value={value}
+      onChange={setValue}
+      onClear={() => setValue(null)}
+    />
+  )
+}
+
 export const Default: Story = {
-  render: (args) => {
-    const [value, setValue] = useState<TimeRangeValue | null>(null)
-    return (
-      <TimeRangePicker
-        {...args}
-        value={value}
-        onChange={setValue}
-        onClear={() => setValue(null)}
-      />
-    )
-  },
+  render: args => <DefaultStory {...args} />,
 }

@@ -1,5 +1,6 @@
 import type { RowContextType, RowProps, RowState } from '../types/grid.types'
-import React, { useEffect, useState } from 'react'
+import * as React from 'react'
+import { useEffect, useState } from 'react'
 import { cn } from '../../../../utils/cn'
 import { GRID_PREFIX, RESPONSIVE_MAP } from '../constants/grid.constants'
 import { getGutter, registerMediaQuery } from '../utils/responsive'

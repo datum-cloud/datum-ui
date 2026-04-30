@@ -9,7 +9,7 @@ const { Stepper, steps } = defineStepper(
 
 function StepperDemo({ initialStep }: { initialStep?: string }) {
   return (
-    // eslint-disable-next-line react/no-context-provider -- Stepperize's Stepper is not a React Context; .Provider is required
+
     <Stepper.Provider variant="horizontal" initialStep={initialStep as any}>
       {({ methods }: any) => (
         <div className="flex flex-col gap-6">

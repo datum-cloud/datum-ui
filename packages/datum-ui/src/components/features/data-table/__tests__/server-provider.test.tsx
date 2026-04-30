@@ -17,7 +17,7 @@ interface TestResponse {
 const testColumns = [{ accessorKey: 'name' as const, header: 'Name' }]
 const testData: TestRow[] = [{ id: '1', name: 'Pod A' }]
 
-const mockFetchFn = vi.fn<any>().mockResolvedValue({ items: testData })
+const mockFetchFn = (vi.fn() as any).mockResolvedValue({ items: testData })
 
 function mockTransform(response: TestResponse) {
   return { data: response.items, hasNextPage: false }
@@ -79,7 +79,7 @@ describe('serverProvider', () => {
   })
 
   it('starts loading and fetches after hydration', async () => {
-    const fetchSpy = vi.fn<any>().mockResolvedValue({ items: testData })
+    const fetchSpy = (vi.fn() as any).mockResolvedValue({ items: testData })
 
     render(
       <ServerProvider

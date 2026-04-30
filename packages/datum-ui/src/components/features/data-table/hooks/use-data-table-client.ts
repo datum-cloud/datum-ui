@@ -101,7 +101,7 @@ export function useClientTable<TData>(
       if (persisted.pageSize != null)
         store.setPageSize(persisted.pageSize)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react/exhaustive-deps
   }, []) // mount only
 
   // 5. State adapter sync (skip first render to avoid overwriting hydrated state)
@@ -148,7 +148,7 @@ export function useDataTableClient<TData>(options: UseDataTableClientOptions<TDa
       searchFn,
       filterFns,
     } as CreateStoreOptions<TData>),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react/exhaustive-deps
     [], // intentionally empty — store created once
   )
 

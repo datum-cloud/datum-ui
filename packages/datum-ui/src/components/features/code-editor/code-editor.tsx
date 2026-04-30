@@ -63,6 +63,7 @@ export function CodeEditor({
   value,
   onChange,
   language,
+  placeholder,
   id,
   name = 'code-editor',
   error,
@@ -75,6 +76,7 @@ export function CodeEditor({
   const [mounted, setMounted] = useState(false)
 
   const monacoTheme = theme === 'dark' ? 'vs-dark' : 'light'
+  const showPlaceholder = !!placeholder && value.length === 0
 
   useEffect(() => {
     if (editorRef.current && !mounted) {
@@ -114,6 +116,14 @@ export function CodeEditor({
         }}
         className={cn(error && 'border border-destructive rounded-md')}
       />
+      {showPlaceholder && (
+        <div
+          aria-hidden="true"
+          className="text-input-placeholder pointer-events-none absolute top-0 left-14 z-10 py-0.5 text-sm whitespace-pre-wrap"
+        >
+          {placeholder}
+        </div>
+      )}
       <input type="hidden" id={id} name={name} value={value} />
       {error && <p className="text-sm text-destructive mt-1">{error}</p>}
     </div>

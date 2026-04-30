@@ -167,7 +167,7 @@ function useRHFWatchAllHook(names: string[]): Record<string, unknown> {
       result[n] = (values as any[])[index]
     })
     return result
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react/exhaustive-deps
   }, [namesKey, values])
 }
 

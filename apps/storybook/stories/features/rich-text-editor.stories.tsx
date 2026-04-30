@@ -11,36 +11,38 @@ export default meta
 
 type Story = StoryObj<typeof RichTextEditor>
 
-export const Editor: Story = {
-  render: () => {
-    const [content, setContent] = useState('<p>Start editing here…</p>')
-    return (
-      <div className="w-full max-w-2xl space-y-4">
-        <RichTextEditor
-          content={content}
-          placeholder="Write something…"
-          onChange={setContent}
-        >
-          <RichTextEditor.Toolbar>
-            <RichTextEditor.Bold />
-            <RichTextEditor.Italic />
-            <RichTextEditor.Underline />
-            <RichTextEditor.Strike />
-            <RichTextEditor.Separator />
-            <RichTextEditor.Link />
-          </RichTextEditor.Toolbar>
-          <RichTextEditor.Content />
-        </RichTextEditor>
+function EditorStory() {
+  const [content, setContent] = useState('<p>Start editing here…</p>')
+  return (
+    <div className="w-full max-w-2xl space-y-4">
+      <RichTextEditor
+        content={content}
+        placeholder="Write something…"
+        onChange={setContent}
+      >
+        <RichTextEditor.Toolbar>
+          <RichTextEditor.Bold />
+          <RichTextEditor.Italic />
+          <RichTextEditor.Underline />
+          <RichTextEditor.Strike />
+          <RichTextEditor.Separator />
+          <RichTextEditor.Link />
+        </RichTextEditor.Toolbar>
+        <RichTextEditor.Content />
+      </RichTextEditor>
 
-        <details className="rounded border p-3">
-          <summary className="text-muted-foreground cursor-pointer text-xs">
-            Raw HTML output
-          </summary>
-          <pre className="mt-2 text-xs break-all whitespace-pre-wrap">{content}</pre>
-        </details>
-      </div>
-    )
-  },
+      <details className="rounded border p-3">
+        <summary className="text-muted-foreground cursor-pointer text-xs">
+          Raw HTML output
+        </summary>
+        <pre className="mt-2 text-xs break-all whitespace-pre-wrap">{content}</pre>
+      </details>
+    </div>
+  )
+}
+
+export const Editor: Story = {
+  render: () => <EditorStory />,
 }
 
 export const ReadOnly: Story = {

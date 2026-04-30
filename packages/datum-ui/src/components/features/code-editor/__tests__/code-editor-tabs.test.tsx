@@ -22,7 +22,7 @@ vi.mock('@monaco-editor/react', () => ({
           run: vi.fn(),
         }),
       }
-      setTimeout(() => onMount(mockEditor), 0)
+      setTimeout(onMount, 0, mockEditor)
     }
 
     return (

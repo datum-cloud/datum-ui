@@ -71,7 +71,7 @@ export function ClientProvider<TData>(props: DataTableClientProviderProps<TData>
       searchFn,
       filterFns,
     } as CreateStoreOptions<TData>),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react/exhaustive-deps
     [], // intentionally empty — store created once
   )
 
@@ -87,7 +87,7 @@ export function ClientProvider<TData>(props: DataTableClientProviderProps<TData>
 
   // Table instance — null during SSR, created after hydration
   const [tableReady, setTableReady] = useState(false)
-  // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect -- intentional: triggers re-render to detect client
+  // eslint-disable-next-line react/set-state-in-effect -- intentional: triggers re-render to detect client
   useEffect(() => setTableReady(true), [])
 
   // Sync consumer loading prop into store — gated by tableReady so it fires

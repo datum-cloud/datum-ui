@@ -26,4 +26,8 @@
 @import '../../../packages/datum-ui/src/components/features/nprogress/nprogress.css';
 
 @source "./";
-@source "../../../packages/datum-ui/dist/*.mjs";
+@source "../../../packages/datum-ui/dist/**/*.mjs";
+/* Fallback to source so utilities survive the brief window when tsdown's
+ * --watch wipes dist before re-emitting hashed chunks. Storybook-only;
+ * does not affect what's published to npm. */
+@source "../../../packages/datum-ui/src/**/*.{ts,tsx}";

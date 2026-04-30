@@ -14,7 +14,7 @@ interface TestResponse {
 
 const testColumns = [{ accessorKey: 'name' as const, header: 'Name' }]
 
-const mockFetchFn = vi.fn<any>().mockResolvedValue({
+const mockFetchFn = (vi.fn() as any).mockResolvedValue({
   items: [{ id: '1', name: 'Pod A' }],
   nextCursor: 'abc123',
 })

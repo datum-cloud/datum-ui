@@ -1,4 +1,5 @@
 import type { AutocompleteOption } from '@datum-cloud/datum-ui/autocomplete'
+import type { ComponentProps } from 'react'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import { Autocomplete } from '@datum-cloud/datum-ui/autocomplete'
 import { useState } from 'react'
@@ -35,18 +36,20 @@ export default meta
 
 type Story = StoryObj<typeof Autocomplete>
 
+function DefaultStory(args: ComponentProps<typeof Autocomplete>) {
+  const [value, setValue] = useState<string | undefined>(undefined)
+  return (
+    <div className="w-72">
+      <Autocomplete
+        {...args}
+        options={options}
+        value={value}
+        onValueChange={setValue}
+      />
+    </div>
+  )
+}
+
 export const Default: Story = {
-  render: (args) => {
-    const [value, setValue] = useState<string | undefined>(undefined)
-    return (
-      <div className="w-72">
-        <Autocomplete
-          {...args}
-          options={options}
-          value={value}
-          onValueChange={setValue}
-        />
-      </div>
-    )
-  },
+  render: args => <DefaultStory {...args} />,
 }

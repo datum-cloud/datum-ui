@@ -1,3 +1,4 @@
+import type { ComponentProps } from 'react'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import { Transfer } from '@datum-cloud/datum-ui/transfer'
 import { useState } from 'react'
@@ -36,19 +37,21 @@ export default meta
 
 type Story = StoryObj<typeof Transfer<User>>
 
+function DefaultStory(args: ComponentProps<typeof Transfer<User>>) {
+  const [value, setValue] = useState<string[]>([])
+  return (
+    <Transfer
+      {...args}
+      items={users}
+      value={value}
+      onChange={setValue}
+      itemKey="id"
+      itemLabel="name"
+      itemGroup="role"
+    />
+  )
+}
+
 export const Default: Story = {
-  render: (args) => {
-    const [value, setValue] = useState<string[]>([])
-    return (
-      <Transfer
-        {...args}
-        items={users}
-        value={value}
-        onChange={setValue}
-        itemKey="id"
-        itemLabel="name"
-        itemGroup="role"
-      />
-    )
-  },
+  render: args => <DefaultStory {...args} />,
 }

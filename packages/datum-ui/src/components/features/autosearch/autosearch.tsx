@@ -165,7 +165,7 @@ export function Autosearch({
       setSearchExecuted(false)
       setOpen(false)
     }
-  }, [options, value, hasSearch]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [options, value, hasSearch]) // eslint-disable-line react/exhaustive-deps
 
   // ===== Clear =====
   const handleClear = React.useCallback(() => {

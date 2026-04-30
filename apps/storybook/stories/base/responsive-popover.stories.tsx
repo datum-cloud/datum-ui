@@ -20,64 +20,68 @@ export default meta
 
 type Story = StoryObj<typeof ResponsivePopover>
 
-export const Default: Story = {
-  render: () => {
-    const [open, setOpen] = useState(false)
-    return (
-      <div className="flex items-center justify-center p-10">
-        <ResponsivePopover
-          open={open}
-          onOpenChange={setOpen}
-          sheetTitle="Preferences"
-          trigger={(
-            <Button type="secondary" theme="outline">
-              Open preferences
-            </Button>
-          )}
-        >
-          <div className="space-y-3 p-4">
-            <h3 className="text-sm font-semibold">Theme</h3>
-            <p className="text-muted-foreground text-xs">
-              Arbitrary content renders here. On desktop this is a Popover; on mobile a MobileSheet.
-            </p>
-            <div className="flex gap-2">
-              <Button type="secondary" theme="outline" size="small">Light</Button>
-              <Button type="secondary" theme="outline" size="small">Dark</Button>
-              <Button type="secondary" theme="outline" size="small">Auto</Button>
-            </div>
+function DefaultStory() {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="flex items-center justify-center p-10">
+      <ResponsivePopover
+        open={open}
+        onOpenChange={setOpen}
+        sheetTitle="Preferences"
+        trigger={(
+          <Button type="secondary" theme="outline">
+            Open preferences
+          </Button>
+        )}
+      >
+        <div className="space-y-3 p-4">
+          <h3 className="text-sm font-semibold">Theme</h3>
+          <p className="text-muted-foreground text-xs">
+            Arbitrary content renders here. On desktop this is a Popover; on mobile a MobileSheet.
+          </p>
+          <div className="flex gap-2">
+            <Button type="secondary" theme="outline" size="small">Light</Button>
+            <Button type="secondary" theme="outline" size="small">Dark</Button>
+            <Button type="secondary" theme="outline" size="small">Auto</Button>
           </div>
-        </ResponsivePopover>
-      </div>
-    )
-  },
+        </div>
+      </ResponsivePopover>
+    </div>
+  )
+}
+
+function ResponsiveFalseStory() {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="flex items-center justify-center p-10">
+      <ResponsivePopover
+        open={open}
+        onOpenChange={setOpen}
+        sheetTitle="Preferences"
+        responsive={false}
+        trigger={(
+          <Button type="secondary" theme="outline">
+            Open (always popover)
+          </Button>
+        )}
+      >
+        <div className="space-y-2 p-4">
+          <p className="text-muted-foreground text-xs">
+            <code>responsive=&#123;false&#125;</code>
+            {' '}
+            keeps this as a popover even at mobile widths.
+          </p>
+        </div>
+      </ResponsivePopover>
+    </div>
+  )
+}
+
+export const Default: Story = {
+  render: () => <DefaultStory />,
 }
 
 export const ResponsiveFalse: Story = {
   name: 'ResponsiveFalse (stays popover on mobile)',
-  render: () => {
-    const [open, setOpen] = useState(false)
-    return (
-      <div className="flex items-center justify-center p-10">
-        <ResponsivePopover
-          open={open}
-          onOpenChange={setOpen}
-          sheetTitle="Preferences"
-          responsive={false}
-          trigger={(
-            <Button type="secondary" theme="outline">
-              Open (always popover)
-            </Button>
-          )}
-        >
-          <div className="space-y-2 p-4">
-            <p className="text-muted-foreground text-xs">
-              <code>responsive=&#123;false&#125;</code>
-              {' '}
-              keeps this as a popover even at mobile widths.
-            </p>
-          </div>
-        </ResponsivePopover>
-      </div>
-    )
-  },
+  render: () => <ResponsiveFalseStory />,
 }
