@@ -601,7 +601,7 @@
     "date-fns-tz": "^3.2.0",
     "eslint": "^9.39.3",
     "js-yaml": "^4.1.1",
-    "jsdom": "^26",
+    "jsdom": "^26.1.0",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
     "leaflet.fullscreen": "^5.3.0",
