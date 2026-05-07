@@ -101,10 +101,12 @@ describe('dateTimePicker', () => {
     await user.clear(timeInput)
     await user.type(timeInput, '14:30')
 
-    // onChange should be called (at least once, may be called multiple times during typing)
-    expect(onChange).toHaveBeenCalled()
+    // Datetime modes are pinned to commit="apply": typing updates pending
+    // state, the Apply click is what publishes onChange.
+    expect(onChange).not.toHaveBeenCalled()
+    await user.click(screen.getByRole('button', { name: /apply/i }))
 
-    // The last call should have the final time
+    expect(onChange).toHaveBeenCalled()
     const lastCall = onChange.mock.calls[onChange.mock.calls.length - 1]
     expect(lastCall).toBeDefined()
     const lastCallValue = lastCall?.[0]
@@ -207,15 +209,16 @@ describe('dateTimePicker', () => {
     await user.clear(timeInput)
     await user.type(timeInput, '1') // Just "1", not valid HH:mm format
 
-    // Should not call onChange because it doesn't match HH:mm pattern
+    // Should not call onChange — neither typing (apply-flow) nor invalid input.
     expect(onChange).not.toHaveBeenCalled()
 
-    // Now type a valid time
+    // Now type a valid time and click Apply (datetime modes commit on Apply).
     onChange.mockClear()
     await user.clear(timeInput)
     await user.type(timeInput, '14:30')
+    expect(onChange).not.toHaveBeenCalled()
 
-    // Should call onChange with valid time
+    await user.click(screen.getByRole('button', { name: /apply/i }))
     expect(onChange).toHaveBeenCalled()
   })
 
