@@ -1,5 +1,35 @@
 # @datum-cloud/datum-ui
 
+## 0.9.0
+
+### Minor Changes
+
+- 3a389c4: `CodeEditor` gains an optional `placeholder` prop. Mirrors HTML `<input>` semantics — visible while `value === ''`, hidden as soon as content is entered.
+
+  The `language` prop type widens from the previous 9-value `EditorLanguage` to a new exported `MonacoLanguage` — a literal union of ~70 Monaco built-in language IDs intersected with `(string & {})` so any custom-registered Monaco language ID is accepted while autocomplete is preserved for known ones. `EditorLanguage` is unchanged and still exported for backward compatibility (used by `CodeEditorTabs.format`).
+
+  Both changes are additive — every previously valid call site continues to compile.
+
+- f28c2fc: Adds a unified picker family at `@datum-cloud/datum-ui/picker`: seven opinionated wrappers (`DatePicker`, `DateRangePicker`, `TimePicker`, `TimeRangePicker`, `DateTimePicker`, `DateTimeRangePicker`, `DateRangeTimePicker`) plus the underlying primitives (`Picker.Root`, `Picker.Trigger`, `Picker.Content`, `Picker.Calendar`, `Picker.TimeInput`, `Picker.Presets`, `Picker.Footer`, `Picker.TimezoneIndicator`, `Picker.TimezoneSelect`).
+
+  The new family covers every realistic combination of date and time selection through a single mental model: native `Date` for date-only modes, `"HH:mm"` strings for time-only modes, and UTC ISO strings paired with a `timezone` prop for time-bearing modes. Range-mode `onChange` may include a `preset` key when the value came from a preset click - useful for URL hydration.
+
+  Helpers exported alongside: `formatPickerValue`, `isoToZonedDate`, `zonedDateToIso`, `getBrowserTimezone`, `formatTimezoneLabel`, `formatTimeLabel`, `parseTimeString`, `dateToYYYYMMDD`, `isValidTimeString`, plus the `usePickerContext` hook for primitive composition.
+
+  The change is purely additive. Existing `@datum-cloud/datum-ui/date-picker`, `@datum-cloud/datum-ui/date-time-picker`, and `@datum-cloud/datum-ui/time-picker` exports are unchanged in this release; they will become adapter shims with a development-only `@deprecated` warning in a follow-up minor release before the eventual `1.0.0` removal. See `picker-migration.mdx` for the full upgrade path.
+
+### Patch Changes
+
+- 3a389c4: Bump `embla-carousel-react` from `^8` to `^8.6.0` and `input-otp` from `^1` to `^1.4.2` (renovate-flagged within-major range tightening; no behavior change for consumers already on the prior ranges).
+- 3a389c4: Fix unstyled `Calendar` in consumer Tailwind v4 builds. The `@source` glob in `dist/styles/root.css` was previously `../*.mjs` (single-star, top-level only) and missed per-export bundles in subfolders like `dist/<name>/index.mjs`. Switched to recursive `../**/*.mjs` so every shipped chunk is scanned and its utilities emitted.
+- f28c2fc: `CalendarDatePicker`, `DateTimePicker`, `TimePicker`, and `TimeRangePicker` are now thin adapter shims that delegate to the new unified `@datum-cloud/datum-ui/picker` family. Public APIs are unchanged - every existing prop, value shape, and `onChange` envelope is preserved by the shim, and each legacy test suite passes against its shim unchanged (with one mechanical update: `getByRole('button')` -> `getByRole('combobox')` to match the new picker trigger's improved ARIA semantics).
+
+  In development builds, each legacy component logs a one-time `console.warn` pointing at the replacement and the migration guide. The warning is silent in `production` and `test` builds.
+
+  The shims will remain through `0.10.x`. The legacy directories (`calendar-date-picker/`, `date-time-picker/`, `time-picker/`, `time-range-picker/`, `date-picker/`) are scheduled for removal in `1.0.0`, at which point importers will need to switch to `@datum-cloud/datum-ui/picker`. See `picker-migration.mdx` for the full upgrade path.
+
+  Two new picker primitives ship alongside to support legacy DateTimePicker UX: `Picker.TimeInputField` (typeable HH:mm input, distinct from the slot-dropdown `Picker.TimeInput`) and a `variant` prop on `Picker.TimezoneIndicator` (`'full'` default, `'compact'` for bare-name display). The `DateTimePicker` wrapper gains `timeInputMode` and `timezoneIndicatorVariant` props to drive these.
+
 ## 0.8.1
 
 ### Patch Changes
