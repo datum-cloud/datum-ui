@@ -359,6 +359,11 @@
       "types": "./dist/components/features/date-time-picker/index.d.ts",
       "default": "./dist/date-time-picker/index.mjs"
     },
+    "./picker": {
+      "source": "./src/components/features/picker/index.ts",
+      "types": "./dist/components/features/picker/index.d.ts",
+      "default": "./dist/picker/index.mjs"
+    },
     "./time-picker": {
       "source": "./src/components/features/time-picker/index.ts",
       "types": "./dist/components/features/time-picker/index.d.ts",

@@ -3,6 +3,10 @@ import type * as React from 'react'
 import type { DateRange } from 'react-day-picker'
 import { cva } from 'class-variance-authority'
 
+/**
+ * @deprecated Internal constant for the legacy CalendarDatePicker shim.
+ * Removed in 1.0.0 alongside `@datum-cloud/datum-ui/calendar-date-picker`.
+ */
 export const months = [
   'January',
   'February',
@@ -18,6 +22,10 @@ export const months = [
   'December',
 ]
 
+/**
+ * @deprecated Internal cva for the legacy CalendarDatePicker trigger.
+ * Removed in 1.0.0 alongside `@datum-cloud/datum-ui/calendar-date-picker`.
+ */
 export const multiSelectVariants = cva(
   'flex font-normal shadow-none items-center justify-center whitespace-nowrap rounded-md text-sm text-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
@@ -37,6 +45,11 @@ export const multiSelectVariants = cva(
   },
 )
 
+/**
+ * @deprecated Use `PickerPreset` (with `getRange`) from
+ * `@datum-cloud/datum-ui/picker` instead. Kept for the legacy
+ * `customPresets` prop on CalendarDatePicker, removed in 1.0.0.
+ */
 export interface DateRangePreset {
   key: string
   label: string
@@ -44,6 +57,12 @@ export interface DateRangePreset {
   end: Date
 }
 
+/**
+ * @deprecated Use `DateRangePickerProps` (or `DatePickerProps`) from
+ * `@datum-cloud/datum-ui/picker` instead. Kept for the legacy
+ * `@datum-cloud/datum-ui/calendar-date-picker` shim, which ships through
+ * 0.10.x and is removed in 1.0.0. See `picker-migration.mdx`.
+ */
 export interface CalendarDatePickerProps
   extends React.HTMLAttributes<HTMLButtonElement>, VariantProps<typeof multiSelectVariants> {
   id?: string

@@ -1,0 +1,247 @@
+---
+title: Picker
+description: Unified date and time picker family - single date, date range, time, time range, datetime, datetime range, and date-range-with-time, all sharing one mental model.
+---
+
+import { DatePicker, DateRangePicker, TimePicker, TimeRangePicker, DateTimePicker, DateTimeRangePicker, DateRangeTimePicker } from '@datum-cloud/datum-ui/picker'
+
+## Overview
+
+The Picker family covers every realistic combination of date and time selection through one consistent API. Each wrapper has a typed `value` and a fixed default layout; for custom layouts, the same primitives the wrappers compose are also exported.
+
+| Mode | Wrapper | `value` shape |
+|------|---------|---------------|
+| `date` | `DatePicker` | `Date \| null` |
+| `date-range` | `DateRangePicker` | `{ from: Date, to: Date } \| null` |
+| `time` | `TimePicker` | `string \| null` (`"HH:mm"`) |
+| `time-range` | `TimeRangePicker` | `{ from: string, to: string } \| null` |
+| `datetime` | `DateTimePicker` | `string \| null` (UTC ISO) |
+| `datetime-range` | `DateTimeRangePicker` | `{ from: string, to: string } \| null` |
+| `date-range-time` | `DateRangeTimePicker` | `{ from: string, to: string } \| null` |
+
+## Dependencies
+
+```package-install
+react-day-picker date-fns date-fns-tz
+```
+
+## Wrappers
+
+### DatePicker
+
+```tsx
+import { DatePicker } from '@datum-cloud/datum-ui/picker'
+import { useState } from 'react'
+
+const [value, setValue] = useState<Date | null>(null)
+
+<DatePicker
+  value={value}
+  onChange={setValue}
+  placeholder="Pick a date"
+  disablePast
+/>
+```
+
+### DateRangePicker
+
+```tsx
+import { DateRangePicker } from '@datum-cloud/datum-ui/picker'
+
+<DateRangePicker
+  value={value}
+  onChange={setValue}
+  numberOfMonths={2}
+/>
+```
+
+### TimePicker
+
+```tsx
+import { TimePicker } from '@datum-cloud/datum-ui/picker'
+
+<TimePicker
+  value={value}
+  onChange={setValue}
+  step={15}
+  hourCycle="12"
+/>
+```
+
+### TimeRangePicker
+
+```tsx
+import { TimeRangePicker } from '@datum-cloud/datum-ui/picker'
+
+<TimeRangePicker
+  value={value}
+  onChange={setValue}
+  step={30}
+/>
+```
+
+### DateTimePicker
+
+```tsx
+import { DateTimePicker } from '@datum-cloud/datum-ui/picker'
+
+<DateTimePicker
+  value={value}
+  onChange={setValue}
+  timezone="UTC"
+/>
+```
+
+### DateTimeRangePicker
+
+```tsx
+import { DateTimeRangePicker } from '@datum-cloud/datum-ui/picker'
+
+<DateTimeRangePicker
+  value={value}
+  onChange={setValue}
+  timezone="America/New_York"
+  numberOfMonths={2}
+/>
+```
+
+### DateRangeTimePicker
+
+A range of dates that share a single time-of-day on each end (e.g. "From 09:00 on Jan 15 to 17:00 on Jan 20"). Useful for booking-style flows.
+
+```tsx
+import { DateRangeTimePicker } from '@datum-cloud/datum-ui/picker'
+
+<DateRangeTimePicker
+  value={value}
+  onChange={setValue}
+  timezone="UTC"
+/>
+```
+
+## Shared props
+
+Every wrapper accepts these props (from `WrapperBaseProps`):
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `placeholder` | `string` | mode-specific | Trigger label when value is null |
+| `disabled` | `boolean` | `false` | Disables the trigger |
+| `clearable` | `boolean` | `true` | Show inline Clear button on the trigger |
+| `className` | `string` | - | Outer trigger wrapper class |
+| `triggerClassName` | `string` | - | Class merged onto the trigger Button |
+| `popoverClassName` | `string` | - | Class on the popover content (desktop) |
+| `id` | `string` | - | Forwarded to the trigger element |
+| `responsive` | `boolean` | `true` | When false, forces popover even on mobile |
+| `sheetTitle` | `string` | mode-specific | Mobile sheet header title |
+| `sheetDescription` | `string` | - | Mobile sheet header description |
+| `modal` | `boolean` | - | Forwarded to ResponsivePopover |
+| `commit` | `'immediate' \| 'apply'` | mode-default | Override commit semantics |
+| `disablePast` | `boolean` | `false` | Disable past dates and presets |
+| `disableFuture` | `boolean` | `false` | Disable future dates and presets |
+| `minDate` | `Date` | - | Inclusive lower bound |
+| `maxDate` | `Date` | - | Inclusive upper bound |
+| `hideTimezone` | `boolean` | `false` | Hide TZ indicator (time-bearing only) |
+| `presets` | `PickerPreset[]` | mode-default | Replace default presets |
+| `excludePresets` | `string[]` | - | Filter default presets by key |
+| `triggerLabel` | `(value) => ReactNode` | - | Custom trigger label render-prop |
+
+## Commit semantics
+
+By default:
+- **Single-value** modes (`date`, `time`, `datetime`) commit on every selection - `onChange` fires immediately and the popover closes.
+- **Range** modes (`date-range`, `datetime-range`, `time-range`, `date-range-time`) commit on Apply - pending edits are held internally; `onChange` fires only when the user clicks Apply.
+- **Preset clicks** always commit immediately, regardless of mode.
+- **Mobile sheets** always render a footer with Cancel / Reset / Apply, regardless of `commit`. Auto-closing a bottom sheet on every tap is bad UX.
+
+Override per-instance with the `commit` prop.
+
+## Timezone
+
+Time-bearing modes (`datetime`, `datetime-range`, `date-range-time`) accept a `timezone` prop (IANA name, e.g. `"America/New_York"`). The default is the browser's resolved timezone. The picker:
+
+- Always renders the calendar and time slots in the declared timezone.
+- Always emits UTC ISO timestamps from `onChange`.
+- Renders a `Times shown in <TZ>` indicator above the footer (suppress with `hideTimezone`).
+
+If you need a TZ selector inside the picker, drop the optional primitive in:
+
+```tsx
+import { Picker, DateTimePicker } from '@datum-cloud/datum-ui/picker'
+
+<Picker.Root mode="datetime" value={value} onChange={setValue} timezone={tz}>
+  <Picker.Content
+    trigger={<Picker.Trigger />}
+    sheetTitle="Pick a date & time"
+  >
+    <Picker.Calendar />
+    <Picker.TimeInput target="embedded-from" />
+    <Picker.TimezoneSelect options={TZ_OPTIONS} onChange={setTz} />
+  </Picker.Content>
+</Picker.Root>
+```
+
+## Presets
+
+Each range-capable mode ships with default presets:
+
+- `date` / `date-range`: Today, Yesterday, This Week, Last 7 Days, This Month, Last 30 Days, This Year
+- `datetime` / `datetime-range`: Last 15m, Last 1h, Last 24h, Today, Last 7d, Last 30d
+- `time` / `time-range`: no defaults
+
+Replace them entirely with `presets={[...]}`, or filter the defaults with `excludePresets={['this-year']}`.
+
+When `onChange` fires from a preset click, the emitted value includes a `preset` key:
+
+```tsx
+onChange((next) => {
+  // next === { from: ..., to: ..., preset: 'last-7-days' }
+})
+```
+
+This enables URL hydration of the active preset.
+
+## Primitives (composable, 10% case)
+
+For layouts the wrappers don't cover, compose the primitives directly:
+
+```tsx
+import { Picker } from '@datum-cloud/datum-ui/picker'
+
+<Picker.Root mode="datetime-range" value={value} onChange={setValue} timezone="UTC">
+  <Picker.Content
+    trigger={<Picker.Trigger placeholder="Pick a window" clearable />}
+    sheetTitle="Pick a window"
+  >
+    <Picker.Presets />
+    <Picker.Calendar numberOfMonths={2} />
+    <Picker.TimeInput target="embedded-from" />
+    <Picker.TimeInput target="embedded-to" />
+    <Picker.TimezoneIndicator />
+    <Picker.Footer>
+      <Picker.Cancel />
+      <Picker.Reset />
+      <Picker.Apply />
+    </Picker.Footer>
+  </Picker.Content>
+</Picker.Root>
+```
+
+Available primitives: `Picker.Root`, `Picker.Trigger`, `Picker.Content`, `Picker.Calendar`, `Picker.TimeInput` (5 variants), `Picker.Presets`, `Picker.Footer`, `Picker.Apply`, `Picker.Reset`, `Picker.Cancel`, `Picker.Clear`, `Picker.TimezoneIndicator`, `Picker.TimezoneSelect`. All read picker state via `usePickerContext()` (throws if used outside `<Picker.Root>`).
+
+## Helpers
+
+```ts
+import {
+  formatPickerValue,
+  isoToZonedDate,
+  zonedDateToIso,
+  getBrowserTimezone,
+  isValidTimeString,
+} from '@datum-cloud/datum-ui/picker'
+```
+
+- `formatPickerValue(v, mode, opts)` - string label per mode (used internally by every wrapper's trigger).
+- `isoToZonedDate(iso, tz)` / `zonedDateToIso(date, tz)` - round-trip-safe conversions.
+- `getBrowserTimezone()` - IANA name from `Intl.DateTimeFormat`, with `'UTC'` fallback.
+- `isValidTimeString(s)` - type guard for `"HH:mm"`.

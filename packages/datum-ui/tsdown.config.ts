@@ -86,6 +86,7 @@ export default defineConfig({
     'data-table/index': 'src/components/features/data-table/index.ts',
     'rich-text-editor/index': 'src/components/features/rich-text-editor/index.ts',
     'date-time-picker/index': 'src/components/features/date-time-picker/index.ts',
+    'picker/index': 'src/components/features/picker/index.ts',
     'time-picker/index': 'src/components/features/time-picker/index.ts',
     'transfer/index': 'src/components/features/transfer/index.ts',
   },

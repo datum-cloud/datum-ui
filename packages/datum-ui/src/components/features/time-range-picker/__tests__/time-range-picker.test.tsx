@@ -50,7 +50,7 @@ describe('timeRangePicker — responsive layout', () => {
   it('opens mobile sheet on mobile viewport', () => {
     setViewport(500)
     render(<TimeRangePicker {...baseProps} />)
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('combobox'))
     // MobileSheet renders SheetTitle as role=heading with the sheet title
     expect(screen.getByRole('heading', { name: /select time range/i })).toBeInTheDocument()
   })

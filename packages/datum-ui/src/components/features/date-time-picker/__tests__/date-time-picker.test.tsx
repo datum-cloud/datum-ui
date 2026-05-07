@@ -31,7 +31,7 @@ function setViewport(width: number) {
 
 // Helper to open the popover
 async function openPopover() {
-  const button = screen.getByRole('button')
+  const button = screen.getByRole('combobox')
   await userEvent.click(button)
 }
 
@@ -138,7 +138,7 @@ describe('dateTimePicker', () => {
     expect(timeInput).not.toBeDisabled()
   })
 
-  it('shows timezone indicator when enabled and date+time are set', () => {
+  it('shows timezone indicator when enabled and date+time are set', async () => {
     const valueWithDateTime = '2024-01-15T10:00:00.000Z'
 
     render(
@@ -149,6 +149,7 @@ describe('dateTimePicker', () => {
       />,
     )
 
+    await openPopover()
     expect(screen.getByText('America/New_York')).toBeInTheDocument()
   })
 
@@ -168,7 +169,7 @@ describe('dateTimePicker', () => {
   it('respects disabled prop on date button', () => {
     render(<DateTimePicker disabled />)
 
-    const dateButton = screen.getByRole('button', { name: /select date and time/i })
+    const dateButton = screen.getByRole('combobox', { name: /select date and time/i })
     expect(dateButton).toBeDisabled()
   })
 
@@ -176,7 +177,7 @@ describe('dateTimePicker', () => {
     render(<DateTimePicker disabled />)
 
     // Button should be disabled, preventing access to time input
-    const button = screen.getByRole('button')
+    const button = screen.getByRole('combobox')
     expect(button).toBeDisabled()
   })
 
@@ -327,7 +328,7 @@ describe('dateTimePicker — responsive', () => {
         placeholder="Pick date & time"
       />,
     )
-    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    await userEvent.click(screen.getAllByRole('combobox')[0] as HTMLElement)
     expect(screen.getByRole('heading', { name: 'Pick date & time' })).toBeInTheDocument()
   })
 
@@ -339,7 +340,7 @@ describe('dateTimePicker — responsive', () => {
         sheetTitle="Custom date title"
       />,
     )
-    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    await userEvent.click(screen.getAllByRole('combobox')[0] as HTMLElement)
     expect(screen.getByRole('heading', { name: 'Custom date title' })).toBeInTheDocument()
   })
 
@@ -351,7 +352,7 @@ describe('dateTimePicker — responsive', () => {
         responsive={false}
       />,
     )
-    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    await userEvent.click(screen.getAllByRole('combobox')[0] as HTMLElement)
     expect(screen.queryByRole('heading', { name: 'Pick date & time' })).not.toBeInTheDocument()
   })
 
@@ -362,7 +363,7 @@ describe('dateTimePicker — responsive', () => {
     )
     // DateTimePicker has a built-in default placeholder 'Select date and time',
     // so sheetTitle falls back to that placeholder, not the generic sentinel
-    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    await userEvent.click(screen.getAllByRole('combobox')[0] as HTMLElement)
     expect(screen.getByRole('heading', { name: 'Select date and time' })).toBeInTheDocument()
   })
 })

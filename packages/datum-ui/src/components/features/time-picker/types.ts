@@ -3,6 +3,11 @@
  *
  * Renders a ResponsivePopover with selectable time slots generated
  * from min/max/step. Value format: "HH:mm" (e.g., "14:30").
+ *
+ * @deprecated Use `TimePickerProps` from `@datum-cloud/datum-ui/picker`
+ * instead. Kept for the legacy `@datum-cloud/datum-ui/time-picker` shim,
+ * which ships through 0.10.x and is removed in 1.0.0. See
+ * `picker-migration.mdx`.
  */
 
 export interface TimePickerProps {

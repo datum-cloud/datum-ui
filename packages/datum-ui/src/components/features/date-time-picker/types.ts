@@ -1,3 +1,9 @@
+/**
+ * @deprecated Use `DateTimePickerProps` from `@datum-cloud/datum-ui/picker`
+ * instead. Kept for the legacy `@datum-cloud/datum-ui/date-time-picker` shim,
+ * which ships through 0.10.x and is removed in 1.0.0. See
+ * `picker-migration.mdx`.
+ */
 export interface DateTimePickerProps {
   /**
    * Current value (UTC ISO string)
@@ -90,6 +96,9 @@ export interface DateTimePickerProps {
 
 /**
  * Internal state for date + time selection
+ *
+ * @deprecated Internal type for the legacy DateTimePicker shim. Removed in
+ * 1.0.0 alongside the rest of `@datum-cloud/datum-ui/date-time-picker`.
  */
 export interface DateTimeState {
   date: Date | undefined
