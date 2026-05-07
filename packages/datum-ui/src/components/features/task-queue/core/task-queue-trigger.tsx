@@ -31,7 +31,7 @@ export function TaskQueueTrigger({ ref, tasks, ...props }: TaskQueueTriggerProps
     if (isAllComplete && !prevAllComplete.current) {
       prevAllComplete.current = true
       setFlash(true)
-      const timer = setTimeout(() => setFlash(false), 5000)
+      const timer = setTimeout(setFlash, 5000, false)
       return () => clearTimeout(timer)
     }
     if (!isAllComplete) {

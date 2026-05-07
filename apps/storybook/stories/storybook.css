@@ -9,6 +9,12 @@
 @import 'tw-animate-css';
 @import 'tailwind-scrollbar-hide/v4';
 
+/* Match the variant defined in datum-ui's root.css. Storybook imports the
+ * library pieces individually (not root.css), so without this directive
+ * Tailwind v4 falls back to `prefers-color-scheme: dark` and the .dark
+ * class toggle has no effect on `dark:*` utilities. */
+@custom-variant dark (&:is(.dark *));
+
 /* Source styles — resolved relative to this file */
 @import '../../../packages/datum-ui/src/styles/fonts.css';
 @import '../../../packages/datum-ui/src/styles/tokens/figma-tokens.css';
@@ -26,4 +32,8 @@
 @import '../../../packages/datum-ui/src/components/features/nprogress/nprogress.css';
 
 @source "./";
-@source "../../../packages/datum-ui/dist/*.mjs";
+@source "../../../packages/datum-ui/dist/**/*.mjs";
+/* Fallback to source so utilities survive the brief window when tsdown's
+ * --watch wipes dist before re-emitting hashed chunks. Storybook-only;
+ * does not affect what's published to npm. */
+@source "../../../packages/datum-ui/src/**/*.{ts,tsx}";

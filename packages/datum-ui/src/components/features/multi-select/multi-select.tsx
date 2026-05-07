@@ -226,7 +226,7 @@ export function MultiSelect({
     if (value === undefined && defaultValue) {
       setInternalValues(defaultValue)
     }
-  }, [defaultValue]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [defaultValue]) // eslint-disable-line react/exhaustive-deps
 
   const picker = useOptionPicker({
     multiple: true,

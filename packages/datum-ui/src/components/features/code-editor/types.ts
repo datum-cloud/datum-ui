@@ -4,6 +4,32 @@ import { isValidJson, isValidYaml } from './lib/editor'
 export type EditorLanguage = 'json' | 'yaml' | 'typescript' | 'javascript' | 'python' | 'sql' | 'html' | 'css' | 'markdown'
 
 /**
+ * Monaco Editor language identifier.
+ *
+ * Provides autocomplete for languages that ship in Monaco's default ESM bundle
+ * while still accepting any string — useful for custom languages registered via
+ * `monaco.languages.register({ id })`.
+ *
+ * The `(string & {})` intersection is a TypeScript idiom that prevents the
+ * literal union from collapsing into `string`, preserving autocomplete.
+ *
+ * Reference: https://github.com/microsoft/monaco-editor/tree/main/src/basic-languages
+ */
+export type MonacoLanguage
+  = | 'abap' | 'apex' | 'azcli' | 'bat' | 'bicep' | 'c' | 'clojure' | 'coffee'
+    | 'cpp' | 'csharp' | 'css' | 'cypher' | 'dart' | 'dockerfile' | 'elixir'
+    | 'fsharp' | 'go' | 'graphql' | 'handlebars' | 'hcl' | 'html' | 'ini'
+    | 'java' | 'javascript' | 'json' | 'julia' | 'kotlin' | 'less' | 'lua'
+    | 'markdown' | 'mdx' | 'mips' | 'mysql' | 'objective-c' | 'pascal'
+    | 'perl' | 'pgsql' | 'php' | 'plaintext' | 'powerquery' | 'powershell'
+    | 'protobuf' | 'pug' | 'python' | 'r' | 'razor' | 'redis' | 'redshift'
+    | 'restructuredtext' | 'ruby' | 'rust' | 'sb' | 'scala' | 'scheme'
+    | 'scss' | 'shell' | 'solidity' | 'sparql' | 'sql' | 'st' | 'swift'
+    | 'systemverilog' | 'tcl' | 'twig' | 'typescript' | 'vb' | 'verilog'
+    | 'xml' | 'yaml'
+    | (string & {})
+
+/**
  * Props for the CodeEditor component.
  *
  * Base Monaco Editor wrapper with single language support, theme integration,
@@ -26,8 +52,18 @@ export interface CodeEditorProps {
   value: string
   /** Content change callback */
   onChange?: (value: string) => void
-  /** Syntax highlighting language */
-  language: EditorLanguage
+  /**
+   * Syntax highlighting language. Accepts any Monaco built-in language ID
+   * (autocomplete provided) plus any custom language registered via
+   * `monaco.languages.register()`.
+   */
+  language: MonacoLanguage
+  /**
+   * Placeholder text shown when the editor is empty. Mirrors HTML input
+   * semantics — visible while `value === ''`, hidden as soon as content
+   * is entered.
+   */
+  placeholder?: string
   /** Input element ID for form integration */
   id?: string
   /** Input element name for form submission (default: 'code-editor') */

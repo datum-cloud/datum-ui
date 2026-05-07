@@ -388,7 +388,7 @@ function useConformWatchAll(names: string[]): Record<string, unknown> {
       }
     }
     return result
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react/exhaustive-deps
   }, [allFields, namesKey])
 }
 

@@ -50,7 +50,7 @@ describe('calendarDatePicker — responsive', () => {
         placeholder="Pick a date"
       />,
     )
-    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    await userEvent.click(screen.getAllByRole('combobox')[0] as HTMLElement)
     expect(screen.getByRole('heading', { name: 'Pick a date' })).toBeInTheDocument()
   })
 
@@ -64,7 +64,7 @@ describe('calendarDatePicker — responsive', () => {
         sheetTitle="Custom date title"
       />,
     )
-    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    await userEvent.click(screen.getAllByRole('combobox')[0] as HTMLElement)
     expect(screen.getByRole('heading', { name: 'Custom date title' })).toBeInTheDocument()
   })
 
@@ -78,7 +78,7 @@ describe('calendarDatePicker — responsive', () => {
         responsive={false}
       />,
     )
-    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    await userEvent.click(screen.getAllByRole('combobox')[0] as HTMLElement)
     expect(screen.queryByRole('heading', { name: 'Pick a date' })).not.toBeInTheDocument()
   })
 
@@ -90,7 +90,7 @@ describe('calendarDatePicker — responsive', () => {
         onDateSelect={vi.fn()}
       />,
     )
-    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    await userEvent.click(screen.getAllByRole('combobox')[0] as HTMLElement)
     expect(screen.getByRole('heading', { name: 'Pick a date' })).toBeInTheDocument()
   })
 })

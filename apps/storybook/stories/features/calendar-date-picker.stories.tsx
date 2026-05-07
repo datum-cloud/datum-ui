@@ -31,28 +31,30 @@ export default meta
 
 type Story = StoryObj<typeof CalendarDatePicker>
 
-export const Default: Story = {
-  render: (args) => {
-    const today = new Date()
-    const [date, setDate] = React.useState<DateRange>({ from: today, to: today })
+function DefaultStory(args: React.ComponentProps<typeof CalendarDatePicker>) {
+  const today = new Date()
+  const [date, setDate] = React.useState<DateRange>({ from: today, to: today })
 
-    return (
-      <div className="w-80">
-        <CalendarDatePicker
-          date={date}
-          onDateSelect={(range) => {
-            if (range)
-              setDate(range)
-          }}
-          numberOfMonths={args.numberOfMonths}
-          closeOnSelect={args.closeOnSelect}
-          disableFuture={args.disableFuture}
-          disablePast={args.disablePast}
-          placeholder={args.placeholder}
-          disabled={args.disabled}
-          variant="outline"
-        />
-      </div>
-    )
-  },
+  return (
+    <div className="w-80">
+      <CalendarDatePicker
+        date={date}
+        onDateSelect={(range) => {
+          if (range)
+            setDate(range)
+        }}
+        numberOfMonths={args.numberOfMonths}
+        closeOnSelect={args.closeOnSelect}
+        disableFuture={args.disableFuture}
+        disablePast={args.disablePast}
+        placeholder={args.placeholder}
+        disabled={args.disabled}
+        variant="outline"
+      />
+    </div>
+  )
+}
+
+export const Default: Story = {
+  render: args => <DefaultStory {...args} />,
 }

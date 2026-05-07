@@ -31,7 +31,7 @@ function setViewport(width: number) {
 
 // Helper to open the popover
 async function openPopover() {
-  const button = screen.getByRole('button')
+  const button = screen.getByRole('combobox')
   await userEvent.click(button)
 }
 
@@ -101,10 +101,12 @@ describe('dateTimePicker', () => {
     await user.clear(timeInput)
     await user.type(timeInput, '14:30')
 
-    // onChange should be called (at least once, may be called multiple times during typing)
-    expect(onChange).toHaveBeenCalled()
+    // Datetime modes are pinned to commit="apply": typing updates pending
+    // state, the Apply click is what publishes onChange.
+    expect(onChange).not.toHaveBeenCalled()
+    await user.click(screen.getByRole('button', { name: /apply/i }))
 
-    // The last call should have the final time
+    expect(onChange).toHaveBeenCalled()
     const lastCall = onChange.mock.calls[onChange.mock.calls.length - 1]
     expect(lastCall).toBeDefined()
     const lastCallValue = lastCall?.[0]
@@ -138,7 +140,7 @@ describe('dateTimePicker', () => {
     expect(timeInput).not.toBeDisabled()
   })
 
-  it('shows timezone indicator when enabled and date+time are set', () => {
+  it('shows timezone indicator when enabled and date+time are set', async () => {
     const valueWithDateTime = '2024-01-15T10:00:00.000Z'
 
     render(
@@ -149,6 +151,7 @@ describe('dateTimePicker', () => {
       />,
     )
 
+    await openPopover()
     expect(screen.getByText('America/New_York')).toBeInTheDocument()
   })
 
@@ -168,7 +171,7 @@ describe('dateTimePicker', () => {
   it('respects disabled prop on date button', () => {
     render(<DateTimePicker disabled />)
 
-    const dateButton = screen.getByRole('button', { name: /select date and time/i })
+    const dateButton = screen.getByRole('combobox', { name: /select date and time/i })
     expect(dateButton).toBeDisabled()
   })
 
@@ -176,7 +179,7 @@ describe('dateTimePicker', () => {
     render(<DateTimePicker disabled />)
 
     // Button should be disabled, preventing access to time input
-    const button = screen.getByRole('button')
+    const button = screen.getByRole('combobox')
     expect(button).toBeDisabled()
   })
 
@@ -206,15 +209,16 @@ describe('dateTimePicker', () => {
     await user.clear(timeInput)
     await user.type(timeInput, '1') // Just "1", not valid HH:mm format
 
-    // Should not call onChange because it doesn't match HH:mm pattern
+    // Should not call onChange — neither typing (apply-flow) nor invalid input.
     expect(onChange).not.toHaveBeenCalled()
 
-    // Now type a valid time
+    // Now type a valid time and click Apply (datetime modes commit on Apply).
     onChange.mockClear()
     await user.clear(timeInput)
     await user.type(timeInput, '14:30')
+    expect(onChange).not.toHaveBeenCalled()
 
-    // Should call onChange with valid time
+    await user.click(screen.getByRole('button', { name: /apply/i }))
     expect(onChange).toHaveBeenCalled()
   })
 
@@ -327,7 +331,7 @@ describe('dateTimePicker — responsive', () => {
         placeholder="Pick date & time"
       />,
     )
-    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    await userEvent.click(screen.getAllByRole('combobox')[0] as HTMLElement)
     expect(screen.getByRole('heading', { name: 'Pick date & time' })).toBeInTheDocument()
   })
 
@@ -339,7 +343,7 @@ describe('dateTimePicker — responsive', () => {
         sheetTitle="Custom date title"
       />,
     )
-    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    await userEvent.click(screen.getAllByRole('combobox')[0] as HTMLElement)
     expect(screen.getByRole('heading', { name: 'Custom date title' })).toBeInTheDocument()
   })
 
@@ -351,7 +355,7 @@ describe('dateTimePicker — responsive', () => {
         responsive={false}
       />,
     )
-    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    await userEvent.click(screen.getAllByRole('combobox')[0] as HTMLElement)
     expect(screen.queryByRole('heading', { name: 'Pick date & time' })).not.toBeInTheDocument()
   })
 
@@ -362,7 +366,7 @@ describe('dateTimePicker — responsive', () => {
     )
     // DateTimePicker has a built-in default placeholder 'Select date and time',
     // so sheetTitle falls back to that placeholder, not the generic sentinel
-    await userEvent.click(screen.getAllByRole('button')[0] as HTMLElement)
+    await userEvent.click(screen.getAllByRole('combobox')[0] as HTMLElement)
     expect(screen.getByRole('heading', { name: 'Select date and time' })).toBeInTheDocument()
   })
 })

@@ -1,5 +1,6 @@
 import type { ColProps, ColSize } from '../types/grid.types'
-import React, { use } from 'react'
+import * as React from 'react'
+import { use } from 'react'
 import { cn } from '../../../../utils/cn'
 import { GRID_PREFIX, RESPONSIVE_ARRAY } from '../constants/grid.constants'
 import { RowContext } from './row'

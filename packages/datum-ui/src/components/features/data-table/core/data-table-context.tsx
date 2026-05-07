@@ -2,7 +2,7 @@
 
 import type { Table } from '@tanstack/react-table'
 import type { DataTableContextValue, DataTableStore } from '../types'
-import { createContext, use, useContext } from 'react' // eslint-disable-line react/no-use-context -- useContext needed: use() breaks context subscriptions after SSR hydration
+import { createContext, use, useContext } from 'react'
 
 export const DataTableStoreContext = createContext<DataTableStore<any> | null>(null)
 export const TableInstanceContext = createContext<Table<any> | null>(null)

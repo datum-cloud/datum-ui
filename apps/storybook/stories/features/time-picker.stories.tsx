@@ -23,17 +23,19 @@ export default meta
 
 type Story = StoryObj<typeof TimePicker>
 
+function DefaultStory(args: React.ComponentProps<typeof TimePicker>) {
+  const [time, setTime] = React.useState<string>('09:00')
+  return (
+    <div className="w-40">
+      <TimePicker
+        {...args}
+        value={time}
+        onChange={setTime}
+      />
+    </div>
+  )
+}
+
 export const Default: Story = {
-  render: (args) => {
-    const [time, setTime] = React.useState<string>('09:00')
-    return (
-      <div className="w-40">
-        <TimePicker
-          {...args}
-          value={time}
-          onChange={setTime}
-        />
-      </div>
-    )
-  },
+  render: args => <DefaultStory {...args} />,
 }

@@ -1,5 +1,5 @@
 import { X as RemoveIcon } from 'lucide-react'
-import React from 'react'
+import * as React from 'react'
 import { z } from 'zod'
 import { Badge, Input } from '../..'
 import { cn } from '../../../utils/cn'

@@ -71,7 +71,7 @@ export function ClientProvider<TData>(props: DataTableClientProviderProps<TData>
       searchFn,
       filterFns,
     } as CreateStoreOptions<TData>),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react/exhaustive-deps
     [], // intentionally empty — store created once
   )
 
@@ -85,9 +85,23 @@ export function ClientProvider<TData>(props: DataTableClientProviderProps<TData>
     store.setData(data)
   }, [data, store])
 
+  // Sync pageSize prop changes — store was seeded with the initial value via
+  // useMemo([]), but later prop updates (e.g. Storybook control changes,
+  // parent-controlled paging) were silently dropped. Skip the initial render
+  // because the store already has it.
+  const isPageSizeInitial = useRef(true)
+  useEffect(() => {
+    if (isPageSizeInitial.current) {
+      isPageSizeInitial.current = false
+      return
+    }
+    if (pageSize != null)
+      store.setPageSize(pageSize)
+  }, [pageSize, store])
+
   // Table instance — null during SSR, created after hydration
   const [tableReady, setTableReady] = useState(false)
-  // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect -- intentional: triggers re-render to detect client
+  // eslint-disable-next-line react/set-state-in-effect -- intentional: triggers re-render to detect client
   useEffect(() => setTableReady(true), [])
 
   // Sync consumer loading prop into store — gated by tableReady so it fires

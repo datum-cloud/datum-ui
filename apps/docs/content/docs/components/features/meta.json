@@ -16,6 +16,8 @@
     "autocomplete",
     "autosearch",
     "combobox",
+    "picker",
+    "picker-migration",
     "calendar-date-picker",
     "date-time-picker",
     "transfer",

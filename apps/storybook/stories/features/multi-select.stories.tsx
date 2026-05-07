@@ -27,35 +27,39 @@ const sampleOptions = [
   { label: 'Storybook', value: 'storybook' },
 ]
 
+function DefaultStory() {
+  const [values, setValues] = useState<string[]>([])
+  return (
+    <div className="w-80">
+      <MultiSelect
+        options={sampleOptions}
+        onValueChange={setValues}
+        placeholder="Pick your stack"
+        value={values}
+      />
+    </div>
+  )
+}
+
+function WithPresetSelectionStory() {
+  const [values, setValues] = useState<string[]>(['react', 'typescript'])
+  return (
+    <div className="w-80">
+      <MultiSelect
+        options={sampleOptions}
+        onValueChange={setValues}
+        placeholder="Pick your stack"
+        value={values}
+        maxCount={2}
+      />
+    </div>
+  )
+}
+
 export const Default: Story = {
-  render: () => {
-    const [values, setValues] = useState<string[]>([])
-    return (
-      <div className="w-80">
-        <MultiSelect
-          options={sampleOptions}
-          onValueChange={setValues}
-          placeholder="Pick your stack"
-          value={values}
-        />
-      </div>
-    )
-  },
+  render: () => <DefaultStory />,
 }
 
 export const WithPresetSelection: Story = {
-  render: () => {
-    const [values, setValues] = useState<string[]>(['react', 'typescript'])
-    return (
-      <div className="w-80">
-        <MultiSelect
-          options={sampleOptions}
-          onValueChange={setValues}
-          placeholder="Pick your stack"
-          value={values}
-          maxCount={2}
-        />
-      </div>
-    )
-  },
+  render: () => <WithPresetSelectionStory />,
 }

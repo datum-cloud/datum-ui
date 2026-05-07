@@ -12,8 +12,10 @@
  */
 
 /* Scan datum-ui's compiled JS for Tailwind class usage.
- * Resolves relative to this file (dist/styles/root.css → dist/*.mjs) */
-@source "../*.mjs";
+ * Recursive: matches both top-level hashed chunks (dist/<name>-<hash>.mjs)
+ * AND per-export entries (dist/<name>/index.mjs). Without **, components that
+ * resolve through a subfolder export are missed and their utilities get purged. */
+@source "../**/*.mjs";
 
 @custom-variant dark (&:is(.dark *));
 

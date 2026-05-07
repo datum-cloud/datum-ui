@@ -45,6 +45,24 @@ describe('clientProvider', () => {
     expect(screen.getByTestId('page-size')).toHaveTextContent('20')
   })
 
+  it('syncs pageSize prop updates into the store', async () => {
+    const { rerender } = render(
+      <ClientProvider data={testData} columns={testColumns} pageSize={5}>
+        <ContextReader />
+      </ClientProvider>,
+    )
+    expect(await screen.findByTestId('page-size')).toHaveTextContent('5')
+
+    // Prop change after mount must propagate (was silently dropped before
+    // because the store was created via useMemo([]) and never re-seeded).
+    rerender(
+      <ClientProvider data={testData} columns={testColumns} pageSize={10}>
+        <ContextReader />
+      </ClientProvider>,
+    )
+    expect(await screen.findByTestId('page-size')).toHaveTextContent('10')
+  })
+
   it('always renders children (no SSR gate)', () => {
     render(
       <ClientProvider data={testData} columns={testColumns}>

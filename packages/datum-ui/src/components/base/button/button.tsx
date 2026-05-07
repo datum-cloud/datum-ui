@@ -265,7 +265,22 @@ export interface ButtonProps
   htmlType?: 'button' | 'submit' | 'reset'
 }
 
-function Button({ ref, className, type, theme, size, block, loading = false, disabled, icon, iconPosition = 'left', loadingIcon, htmlType = 'button', children, ...props }: ButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
+function Button({
+  ref,
+  className,
+  type,
+  theme,
+  size,
+  block,
+  loading = false,
+  disabled,
+  icon,
+  iconPosition = 'left',
+  loadingIcon,
+  htmlType = 'button',
+  children,
+  ...props
+}: ButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
   const isDisabled = disabled || loading
 
   // Auto-detect icon-only buttons and adjust to square
@@ -284,7 +299,14 @@ function Button({ ref, className, type, theme, size, block, loading = false, dis
     )
   }
   const showLoadingIcon
-    = loading && (isIconOnly ? getLoadingIcon() : <SpinnerIcon size="sm" aria-hidden="true" />)
+    = loading
+      && (isIconOnly
+        ? (
+            getLoadingIcon()
+          )
+        : (
+            <SpinnerIcon size="sm" aria-hidden="true" />
+          ))
 
   const getIconOnlyClass = () => {
     if (!isIconOnly || size === 'icon')
@@ -298,7 +320,11 @@ function Button({ ref, className, type, theme, size, block, loading = false, dis
 
   return (
     <button
-      className={cn(buttonVariants({ type, theme, size, block }), getIconOnlyClass(), className)}
+      className={cn(
+        buttonVariants({ type, theme, size, block }),
+        getIconOnlyClass(),
+        className,
+      )}
       ref={ref}
       disabled={isDisabled}
       type={htmlType}
