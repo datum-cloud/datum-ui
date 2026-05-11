@@ -64,6 +64,8 @@ export function AppNavigation({
   currentPath,
   linkComponent,
   loading = false,
+  itemClassName,
+  activeItemClassName,
   ...props
 }: React.ComponentProps<typeof Sidebar> & {
   navItems: NavItem[]
@@ -77,6 +79,10 @@ export function AppNavigation({
   linkComponent?: React.ElementType
   /** Show skeleton instead of nav items while loading */
   loading?: boolean
+  /** Class applied to every nav item button. */
+  itemClassName?: string
+  /** Class applied only to the active nav item button (e.g. `'font-bold text-primary'`). */
+  activeItemClassName?: string
 }) {
   const { setOpen } = useSidebar()
 
@@ -107,6 +113,8 @@ export function AppNavigation({
                   currentPath={currentPath}
                   linkComponent={linkComponent}
                   closeOnNavigation={closeOnNavigation}
+                  itemClassName={itemClassName}
+                  activeItemClassName={activeItemClassName}
                 />
               )
             )}

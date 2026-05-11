@@ -445,7 +445,19 @@ function StepForm({
             autoComplete="off"
             noValidate
             onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+              const submitEvent = e.nativeEvent as SubmitEvent
+              const submitter = submitEvent.submitter as HTMLButtonElement | null
               e.stopPropagation()
+
+              // Only mark fields as touched for visible submit button clicks (not Conform's hidden validation buttons).
+              // Conform uses hidden buttons with name="__intent__" for field validation during initialization;
+              // real user submit buttons (Next/Submit in StepperControls) are visible.
+              const isUserSubmit = submitter && !submitter.hidden
+              if (isUserSubmit) {
+                // On submit attempt, mark all fields as display-touched so zod validation errors become visible.
+                instance.markAllFieldsTouched()
+              }
+
               const adapterSubmit = instance.formProps.onSubmit as
                 | ((e: React.FormEvent<HTMLFormElement>) => void)
                 | undefined

@@ -93,9 +93,11 @@ type NavSidebarMenuButtonProps = ComponentProps<typeof SidebarMenuButton> & {
   item: Pick<NavItem, 'disabled' | 'icon' | 'title'>
   isActive?: boolean
   disableTooltip?: boolean
+  /** Extra classes applied only when isActive is true. Composed after base + className. */
+  activeClassName?: string
 }
 
-function NavSidebarMenuButton({ ref, item, isActive, disableTooltip, className, children, asChild, ...props }: NavSidebarMenuButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
+function NavSidebarMenuButton({ ref, item, isActive, disableTooltip, className, activeClassName, children, asChild, ...props }: NavSidebarMenuButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
   return (
     <SidebarMenuButton
       ref={ref}
@@ -103,7 +105,12 @@ function NavSidebarMenuButton({ ref, item, isActive, disableTooltip, className, 
       isActive={isActive}
       disabled={item.disabled}
       asChild={asChild}
-      className={cn(NAV_STYLES.menuButton, item.disabled && NAV_STYLES.disabled, className)}
+      className={cn(
+        NAV_STYLES.menuButton,
+        item.disabled && NAV_STYLES.disabled,
+        className,
+        isActive && activeClassName,
+      )}
       {...props}
     >
       {asChild
@@ -122,14 +129,17 @@ function NavSidebarMenuButton({ ref, item, isActive, disableTooltip, className, 
 
 NavSidebarMenuButton.displayName = 'NavSidebarMenuButton'
 
-export function NavMenu({ ref, className, items, currentPath, linkComponent: LinkComp = 'a', overrideState, itemClassName, disableTooltip, closeOnNavigation, ...props }: ComponentProps<'ul'> & {
+export function NavMenu({ ref, className, items, currentPath, linkComponent: LinkComp = 'a', overrideState, itemClassName, activeItemClassName, disableTooltip, closeOnNavigation, ...props }: ComponentProps<'ul'> & {
   items: NavItem[]
   /** Current URL pathname — replaces internal useLocation() */
   currentPath: string
   /** Link component to render navigation links (defaults to native `<a>`) */
   linkComponent?: ElementType
   overrideState?: 'expanded' | 'collapsed'
+  /** Class applied to every nav item button. */
   itemClassName?: string
+  /** Class applied only to the active nav item button. Use to bold the label, change colour, etc. */
+  activeItemClassName?: string
   disableTooltip?: boolean
   closeOnNavigation?: boolean
 } & { ref?: React.RefObject<HTMLUListElement | null> }) {
@@ -365,6 +375,7 @@ export function NavMenu({ ref, className, items, currentPath, linkComponent: Lin
                 isActive={isActive}
                 disableTooltip={disableTooltip}
                 className={itemClassName}
+                activeClassName={activeItemClassName}
                 onClick={() => {
                   // Expand sidebar when clicking an item with children
                   setOpen(true)
@@ -467,6 +478,7 @@ export function NavMenu({ ref, className, items, currentPath, linkComponent: Lin
                     isActive={isActive}
                     disableTooltip={disableTooltip}
                     className={itemClassName}
+                    activeClassName={activeItemClassName}
                   >
                     <span>{item.title}</span>
                     <Icon
@@ -567,6 +579,7 @@ export function NavMenu({ ref, className, items, currentPath, linkComponent: Lin
                 isActive={currentItemIsActive}
                 disableTooltip={disableTooltip}
                 className={itemClassName}
+                activeClassName={activeItemClassName}
               >
                 <span>{currentItem.title}</span>
                 <Icon
@@ -613,6 +626,7 @@ export function NavMenu({ ref, className, items, currentPath, linkComponent: Lin
               disableTooltip={disableTooltip}
               onClick={() => hasChildren && toggleItem(item.href as string)}
               className={cn(level >= 1 && 'h-6', itemClassName)}
+              activeClassName={activeItemClassName}
             >
               {item.type === 'externalLink'
                 ? (

@@ -2,6 +2,7 @@
   "title": "Features",
   "pages": [
     "---General---",
+    "logo",
     "loader-overlay",
     "avatar-stack",
     "empty-content",
