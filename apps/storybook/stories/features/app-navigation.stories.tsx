@@ -13,14 +13,6 @@ import {
   Users,
 } from 'lucide-react'
 
-const meta: Meta = {
-  title: 'Features/AppNavigation',
-}
-
-export default meta
-
-type Story = StoryObj
-
 const navItems: NavItem[] = [
   {
     title: 'Home',
@@ -65,16 +57,54 @@ const navItems: NavItem[] = [
   },
 ]
 
-export const Default: Story = {
-  render: () => (
+const meta: Meta<typeof AppNavigation> = {
+  title: 'Features/AppNavigation',
+  component: AppNavigation,
+  argTypes: {
+    title: { control: 'text' },
+    currentPath: {
+      control: 'select',
+      options: [
+        '/',
+        '/dashboard',
+        '/users/all',
+        '/users/invitations',
+        '/users/roles',
+        '/documents',
+        '/settings/general',
+        '/settings/security',
+        '/settings/billing',
+      ],
+    },
+    collapsible: {
+      control: 'inline-radio',
+      options: ['offcanvas', 'icon', 'none'],
+    },
+    loading: { control: 'boolean' },
+    closeOnNavigation: { control: 'boolean' },
+    defaultOpen: { control: 'boolean' },
+    itemClassName: { control: 'text' },
+    activeItemClassName: {
+      control: 'text',
+      description:
+        'Class applied only to the active nav item button. Try e.g. `font-bold text-primary` or `font-bold text-primary border-l-2 border-primary rounded-l-none`.',
+    },
+  },
+  args: {
+    navItems,
+    title: 'My App',
+    currentPath: '/dashboard',
+    collapsible: 'icon',
+    loading: false,
+    closeOnNavigation: false,
+    defaultOpen: true,
+    itemClassName: '',
+    activeItemClassName: '',
+  },
+  render: args => (
     <div className="h-[600px] w-full">
-      <SidebarProvider defaultOpen>
-        <AppNavigation
-          navItems={navItems}
-          title="My App"
-          currentPath="/dashboard"
-          collapsible="icon"
-        />
+      <SidebarProvider defaultOpen={args.defaultOpen}>
+        <AppNavigation {...args} />
         <SidebarInset>
           <div className="flex h-full items-center justify-center p-6">
             <p className="text-muted-foreground text-sm">Main content area</p>
@@ -84,3 +114,9 @@ export const Default: Story = {
     </div>
   ),
 }
+
+export default meta
+
+type Story = StoryObj<typeof AppNavigation>
+
+export const Default: Story = {}
