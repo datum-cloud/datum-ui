@@ -1,5 +1,12 @@
 # @repo/storybook
 
+## 1.0.7
+
+### Patch Changes
+
+- Updated dependencies [93b48e7]
+  - @datum-cloud/datum-ui@0.10.0
+
 ## 1.0.6
 
 ### Patch Changes
