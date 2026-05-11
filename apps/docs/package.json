@@ -45,7 +45,7 @@
     "@types/leaflet.fullscreen": "^5.2.0",
     "@types/leaflet.markercluster": "^1.5.6",
     "@types/mdx": "^2.0.13",
-    "@types/node": "25.6.0",
+    "@types/node": "25.6.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "leaflet": "^1.9.4",
