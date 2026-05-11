@@ -3,7 +3,7 @@ title: Logo
 description: Datum brand logo family — horizontal lockup, stacked lockup, and standalone D mark with tone variants for any surface.
 ---
 
-import { Logo } from '@/components/ui'
+import { LogoFlat, LogoIcon, LogoStacked, LogoText } from '@/components/ui'
 
 ## Overview
 
@@ -28,7 +28,7 @@ Sizing is driven entirely by Tailwind classes on `className` (`h-8 w-auto`, `siz
 ## Usage
 
 <ComponentPreview name="Logo.Flat">
-  <Logo.Flat className="h-8 w-auto" />
+  <LogoFlat className="h-8 w-auto" />
 </ComponentPreview>
 
 ```tsx
@@ -42,7 +42,7 @@ import { Logo } from '@datum-cloud/datum-ui/logo'
 ### Stacked
 
 <ComponentPreview name="Logo.Stacked">
-  <Logo.Stacked className="h-20 w-auto" />
+  <LogoStacked className="h-20 w-auto" />
 </ComponentPreview>
 
 ```tsx
@@ -52,7 +52,7 @@ import { Logo } from '@datum-cloud/datum-ui/logo'
 ### Icon (D mark)
 
 <ComponentPreview name="Logo.Icon">
-  <Logo.Icon className="size-12" />
+  <LogoIcon className="size-12" />
 </ComponentPreview>
 
 ```tsx
@@ -64,7 +64,7 @@ import { Logo } from '@datum-cloud/datum-ui/logo'
 `Logo.Text` is cropped to just the "Datum" letterforms — useful when the D mark is already shown separately (e.g. in a brand bar).
 
 <ComponentPreview name="Logo.Text">
-  <Logo.Text className="h-8 w-auto" />
+  <LogoText className="h-8 w-auto" />
 </ComponentPreview>
 
 ```tsx
@@ -77,7 +77,7 @@ import { Logo } from '@datum-cloud/datum-ui/logo'
 
 <ComponentPreview name="Logo.Flat mono-light">
   <div className="flex items-center justify-center bg-[#0C1D31] p-8 rounded-lg">
-    <Logo.Flat tone="mono-light" className="h-8 w-auto" />
+    <LogoFlat tone="mono-light" className="h-8 w-auto" />
   </div>
 </ComponentPreview>
 
@@ -88,7 +88,7 @@ import { Logo } from '@datum-cloud/datum-ui/logo'
 ### `mono-dark` (monochrome on light surfaces)
 
 <ComponentPreview name="Logo.Flat mono-dark">
-  <Logo.Flat tone="mono-dark" className="h-8 w-auto" />
+  <LogoFlat tone="mono-dark" className="h-8 w-auto" />
 </ComponentPreview>
 
 ```tsx
@@ -99,7 +99,7 @@ import { Logo } from '@datum-cloud/datum-ui/logo'
 
 <ComponentPreview name="Logo.Flat white">
   <div className="flex items-center justify-center bg-[#7c3aed] p-8 rounded-lg">
-    <Logo.Flat tone="white" className="h-8 w-auto" />
+    <LogoFlat tone="white" className="h-8 w-auto" />
   </div>
 </ComponentPreview>
 
