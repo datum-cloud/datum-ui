@@ -79,6 +79,8 @@ export default defineConfig({
     'page-title/index': 'src/components/features/page-title/index.ts',
     'sidebar/index': 'src/components/base/sidebar/index.ts',
     'app-navigation/index': 'src/components/features/app-navigation/index.ts',
+    'logo/index': 'src/components/features/logo/index.ts',
+    'logo/themed/index': 'src/components/features/logo/themed/index.ts',
     'stepper/index': 'src/components/features/stepper/index.ts',
     'tag-input/index': 'src/components/features/tag-input/index.ts',
     'task-queue/index': 'src/components/features/task-queue/index.ts',

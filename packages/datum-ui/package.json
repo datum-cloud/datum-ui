@@ -329,6 +329,16 @@
       "types": "./dist/components/features/app-navigation/index.d.ts",
       "default": "./dist/app-navigation/index.mjs"
     },
+    "./logo": {
+      "source": "./src/components/features/logo/index.ts",
+      "types": "./dist/components/features/logo/index.d.ts",
+      "default": "./dist/logo/index.mjs"
+    },
+    "./logo/themed": {
+      "source": "./src/components/features/logo/themed/index.ts",
+      "types": "./dist/components/features/logo/themed/index.d.ts",
+      "default": "./dist/logo/themed/index.mjs"
+    },
     "./stepper": {
       "source": "./src/components/features/stepper/index.ts",
       "types": "./dist/components/features/stepper/index.d.ts",
