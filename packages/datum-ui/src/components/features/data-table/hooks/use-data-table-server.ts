@@ -176,12 +176,17 @@ export function useServerTable<TResponse, TData>(
     },
   })
 
-  // 5. State adapter sync
+  // 5. State adapter sync.
+  // The adapter is captured in a ref so a churning adapter reference (e.g. a
+  // consumer hook that returns a new object each render) cannot cascade into
+  // this effect's deps and trigger an infinite write→re-render loop (issue #98).
+  const stateAdapterRef = useRef(stateAdapter)
   useEffect(() => {
-    if (stateAdapter) {
-      stateAdapter.write({ sorting, filters, search, pageSize })
-    }
-  }, [sorting, filters, search, pageSize, stateAdapter])
+    stateAdapterRef.current = stateAdapter
+  }, [stateAdapter])
+  useEffect(() => {
+    stateAdapterRef.current?.write({ sorting, filters, search, pageSize })
+  }, [sorting, filters, search, pageSize])
 
   return { table }
 }

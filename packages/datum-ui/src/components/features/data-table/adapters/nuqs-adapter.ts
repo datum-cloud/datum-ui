@@ -63,6 +63,16 @@ const coreSearchParams = {
   size: parseAsInteger.withDefault(DEFAULT_PAGE_SIZE),
 }
 
+// Module-scoped placeholder used when the consumer provides no filter parsers.
+// Must be stable across renders — a fresh object literal or a fresh
+// `parseAsString.withDefault('')` parser instance on each render makes
+// `useQueryStates` re-subscribe and return a new setter ref each render,
+// which cascades into an unstable StateAdapter and can trigger an infinite
+// update loop in consumers that write the adapter on change (see issue #98).
+const EMPTY_FILTER_PARSERS_PLACEHOLDER = {
+  _dt: parseAsString.withDefault(''),
+}
+
 /**
  * Hook that creates a StateAdapter backed by nuqs URL query state.
  *
@@ -94,10 +104,11 @@ export function useNuqsAdapter(
 
   const hasFilters = filterParsers != null && Object.keys(filterParsers).length > 0
 
-  // Filters use a separate sentinel when empty to satisfy useQueryStates
+  // Filters use a separate sentinel when empty to satisfy useQueryStates.
+  // The sentinel must be a stable reference — see EMPTY_FILTER_PARSERS_PLACEHOLDER above.
   const resolvedFilterParsers = hasFilters
     ? filterParsers
-    : { _dt: parseAsString.withDefault('') }
+    : EMPTY_FILTER_PARSERS_PLACEHOLDER
   const [filterState, setFilterState] = useQueryStates(resolvedFilterParsers as Parameters<typeof useQueryStates>[0])
 
   return useMemo<StateAdapter>(
