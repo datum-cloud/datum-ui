@@ -430,7 +430,7 @@
     "date-fns-tz": ">=3",
     "js-yaml": "^4.1.1",
     "leaflet": ">=1.9",
-    "leaflet-draw": ">=1",
+    "leaflet-draw": ">=1.0.4",
     "leaflet.fullscreen": ">=5",
     "leaflet.markercluster": ">=1.5",
     "lucide-react": ">=0.400",

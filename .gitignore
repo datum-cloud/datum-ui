@@ -5,7 +5,6 @@ storybook-static/
 .turbo/
 coverage/
 *.tsbuildinfo
-.env*
 .source/
 
 *.tgz
@@ -18,3 +17,4 @@ CLAUDE.MD
 
 .opencode/
 .superpowers
+config.bat

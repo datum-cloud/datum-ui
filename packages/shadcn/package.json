@@ -70,7 +70,7 @@
     "react-leaflet": "^5.0.0",
     "@types/leaflet": "^1",
     "leaflet-draw": "^1.0.4",
-    "@types/leaflet-draw": "^1",
+    "@types/leaflet-draw": "^1.0.13",
     "leaflet.fullscreen": "^5.3.0",
     "@types/leaflet.fullscreen": "^3.0.3",
     "leaflet.markercluster": "^1.5.3",

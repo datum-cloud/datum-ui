@@ -577,7 +577,7 @@ importers:
         specifier: ^1
         version: 1.9.21
       '@types/leaflet-draw':
-        specifier: ^1
+        specifier: ^1.0.13
         version: 1.0.13
       '@types/leaflet.fullscreen':
         specifier: ^3.0.3
