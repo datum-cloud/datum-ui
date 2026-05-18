@@ -574,7 +574,7 @@ importers:
         specifier: ^1
         version: 1.2.4(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@types/leaflet':
-        specifier: ^1
+        specifier: ^1.9.21
         version: 1.9.21
       '@types/leaflet-draw':
         specifier: ^1
