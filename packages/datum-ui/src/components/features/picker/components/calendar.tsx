@@ -79,8 +79,8 @@ export function PickerCalendar({
         onMonthChange={actions.setMonthFrom}
         numberOfMonths={numberOfMonths}
         disabled={isDateDisabled}
-        fromDate={effectiveMinDate}
-        toDate={effectiveMaxDate}
+        startMonth={effectiveMinDate}
+        endMonth={effectiveMaxDate}
         className={className}
         classNames={CALENDAR_RESPONSIVE_CLASSNAMES}
       />
@@ -112,8 +112,8 @@ export function PickerCalendar({
       month={month}
       onMonthChange={actions.setMonthFrom}
       disabled={isDateDisabled}
-      fromDate={effectiveMinDate}
-      toDate={effectiveMaxDate}
+      startMonth={effectiveMinDate}
+      endMonth={effectiveMaxDate}
       className={className}
       classNames={CALENDAR_RESPONSIVE_CLASSNAMES}
     />
