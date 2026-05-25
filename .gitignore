@@ -17,4 +17,5 @@ CLAUDE.MD
 
 .opencode/
 .superpowers
-config.bat
+.env
+.env.local
