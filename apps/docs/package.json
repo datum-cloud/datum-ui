@@ -28,7 +28,7 @@
     "@radix-ui/react-visually-hidden": "^1.2.4",
     "cmdk": "^1.1.1",
     "fumadocs-core": "^16.9.3",
-    "fumadocs-mdx": "~14.3.2",
+    "fumadocs-mdx": "~15.0.10",
     "fumadocs-ui": "^16.9.3",
     "lucide-react": "^1.17.0",
     "next": "^16.2.7",
