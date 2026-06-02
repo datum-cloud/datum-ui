@@ -432,7 +432,7 @@
     "leaflet": ">=1.9",
     "leaflet-draw": ">=1",
     "leaflet.fullscreen": ">=5",
-    "leaflet.markercluster": ">=1.5",
+    "leaflet.markercluster": ">=1.5.3",
     "lucide-react": ">=0.400",
     "monaco-editor": ">=0.44.0",
     "motion": ">=11",
