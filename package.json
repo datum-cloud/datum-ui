@@ -21,7 +21,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
     "lefthook": "^2.1.9",
-    "turbo": "^2.9.14"
+    "turbo": "^2.9.16"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

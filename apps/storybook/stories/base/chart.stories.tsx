@@ -1,4 +1,4 @@
-import type { ChartConfig } from '@datum-cloud/datum-ui/chart'
+import type { ChartConfig, CustomTooltipProps } from '@datum-cloud/datum-ui/chart'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import {
   ChartContainer,
@@ -48,7 +48,9 @@ export const Default: Story = {
         <CartesianGrid vertical={false} />
         <XAxis dataKey="month" tickLine={false} axisLine={false} />
         <YAxis tickLine={false} axisLine={false} />
-        <ChartTooltip content={props => <ChartTooltipContent {...props} />} />
+        <ChartTooltip
+          content={props => <ChartTooltipContent {...(props as CustomTooltipProps)} />}
+        />
         <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
         <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
       </BarChart>

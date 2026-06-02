@@ -261,7 +261,7 @@ export function CustomRangePanel({
               selected={startDate}
               onSelect={handleStartDateSelect}
               disabled={disableFuture ? date => date > new Date() : undefined}
-              initialFocus
+              autoFocus
             />
           </ResponsivePopover>
 
@@ -311,7 +311,7 @@ export function CustomRangePanel({
                   ? date => date > new Date() || date < startDate
                   : date => date < startDate
               }
-              initialFocus
+              autoFocus
             />
           </ResponsivePopover>
 

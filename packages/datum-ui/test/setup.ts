@@ -37,3 +37,9 @@ if (!Element.prototype.releasePointerCapture) {
 if (!Element.prototype.scrollIntoView) {
   Element.prototype.scrollIntoView = () => {}
 }
+
+// jsdom does not implement elementFromPoint — provide a mock
+// (tiptap 3.24+ placeholder viewport tracking calls posAtCoords -> elementFromPoint)
+if (!Document.prototype.elementFromPoint) {
+  Document.prototype.elementFromPoint = () => null
+}
