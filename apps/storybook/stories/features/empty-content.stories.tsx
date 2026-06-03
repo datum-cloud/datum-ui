@@ -38,3 +38,42 @@ export default meta
 type Story = StoryObj<typeof EmptyContent>
 
 export const Default: Story = {}
+
+export const WithActions: Story = {
+  args: {
+    actions: [
+      { as: 'button', label: 'Create item', type: 'primary' },
+      { as: 'link', label: 'Read the docs', to: '/docs' },
+    ],
+  },
+}
+
+export const ExternalLink: Story = {
+  args: {
+    actions: [
+      { as: 'external-link', label: 'Open status page', to: 'https://status.datum.net' },
+    ],
+  },
+}
+
+export const DisabledWithTooltip: Story = {
+  args: {
+    actions: [
+      {
+        as: 'button',
+        label: 'Create item',
+        disabled: true,
+        tooltip: 'You don\'t have permission to create items.',
+      },
+    ],
+  },
+}
+
+export const HiddenAction: Story = {
+  args: {
+    actions: [
+      { as: 'button', label: 'Visible action' },
+      { as: 'button', label: 'Hidden action', hidden: true },
+    ],
+  },
+}
