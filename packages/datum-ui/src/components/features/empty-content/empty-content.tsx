@@ -1,21 +1,38 @@
 import type { VariantProps } from 'class-variance-authority'
+import type { AnchorHTMLAttributes, ReactNode } from 'react'
+import type { ButtonProps } from '../../base/button/button'
 import { cva } from 'class-variance-authority'
+import { Fragment } from 'react'
 import { cn } from '../../../utils/cn'
 import { Button } from '../../base/button/button'
+import { Tooltip } from '../../base/tooltip/tooltip'
 import miloStamp from './assets/milo-stamp.svg'
 import scene5 from './assets/scene-5.png'
 import scene6 from './assets/scene-6.png'
 import scene7 from './assets/scene-7.png'
 
-export interface EmptyContentAction {
-  type: 'button' | 'link' | 'external-link'
+/** Shared by every action kind: full Button surface + presentation concerns. */
+interface BaseAction extends Omit<ButtonProps, 'asChild' | 'htmlType' | 'children'> {
   label: string
-  onClick?: () => void
-  to?: string
-  variant?: 'default' | 'destructive' | 'outline'
-  icon?: React.ReactNode
-  iconPosition?: 'start' | 'end'
+  /** Tooltip shown on hover/focus — pairs with `disabled` to explain why (RBAC). */
+  tooltip?: ReactNode
+  tooltipSide?: 'top' | 'right' | 'bottom' | 'left'
+  /** Skip rendering entirely (e.g. no RBAC permission to even see it). */
+  hidden?: boolean
 }
+
+export interface ButtonAction extends BaseAction {
+  as?: 'button'
+}
+
+export interface LinkAction
+  extends BaseAction,
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href' | keyof BaseAction> {
+  as: 'link' | 'external-link'
+  to: string
+}
+
+export type EmptyContentAction = ButtonAction | LinkAction
 
 // Container variants
 const containerVariants = cva(
@@ -126,6 +143,19 @@ const BUTTON_SIZE_MAP = {
   xl: 'default',
 } as const
 
+// Button size back to the nearest container size (for actionButtonVariants text class)
+const BUTTON_SIZE_TO_CONTAINER: Record<
+  NonNullable<ButtonProps['size']>,
+  NonNullable<VariantProps<typeof actionButtonVariants>['size']>
+> = {
+  xs: 'xs',
+  small: 'sm',
+  default: 'lg',
+  large: 'xl',
+  icon: 'md',
+  link: 'md',
+}
+
 export interface EmptyContentProps extends VariantProps<typeof containerVariants> {
   title?: string
   subtitle?: string
@@ -152,52 +182,75 @@ export function EmptyContent({
 }: EmptyContentProps) {
   const buttonSize = BUTTON_SIZE_MAP[size ?? 'md']
   const LinkComp = linkComponent || 'a'
+  const visibleActions = actions.filter(action => !action.hidden)
 
   const renderAction = (action: EmptyContentAction) => {
-    const { icon: actionIcon, iconPosition = 'start' } = action
+    const renderAsLink
+      = (action.as === 'link' || action.as === 'external-link') && !action.disabled
 
-    const buttonContent = (
+    // Strip all non-Button keys (meta + anchor) so only Button props reach <Button>.
+    const {
+      as: _as,
+      label,
+      tooltip,
+      tooltipSide,
+      hidden: _hidden,
+      to,
+      target,
+      rel,
+      download,
+      hrefLang,
+      referrerPolicy,
+      ping,
+      type = 'secondary',
+      size: sizeOverride,
+      className: actionClassName,
+      ...buttonProps
+    } = action as ButtonAction & Partial<LinkAction>
+
+    const resolvedSize = sizeOverride ?? buttonSize
+    const wrapperSize = BUTTON_SIZE_TO_CONTAINER[resolvedSize ?? 'xs'] ?? 'md'
+
+    const button = (
       <Button
-        size={buttonSize}
-        type={action.variant === 'destructive' ? 'danger' : 'secondary'}
-        theme={action.variant === 'outline' ? 'outline' : 'solid'}
-        className={actionButtonVariants({ size })}
+        type={type}
+        size={resolvedSize}
+        className={cn(actionButtonVariants({ size: wrapperSize }), actionClassName)}
+        {...buttonProps}
       >
-        {actionIcon && iconPosition === 'start' && actionIcon}
-        <span>{action.label}</span>
-        {actionIcon && iconPosition === 'end' && actionIcon}
+        {label}
       </Button>
     )
 
-    if (action.type === 'link' || action.type === 'external-link') {
-      const linkProps = LinkComp === 'a' ? { href: action.to ?? '' } : { to: action.to ?? '' }
+    let control: ReactNode = button
 
-      return (
+    if (renderAsLink) {
+      const isExternal = action.as === 'external-link'
+      const linkHref = LinkComp === 'a' ? { href: to ?? '' } : { to: to ?? '' }
+      control = (
         <LinkComp
-          key={action.label}
-          {...linkProps}
-          target={action.type === 'external-link' ? '_blank' : '_self'}
-          rel={action.type === 'external-link' ? 'noopener noreferrer' : undefined}
+          {...linkHref}
+          target={target ?? (isExternal ? '_blank' : '_self')}
+          rel={isExternal ? 'noopener noreferrer' : rel}
+          download={download}
+          hrefLang={hrefLang}
+          referrerPolicy={referrerPolicy}
+          ping={ping}
         >
-          {buttonContent}
+          {button}
         </LinkComp>
       )
     }
 
-    return (
-      <Button
-        key={action.label}
-        size={buttonSize}
-        onClick={action.onClick}
-        type={action.variant === 'destructive' ? 'danger' : 'secondary'}
-        theme={action.variant === 'outline' ? 'outline' : 'solid'}
-        className={actionButtonVariants({ size })}
-      >
-        {actionIcon && iconPosition === 'start' && actionIcon}
-        <span>{action.label}</span>
-        {actionIcon && iconPosition === 'end' && actionIcon}
-      </Button>
-    )
+    if (tooltip) {
+      control = (
+        <Tooltip message={tooltip} side={tooltipSide}>
+          <span className="inline-flex">{control}</span>
+        </Tooltip>
+      )
+    }
+
+    return <Fragment key={`${action.as ?? 'button'}-${label}`}>{control}</Fragment>
   }
 
   return (
@@ -228,9 +281,9 @@ export function EmptyContent({
           {`Hey ${userName ?? 'there'}, ${title || ''}`}
         </h3>
         {subtitle && <span className={subtitleVariants({ size })}>{subtitle}</span>}
-        {actions.length > 0 && (
+        {visibleActions.length > 0 && (
           <div className={actionsContainerVariants({ size, spacing })}>
-            {actions.map(renderAction)}
+            {visibleActions.map(renderAction)}
           </div>
         )}
 

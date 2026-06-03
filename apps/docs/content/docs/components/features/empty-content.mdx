@@ -35,7 +35,7 @@ import { EmptyContent } from '@datum-cloud/datum-ui/empty-content'
     subtitle="Create your first project to get started."
     actions={[
       {
-        type: 'link',
+        as: 'link',
         label: 'Create Project',
         to: '#',
       },
@@ -49,7 +49,7 @@ import { EmptyContent } from '@datum-cloud/datum-ui/empty-content'
   subtitle="Create your first project to get started."
   actions={[
     {
-      type: 'button',
+      as: 'button',
       label: 'Create Project',
       onClick: () => console.log('Create clicked'),
     },
@@ -100,12 +100,12 @@ Actions can render as links or external links instead of buttons.
   title="no documentation yet."
   actions={[
     {
-      type: 'link',
+      as: 'link',
       label: 'View Docs',
       to: '/docs',
     },
     {
-      type: 'external-link',
+      as: 'external-link',
       label: 'GitHub',
       to: 'https://github.com/datum-cloud',
     },
@@ -130,12 +130,23 @@ Actions can render as links or external links instead of buttons.
 
 ### EmptyContentAction
 
+Actions are a discriminated union keyed on `as`. A `button` action accepts the full
+[`Button`](/docs/components/base/button) prop surface; `link` / `external-link` actions
+additionally accept anchor attributes plus `to`.
+
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `type` | `'button' \| 'link' \| 'external-link'` | -- | Action type |
+| `as` | `'button' \| 'link' \| 'external-link'` | `'button'` | Action kind (discriminator) |
 | `label` | `string` | -- | Button or link text |
-| `onClick` | `() => void` | -- | Click handler (for `button` type) |
-| `to` | `string` | -- | URL (for `link` and `external-link` types) |
-| `variant` | `'default' \| 'destructive' \| 'outline'` | -- | Button style variant |
+| `to` | `string` | -- | URL (required for `link` and `external-link`) |
+| `disabled` | `boolean` | `false` | Disables the action; a disabled link renders as a plain disabled button |
+| `hidden` | `boolean` | `false` | When true the action is not rendered (useful for RBAC) |
+| `tooltip` | `ReactNode` | -- | Tooltip shown on hover/focus (works while disabled) |
+| `tooltipSide` | `'top' \| 'right' \| 'bottom' \| 'left'` | -- | Tooltip placement |
+| `type` | `'primary' \| 'secondary' \| 'danger' \| …` | `'secondary'` | Button color/semantic type (any `Button` `type`) |
+| `theme` | `'solid' \| 'light' \| 'outline' \| …` | `'solid'` | Button theme (any `Button` `theme`) |
 | `icon` | `ReactNode` | -- | Icon element |
-| `iconPosition` | `'start' \| 'end'` | `'start'` | Icon placement |
+| `iconPosition` | `'left' \| 'right'` | `'left'` | Icon placement |
+| `onClick` | `(e) => void` | -- | Click handler |
+
+Any other [`Button`](/docs/components/base/button) prop (`loading`, `block`, …) is also accepted.
