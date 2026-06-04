@@ -14,6 +14,18 @@ import { Calculator, Calendar, CreditCard, Settings, Smile, User } from 'lucide-
 const meta: Meta<typeof Command> = {
   title: 'Base/Command',
   component: Command,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'A searchable command palette for quick navigation and action execution.\n\n'
+          + 'Command provides a searchable, keyboard-navigable list of actions, inspired by the '
+          + 'command palettes in VS Code and Linear. It is built on '
+          + '[cmdk](https://cmdk.paco.me/) and can be used inline or inside a dialog overlay '
+          + '(`CommandDialog`). Items are automatically filtered as the user types.',
+      },
+    },
+  },
 }
 
 export default meta
@@ -21,6 +33,14 @@ export default meta
 type Story = StoryObj<typeof Command>
 
 export const Default: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'An inline command palette with grouped items, a separator, and keyboard shortcuts.',
+      },
+    },
+  },
   render: args => (
     <Command className="rounded-lg border shadow-md md:min-w-[450px]" {...args}>
       <CommandInput placeholder="Type a command or search..." />

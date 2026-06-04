@@ -4,10 +4,12 @@ import { pluginReact } from '@rsbuild/plugin-react'
 const config: StorybookConfig = {
   framework: 'storybook-react-rsbuild',
   stories: [
+    '../stories/**/*.mdx',
     '../stories/**/*.stories.tsx',
   ],
   staticDirs: ['./assets'],
   addons: [
+    '@storybook/addon-docs',
     '@storybook/addon-a11y',
     '@storybook/addon-interactions',
     '@storybook/addon-links',

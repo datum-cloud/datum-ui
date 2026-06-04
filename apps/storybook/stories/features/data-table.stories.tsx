@@ -38,6 +38,17 @@ interface DataTableStoryArgs {
 
 const meta: Meta<DataTableStoryArgs> = {
   title: 'Features/DataTable',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'A composable, type-safe data table with client and server modes, sorting, filtering, active filters, pagination, and optional URL state sync.\n\n'
+          + 'Built on TanStack React Table. Supports both client-side (`DataTable.Client`) and server-side (`DataTable.Server`) data with sorting, '
+          + 'filtering, search, row selection, bulk actions, and pagination. All sub-components are accessed through the `DataTable` namespace. '
+          + 'Requires `@tanstack/react-table`; optionally requires `nuqs` for URL state sync.',
+      },
+    },
+  },
   argTypes: {
     pageSize: { control: { type: 'number', min: 1, max: 20 } },
     enableRowSelection: { control: 'boolean' },
@@ -51,6 +62,15 @@ export default meta
 type Story = StoryObj<DataTableStoryArgs>
 
 export const Default: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Client-side data table with search and pagination. Pass all options directly to `DataTable.Client` — '
+          + 'the provider creates the TanStack table instance internally. Use `pageSize` and `enableRowSelection` controls to explore the defaults.',
+      },
+    },
+  },
   render: args => (
     <DataTable.Client
       data={sampleUsers}

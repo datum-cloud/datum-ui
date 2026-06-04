@@ -57,9 +57,44 @@ const navItems: NavItem[] = [
   },
 ]
 
+const groupedNavItems: NavItem[] = [
+  {
+    title: 'Platform',
+    href: null,
+    type: 'group',
+    children: [
+      { title: 'Dashboard', href: '/dashboard', type: 'link', icon: LayoutDashboard },
+      { title: 'Users', href: '/users', type: 'link', icon: Users },
+    ],
+  },
+  {
+    title: 'Resources',
+    href: null,
+    type: 'group',
+    children: [
+      { title: 'Documents', href: '/documents', type: 'link', icon: FileText },
+      { title: 'Settings', href: '/settings', type: 'link', icon: Settings },
+    ],
+  },
+]
+
 const meta: Meta<typeof AppNavigation> = {
   title: 'Features/AppNavigation',
   component: AppNavigation,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'A complete navigation sidebar with collapsible menus, route highlighting, and motion animations.\n\n'
+          + '`AppNavigation` is a pre-composed sidebar built on top of the base Sidebar primitives. It adds '
+          + 'declarative navigation via a `navItems` prop, automatic active-state detection based on `currentPath`, '
+          + 'collapsible sub-menus (`type: \'collapsible\'`), labeled section groups (`type: \'group\'`), '
+          + 'hover-to-expand behavior with motion animations, and a keyboard shortcut (Cmd+B / Ctrl+B) to toggle.\n\n'
+          + '`AppNavigation` also re-exports all base sidebar primitives, so you can import everything from a single entry point.\n\n'
+          + 'Requires the `motion` package.',
+      },
+    },
+  },
   argTypes: {
     title: { control: 'text' },
     currentPath: {
@@ -119,4 +154,61 @@ export default meta
 
 type Story = StoryObj<typeof AppNavigation>
 
-export const Default: Story = {}
+export const Default: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Basic usage with flat link items, a collapsible sub-menu, and a separator. '
+          + 'The active item is highlighted based on `currentPath`. '
+          + 'Use the Controls to change the path, collapse behavior, and open state.',
+      },
+    },
+  },
+}
+
+export const WithNestedCollapsible: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Navigation items can have `children`, rendered as collapsible sub-menus when `type: \'collapsible\'` is set. '
+          + 'The sub-menu for the active path is automatically expanded.',
+      },
+    },
+  },
+  args: {
+    currentPath: '/users/all',
+  },
+}
+
+export const WithGroups: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Use `type: \'group\'` to organize items under labeled sections. '
+          + 'Group items have `href: null` and their `title` is rendered as a section heading.',
+      },
+    },
+  },
+  args: {
+    navItems: groupedNavItems,
+    currentPath: '/dashboard',
+  },
+}
+
+export const CollapsedState: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Set `defaultOpen` to `false` to start the sidebar collapsed. '
+          + 'With `collapsible: \'icon\'`, icons remain visible in the collapsed state.',
+      },
+    },
+  },
+  args: {
+    defaultOpen: false,
+  },
+}

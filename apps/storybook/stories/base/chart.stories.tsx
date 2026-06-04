@@ -35,6 +35,18 @@ const chartConfig: ChartConfig = {
 
 const meta: Meta = {
   title: 'Base/Chart',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Data visualization components built on Recharts.\n\n'
+          + 'Chart provides `ChartContainer`, `ChartTooltip`, `ChartTooltipContent`, `ChartLegend`, '
+          + 'and `ChartLegendContent` — a thin Datum-styled wrapper around Recharts. '
+          + '`ChartContainer` accepts a `config` map that binds label and color tokens to data keys, '
+          + 'keeping chart colors consistent with the design system. Requires `recharts` as a peer dependency.',
+      },
+    },
+  },
 }
 
 export default meta
@@ -42,6 +54,15 @@ export default meta
 type Story = StoryObj
 
 export const Default: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A grouped bar chart using `ChartContainer` with a two-series config (`desktop`, `mobile`) '
+          + 'and `ChartTooltip` for interactive data labels.',
+      },
+    },
+  },
   render: () => (
     <ChartContainer config={chartConfig} className="h-[300px] w-full">
       <BarChart data={barData}>
