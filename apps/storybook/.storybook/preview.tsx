@@ -1,7 +1,6 @@
 import type { Preview } from 'storybook-react-rsbuild'
 import { ThemeProvider } from '@datum-cloud/datum-ui/theme'
 import { useEffect } from 'react'
-import { ThemedDocsContainer } from './themed-docs-container'
 import { datumViewports } from './viewport'
 import '../stories/storybook.css'
 
@@ -47,9 +46,6 @@ const preview: Preview = {
     },
   ],
   parameters: {
-    docs: {
-      container: ThemedDocsContainer,
-    },
     viewport: {
       viewports: datumViewports,
     },

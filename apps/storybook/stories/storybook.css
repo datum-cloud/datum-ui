@@ -37,3 +37,12 @@
  * --watch wipes dist before re-emitting hashed chunks. Storybook-only;
  * does not affect what's published to npm. */
 @source "../../../packages/datum-ui/src/**/*.{ts,tsx}";
+
+/* Docs dark mode: the preview decorator sets the `dark` class on the docs root
+ * when the `theme` global is dark, so the rendered component is dark. Give just
+ * the component preview surface a matching dark background; the rest of the docs
+ * chrome stays light. Colour matches datumDark appContentBg. */
+html.dark .sbdocs-preview,
+html.dark .docs-story {
+  background-color: #0c1d31 !important;
+}
