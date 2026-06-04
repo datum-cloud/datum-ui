@@ -1,0 +1,151 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Features/Picker/Migration" />
+
+# Picker Migration
+
+Migrate from `CalendarDatePicker`, `DateTimePicker`, `TimePicker`, and `TimeRangePicker` to the unified Picker family.
+
+## Overview
+
+The Picker family ships in `@datum-cloud/datum-ui@0.10.0` and replaces four legacy components. The legacy components remain available through `0.10.x` as adapter shims — they will log a `@deprecated` warning in development and re-export equivalent behavior. They are removed in `1.0.0`.
+
+This guide maps each legacy component to its replacement and the prop diffs you need to make.
+
+## From `CalendarDatePicker` to `DateRangePicker`
+
+The legacy `CalendarDatePicker` covered both single-date and date-range selection by toggling a prop. The new family separates them: `DatePicker` for single dates, `DateRangePicker` for ranges.
+
+**Before:**
+
+```tsx
+import { CalendarDatePicker } from '@datum-cloud/datum-ui/date-picker'
+
+<CalendarDatePicker
+  date={dateRange}
+  onDateSelect={setDateRange}
+  numberOfMonths={2}
+  closeOnSelect={false}
+/>
+```
+
+**After (range):**
+
+```tsx
+import { DateRangePicker } from '@datum-cloud/datum-ui/picker'
+
+<DateRangePicker
+  value={dateRange}
+  onChange={setDateRange}
+  numberOfMonths={2}
+/>
+```
+
+Prop diff:
+
+| Legacy | New |
+|--------|-----|
+| `date` | `value` |
+| `onDateSelect` | `onChange` |
+| `closeOnSelect={false}` | `commit="apply"` (default for ranges) |
+| `closeOnSelect={true}` | `commit="immediate"` |
+| `numberOfMonths` | unchanged |
+| Value `react-day-picker` `DateRange` | Plain `{ from: Date, to: Date }` |
+
+For single-date use cases that previously passed `mode="single"`, switch to `DatePicker`:
+
+```tsx
+import { DatePicker } from '@datum-cloud/datum-ui/picker'
+
+<DatePicker value={date} onChange={setDate} />
+```
+
+## From legacy `DateTimePicker` to new `DateTimePicker`
+
+The new `DateTimePicker` keeps the same value contract (UTC ISO string) and most prop names. Notable changes:
+
+| Legacy | New |
+|--------|-----|
+| `showTimezoneIndicator` | `hideTimezone` (inverted; default is now show) |
+| `timezone` | unchanged |
+| `value` / `onChange` | unchanged |
+| Internal double-conversion bugs in `setHours()` + `fromZonedTime()` | fixed in the new state machine |
+
+```tsx
+// Before
+<DateTimePicker value={iso} onChange={setIso} showTimezoneIndicator />
+
+// After
+<DateTimePicker value={iso} onChange={setIso} />
+// - TZ indicator is now on by default. Pass `hideTimezone` to hide.
+```
+
+## From legacy `TimePicker` to new `TimePicker`
+
+Mostly drop-in. `value` is still `"HH:mm"`. New props: `step`, `hourCycle`, `minTime`, `maxTime`.
+
+```tsx
+// Before
+<TimePicker value={t} onChange={setT} />
+
+// After
+<TimePicker value={t} onChange={setT} step={15} hourCycle="24" />
+```
+
+## From `TimeRangePicker` to new `TimeRangePicker` or `DateTimeRangePicker`
+
+The legacy `TimeRangePicker` returned a bespoke `TimeRangeValue` envelope with a `type` discriminator and ad-hoc preset handling. The new family splits the use cases:
+
+- **Pure time of day** (e.g. business hours): `TimeRangePicker` with `value: { from: string, to: string }`.
+- **Datetime range with explicit dates**: `DateTimeRangePicker` with UTC ISO pair.
+
+**Before (relative range):**
+
+```tsx
+import { TimeRangePicker } from '@datum-cloud/datum-ui/time-picker'
+
+<TimeRangePicker
+  value={{ type: 'relative', preset: 'last-7-days', from, to }}
+  onChange={setRange}
+  timezone="UTC"
+/>
+```
+
+**After (datetime range with the same preset):**
+
+```tsx
+import { DateTimeRangePicker } from '@datum-cloud/datum-ui/picker'
+
+<DateTimeRangePicker
+  value={range /* { from, to, preset?: string } */}
+  onChange={setRange}
+  timezone="UTC"
+/>
+```
+
+The `type` discriminator is gone. Detect "user picked a preset" by checking `range.preset !== undefined`.
+
+The bug where typing `M` in any input fired the "Last 30 days" preset is fixed: keyboard shortcuts are bound on the picker root only, never on `document`.
+
+## Helper migration
+
+Per-component utility files (`time-range-picker/utils/timezone.ts`, `date-time-picker/utils/timezone.ts`, etc.) are unified under `@datum-cloud/datum-ui/picker`:
+
+| Old import | New import |
+|------------|-----------|
+| `time-range-picker/utils/timezone` | `@datum-cloud/datum-ui/picker` (`isoToZonedDate`, `zonedDateToIso`, `getBrowserTimezone`, `formatTimezoneLabel`) |
+| `date-time-picker/utils/format` | `@datum-cloud/datum-ui/picker` (`formatPickerValue`, `formatTimeLabel`, `parseTimeString`, `dateToYYYYMMDD`, `isValidTimeString`) |
+
+## Timeline
+
+- **`0.10.0`** — Picker family ships. Legacy components become adapter shims; passing through them logs a `@deprecated` warning in dev mode only.
+- **`0.10.x`** — adapter shims preserved; consumers migrate at their own pace.
+- **`1.0.0`** — legacy directories deleted; importing them fails to resolve.
+
+If you have many call sites, run the codemod:
+
+```bash
+pnpm dlx @datum-cloud/datum-ui-codemod migrate-picker
+```
+
+It handles the static rename + value-shape transform and emits `// TODO: review` comments for callers using bespoke shapes.

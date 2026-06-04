@@ -5,6 +5,17 @@ import { CalendarDays } from 'lucide-react'
 const meta: Meta<typeof HoverCard> = {
   title: 'Base/HoverCard',
   component: HoverCard,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'A floating preview card that appears on hover over a trigger element.\n\n'
+          + 'HoverCard shows a floating preview card when the user hovers over a trigger element. '
+          + 'It is useful for displaying supplementary information (user profiles, resource '
+          + 'summaries, link previews) without requiring a click. Built on Radix UI\'s HoverCard primitive.',
+      },
+    },
+  },
   argTypes: {
     openDelay: { control: 'number' },
     closeDelay: { control: 'number' },
@@ -20,6 +31,13 @@ export default meta
 type Story = StoryObj<typeof HoverCard>
 
 export const Default: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Hovering over the trigger link reveals a floating user profile card.',
+      },
+    },
+  },
   render: args => (
     <div className="flex items-center justify-center py-16">
       <HoverCard {...args}>
@@ -45,6 +63,33 @@ export const Default: Story = {
                 <span>Joined December 2023</span>
               </div>
             </div>
+          </div>
+        </HoverCardContent>
+      </HoverCard>
+    </div>
+  ),
+}
+
+export const ResourcePreview: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'A wider card (`w-80`) showing structured resource metadata — region, replica health, and last deployment time.',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex items-center justify-center py-16">
+      <HoverCard>
+        <HoverCardTrigger asChild>
+          <span className="cursor-pointer font-mono text-sm underline">us-east-1-prod</span>
+        </HoverCardTrigger>
+        <HoverCardContent className="w-80">
+          <div className="flex flex-col gap-2">
+            <h4 className="text-sm font-semibold">Production Cluster</h4>
+            <p className="text-muted-foreground text-xs">Region: us-east-1</p>
+            <p className="text-muted-foreground text-xs">Replicas: 3 / 3 healthy</p>
+            <p className="text-muted-foreground text-xs">Last deployed: 2 hours ago</p>
           </div>
         </HoverCardContent>
       </HoverCard>

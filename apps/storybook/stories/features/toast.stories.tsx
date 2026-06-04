@@ -7,6 +7,18 @@ type Position = ComponentProps<typeof Toaster>['position']
 
 const meta: Meta = {
   title: 'Features/Toast',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Ephemeral notification messages triggered by user actions.\n\n'
+          + 'Toasts display brief, auto-dismissing messages at the edge of the screen. datum-ui wraps '
+          + '[Sonner](https://sonner.emilkowal.dev/) — render the `<Toaster />` provider once in your root layout '
+          + 'and call `toast()` (or `toast.success`, `toast.error`, `toast.warning`, `toast.promise`) anywhere in '
+          + 'your app. Requires `sonner`.',
+      },
+    },
+  },
   argTypes: {
     position: {
       control: 'select',
@@ -23,6 +35,16 @@ export default meta
 type Story = StoryObj
 
 export const Default: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Trigger the five core toast variants — success, error, info, warning, and plain message — '
+          + 'via button clicks. The `<Toaster />` is rendered once at the canvas level; '
+          + 'use the `position` control to change where toasts appear.',
+      },
+    },
+  },
   render: (args: Record<string, unknown>) => (
     <div className="flex flex-col gap-4">
       <Toaster position={(args.position as Position) ?? 'top-right'} />

@@ -1,0 +1,71 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Docs/Installation" />
+
+# Installation
+
+Install and configure Datum UI in your project.
+
+## Install
+
+```bash
+# npm
+npm install @datum-cloud/datum-ui
+# pnpm
+pnpm add @datum-cloud/datum-ui
+# yarn
+yarn add @datum-cloud/datum-ui
+# bun
+bun add @datum-cloud/datum-ui
+```
+
+## Peer Dependencies
+
+Datum UI requires React 19, Tailwind CSS v4 (v4.0.7 or later, v4.2.1+ recommended), and lucide-react:
+
+```bash
+# npm
+npm install react react-dom tailwindcss lucide-react
+# pnpm
+pnpm add react react-dom tailwindcss lucide-react
+# yarn
+yarn add react react-dom tailwindcss lucide-react
+# bun
+bun add react react-dom tailwindcss lucide-react
+```
+
+Each component may have additional peer dependencies — check the component's doc page for the specific install command.
+
+## Styles Setup
+
+Add the Datum UI styles import to your CSS file, after Tailwind:
+
+```css
+/* Required */
+@import 'tailwindcss';
+@import '@datum-cloud/datum-ui/styles';
+
+/* Optional — import only if you use these components */
+@import '@datum-cloud/datum-ui/grid';
+@import '@datum-cloud/datum-ui/nprogress';
+```
+
+This loads all design tokens, theme variables, fonts, and component styles. The styles import automatically configures Tailwind to scan Datum UI's components for class usage, so utilities like `bg-primary` and `text-foreground` work out of the box.
+
+## Theme Provider
+
+Wrap your app with `ThemeProvider` for light/dark/system theme switching:
+
+```tsx
+import { ThemeProvider } from '@datum-cloud/datum-ui/theme'
+
+export default function RootLayout({ children }) {
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      {children}
+    </ThemeProvider>
+  )
+}
+```
+
+See [Providers](Docs/Providers) for full configuration options.

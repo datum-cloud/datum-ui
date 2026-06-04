@@ -116,6 +116,18 @@ const sampleTasks: Array<{ task: Task, contextLabel?: string }> = [
 
 const meta: Meta = {
   title: 'Features/TaskQueue',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Async task queue with progress tracking, retry logic, and persistent storage.\n\n'
+          + 'Wrap your app with `TaskQueueProvider`, then call `useTaskQueue()` to `enqueue` batch operations. '
+          + 'Each task tracks per-item progress, supports cancel and retry, and can optionally persist to '
+          + '`localStorage`. After completion, call `showSummary()` to display a results dialog. '
+          + 'Requires `date-fns`.',
+      },
+    },
+  },
 }
 
 export default meta
@@ -123,6 +135,17 @@ export default meta
 type Story = StoryObj
 
 export const Default: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The task panel showing all task states: running (with progress), pending, completed successfully, '
+          + 'completed with partial failures (retryable), and fully failed. '
+          + 'In a real app, the panel is driven by `useTaskQueue()` — this story uses static `Task` objects '
+          + 'to render the panel UI without needing a live queue.',
+      },
+    },
+  },
   render: () => (
     <TaskQueueProvider>
       <div className="border-border/50 w-96 overflow-hidden rounded-xl border shadow-xl shadow-black/10">

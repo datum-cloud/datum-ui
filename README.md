@@ -73,11 +73,8 @@ git clone https://github.com/datum-cloud/datum-ui.git
 cd datum-ui
 pnpm install
 
-# Start Storybook (component explorer)
+# Start Storybook (component explorer + docs)
 pnpm --filter @repo/storybook dev
-
-# Start documentation site
-pnpm --filter @repo/docs dev
 
 # Build the component library
 pnpm --filter @datum-cloud/datum-ui build
@@ -193,8 +190,7 @@ For the complete component API with props, sub-components, and usage examples, s
 ## Documentation
 
 - **[Package README](packages/datum-ui/README.md)** — Full component catalog, API reference, and usage examples
-- **[Documentation Site](apps/docs/)** — Component docs, guides, and live previews
-- **[Storybook](apps/storybook/)** — Interactive component explorer
+- **[Storybook](apps/storybook/)** — Interactive component explorer with usage docs, guides, and live previews
 
 ---
 
