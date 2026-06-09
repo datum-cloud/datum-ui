@@ -1,5 +1,12 @@
 # @datum-cloud/datum-ui
 
+## 1.1.0
+
+### Minor Changes
+
+- 36b0835: GroupedTable: full data-table parity — sortable column headers, checkbox multi-select, per-row action menus, search, and loading/empty states, while keeping collapsible banded groups. Reuses data-table's selection column, column header, row actions, and search matcher.
+- 36b0835: Add `GroupedTable` — a reusable collapsible grouped table with TanStack columns aligned across groups and a per-group header `meta` slot.
+
 ## 1.0.0
 
 ### Major Changes
