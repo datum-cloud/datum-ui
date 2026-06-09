@@ -5,6 +5,10 @@ export type { UseNuqsAdapterOptions } from './adapters/nuqs-adapter'
 // Columns
 export { createSelectionColumn } from './columns/selection-column'
 
+// Components (reusable, context-free)
+export { DataTableColumnHeader } from './components/column-header'
+export { DataTableRowActions } from './components/row-actions'
+
 // Constants
 export {
   DEFAULT_DEBOUNCE_MS,
@@ -12,6 +16,10 @@ export {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_SIZES,
 } from './constants'
+// Search utilities (reused by grouped-table)
+export { resolvePath, rowMatchesSearch } from './core/filter-engine'
+
+export type { SearchConfig } from './core/filter-engine'
 // Store
 export { createDataTableStore } from './core/store'
 

@@ -91,6 +91,7 @@ export default defineConfig({
     'picker/index': 'src/components/features/picker/index.ts',
     'time-picker/index': 'src/components/features/time-picker/index.ts',
     'transfer/index': 'src/components/features/transfer/index.ts',
+    'grouped-table/index': 'src/components/features/grouped-table/index.ts',
   },
   format: ['esm'],
   dts: false,
