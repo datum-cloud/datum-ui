@@ -75,16 +75,41 @@ function resolveStrategy(strategy: FilterStrategy | undefined): FilterFn | undef
   return FILTER_STRATEGIES[strategy]
 }
 
+export interface SearchConfig<TData> {
+  searchFn?: (row: TData, query: string) => boolean
+  searchableColumns?: string[]
+}
+
+/** True when a row matches a free-text query (custom fn → columns → all values). */
+export function rowMatchesSearch<TData>(
+  row: TData,
+  search: string,
+  config: SearchConfig<TData>,
+): boolean {
+  if (!search || search.length === 0)
+    return true
+  if (config.searchFn)
+    return config.searchFn(row, search)
+
+  const query = search.toLowerCase()
+  if (config.searchableColumns && config.searchableColumns.length > 0) {
+    return config.searchableColumns.some((col) => {
+      const cellValue = resolvePath(row, col)
+      return cellValue != null && String(cellValue).toLowerCase().includes(query)
+    })
+  }
+  return Object.values(row as Record<string, unknown>).some(
+    val => val != null && String(val).toLowerCase().includes(query),
+  )
+}
+
 export function applyFilters<TData>(
   data: TData[],
   filters: Record<string, unknown>,
   search: string,
   registeredFilters: Map<string, FilterStrategy>,
   customFilterFns: Record<string, FilterFn>,
-  searchConfig: {
-    searchFn?: (row: TData, query: string) => boolean
-    searchableColumns?: string[]
-  },
+  searchConfig: SearchConfig<TData>,
 ): TData[] {
   const hasFilters = Object.keys(filters).length > 0
   const hasSearch = search.length > 0
@@ -106,24 +131,8 @@ export function applyFilters<TData>(
       }
     }
 
-    if (hasSearch) {
-      const query = search.toLowerCase()
-      if (searchConfig.searchFn) {
-        return searchConfig.searchFn(row, search)
-      }
-      if (searchConfig.searchableColumns && searchConfig.searchableColumns.length > 0) {
-        return searchConfig.searchableColumns.some((col) => {
-          const cellValue = resolvePath(row, col)
-          return cellValue != null && String(cellValue).toLowerCase().includes(query)
-        })
-      }
-      // Fallback: search all string/number values on the row
-      return Object.values(row as Record<string, unknown>).some((val) => {
-        if (val == null)
-          return false
-        return String(val).toLowerCase().includes(query)
-      })
-    }
+    if (hasSearch && !rowMatchesSearch(row, search, searchConfig))
+      return false
 
     return true
   })

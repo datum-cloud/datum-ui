@@ -194,6 +194,11 @@
       "types": "./dist/components/base/table/index.d.ts",
       "default": "./dist/table/index.mjs"
     },
+    "./grouped-table": {
+      "source": "./src/components/features/grouped-table/index.ts",
+      "types": "./dist/components/features/grouped-table/index.d.ts",
+      "default": "./dist/grouped-table/index.mjs"
+    },
     "./tabs": {
       "source": "./src/components/base/tabs/index.ts",
       "types": "./dist/components/base/tabs/index.d.ts",
