@@ -138,4 +138,16 @@ describe('groupedTable', () => {
     expect(onRowSelectionChange).toHaveBeenCalled()
     expect(screen.getAllByLabelText('Select row')[0]!).not.toBeChecked()
   })
+
+  it('applies a string cellClassName to every data cell', () => {
+    const { container } = render(<GroupedTable columns={columns} groups={groups} cellClassName="custom-cell" />)
+    // 3 rows (alpha, beta, gamma) x 2 columns
+    expect(container.querySelectorAll('td.custom-cell')).toHaveLength(6)
+  })
+
+  it('applies groupHeaderClassName(group) to each group band', () => {
+    render(<GroupedTable columns={columns} groups={groups} groupHeaderClassName={g => `band-${g.id}`} />)
+    expect(screen.getByText('Group One').closest('button')).toHaveClass('band-g1')
+    expect(screen.getByText('Group Two').closest('button')).toHaveClass('band-g2')
+  })
 })
