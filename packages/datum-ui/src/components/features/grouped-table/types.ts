@@ -1,4 +1,4 @@
-import type { ColumnDef, RowSelectionState, SortingState } from '@tanstack/react-table'
+import type { Cell, ColumnDef, Row, RowSelectionState, SortingState } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
 import type { SelectionColumnOptions } from '../data-table/types'
 import type { ActionItem } from '../more-actions/types'
@@ -61,5 +61,24 @@ export interface GroupedTableProps<TData> {
 
   /** Rendered when there are no groups, every group is empty, or search clears everything. */
   empty?: ReactNode
+
+  // ── styling overrides (mirrors data-table; merged on top of defaults) ──
+  /** Root wrapper. */
   className?: string
+  /** Search toolbar wrapper (when `enableSearch`). */
+  toolbarClassName?: string
+  /** Every `<table>` element (shared header + each group body). */
+  tableClassName?: string
+  /** The column-header `<tr>`. */
+  headerRowClassName?: string
+  /** Each column-header `<th>`. */
+  headerCellClassName?: string
+  /** Each group's collapsible header band; receives the group for per-group styling. */
+  groupHeaderClassName?: string | ((group: GroupedTableGroup<TData>) => string)
+  /** Each group's `<tbody>`. */
+  bodyClassName?: string
+  /** Each data `<tr>`; receives the row for per-row styling. */
+  rowClassName?: string | ((row: Row<TData>) => string)
+  /** Each data `<td>`; receives the cell for per-cell styling. */
+  cellClassName?: string | ((cell: Cell<TData, unknown>) => string)
 }

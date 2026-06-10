@@ -47,6 +47,11 @@ function renderColGroup<TData>(resolvedColumns: ColumnDef<TData, unknown>[]): Re
   )
 }
 
+/** Resolve a static or per-item className override (mirrors data-table). */
+function resolveClassName<T>(value: string | ((item: T) => string) | undefined, item: T): string | undefined {
+  return typeof value === 'function' ? value(item) : value
+}
+
 export function GroupedTable<TData>(props: GroupedTableProps<TData>) {
   const {
     columns,
@@ -73,6 +78,14 @@ export function GroupedTable<TData>(props: GroupedTableProps<TData>) {
     isLoading,
     empty,
     className,
+    toolbarClassName,
+    tableClassName,
+    headerRowClassName,
+    headerCellClassName,
+    groupHeaderClassName,
+    bodyClassName,
+    rowClassName,
+    cellClassName,
   } = props
 
   const [sorting, setSorting] = useControllableState(sortingProp, [], onSortingChange)
@@ -119,6 +132,7 @@ export function GroupedTable<TData>(props: GroupedTableProps<TData>) {
 
   const slices = useMemo(
     () => groups.map(g => ({
+      group: g,
       id: g.id,
       title: g.title,
       meta: g.meta,
@@ -139,6 +153,7 @@ export function GroupedTable<TData>(props: GroupedTableProps<TData>) {
           onSearchChange={setSearch}
           placeholder={searchPlaceholder}
           debounceMs={searchDebounceMs}
+          className={toolbarClassName}
         />
       )}
       <div className={cn('w-full rounded-md border', scrollable ? 'overflow-x-auto' : 'overflow-hidden')}>
@@ -155,13 +170,13 @@ export function GroupedTable<TData>(props: GroupedTableProps<TData>) {
 
   return renderShell(
     <>
-      <table className="w-full table-fixed text-sm">
+      <table className={cn('w-full table-fixed text-sm', tableClassName)}>
         {renderColGroup(resolvedColumns)}
         <TableHeader>
           {headerGroups.map(hg => (
-            <TableRow key={hg.id}>
+            <TableRow key={hg.id} className={headerRowClassName}>
               {hg.headers.map(header => (
-                <TableHead key={header.id} scope="col">
+                <TableHead key={header.id} scope="col" className={headerCellClassName}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(header.column.columnDef.header, header.getContext())}
@@ -172,38 +187,42 @@ export function GroupedTable<TData>(props: GroupedTableProps<TData>) {
         </TableHeader>
       </table>
 
-      {visibleSlices.map((slice, i) => {
+      {visibleSlices.map((slice) => {
         const open = isSearching ? true : isOpen(slice.id)
         return (
           <Collapsible key={slice.id} open={open} onOpenChange={() => toggle(slice.id)}>
             <CollapsibleTrigger
               className={cn(
-                'flex w-full items-center gap-2 bg-muted/40 px-3 py-2 text-left text-sm font-semibold hover:bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                i > 0 && 'border-t',
+                'flex h-10 w-full items-center gap-2 border-b bg-muted/40 px-2 text-left align-middle text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                resolveClassName(groupHeaderClassName, slice.group),
               )}
             >
               <Icon
                 icon={ChevronRight}
                 aria-hidden
-                className={cn('size-4 shrink-0 text-muted-foreground transition-transform', open && 'rotate-90')}
+                className={cn('size-4 shrink-0 transition-transform', open && 'rotate-90')}
               />
               <span>{slice.title}</span>
               {slice.meta != null && (
-                <span className="ml-auto flex items-center gap-2 font-medium text-muted-foreground">{slice.meta}</span>
+                <span className="ml-auto flex items-center gap-2 font-medium">{slice.meta}</span>
               )}
             </CollapsibleTrigger>
 
             <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
               <table
-                className="w-full table-fixed border-t text-sm"
+                className={cn('w-full table-fixed text-sm', tableClassName)}
                 aria-label={typeof slice.title === 'string' ? slice.title : undefined}
               >
                 {renderColGroup(resolvedColumns)}
-                <TableBody>
+                <TableBody className={bodyClassName}>
                   {slice.rows.map((row: Row<TData>) => (
-                    <TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() ? 'selected' : undefined}
+                      className={resolveClassName(rowClassName, row)}
+                    >
                       {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id} className="truncate">
+                        <TableCell key={cell.id} className={resolveClassName(cellClassName, cell)}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}
