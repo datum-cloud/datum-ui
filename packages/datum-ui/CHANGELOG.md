@@ -1,5 +1,11 @@
 # @datum-cloud/datum-ui
 
+## 1.2.0
+
+### Minor Changes
+
+- eb8bb48: GroupedTable: align header/body/cell styling with `data-table`, restyle the group band as a muted section header (subtle fill, matching the column header), and drop cell truncation. Adds slot-level `className` overrides mirroring data-table — `tableClassName`, `headerRowClassName`, `headerCellClassName`, `groupHeaderClassName` (`string | (group) => string`), `bodyClassName`, `rowClassName` (`string | (row) => string`), `cellClassName` (`string | (cell) => string`), and `toolbarClassName`.
+
 ## 1.1.0
 
 ### Minor Changes
