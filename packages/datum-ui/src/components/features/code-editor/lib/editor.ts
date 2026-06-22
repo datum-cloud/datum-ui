@@ -1,4 +1,4 @@
-import yaml from 'js-yaml'
+import { dump, FAILSAFE_SCHEMA, load } from 'js-yaml'
 
 export function isValidJson(jsonStr: string): boolean {
   try {
@@ -12,7 +12,7 @@ export function isValidJson(jsonStr: string): boolean {
 
 export function isValidYaml(yamlStr: string): boolean {
   try {
-    yaml.load(yamlStr, { schema: yaml.FAILSAFE_SCHEMA })
+    load(yamlStr, { schema: FAILSAFE_SCHEMA })
     return true
   }
   catch {
@@ -32,8 +32,8 @@ export function formatJson(jsonStr: string): string {
 
 export function formatYaml(yamlStr: string): string {
   try {
-    const parsed = yaml.load(yamlStr, { schema: yaml.FAILSAFE_SCHEMA })
-    return yaml.dump(parsed, {
+    const parsed = load(yamlStr, { schema: FAILSAFE_SCHEMA })
+    return dump(parsed, {
       indent: 2,
       lineWidth: -1,
       noRefs: true,
@@ -47,7 +47,7 @@ export function formatYaml(yamlStr: string): string {
 export function jsonToYaml(jsonStr: string): string {
   try {
     const parsed = JSON.parse(jsonStr)
-    return yaml.dump(parsed, {
+    return dump(parsed, {
       indent: 2,
       lineWidth: -1,
       noRefs: true,
@@ -60,7 +60,7 @@ export function jsonToYaml(jsonStr: string): string {
 
 export function yamlToJson(yamlStr: string): string {
   try {
-    const parsed = yaml.load(yamlStr, { schema: yaml.FAILSAFE_SCHEMA })
+    const parsed = load(yamlStr, { schema: FAILSAFE_SCHEMA })
     return JSON.stringify(parsed, null, 2)
   }
   catch (error) {

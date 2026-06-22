@@ -1,3 +1,17 @@
 packages:
   - "apps/*"
   - "packages/*"
+
+# Build scripts allowlist (pnpm 11 home for the former pnpm.onlyBuiltDependencies).
+# Only lefthook needs its install script (git hooks); the rest are not required.
+allowBuilds:
+  core-js: false
+  esbuild: false
+  lefthook: true
+  sharp: false
+
+# Security overrides
+# undici <=7.27.0 has a critical CRLF Injection vulnerability. It is pulled in
+# transitively via jsdom (test-only). Pin to a patched release.
+overrides:
+  undici: "^7.28.0"
