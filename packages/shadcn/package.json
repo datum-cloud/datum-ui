@@ -72,8 +72,8 @@
     "leaflet-draw": "^1.0.4",
     "leaflet.fullscreen": "^5.3.0",
     "leaflet.markercluster": "^1.5.3",
-    "react": ">=19",
-    "react-dom": ">=19",
+    "react": ">=19.2.7",
+    "react-dom": ">=19.2.7",
     "react-leaflet": "^5.0.0",
     "react-leaflet-markercluster": ">=5.0.0-rc.0"
   },
