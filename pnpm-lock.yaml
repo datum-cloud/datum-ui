@@ -480,13 +480,13 @@ importers:
         specifier: ^1.21.0
         version: 1.21.0(react@19.2.7)
       react:
-        specifier: '>=19'
+        specifier: '>=19.2.7'
         version: 19.2.7
       react-day-picker:
         specifier: ^10.0.1
         version: 10.0.1(@types/react@19.2.17)(react@19.2.7)
       react-dom:
-        specifier: '>=19'
+        specifier: '>=19.2.7'
         version: 19.2.7(react@19.2.7)
       react-hook-form:
         specifier: ^7.80.0
