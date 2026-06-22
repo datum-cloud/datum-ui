@@ -47,11 +47,11 @@ const classForSeparator = cva(
 
 function defineStepper<const Steps extends Stepperize.Step[]>(...steps: Steps): Stepper.DefineProps<Steps> {
   const {
-    Scoped,
+    Provider: StepperizeProvider,
     useStepper,
     steps: stepList,
     Stepper: StepperizePrimitives,
-  } = Stepperize.defineStepper(...steps)
+  } = Stepperize.defineStepper(steps)
 
   const StepperContainer = ({
     children,
@@ -80,17 +80,19 @@ function defineStepper<const Steps extends Stepperize.Step[]>(...steps: Steps): 
         variant = 'horizontal',
         labelOrientation = 'horizontal',
         tracking = false,
+        defaultStep,
+        defaultData,
         children,
         className,
         ...props
       }) => {
         return (
           <StepperContext value={{ variant, labelOrientation, tracking }}>
-            <Scoped initialStep={props.initialStep} initialMetadata={props.initialMetadata}>
+            <StepperizeProvider defaultStep={defaultStep} defaultData={defaultData}>
               <StepperContainer className={className} {...props}>
                 {children}
               </StepperContainer>
-            </Scoped>
+            </StepperizeProvider>
           </StepperContext>
         )
       },
@@ -113,12 +115,12 @@ function defineStepper<const Steps extends Stepperize.Step[]>(...steps: Steps): 
 
         const steps = stepList
 
-        const stepIndex = stepper.lookup.getIndex(props.of)
+        const stepIndex = steps.findIndex(s => s.id === props.of)
         const step = steps[stepIndex]!
-        const currentIndex = stepper.lookup.getIndex(stepper.state.current.data.id)
+        const currentIndex = stepper.index
 
-        const isLast = stepper.lookup.getLast().id === props.of
-        const isActive = stepper.state.current.data.id === props.of
+        const isLast = stepIndex === steps.length - 1
+        const isActive = stepper.current.id === props.of
 
         const dataState = getStepState(currentIndex, stepIndex)
         const childMap = useStepChildren(children)
@@ -181,8 +183,8 @@ function defineStepper<const Steps extends Stepperize.Step[]>(...steps: Steps): 
                 onKeyDown={e =>
                   onStepKeyDown(
                     e,
-                    stepper.lookup.getNext(props.of),
-                    stepper.lookup.getPrev(props.of),
+                    steps[stepIndex + 1],
+                    steps[stepIndex - 1],
                   )}
                 {...props}
               >
@@ -414,7 +416,7 @@ function extractChildren(children: React.ReactNode) {
   return map
 }
 
-function onStepKeyDown(e: React.KeyboardEvent<HTMLButtonElement>, nextStep: Stepperize.Step, prevStep: Stepperize.Step) {
+function onStepKeyDown(e: React.KeyboardEvent<HTMLButtonElement>, nextStep: Stepperize.Step | undefined, prevStep: Stepperize.Step | undefined) {
   const { key } = e
   const directions = {
     next: ['ArrowRight', 'ArrowDown'],
@@ -462,13 +464,12 @@ namespace Stepper {
     tracking?: boolean
   }
 
-  export type DefineProps<Steps extends Stepperize.Step[]> = Omit<
-    Stepperize.StepperReturn<Steps>,
-    'Scoped'
-  > & {
+  export interface DefineProps<Steps extends Stepperize.Step[]> {
+    steps: Steps
+    useStepper: (options?: Stepperize.UseStepperOptions<Steps>) => Stepperize.Stepper<Steps>
     Stepper: {
       Provider: (
-        props: Omit<Stepperize.ScopedProps<Steps>, 'children'>
+        props: Omit<Stepperize.ProviderProps<Steps>, 'children'>
           & Omit<React.ComponentProps<'div'>, 'children'>
           & Stepper.ConfigProps & {
             children:

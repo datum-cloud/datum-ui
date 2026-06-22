@@ -21,12 +21,12 @@ const { Stepper: StepperC, steps: stepsC } = defineStepper(
 
 function StepperDemo({ initialStep }: { initialStep?: string }) {
   return (
-    <Stepper.Provider variant="horizontal" initialStep={initialStep as any}>
+    <Stepper.Provider variant="horizontal" defaultStep={initialStep as any}>
       {({ methods }: any) => (
         <div className="flex flex-col gap-6">
           <Stepper.Navigation>
             {steps.map(step => (
-              <Stepper.Step key={step.id} of={step.id} onClick={() => methods.navigation.goTo(step.id)}>
+              <Stepper.Step key={step.id} of={step.id} onClick={() => methods.goTo(step.id)}>
                 <Stepper.Title>{step.title}</Stepper.Title>
                 <Stepper.Description>{step.description}</Stepper.Description>
               </Stepper.Step>
@@ -36,7 +36,7 @@ function StepperDemo({ initialStep }: { initialStep?: string }) {
           <div className="rounded-lg border p-6">
             {steps.map(step => (
               <div key={step.id}>
-                {methods.state.current.data.id === step.id && (
+                {methods.current.id === step.id && (
                   <div>
                     <h3 className="text-lg font-medium">{step.title}</h3>
                     <p className="text-muted-foreground text-sm">{step.description}</p>
@@ -50,17 +50,17 @@ function StepperDemo({ initialStep }: { initialStep?: string }) {
             <button
               type="button"
               className="rounded-md border px-4 py-2 text-sm"
-              onClick={() => methods.navigation.prev()}
-              disabled={methods.state.isFirst}
+              onClick={() => methods.prev()}
+              disabled={methods.isFirst}
             >
               Previous
             </button>
             <button
               type="button"
               className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm"
-              onClick={() => methods.state.isLast ? alert('Done!') : methods.navigation.next()}
+              onClick={() => methods.isLast ? alert('Done!') : methods.next()}
             >
-              {methods.state.isLast ? 'Complete' : 'Next'}
+              {methods.isLast ? 'Complete' : 'Next'}
             </button>
           </Stepper.Controls>
         </div>
@@ -76,7 +76,7 @@ function VerticalStepperDemo() {
         <div className="flex flex-col gap-4">
           <StepperV.Navigation>
             {stepsV.map(step => (
-              <StepperV.Step key={step.id} of={step.id} onClick={() => methods.navigation.goTo(step.id)}>
+              <StepperV.Step key={step.id} of={step.id} onClick={() => methods.goTo(step.id)}>
                 <StepperV.Title>{step.title}</StepperV.Title>
                 <StepperV.Description>{step.description}</StepperV.Description>
                 <div className="rounded-lg border p-4 text-sm">
@@ -91,16 +91,16 @@ function VerticalStepperDemo() {
             <button
               type="button"
               className="rounded-md border px-4 py-2 text-sm"
-              onClick={() => methods.navigation.prev()}
-              disabled={methods.state.isFirst}
+              onClick={() => methods.prev()}
+              disabled={methods.isFirst}
             >
               Previous
             </button>
             <button
               type="button"
               className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm"
-              onClick={() => methods.navigation.next()}
-              disabled={methods.state.isLast}
+              onClick={() => methods.next()}
+              disabled={methods.isLast}
             >
               Next
             </button>
@@ -128,16 +128,16 @@ function CircleStepperDemo() {
             <button
               type="button"
               className="rounded-md border px-4 py-2 text-sm"
-              onClick={() => methods.navigation.prev()}
-              disabled={methods.state.isFirst}
+              onClick={() => methods.prev()}
+              disabled={methods.isFirst}
             >
               Previous
             </button>
             <button
               type="button"
               className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm"
-              onClick={() => methods.navigation.next()}
-              disabled={methods.state.isLast}
+              onClick={() => methods.next()}
+              disabled={methods.isLast}
             >
               Next
             </button>
@@ -160,7 +160,7 @@ const meta: Meta = {
           + 'Define steps with `defineStepper(...)` which returns a scoped `Stepper` namespace, `useStepper` hook, '
           + 'and `steps` array. Compose `Stepper.Provider`, `Stepper.Navigation`, `Stepper.Step`, `Stepper.Title`, '
           + '`Stepper.Description`, `Stepper.Panel`, and `Stepper.Controls` for full layout control. '
-          + 'The `Provider` accepts `variant` (`horizontal` | `vertical` | `circle`), an optional `initialStep` ID, '
+          + 'The `Provider` accepts `variant` (`horizontal` | `vertical` | `circle`), an optional `defaultStep` ID, '
           + '`labelOrientation`, and `tracking` for auto-scroll. Navigation methods are exposed via the render-prop `methods`.\n\n'
           + '**External dependency:** `@stepperize/react`',
       },

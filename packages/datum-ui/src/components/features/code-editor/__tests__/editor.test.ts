@@ -30,7 +30,8 @@ describe('isValidYaml', () => {
 
   it('returns false for invalid YAML', () => {
     expect(isValidYaml('{')).toBe(false)
-    expect(isValidYaml(': invalid')).toBe(false)
+    // unclosed flow sequence — invalid under the YAML 1.2 parser
+    expect(isValidYaml('foo: [bar')).toBe(false)
   })
 })
 
@@ -55,7 +56,7 @@ describe('formatYaml', () => {
   })
 
   it('throws error for invalid YAML', () => {
-    expect(() => formatYaml(': invalid')).toThrow('Invalid YAML format')
+    expect(() => formatYaml('foo: [bar')).toThrow('Invalid YAML format')
   })
 })
 
@@ -81,6 +82,6 @@ describe('yamlToJson', () => {
   })
 
   it('throws error for invalid YAML', () => {
-    expect(() => yamlToJson(': invalid')).toThrow('Invalid YAML format')
+    expect(() => yamlToJson('foo: [bar')).toThrow('Invalid YAML format')
   })
 })

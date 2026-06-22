@@ -132,8 +132,8 @@ export function FormStepper({
 
   const { Stepper } = stepperDef
 
-  // Note: initialStep is handled by Stepperize's Scoped component internally
-  const providerProps = initialStepIndex ? { initialStep: initialStepIndex as any } : {}
+  // Note: initialStep is forwarded to Stepperize's Provider as defaultStep
+  const providerProps = initialStepIndex ? { defaultStep: initialStepIndex as any } : {}
 
   return (
 
@@ -191,25 +191,25 @@ function FormStepperContent({
 
   // Find current step config
   const currentStepConfig = React.useMemo(
-    () => steps.find(s => s.id === stepper.state.current.data.id) ?? steps[0]!,
-    [steps, stepper.state.current.data.id],
+    () => steps.find(s => s.id === stepper.current.id) ?? steps[0]!,
+    [steps, stepper.current.id],
   )
 
-  // Collect all stored metadata as default values
+  // Collect all stored flow data as default values
   const storedValues = React.useMemo(() => {
-    const allMetadata = steps.reduce(
+    const allData = steps.reduce(
       (acc, step) => ({
         ...acc,
-        ...(stepper.metadata.get(step.id as any) || {}),
+        ...((stepper.data.get(step.id as any) || {}) as Record<string, unknown>),
       }),
       {},
     )
-    return { ...defaultValues, ...allMetadata }
-  }, [steps, stepper, defaultValues, stepper.state.current.data.id]) // Include current.id to recompute on step change
+    return { ...defaultValues, ...allData }
+  }, [steps, stepper, defaultValues, stepper.current.id]) // Include current.id to recompute on step change
 
   return (
     <StepForm
-      key={stepper.state.current.data.id} // Force remount on step change
+      key={stepper.current.id} // Force remount on step change
       steps={steps}
       stepper={stepper}
       currentStepConfig={currentStepConfig}
@@ -263,7 +263,7 @@ function StepForm({
   const [submitCount, setSubmitCount] = React.useState(0)
   const formRef = React.useRef<HTMLFormElement>(null)
 
-  const currentIndex = stepper.lookup.getIndex(stepper.state.current.data.id as any)
+  const currentIndex = stepper.index
 
   // Submit handler called with validated data from the adapter
   const handleStepSubmit = React.useCallback(
@@ -271,17 +271,17 @@ function StepForm({
       setIsSubmitted(true)
       setSubmitCount(prev => prev + 1)
 
-      // Store current step's validated data in metadata
-      stepper.metadata.set(stepper.state.current.data.id as any, data)
+      // Store current step's validated data in flow data
+      stepper.data.set(data)
 
-      if (stepper.state.isLast) {
-        // Final step - collect all metadata and complete
+      if (stepper.isLast) {
+        // Final step - collect all flow data and complete
         setIsSubmitting(true)
         try {
           const allData = steps.reduce(
             (acc, step) => ({
               ...acc,
-              ...(stepper.metadata.get(step.id as any) || {}),
+              ...(stepper.data.get(step.id) || {}),
             }),
             {},
           )
@@ -298,14 +298,14 @@ function StepForm({
       }
       else {
         // Move to next step
-        const nextStepId = stepper.lookup.getNext(stepper.state.current.data.id as any)?.id
+        const nextStepId = steps[currentIndex + 1]?.id
         if (nextStepId) {
-          stepper.navigation.goTo(nextStepId as any)
+          stepper.goTo(nextStepId)
           onStepChange?.(nextStepId, 'next')
         }
       }
     },
-    [stepper, steps, onComplete, onStepChange],
+    [stepper, steps, currentIndex, onComplete, onStepChange],
   )
 
   // Create per-step form via adapter (recreated when component remounts on step change)
@@ -325,41 +325,41 @@ function StepForm({
   }, [])
 
   const prev = React.useCallback(() => {
-    // Before going back, save current form data to metadata (without validation)
+    // Before going back, save current form data to flow data (without validation)
     const currentValues = instance.getValues()
     if (Object.keys(currentValues).length > 0) {
-      stepper.metadata.set(stepper.state.current.data.id as any, currentValues)
+      stepper.data.set(currentValues)
     }
 
-    const prevStepId = stepper.lookup.getPrev(stepper.state.current.data.id as any)?.id
+    const prevStepId = steps[currentIndex - 1]?.id
     if (prevStepId) {
-      stepper.navigation.goTo(prevStepId as any)
+      stepper.goTo(prevStepId)
       onStepChange?.(prevStepId, 'prev')
     }
-  }, [instance, stepper, onStepChange])
+  }, [instance, stepper, steps, currentIndex, onStepChange])
 
   const goTo = React.useCallback(
     (stepId: string) => {
-      const targetIndex = stepper.lookup.getIndex(stepId as any)
+      const targetIndex = steps.findIndex(s => s.id === stepId)
 
       // Only allow going back without validation
       if (targetIndex < currentIndex) {
         // Save current data before navigating
         const currentValues = instance.getValues()
         if (Object.keys(currentValues).length > 0) {
-          stepper.metadata.set(stepper.state.current.data.id as any, currentValues)
+          stepper.data.set(currentValues)
         }
-        stepper.navigation.goTo(stepId as any)
+        stepper.goTo(stepId)
         onStepChange?.(stepId, 'prev')
       }
       // Going forward requires validation - use next() instead
     },
-    [instance, stepper, currentIndex, onStepChange],
+    [instance, stepper, steps, currentIndex, onStepChange],
   )
 
-  // Helper to get step data from metadata
+  // Helper to get step data from flow data
   const getStepData = React.useCallback(
-    (stepId: string) => stepper.metadata.get(stepId as any) as Record<string, unknown> | undefined,
+    (stepId: string) => stepper.data.get(stepId) as Record<string, unknown> | undefined,
     [stepper],
   )
 
@@ -368,7 +368,7 @@ function StepForm({
     return steps.reduce(
       (acc, step) => ({
         ...acc,
-        ...(stepper.metadata.get(step.id as any) || {}),
+        ...(stepper.data.get(step.id) || {}),
       }),
       {},
     )
@@ -383,12 +383,12 @@ function StepForm({
       next,
       prev,
       goTo,
-      isFirst: stepper.state.isFirst,
-      isLast: stepper.state.isLast,
+      isFirst: stepper.isFirst,
+      isLast: stepper.isLast,
       getStepData,
       getAllStepData,
       utils: {
-        getIndex: (stepId: string) => stepper.lookup.getIndex(stepId as any),
+        getIndex: (stepId: string) => steps.findIndex(s => s.id === stepId),
       },
     }),
     [steps, currentStepConfig, currentIndex, stepper, next, prev, goTo, getStepData, getAllStepData],
@@ -425,8 +425,8 @@ function StepForm({
     next,
     prev,
     goTo,
-    isFirst: stepper.state.isFirst,
-    isLast: stepper.state.isLast,
+    isFirst: stepper.isFirst,
+    isLast: stepper.isLast,
     getStepData,
     getAllStepData,
   }
