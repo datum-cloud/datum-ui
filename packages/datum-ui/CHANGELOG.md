@@ -1,5 +1,11 @@
 # @datum-cloud/datum-ui
 
+## 1.3.1
+
+### Patch Changes
+
+- f760a10: If the dialog content was scrollable it would scroll into and past the footer.
+
 ## 1.3.0
 
 ### Minor Changes
