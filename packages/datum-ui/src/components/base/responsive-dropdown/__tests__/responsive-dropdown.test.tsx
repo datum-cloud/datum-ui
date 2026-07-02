@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { MobileSheet } from '../../mobile-sheet'
 import { ResponsiveDropdown } from '../responsive-dropdown'
@@ -51,6 +51,23 @@ describe('responsiveDropdown', () => {
       </ResponsiveDropdown>,
     )
     expect(screen.getByText('Dropdown body')).toBeInTheDocument()
+  })
+
+  it('stays open when the window loses focus (e.g. native file picker opens)', () => {
+    setViewport(1440)
+    const onOpenChange = vi.fn()
+    render(
+      <ResponsiveDropdown
+        open
+        onOpenChange={onOpenChange}
+        trigger={<button type="button">Trigger</button>}
+        sheetTitle="Menu"
+      >
+        <div>Dropdown body</div>
+      </ResponsiveDropdown>,
+    )
+    fireEvent.blur(window)
+    expect(onOpenChange).not.toHaveBeenCalledWith(false)
   })
 
   it('renders mobile sheet on mobile viewport', () => {
