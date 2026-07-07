@@ -2,6 +2,7 @@ import type { z } from 'zod'
 import type { FormRootProps, FormRootRenderProps } from '../types'
 import * as React from 'react'
 import { cn } from '../../../../utils/cn'
+import { useControllableState } from '../../../base/hooks'
 import { useAdapter } from '../adapter-context'
 import { FormProvider } from '../context/form-context'
 
@@ -46,8 +47,9 @@ export function FormRoot<T extends z.ZodType>({
 }: FormRootProps<T>) {
   const adapter = useAdapter()
 
-  const [internalIsSubmitting, setInternalIsSubmitting] = React.useState(false)
-  const isSubmitting = externalIsSubmitting ?? internalIsSubmitting
+  // Submitting state via the shared controllable-state contract: uncontrolled by
+  // default, but `isSubmitting` (e.g. from useFetcher) overrides when provided.
+  const [isSubmitting, setIsSubmitting] = useControllableState<boolean>(externalIsSubmitting, false)
 
   // Track submission state (shared across all adapters)
   const [isSubmitted, setIsSubmitted] = React.useState(false)
@@ -58,7 +60,7 @@ export function FormRoot<T extends z.ZodType>({
   // Wrap onSubmit with telemetry + state management
   const wrappedOnSubmit = React.useCallback(
     async (data: Record<string, unknown>) => {
-      setInternalIsSubmitting(true)
+      setIsSubmitting(true)
       setIsSubmitted(true)
       setSubmitCount(prev => prev + 1)
       try {
@@ -68,15 +70,22 @@ export function FormRoot<T extends z.ZodType>({
       }
       catch (error) {
         const err = error instanceof Error ? error : new Error(String(error))
+        // Was the error routed to at least one consumer-provided handler? If not,
+        // rethrow instead of silently swallowing it so a failed submission never
+        // looks like success.
+        const handled = Boolean(telemetry?.onError || telemetry?.captureError || onError)
         telemetry?.onError?.({ formName: name ?? '', formId: id, error: err })
         telemetry?.captureError?.(err, { formName: name ?? '', formId: id })
         onError?.(error as any)
+        if (!handled) {
+          throw err
+        }
       }
       finally {
-        setInternalIsSubmitting(false)
+        setIsSubmitting(false)
       }
     },
-    [onSubmit, onSuccess, onError, telemetry, name, id],
+    [onSubmit, onSuccess, onError, telemetry, name, id, setIsSubmitting],
   )
 
   // Create form instance via the adapter
@@ -164,6 +173,17 @@ export function FormRoot<T extends z.ZodType>({
               instance.markAllFieldsTouched()
             }
             telemetry?.onSubmit?.({ formName: name ?? '', formId: id })
+
+            // Action-based submission (no client onSubmit): wrappedOnSubmit never
+            // runs, so surface the success callbacks + submission state here that
+            // consumers rely on. onSubmit-based forms take that path instead.
+            if (isUserSubmit && !onSubmit) {
+              setIsSubmitted(true)
+              setSubmitCount(prev => prev + 1)
+              telemetry?.onSuccess?.({ formName: name ?? '', formId: id })
+              onSuccess?.(instance.getValues() as z.infer<T>)
+            }
+
             const adapterSubmit = instance.formProps.onSubmit as
               | ((e: React.FormEvent<HTMLFormElement>) => void)
               | undefined

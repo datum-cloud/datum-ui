@@ -23,6 +23,13 @@ import { getSchemaDefaults } from '../../utils/get-schema-defaults'
 
 const RHFFormIdContext = React.createContext<string>('form')
 
+/**
+ * Provides the normalized field metadata (keyed by field name) so per-field
+ * hooks can read schema-derived data — notably `required` — that only
+ * useCreateForm computes from the Zod schema.
+ */
+const RHFFieldsContext = React.createContext<Record<string, NormalizedFieldMeta>>({})
+
 // ============================================================================
 // Hook Implementations
 // ============================================================================
@@ -54,6 +61,8 @@ function useRHFCreateForm(props: CreateFormProps): NormalizedFormInstance {
     errors,
     isDirty,
     isValid,
+    isSubmitted,
+    submitCount,
     dirtyFields,
     touchedFields,
   } = form.formState
@@ -85,15 +94,15 @@ function useRHFCreateForm(props: CreateFormProps): NormalizedFormInstance {
   const formState: NormalizedFormState = React.useMemo(() => ({
     isDirty,
     isValid,
-    isSubmitted: false,
-    submitCount: 0,
+    isSubmitted,
+    submitCount,
     dirtyFields: Object.fromEntries(
       Object.entries(dirtyFields).map(([k, v]) => [k, Boolean(v)]),
     ),
     touchedFields: Object.fromEntries(
       Object.entries(touchedFields).map(([k, v]) => [k, Boolean(v)]),
     ),
-  }), [isDirty, isValid, dirtyFields, touchedFields])
+  }), [isDirty, isValid, isSubmitted, submitCount, dirtyFields, touchedFields])
 
   const handleSubmit = React.useMemo(
     () => form.handleSubmit((data) => {
@@ -133,20 +142,24 @@ function useRHFCreateForm(props: CreateFormProps): NormalizedFormInstance {
 function useRHFField(name: string): NormalizedFieldState {
   const form = useRHFFormContext()
   const formId = React.use(RHFFormIdContext)
+  const fieldsMeta = React.use(RHFFieldsContext)
   const { field, fieldState } = useController({ name, control: form.control })
+  // Schema-derived required flag (top-level fields). Form.Field still lets an
+  // explicit `required` prop take precedence for nested/array paths.
+  const required = fieldsMeta[name]?.required ?? false
 
   return React.useMemo(() => ({
     name: field.name,
     id: `${formId}-${name}`,
     errors: fieldState.error?.message ? [String(fieldState.error.message)] : [],
-    required: false, // Will be overridden by Form.Field from NormalizedFormInstance.fields
+    required,
     isDirty: fieldState.isDirty,
     isTouched: fieldState.isTouched,
     value: field.value,
     change: (value: unknown) => field.onChange(value),
     blur: () => field.onBlur(),
     focus: () => form.setFocus(name),
-  }), [field, fieldState, name, formId, form])
+  }), [field, fieldState, name, formId, form, required])
 }
 
 /** Watch a single field's value reactively. */
@@ -216,9 +229,11 @@ function RHFFormProviderWrapper({
   const form = instance.raw as ReturnType<typeof useForm>
   return (
     <RHFFormIdContext value={instance.id}>
-      <RHFFormProvider {...form}>
-        {children}
-      </RHFFormProvider>
+      <RHFFieldsContext value={instance.fields}>
+        <RHFFormProvider {...form}>
+          {children}
+        </RHFFormProvider>
+      </RHFFieldsContext>
     </RHFFormIdContext>
   )
 }

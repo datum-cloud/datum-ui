@@ -4,6 +4,7 @@ import * as React from 'react'
 import { Form } from '..'
 import { cn } from '../../../../utils/cn'
 import { Dialog } from '../../../base/dialog'
+import { useControllableState } from '../../../base/hooks'
 
 /**
  * Form.Dialog - A dialog with an integrated form
@@ -97,15 +98,10 @@ export function FormDialog<T extends z.ZodType>({
   // Children
   children,
 }: FormDialogProps<T>) {
-  const [internalOpen, setInternalOpen] = React.useState(defaultOpen ?? false)
-  const [internalIsSubmitting, setInternalIsSubmitting] = React.useState(false)
-
-  // Use external loading if provided, otherwise use internal state
-  const isSubmitting = loading ?? internalIsSubmitting
-
-  // Determine if controlled or uncontrolled
-  const isControlled = open !== undefined
-  const isOpen = isControlled ? open : internalOpen
+  // Open + submitting state share the controllable-state contract with Form.Root.
+  // `open`/`onOpenChange` control the dialog; `loading` overrides submitting.
+  const [isOpen, setOpen] = useControllableState<boolean>(open, defaultOpen ?? false, onOpenChange)
+  const [isSubmitting, setIsSubmitting] = useControllableState<boolean>(loading, false)
 
   const handleOpenChange = React.useCallback(
     (value: boolean) => {
@@ -113,32 +109,36 @@ export function FormDialog<T extends z.ZodType>({
       if (!value && isSubmitting) {
         return
       }
-
-      if (!isControlled) {
-        setInternalOpen(value)
-      }
-      onOpenChange?.(value)
+      setOpen(value)
     },
-    [isControlled, isSubmitting, onOpenChange],
+    [isSubmitting, setOpen],
   )
 
   const handleSubmit = React.useCallback(
     async (data: z.infer<T>) => {
-      // Only manage internal state if not using external loading
-      if (loading === undefined) {
-        setInternalIsSubmitting(true)
-      }
+      // When `loading` is externally controlled these setters are no-ops, so the
+      // parent's loading state stays the single source of truth.
+      setIsSubmitting(true)
       try {
         await onSubmit?.(data)
         onSuccess?.(data)
       }
       finally {
-        if (loading === undefined) {
-          setInternalIsSubmitting(false)
-        }
+        setIsSubmitting(false)
+      }
+      // Auto-close on successful submission (documented contract), but ONLY for
+      // the uncontrolled case. When `loading` is externally controlled the
+      // parent owns submission lifecycle (fire-and-forget mutations resolve
+      // onSubmit synchronously while the request is still in flight); auto-
+      // closing here would tear down the dialog before a later failure can
+      // surface in-dialog. Only reached when the submission resolves without
+      // throwing; bypasses the submit-guard in handleOpenChange because
+      // submission has already completed.
+      if (!loading) {
+        setOpen(false)
       }
     },
-    [onSubmit, onSuccess, loading],
+    [onSubmit, onSuccess, setIsSubmitting, setOpen, loading],
   )
 
   const handleCancel = React.useCallback(() => {

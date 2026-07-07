@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { z } from 'zod'
 import { ConformAdapter } from '../adapters/conform'
+import { flattenDefaults } from '../adapters/conform/conform-adapter'
 import { Form } from '../index'
 
 const schema = z.object({
@@ -70,6 +71,49 @@ describe('conform adapter', () => {
 
     // Conform should display validation errors
     expect(await screen.findByRole('alert')).toBeInTheDocument()
+  })
+
+  // Regression (CR-003): flattenDefaults must not recurse into non-plain object
+  // instances. Recursing into a Date/Map/Set/class instance yields an empty
+  // Object.entries(), which drops the field's default and makes dirty-tracking
+  // flag the field as dirty on mount with no user edit.
+  describe('flattenDefaults', () => {
+    it('keeps a Date default as a leaf value (not dropped)', () => {
+      const date = new Date('2026-07-06T00:00:00.000Z')
+      const result = flattenDefaults({ startDate: date })
+
+      // The field default survives untouched instead of vanishing.
+      expect(Object.hasOwn(result, 'startDate')).toBe(true)
+      expect(result.startDate).toBe(date)
+      // It must NOT have been walked into dot-notation sub-keys.
+      expect(Object.keys(result)).toEqual(['startDate'])
+    })
+
+    it('keeps Map, Set, and class instances as leaf values', () => {
+      class Money {
+        constructor(public amount: number) {}
+      }
+      const map = new Map([['a', 1]])
+      const set = new Set([1, 2])
+      const money = new Money(10)
+
+      const result = flattenDefaults({ map, set, money })
+
+      expect(result).toEqual({ map, set, money })
+    })
+
+    it('still recurses into plain nested objects', () => {
+      const result = flattenDefaults({ address: { city: 'NYC', zip: '10001' } })
+
+      expect(result).toEqual({ 'address.city': 'NYC', 'address.zip': '10001' })
+    })
+
+    it('treats arrays as leaf values', () => {
+      const tags = ['a', 'b']
+      const result = flattenDefaults({ tags })
+
+      expect(result).toEqual({ tags })
+    })
   })
 
   it('renders checkbox with native boolean value', () => {
