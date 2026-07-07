@@ -10,7 +10,7 @@ import {
 } from '@repo/shadcn/ui/command'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { CheckIcon } from 'lucide-react'
-import { LoaderOverlay } from '../../features/loader-overlay'
+import { LoaderOverlay } from '../loader-overlay'
 import { isGroupedOptions } from './types'
 
 function defaultRenderOption<T extends OptionPickerOption>(
@@ -45,7 +45,7 @@ export function OptionList<T extends OptionPickerOption>({
   itemSize = 36,
   listClassName,
 }: OptionListProps<T>) {
-  const { filteredOptions, search, setSearch, isSelected, toggle, creatableValue } = picker
+  const { filteredOptions, search, setSearch, isSelected, toggle, creatableValue, creatableLabel } = picker
   const grouped = isGroupedOptions(filteredOptions)
   const row = renderOption ?? defaultRenderOption
 
@@ -117,11 +117,17 @@ export function OptionList<T extends OptionPickerOption>({
               value={`__create_${creatableValue}`}
               onSelect={() => toggle(creatableValue)}
             >
-              <span>
-                Use &quot;
-                {creatableValue}
-                &quot;
-              </span>
+              {creatableLabel
+                ? (
+                    creatableLabel(creatableValue)
+                  )
+                : (
+                    <span>
+                      Use &quot;
+                      {creatableValue}
+                      &quot;
+                    </span>
+                  )}
             </CommandItem>
           </CommandGroup>
         )}
@@ -165,6 +171,8 @@ function VirtualCommandGroup<T extends OptionPickerOption>({
           return (
             <div
               key={option.value}
+              data-index={virtualRow.index}
+              ref={virtualizer.measureElement}
               style={{
                 position: 'absolute',
                 top: 0,

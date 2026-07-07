@@ -104,6 +104,38 @@ describe('useOptionPicker — single mode', () => {
     act(() => result.current.setSearch('apple'))
     expect(result.current.creatableValue).toBe(null)
   })
+
+  it('suppresses creatableValue when search collides with an existing value (BUG-119)', () => {
+    const collidingOpts = [{ label: 'Foo Bar', value: 'foo' }]
+    const { result } = renderHook(() =>
+      useOptionPicker({
+        multiple: false,
+        options: collidingOpts,
+        creatable: true,
+        open: true,
+        onOpenChange: () => {},
+      }),
+    )
+    act(() => result.current.setSearch('foo'))
+    expect(result.current.creatableValue).toBe(null)
+  })
+
+  it('exposes selection and selectedOptions as the resolved read path (STRUCT-045)', () => {
+    const { result } = renderHook(() =>
+      useOptionPicker({
+        multiple: true,
+        options: opts,
+        value: ['apple', 'cherry'],
+        open: true,
+        onOpenChange: () => {},
+      }),
+    )
+    expect(result.current.selection).toEqual(['apple', 'cherry'])
+    expect(result.current.selectedOptions).toEqual([
+      { label: 'Apple', value: 'apple' },
+      { label: 'Cherry', value: 'cherry' },
+    ])
+  })
 })
 
 describe('useOptionPicker — multi mode', () => {
@@ -171,6 +203,91 @@ describe('useOptionPicker — multi mode', () => {
       }),
     )
     expect(one.current.hasSelection).toBe(true)
+  })
+})
+
+describe('useOptionPicker — controllable state', () => {
+  it('seeds from defaultValue and owns the value when uncontrolled (single)', () => {
+    const onValueChange = vi.fn()
+    const { result } = renderHook(() =>
+      useOptionPicker({
+        multiple: false,
+        options: opts,
+        defaultValue: 'apple',
+        onValueChange,
+        closeOnSelect: false,
+        open: true,
+        onOpenChange: () => {},
+      }),
+    )
+    expect(result.current.isSelected('apple')).toBe(true)
+
+    act(() => result.current.toggle('banana'))
+    expect(onValueChange).toHaveBeenCalledWith('banana')
+    // Uncontrolled: the hook owns the value, so selection updates without a value prop.
+    expect(result.current.isSelected('banana')).toBe(true)
+    expect(result.current.isSelected('apple')).toBe(false)
+  })
+
+  it('does not mutate selection internally when controlled (single)', () => {
+    const onValueChange = vi.fn()
+    const { result } = renderHook(() =>
+      useOptionPicker({
+        multiple: false,
+        options: opts,
+        value: 'apple',
+        onValueChange,
+        closeOnSelect: false,
+        open: true,
+        onOpenChange: () => {},
+      }),
+    )
+    act(() => result.current.toggle('banana'))
+    expect(onValueChange).toHaveBeenCalledWith('banana')
+    // Controlled: the parent owns the value; internal selection stays put.
+    expect(result.current.isSelected('apple')).toBe(true)
+    expect(result.current.isSelected('banana')).toBe(false)
+  })
+
+  it('seeds from defaultValue and toggles/clears internally when uncontrolled (multi)', () => {
+    const onValueChange = vi.fn()
+    const { result } = renderHook(() =>
+      useOptionPicker({
+        multiple: true,
+        options: opts,
+        defaultValue: ['apple'],
+        onValueChange,
+        open: true,
+        onOpenChange: () => {},
+      }),
+    )
+    expect(result.current.selection).toEqual(['apple'])
+
+    act(() => result.current.toggle('banana'))
+    expect(onValueChange).toHaveBeenLastCalledWith(['apple', 'banana'])
+    expect(result.current.selection).toEqual(['apple', 'banana'])
+
+    act(() => result.current.clear())
+    expect(onValueChange).toHaveBeenLastCalledWith([])
+    expect(result.current.selection).toEqual([])
+  })
+
+  it('does not mutate selection internally when controlled (multi)', () => {
+    const onValueChange = vi.fn()
+    const { result } = renderHook(() =>
+      useOptionPicker({
+        multiple: true,
+        options: opts,
+        value: ['apple'],
+        onValueChange,
+        open: true,
+        onOpenChange: () => {},
+      }),
+    )
+    act(() => result.current.toggle('banana'))
+    expect(onValueChange).toHaveBeenLastCalledWith(['apple', 'banana'])
+    // Controlled: internal selection stays at the controlled value until the parent updates it.
+    expect(result.current.selection).toEqual(['apple'])
   })
 })
 

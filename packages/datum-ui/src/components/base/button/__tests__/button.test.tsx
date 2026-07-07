@@ -87,6 +87,21 @@ describe('button', () => {
     expect(button.className).toContain('px-0')
   })
 
+  it('xs icon-only button is squared to w-7 (matches h-7)', () => {
+    const icon = <span data-testid="icon">I</span>
+    render(<Button size="xs" icon={icon} />)
+    const button = screen.getByRole('button')
+    expect(button.className).toContain('w-7')
+    expect(button.className).toContain('px-0')
+  })
+
+  it('link-size icon-only button is not forced to a fixed width', () => {
+    const icon = <span data-testid="icon">I</span>
+    render(<Button theme="link" size="link" icon={icon} />)
+    const button = screen.getByRole('button')
+    expect(button.className).not.toMatch(/\bw-9\b/)
+  })
+
   it('merges custom className', () => {
     render(<Button className="my-custom">Styled</Button>)
     expect(screen.getByRole('button')).toHaveClass('my-custom')

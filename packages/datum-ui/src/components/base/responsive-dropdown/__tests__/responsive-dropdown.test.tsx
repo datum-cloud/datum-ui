@@ -1,41 +1,12 @@
+import { resetViewport, setViewport } from '@test/viewport'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { MobileSheet } from '../../mobile-sheet'
 import { ResponsiveDropdown } from '../responsive-dropdown'
 
-const originalInnerWidth = window.innerWidth
-const originalMatchMedia = window.matchMedia
-
-function setViewport(width: number) {
-  Object.defineProperty(window, 'innerWidth', {
-    configurable: true,
-    writable: true,
-    value: width,
-  })
-  window.matchMedia = vi.fn().mockImplementation((query: string) => {
-    const match = query.match(/min-width:\s*(\d+)px/)
-    const min = match ? Number(match[1]) : 0
-    return {
-      matches: width >= min,
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    } as unknown as MediaQueryList
-  })
-}
-
 describe('responsiveDropdown', () => {
   afterEach(() => {
-    Object.defineProperty(window, 'innerWidth', {
-      configurable: true,
-      writable: true,
-      value: originalInnerWidth,
-    })
-    window.matchMedia = originalMatchMedia
+    resetViewport()
   })
 
   it('renders dropdown content on desktop viewport', () => {
@@ -84,6 +55,30 @@ describe('responsiveDropdown', () => {
     )
     expect(screen.getByRole('heading', { name: 'Mobile Menu' })).toBeInTheDocument()
     expect(screen.getByText('Sheet body')).toBeInTheDocument()
+  })
+
+  it('fires the trigger\'s own onClick exactly once on mobile (no double-fire)', () => {
+    setViewport(500)
+    const triggerClick = vi.fn()
+    const onOpenChange = vi.fn()
+    render(
+      <ResponsiveDropdown
+        open={false}
+        onOpenChange={onOpenChange}
+        trigger={(
+          <button type="button" onClick={triggerClick}>
+            Trigger
+          </button>
+        )}
+        sheetTitle="Menu"
+      >
+        <div>Sheet body</div>
+      </ResponsiveDropdown>,
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Trigger' }))
+    expect(triggerClick).toHaveBeenCalledTimes(1)
+    expect(onOpenChange).toHaveBeenCalledTimes(1)
+    expect(onOpenChange).toHaveBeenCalledWith(true)
   })
 
   it('stays as dropdown on mobile when responsive={false}', () => {

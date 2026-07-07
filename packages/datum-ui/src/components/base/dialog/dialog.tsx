@@ -73,7 +73,7 @@ function Content({ children, className }: DialogContentProps) {
       <DialogOverlay />
       <DialogPrimitive.Content
         className={cn(
-          'dark:bg-muted dark:border-dialog-border data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 flex max-h-[80vh] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] flex-col gap-0 overflow-hidden rounded-lg bg-white p-0 shadow-xl duration-200 sm:max-w-lg dark:border [&>button:last-child]:hidden',
+          'dark:bg-muted dark:border-dialog-border data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 flex max-h-[80vh] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] flex-col gap-0 overflow-hidden rounded-lg bg-white p-0 shadow-xl duration-200 sm:max-w-lg dark:border',
           className,
         )}
       >
