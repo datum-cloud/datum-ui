@@ -62,6 +62,9 @@ jobs:
 
       - run: pnpm test
 
+      - name: Component test/story coverage matrix
+        run: pnpm --filter @datum-cloud/datum-ui check:coverage-matrix
+
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -108,3 +111,35 @@ jobs:
           path: packages/datum-ui/dist/
 
       - run: pnpm --filter @repo/storybook build
+
+  storybook-test:
+    name: Test Storybook
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: datum-ui-dist
+          path: packages/datum-ui/dist/
+
+      - name: Install Playwright browser
+        run: pnpm --filter @repo/storybook exec playwright install --with-deps chromium
+
+      - name: Build Storybook
+        run: pnpm --filter @repo/storybook build
+
+      # Runs every story as a smoke/interaction test and asserts axe a11y rules,
+      # turning the addon-a11y config in preview.tsx into a CI gate.
+      - name: Run Storybook tests (interactions + a11y)
+        run: pnpm --filter @repo/storybook test-storybook:ci

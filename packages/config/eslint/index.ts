@@ -22,5 +22,37 @@ export function createConfig(options?: { react?: boolean, markdown?: boolean }):
       'react/exhaustive-deps': 'warn',
       'react/set-state-in-effect': 'warn',
     },
-  }) as unknown as Linter.Config[]
+  }).append(
+    // Architectural layering enforcement for the datum-ui component tree
+    // (shadcn primitives -> base -> features). Scoped by path globs so these
+    // blocks are inert in every other workspace package. `@repo/shadcn` is a
+    // shared primitive layer both `base` and `features` may consume, so it is
+    // intentionally NOT restricted.
+    {
+      name: 'datum-ui/layering/base-no-features',
+      files: ['**/src/components/base/**'],
+      ignores: ['**/__tests__/**'],
+      rules: {
+        'no-restricted-imports': ['error', {
+          patterns: [{
+            group: ['**/features/*', '**/features/**', '**/components/features/**'],
+            message: 'Layering: base/ components must not import from features/. Move shared code down into base/ or a shared module.',
+          }],
+        }],
+      },
+    },
+    {
+      name: 'datum-ui/layering/features-base-barrel-only',
+      files: ['**/src/components/features/**'],
+      ignores: ['**/__tests__/**'],
+      rules: {
+        'no-restricted-imports': ['error', {
+          patterns: [{
+            group: ['**/base/*/*', '**/base/*/*/**'],
+            message: 'Layering: import base components from their barrel (base/<name>), not their internal files (base/<name>/<file>).',
+          }],
+        }],
+      },
+    },
+  ) as unknown as Linter.Config[]
 }

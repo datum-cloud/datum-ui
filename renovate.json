@@ -61,6 +61,11 @@
       "matchDepTypes": ["dependencies", "devDependencies"],
       "matchPackagePatterns": ["^@datum-cloud"],
       "enabled": false
+    },
+    {
+      "description": "Label runtime-dependency upgrades so the renovate-changeset CI workflow adds a real patch changeset that triggers a release (devDependency-only bumps intentionally get none). Hosted Renovate (Mend) disables postUpgradeTasks and ignores allowedPostUpgradeCommands in repo config, so changeset generation lives in .github/workflows/renovate-changeset.yml instead. (STRUCT-075 / CR-006)",
+      "matchDepTypes": ["dependencies"],
+      "addLabels": ["runtime-deps"]
     }
   ],
   "lockFileMaintenance": {
@@ -71,15 +76,5 @@
   },
   "prConcurrentLimit": 10,
   "prCreation": "immediate",
-  "rebaseWhen": "behind-base-branch",
-  "allowedPostUpgradeCommands": [
-    "^pnpm changeset add --empty$"
-  ],
-  "postUpgradeTasks": {
-    "commands": [
-      "pnpm changeset add --empty"
-    ],
-    "fileFilters": [".changeset/**"],
-    "executionMode": "update"
-  }
+  "rebaseWhen": "behind-base-branch"
 }

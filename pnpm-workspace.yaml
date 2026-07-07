@@ -5,10 +5,12 @@ packages:
 # Build scripts allowlist (pnpm 11 home for the former pnpm.onlyBuiltDependencies).
 # Only lefthook needs its install script (git hooks); the rest are not required.
 allowBuilds:
+  '@swc/core': false
   core-js: false
   esbuild: false
   lefthook: true
   sharp: false
+  unrs-resolver: false
 
 # Security overrides
 # undici <=7.27.0 has a critical CRLF Injection vulnerability. It is pulled in

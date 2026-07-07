@@ -11,8 +11,7 @@
     "fresh": "pnpm clean:all && pnpm install",
     "format": "turbo run format",
     "changeset": "changeset",
-    "version-packages": "changeset version",
-    "release": "turbo run build --filter=@datum-cloud/datum-ui && changeset publish"
+    "version-packages": "changeset version"
   },
   "engines": {
     "node": ">=24"
@@ -22,8 +21,5 @@
     "@changesets/cli": "^2.31.0",
     "lefthook": "^2.1.9",
     "turbo": "^2.9.18"
-  },
-  "dependencies": {
-    "@dnd-kit/utilities": "^3.2.2"
   }
 }
