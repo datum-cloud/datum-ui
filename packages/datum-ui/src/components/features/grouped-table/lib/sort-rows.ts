@@ -20,8 +20,9 @@ export function sortRows<TData>(rows: Row<TData>[], sorting: SortingState): Row<
   if (sorting.length === 0)
     return rows
   const { id, desc } = sorting[0]!
-  const sorted = [...rows].sort((ra, rb) => compare(ra.getValue(id), rb.getValue(id)))
-  if (desc)
-    sorted.reverse()
-  return sorted
+  const direction = desc ? -1 : 1
+  // Apply direction inside the comparator (rather than reverse()ing afterward) so
+  // tied rows keep their original relative order in both directions — reverse()
+  // would flip equal-key rows and cause visible jitter on sort-direction toggle.
+  return [...rows].sort((ra, rb) => direction * compare(ra.getValue(id), rb.getValue(id)))
 }

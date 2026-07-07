@@ -8,7 +8,7 @@ import { ActionRow } from './action-row'
 
 export type { ActionItem }
 
-export interface MoreActionsComponentProps<TData> {
+interface MoreActionsBaseProps<TData> {
   row?: TData
   actions: ActionItem<TData>[]
   className?: string
@@ -18,15 +18,30 @@ export interface MoreActionsComponentProps<TData> {
   sheetTitle?: string
 }
 
-export function MoreActions<TData,>({
-  row,
-  actions,
-  className,
-  disabled = false,
-  iconClassName,
-  responsive = true,
-  sheetTitle = 'Actions',
-}: MoreActionsComponentProps<TData>) {
+/**
+ * `row` is required whenever `TData` cannot be `undefined`, so callers that use
+ * row-dependent callbacks (`hidden`/`onClick`/`tooltip`) get a compile error
+ * instead of a runtime `undefined` crash. When `TData` includes `undefined`
+ * (e.g. `unknown`), `row` stays optional.
+ */
+type MoreActionsRowProp<TData> = undefined extends TData
+  ? { row?: TData }
+  : { row: TData }
+
+export type MoreActionsComponentProps<TData>
+  = Omit<MoreActionsBaseProps<TData>, 'row'>
+    & MoreActionsRowProp<TData>
+
+export function MoreActions<TData,>(props: MoreActionsComponentProps<TData>) {
+  const {
+    row,
+    actions,
+    className,
+    disabled = false,
+    iconClassName,
+    responsive = true,
+    sheetTitle = 'Actions',
+  } = props as MoreActionsBaseProps<TData>
   const [open, setOpen] = useState<boolean>(false)
 
   // Filter visible actions
@@ -50,6 +65,8 @@ export function MoreActions<TData,>({
       theme="borderless"
       size="icon"
       disabled={disabled}
+      aria-label={sheetTitle}
+      aria-haspopup="menu"
       className={cn(
         'data-[state=open]:bg-accent size-7 p-0 focus-visible:ring-0 focus-visible:ring-offset-0',
         className,

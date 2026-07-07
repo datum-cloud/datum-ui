@@ -106,6 +106,7 @@ export function useDataTablePagination() {
 
   if (!table) {
     return {
+      mode: state.mode,
       canNextPage: false,
       canPrevPage: false,
       nextPage: () => {},
@@ -120,6 +121,7 @@ export function useDataTablePagination() {
   }
 
   return {
+    mode: state.mode,
     canNextPage: table.getCanNextPage(),
     canPrevPage: table.getCanPreviousPage(),
     nextPage: () => table.nextPage(),

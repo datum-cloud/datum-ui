@@ -100,31 +100,43 @@ export function CodeEditorTabs({
     }
   }, [value, format])
 
+  // Keep the active tab in sync with the controlled `format` prop. Without
+  // this, later parent-driven format changes never switch the visible tab,
+  // the hidden format field, or the format passed to onChange.
+  useEffect(() => {
+    setActiveTab(format)
+  }, [format])
+
   const handleJsonChange = (newValue: string) => {
     setJsonContent(newValue)
-    try {
-      const converted = jsonToYaml(newValue)
-      setYamlContent(converted)
-      if (activeTab === 'json') {
-        onChange?.(newValue, 'json')
-      }
+    // Always propagate the raw edit to the parent, even while the content is
+    // transiently invalid mid-keystroke — otherwise a React Hook Form consumer
+    // wired via onChange keeps a stale value and could submit outdated content.
+    if (activeTab === 'json') {
+      onChange?.(newValue, 'json')
     }
-    catch (error) {
-      console.error('Failed to convert JSON to YAML:', error)
+    try {
+      setYamlContent(jsonToYaml(newValue))
+    }
+    catch {
+      // Content is transiently invalid; keep the last valid YAML mirror and
+      // skip cross-format sync until it parses again. (No console spam.)
     }
   }
 
   const handleYamlChange = (newValue: string) => {
     setYamlContent(newValue)
-    try {
-      const converted = yamlToJson(newValue)
-      setJsonContent(converted)
-      if (activeTab === 'yaml') {
-        onChange?.(newValue, 'yaml')
-      }
+    // Propagate every edit to the parent, including transiently-invalid states,
+    // so the parent never holds stale content (see handleJsonChange).
+    if (activeTab === 'yaml') {
+      onChange?.(newValue, 'yaml')
     }
-    catch (error) {
-      console.error('Failed to convert YAML to JSON:', error)
+    try {
+      setJsonContent(yamlToJson(newValue))
+    }
+    catch {
+      // Content is transiently invalid; keep the last valid JSON mirror and
+      // skip cross-format sync until it parses again. (No console spam.)
     }
   }
 

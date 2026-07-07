@@ -1,27 +1,12 @@
 // app/modules/datum-ui/components/time-range-picker/presets.ts
 import type { DateRange, PresetConfig } from './types'
 import { subDays, subHours, subMinutes } from 'date-fns'
-import { fromZonedTime, toZonedTime } from 'date-fns-tz'
-
-/**
- * Get start of day in a specific timezone
- */
-function startOfDayInTimezone(date: Date, timezone: string): Date {
-  // Convert to timezone, set to start of day, convert back
-  const zonedDate = toZonedTime(date, timezone)
-  zonedDate.setHours(0, 0, 0, 0)
-  return fromZonedTime(zonedDate, timezone)
-}
-
-/**
- * Get end of day in a specific timezone
- */
-function endOfDayInTimezone(date: Date, timezone: string): Date {
-  // Convert to timezone, set to end of day, convert back
-  const zonedDate = toZonedTime(date, timezone)
-  zonedDate.setHours(23, 59, 59, 999)
-  return fromZonedTime(zonedDate, timezone)
-}
+// Timezone-day boundaries share the single canonical implementation from the
+// picker (STRUCT-014) — these were copy-pasted helpers before.
+import {
+  endOfDayInTz as endOfDayInTimezone,
+  startOfDayInTz as startOfDayInTimezone,
+} from '../_shared'
 
 /**
  * Default time range presets with timezone-aware range calculation

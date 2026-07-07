@@ -1,9 +1,23 @@
 import type { ReactNode } from 'react'
-import type { ButtonProps } from '../../base/button/button'
+import type { ButtonProps } from '../../base/button'
 
 // --- Task Status ---
 
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed' | 'cancelled'
+
+/** Terminal states a task can settle into. Shared by every "outcome" shape. */
+export type TerminalTaskStatus = Extract<TaskStatus, 'completed' | 'failed' | 'cancelled'>
+
+/** Canonical per-item result status used across item-result shapes. */
+export type ItemStatus = 'succeeded' | 'failed'
+
+// --- Shared item shapes ---
+
+/** A single failed item recorded on a task/outcome/context. */
+export interface FailedItem {
+  id?: string
+  message: string
+}
 
 // --- Task Metadata ---
 
@@ -18,8 +32,8 @@ export interface TaskMetadata {
   orgId?: string
   /** Human-readable organization name */
   orgName?: string
-  /** Extensible - any additional context */
-  [key: string]: unknown
+  /** Extensible bag for any additional, consumer-defined context. */
+  extra?: Record<string, unknown>
 }
 
 // --- Completion Info ---
@@ -28,12 +42,12 @@ export interface TaskCompletionInfo<TItem = unknown> {
   status: TaskStatus
   completed: number
   failed: number
-  items: Array<{ id: string, status: 'succeeded' | 'failed', message?: string, data: TItem }>
+  items: Array<{ id: string, status: ItemStatus, message?: string, data: TItem }>
 }
 
 // --- Task ---
 
-export interface Task<TResult = unknown> {
+export interface Task<TResult = unknown, TItem = unknown> {
   id: string
   title: string
   status: TaskStatus
@@ -51,7 +65,7 @@ export interface Task<TResult = unknown> {
 
   // Item tracking for retry
   succeededItems: string[]
-  failedItems: Array<{ id?: string, message: string }>
+  failedItems: FailedItem[]
   errorStrategy: 'continue' | 'stop'
 
   // Capabilities
@@ -65,14 +79,14 @@ export interface Task<TResult = unknown> {
   // Actions
   completionActions?:
     | ButtonProps[]
-    | ((result: TResult, info: TaskCompletionInfo) => ButtonProps[])
+    | ((result: TResult, info: TaskCompletionInfo<TItem>) => ButtonProps[])
 
   // Retry tracking
   retryOf?: string
   retryCount: number
 
   // Internal: processor reference (not serializable)
-  _processor?: (ctx: TaskContext<unknown, TResult>) => Promise<void>
+  _processor?: TaskProcessor<TResult>
   _originalItems?: unknown[]
 
   // Timestamps
@@ -81,12 +95,45 @@ export interface Task<TResult = unknown> {
   completedAt?: number
 }
 
+/**
+ * The serializable public view of a task — everything storage persists and the
+ * UI renders. Non-serializable engine internals live in {@link TaskRuntime}.
+ */
+export type TaskView<TResult = unknown, TItem = unknown> = Task<TResult, TItem>
+
+// --- Task processor ---
+
+export type TaskProcessor<TResult = unknown> = (
+  ctx: TaskContext<unknown, TResult>,
+) => Promise<void>
+
+/**
+ * Engine-internal, non-serializable runtime state for a single task.
+ *
+ * Held only inside the queue engine and never written to storage. Keeping this
+ * separate from the serializable {@link TaskView} means a persisted task never
+ * carries live functions or timers.
+ */
+export interface TaskRuntime {
+  processor: TaskProcessor
+  originalItems?: unknown[]
+  getItemId?: (item: unknown) => string | undefined
+  onComplete?: (outcome: TaskOutcome) => void | Promise<void>
+  resolve?: (outcome: TaskOutcome) => void
+  setCancelled?: (cancelled: boolean) => void
+  timeoutId?: ReturnType<typeof setTimeout>
+  /** Configured timeout in ms; undefined means "no timeout". */
+  timeoutMs?: number
+  /** Set once a timeout has fired so the settling processor can't overwrite it. */
+  timedOut?: boolean
+}
+
 // --- Task Context ---
 
 export interface TaskContext<TItem = unknown, TResult = unknown> {
   readonly items: TItem[]
   readonly cancelled: boolean
-  readonly failedItems: Array<{ id?: string, message: string }>
+  readonly failedItems: readonly FailedItem[]
   /** Mark current item as succeeded. Pass itemId to enable retry of remaining items on cancel. */
   succeed: (itemId?: string) => void
   /** Mark current item as failed. Pass itemId and message for retry support. */
@@ -111,10 +158,10 @@ export interface ItemContext {
 // --- Task Outcome ---
 
 export interface TaskOutcome<TResult = unknown> {
-  status: 'completed' | 'failed' | 'cancelled'
+  status: TerminalTaskStatus
   completed: number
   failed: number
-  failedItems: Array<{ id?: string, message: string }>
+  failedItems: FailedItem[]
   result?: TResult
 }
 
@@ -164,7 +211,11 @@ interface BaseEnqueueOptions<TItem = unknown, TResult = unknown> {
     | ButtonProps[]
     | ((result: TResult, info: TaskCompletionInfo<TItem>) => ButtonProps[])
   onComplete?: (outcome: TaskOutcome<TResult>) => void | Promise<void>
-  /** Timeout in milliseconds. Default: 300000 (5 minutes) */
+  /**
+   * Timeout in milliseconds, measured from when the task starts running (not
+   * from enqueue). Default: 300000 (5 minutes). Pass `0` or a negative value to
+   * disable the timeout entirely.
+   */
   timeout?: number
 }
 
@@ -228,11 +279,23 @@ export interface TaskQueueConfig {
 // --- Storage ---
 
 export interface TaskStorage {
-  getAll: () => Task[]
-  get: (id: string) => Task | undefined
-  set: (id: string, task: Task) => void
+  getAll: () => TaskView[]
+  get: (id: string) => TaskView | undefined
+  set: (id: string, task: TaskView) => void
   remove: (id: string) => void
   clear: () => void
+  /**
+   * Optional hook invoked once an async backend (e.g. Redis) has loaded its
+   * persisted data into the in-memory cache. Lets the engine surface and
+   * reconcile pre-existing tasks after initialization resolves.
+   */
+  onReady?: (callback: () => void) => void
+  /**
+   * Optional subscription for external mutations to a shared backend (e.g.
+   * another browser tab writing to the same localStorage key). Returns an
+   * unsubscribe function.
+   */
+  onExternalChange?: (callback: () => void) => () => void
 }
 
 // --- Task Summary ---

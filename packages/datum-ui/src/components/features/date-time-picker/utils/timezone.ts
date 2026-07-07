@@ -1,11 +1,9 @@
 import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz'
 
-/**
- * Get the browser's timezone
- */
-export function getBrowserTimezone(): string {
-  return Intl.DateTimeFormat().resolvedOptions().timeZone
-}
+// Consolidated onto the canonical picker timezone module (STRUCT-011).
+// `getBrowserTimezone` is re-exported for the deprecated barrel; the
+// date+time conversion helpers below are unique to this shim.
+export { getBrowserTimezone } from '../../picker/utils/timezone'
 
 /**
  * Convert local date + time to UTC ISO string

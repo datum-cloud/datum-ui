@@ -23,9 +23,9 @@ export type { UseDataTableClientOptions }
 // ── useClientTable ──
 
 export interface UseClientTableOptions<TData> {
-  readonly columns: ColumnDef<TData, any>[]
+  readonly columns: ColumnDef<TData, unknown>[]
   readonly getRowId?: (row: TData) => string
-  readonly enableRowSelection?: boolean | SelectionColumnOptions
+  readonly enableRowSelection?: boolean | SelectionColumnOptions<TData>
   readonly stateAdapter?: StateAdapter
 }
 
@@ -80,29 +80,31 @@ export function useClientTable<TData>(
     enableRowSelection: !!enableRowSelection,
   })
 
-  // 4. Hydrate from adapter on mount (must run before write effect)
+  // 4. Hydrate from adapter (runs once, when an adapter first becomes available).
+  // Depending on `stateAdapter` — not just mounting — lets a consumer supply the
+  // adapter asynchronously (e.g. after router/URL context initializes) and still
+  // hydrate persisted state. `hydratedRef` guards against re-hydrating.
   const hydratedRef = useRef(false)
   useEffect(() => {
-    if (stateAdapter && !hydratedRef.current) {
-      hydratedRef.current = true
-      const persisted = stateAdapter.read()
-      if (persisted.sorting && persisted.sorting.length > 0)
-        store.setSorting(persisted.sorting)
-      if (persisted.filters) {
-        for (const [key, value] of Object.entries(persisted.filters)) {
-          if (value != null)
-            store.setFilter(key, value)
-        }
+    if (!stateAdapter || hydratedRef.current)
+      return
+    hydratedRef.current = true
+    const persisted = stateAdapter.read()
+    if (persisted.sorting && persisted.sorting.length > 0)
+      store.setSorting(persisted.sorting)
+    if (persisted.filters) {
+      for (const [key, value] of Object.entries(persisted.filters)) {
+        if (value != null)
+          store.setFilter(key, value)
       }
-      if (persisted.search)
-        store.setSearch(persisted.search)
-      if (persisted.pageIndex != null && persisted.pageIndex > 0)
-        store.setPageIndex(persisted.pageIndex)
-      if (persisted.pageSize != null)
-        store.setPageSize(persisted.pageSize)
     }
-    // eslint-disable-next-line react/exhaustive-deps
-  }, []) // mount only
+    if (persisted.search)
+      store.setSearch(persisted.search)
+    if (persisted.pageIndex != null && persisted.pageIndex > 0)
+      store.setPageIndex(persisted.pageIndex)
+    if (persisted.pageSize != null)
+      store.setPageSize(persisted.pageSize)
+  }, [stateAdapter, store])
 
   // 5. State adapter sync (skip first render to avoid overwriting hydrated state)
   const isFirstWrite = useRef(true)

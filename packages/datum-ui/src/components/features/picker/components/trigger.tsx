@@ -46,7 +46,11 @@ export function PickerTrigger({
       type="button"
       variant="outline"
       role="combobox"
-      aria-label={placeholder}
+      // Only label with the placeholder when empty. When a value is selected,
+      // omit aria-label so the accessible name falls through to the rendered
+      // value text — otherwise the placeholder masks the selection for screen
+      // readers (BUG-091).
+      aria-label={hasValue ? undefined : placeholder}
       aria-expanded={state.open}
       disabled={disabled}
       onClick={(e) => {

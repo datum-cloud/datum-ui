@@ -45,6 +45,15 @@ export const TransferPanel: React.FC<TransferPanelProps> = ({
       grouped[group] = items.filter(item => item.group === group)
     })
 
+    // Bucket ungrouped items (or items whose group is not among the known
+    // groups) under an empty-key section so they are never silently dropped.
+    const ungrouped = items.filter(
+      item => item.group == null || !groups.includes(item.group),
+    )
+    if (ungrouped.length > 0) {
+      grouped[''] = ungrouped
+    }
+
     return grouped
   }, [items, groups])
 
@@ -115,9 +124,17 @@ export const TransferPanel: React.FC<TransferPanelProps> = ({
             : (
                 Object.entries(groupedItems).map(([group, groupItems]) =>
                   groupItems.length > 0 && (
-                    <TransferGroup key={group} title={group}>
-                      {renderItems(groupItems)}
-                    </TransferGroup>
+                    group === ''
+                      ? (
+                          <div key="__ungrouped__" className="space-y-1">
+                            {renderItems(groupItems)}
+                          </div>
+                        )
+                      : (
+                          <TransferGroup key={group} title={group}>
+                            {renderItems(groupItems)}
+                          </TransferGroup>
+                        )
                   ),
                 )
               )}

@@ -36,6 +36,9 @@ export function TaskQueueTrigger({ ref, tasks, ...props }: TaskQueueTriggerProps
     }
     if (!isAllComplete) {
       prevAllComplete.current = false
+      // New work started within the flash window: clear the leftover flash
+      // style instead of leaving the trigger stuck in the completed state.
+      setFlash(false)
     }
   }, [isAllComplete])
 

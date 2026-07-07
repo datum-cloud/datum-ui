@@ -1,9 +1,24 @@
-import type { Task, TaskContext, TaskOutcome } from '../types'
+import type { Task, TaskContext, TaskOutcome, TaskProcessor } from '../types'
 
 export interface ExecutorCallbacks {
   onUpdate: (task: Task) => void
   onCancelReady?: (setCancelled: (v: boolean) => void) => void
   onTaskComplete?: () => void
+}
+
+/**
+ * Shallow-clone a task into an engine-local working copy.
+ *
+ * The executor mutates its working copy freely and emits fresh copies on every
+ * update, so the object handed in (which may be the exact reference held in a
+ * live React snapshot) is never mutated in place.
+ */
+function cloneTask<TResult>(task: Task<TResult>): Task<TResult> {
+  return {
+    ...task,
+    succeededItems: [...(task.succeededItems ?? [])],
+    failedItems: [...(task.failedItems ?? [])],
+  }
 }
 
 export function createTaskContext<TItem = unknown, TResult = unknown>(
@@ -92,10 +107,10 @@ export function createTaskContext<TItem = unknown, TResult = unknown>(
 }
 
 export async function executeTask<TResult = unknown>(
-  task: Task<TResult>,
+  inputTask: Task<TResult>,
+  processor: TaskProcessor<TResult> | undefined,
   callbacks: ExecutorCallbacks,
 ): Promise<TaskOutcome<TResult>> {
-  const processor = task._processor
   if (!processor) {
     return {
       status: 'failed',
@@ -104,6 +119,10 @@ export async function executeTask<TResult = unknown>(
       failedItems: [{ message: 'No processor attached' }],
     }
   }
+
+  // Work on a private copy so the stored object (possibly aliased by a live
+  // React snapshot) is never mutated in place.
+  const task = cloneTask(inputTask)
 
   task.status = 'running'
   task.startedAt = Date.now()

@@ -4,10 +4,17 @@ import { CloseIcon } from '../../icons/close.icon'
 
 export type HeadlessToastVariant = 'message' | 'success' | 'error' | 'info' | 'warning'
 
+export interface HeadlessToastAction {
+  label: React.ReactNode
+  onClick: () => void
+}
+
 export interface HeadlessToastProps {
   variant: HeadlessToastVariant
   title: string
   description?: React.ReactNode
+  action?: HeadlessToastAction
+  cancel?: HeadlessToastAction
   onDismiss: () => void
 }
 
@@ -27,7 +34,7 @@ const variantIconClass: Record<HeadlessToastVariant, string> = {
   error: 'fill-toast-error-icon',
 }
 
-export function HeadlessToast({ variant, title, description, onDismiss }: HeadlessToastProps) {
+export function HeadlessToast({ variant, title, description, action, cancel, onDismiss }: HeadlessToastProps) {
   return (
     <div
       className={cn(
@@ -39,6 +46,35 @@ export function HeadlessToast({ variant, title, description, onDismiss }: Headle
       <div className="relative flex w-full flex-col gap-1">
         <div className="font-semibold">{title}</div>
         {description ? <div>{description}</div> : null}
+
+        {action || cancel
+          ? (
+              <div className="mt-2 flex items-center gap-2">
+                {action
+                  ? (
+                      <button
+                        type="button"
+                        onClick={action.onClick}
+                        className="rounded-md bg-current/10 px-2.5 py-1 font-medium transition-opacity hover:opacity-80"
+                      >
+                        {action.label}
+                      </button>
+                    )
+                  : null}
+                {cancel
+                  ? (
+                      <button
+                        type="button"
+                        onClick={cancel.onClick}
+                        className="rounded-md px-2.5 py-1 font-medium opacity-70 transition-opacity hover:opacity-100"
+                      >
+                        {cancel.label}
+                      </button>
+                    )
+                  : null}
+              </div>
+            )
+          : null}
 
         <button
           type="button"

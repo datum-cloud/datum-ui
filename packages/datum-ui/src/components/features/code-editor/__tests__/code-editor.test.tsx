@@ -150,7 +150,10 @@ describe('codeEditor', () => {
       <CodeEditor value="" language="json" className={className} />,
     )
 
-    const wrapper = container.firstChild as HTMLElement
+    // ThemeProvider renders its no-flash ThemeScript before children, so the
+    // CodeEditor wrapper is not necessarily container.firstChild; select it by
+    // its stable root class instead.
+    const wrapper = container.querySelector('.relative') as HTMLElement
     expect(wrapper).toHaveClass(className)
   })
 

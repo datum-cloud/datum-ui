@@ -21,18 +21,18 @@ export function TaskQueueProvider({ children, config }: TaskQueueProviderProps) 
     queueRef.current = new TaskQueue(config)
   }
 
-  // Cleanup on unmount: cancel running tasks to prevent memory leaks
+  // Cleanup on unmount: fully dispose the queue (cancel running AND pending
+  // tasks, clear timers and listeners) so a re-mounted provider does not leave
+  // an orphaned queue instance running in the background.
   useEffect(() => {
     const queue = queueRef.current
     return () => {
       if (!queue)
         return
-      const tasks = queue.getSnapshot()
-      tasks.forEach((task) => {
-        if (task.status === 'running') {
-          queue.cancel(task.id)
-        }
-      })
+      queue.dispose()
+      // Drop the reference so a genuine remount builds a fresh queue instead of
+      // reusing the disposed one.
+      queueRef.current = null
     }
   }, [])
 

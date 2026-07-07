@@ -1,31 +1,9 @@
-import { useCallback, useState } from 'react'
-
-export type Updater<T> = T | ((prev: T) => T)
-
 /**
- * Uncontrolled-by-default state with an optional controlled override.
- * When `controlled` is undefined the hook owns the value; otherwise the prop wins.
- * `onChange` always fires. Accepts TanStack-style updater functions.
+ * Re-export of the shared controllable-state hook.
+ *
+ * The implementation now lives in `base/hooks` so every value-bearing
+ * component can consume the same `(value?, defaultValue, onValueChange)`
+ * contract. This module is kept for backward compatibility.
  */
-export function useControllableState<T>(
-  controlled: T | undefined,
-  defaultValue: T,
-  onChange?: (value: T) => void,
-): readonly [T, (next: Updater<T>) => void] {
-  const [internal, setInternal] = useState<T>(defaultValue)
-  const isControlled = controlled !== undefined
-  const value: T = isControlled ? controlled : internal
-
-  const setValue = useCallback(
-    (next: Updater<T>) => {
-      const resolved
-        = typeof next === 'function' ? (next as (prev: T) => T)(value) : next
-      if (!isControlled)
-        setInternal(resolved)
-      onChange?.(resolved)
-    },
-    [isControlled, onChange, value],
-  )
-
-  return [value, setValue] as const
-}
+export type { Updater } from '../../../base/hooks'
+export { useControllableState } from '../../../base/hooks'

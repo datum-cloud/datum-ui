@@ -1,11 +1,11 @@
 import type { VariantProps } from 'class-variance-authority'
 import type { AnchorHTMLAttributes, ReactNode } from 'react'
-import type { ButtonProps } from '../../base/button/button'
+import type { ButtonProps } from '../../base/button'
 import { cva } from 'class-variance-authority'
 import { Fragment } from 'react'
 import { cn } from '../../../utils/cn'
-import { Button } from '../../base/button/button'
-import { Tooltip } from '../../base/tooltip/tooltip'
+import { Button } from '../../base/button'
+import { Tooltip } from '../../base/tooltip'
 import miloStamp from './assets/milo-stamp.svg'
 import scene5 from './assets/scene-5.png'
 import scene6 from './assets/scene-6.png'
@@ -184,7 +184,7 @@ export function EmptyContent({
   const LinkComp = linkComponent || 'a'
   const visibleActions = actions.filter(action => !action.hidden)
 
-  const renderAction = (action: EmptyContentAction) => {
+  const renderAction = (action: EmptyContentAction, index: number) => {
     const renderAsLink
       = (action.as === 'link' || action.as === 'external-link') && !action.disabled
 
@@ -250,7 +250,7 @@ export function EmptyContent({
       )
     }
 
-    return <Fragment key={`${action.as ?? 'button'}-${label}`}>{control}</Fragment>
+    return <Fragment key={`${action.as ?? 'button'}-${label}-${index}`}>{control}</Fragment>
   }
 
   return (
@@ -277,9 +277,11 @@ export function EmptyContent({
       />
 
       <div className="dark:bg-background border-border relative flex max-w-[224px] flex-col items-center justify-center gap-3.5 rounded-lg border bg-white px-6 py-7">
-        <h3 className={titleVariants({ size })}>
-          {`Hey ${userName ?? 'there'}, ${title || ''}`}
-        </h3>
+        {title && (
+          <h3 className={titleVariants({ size })}>
+            {`Hey ${userName ?? 'there'}, ${title}`}
+          </h3>
+        )}
         {subtitle && <span className={subtitleVariants({ size })}>{subtitle}</span>}
         {visibleActions.length > 0 && (
           <div className={actionsContainerVariants({ size, spacing })}>

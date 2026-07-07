@@ -1,9 +1,10 @@
 import type { NumericFormatProps } from 'react-number-format'
 import { Button } from '@repo/shadcn/ui/button'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { NumericFormat } from 'react-number-format'
 import { Input } from '../..'
+import { useControllableState } from '../../base/hooks'
 import { Icon } from '../../icons/icon-wrapper'
 
 export interface NumberInputProps extends Omit<NumericFormatProps, 'value' | 'onValueChange'> {
@@ -24,19 +25,37 @@ export interface NumberInputProps extends Omit<NumericFormatProps, 'value' | 'on
 export function InputNumber({ ref, stepper, thousandSeparator, placeholder, defaultValue, min = -Infinity, max = Infinity, onValueChange, fixedDecimalScale = false, decimalScale = 0, suffix, prefix, value: controlledValue, ...props }: NumberInputProps & { ref?: React.RefObject<HTMLInputElement | null> }) {
   const internalRef = useRef<HTMLInputElement>(null) // Create an internal ref
   const combinedRef = ref || internalRef // Use provided ref or internal ref
-  const [value, setValue] = useState<number | undefined>(controlledValue ?? defaultValue)
+
+  // Uncontrolled by default; the `value` prop takes over when provided. The
+  // shared hook replaces the prior prop-into-useState-plus-sync-effect pattern,
+  // so the displayed value tracks `controlledValue` without an effect.
+  // `onValueChange` is emitted explicitly (not via the hook's onChange) to keep
+  // NumericFormat as the single emit source for uncontrolled edits and avoid
+  // double-firing on programmatic value changes.
+  const [value, setValue] = useControllableState<number | undefined>(controlledValue, defaultValue)
+  const isControlled = controlledValue !== undefined
+
+  const step = stepper ?? 1
+  const clampValue = useCallback(
+    (n: number) => Math.min(Math.max(n, min), max),
+    [min, max],
+  )
 
   const handleIncrement = useCallback(() => {
-    setValue(prev =>
-      prev === undefined ? (stepper ?? 1) : Math.min(prev + (stepper ?? 1), max),
-    )
-  }, [stepper, max])
+    const next = clampValue((value ?? 0) + step)
+    if (isControlled)
+      onValueChange?.(next)
+    else
+      setValue(next)
+  }, [value, step, clampValue, onValueChange, isControlled, setValue])
 
   const handleDecrement = useCallback(() => {
-    setValue(prev =>
-      prev === undefined ? -(stepper ?? 1) : Math.max(prev - (stepper ?? 1), min),
-    )
-  }, [stepper, min])
+    const next = clampValue((value ?? 0) - step)
+    if (isControlled)
+      onValueChange?.(next)
+    else
+      setValue(next)
+  }, [value, step, clampValue, onValueChange, isControlled, setValue])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -56,37 +75,32 @@ export function InputNumber({ ref, stepper, thousandSeparator, placeholder, defa
     }
   }, [handleIncrement, handleDecrement, combinedRef])
 
-  useEffect(() => {
-    if (controlledValue !== undefined) {
-      setValue(controlledValue)
-    }
-  }, [controlledValue])
-
   const handleChange = (values: { value: string, floatValue: number | undefined }) => {
-    const newValue = values.floatValue === undefined ? undefined : values.floatValue
-    setValue(newValue)
-    if (onValueChange) {
-      onValueChange(newValue)
+    const newValue = values.floatValue
+    // Controlled: let the consumer drive the value; if they reject the update
+    // NumericFormat reverts to the controlled value instead of desyncing.
+    if (!isControlled) {
+      setValue(newValue)
     }
+    onValueChange?.(newValue)
   }
 
   const handleBlur = () => {
-    if (value !== undefined) {
-      if (value < min) {
-        setValue(min);
-        (ref as React.RefObject<HTMLInputElement>).current!.value = String(min)
-      }
-      else if (value > max) {
-        setValue(max);
-        (ref as React.RefObject<HTMLInputElement>).current!.value = String(max)
-      }
-    }
+    if (value === undefined)
+      return
+    const clamped = clampValue(value)
+    if (clamped === value)
+      return
+    if (isControlled)
+      onValueChange?.(clamped)
+    else
+      setValue(clamped)
   }
 
   return (
     <div className="flex items-center">
       <NumericFormat
-        value={value}
+        value={value ?? ''}
         onValueChange={handleChange}
         thousandSeparator={thousandSeparator}
         decimalScale={decimalScale}

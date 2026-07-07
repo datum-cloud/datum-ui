@@ -1,10 +1,10 @@
 import type { ColumnDef } from '@tanstack/react-table'
-import type { SelectionColumnOptions } from '../../data-table/types'
-import type { ActionItem } from '../../more-actions/types'
+import type { SelectionColumnOptions } from '../../data-table'
+import type { ActionItem } from '../../more-actions'
 import { createSelectionColumn, DataTableColumnHeader, DataTableRowActions } from '../../data-table'
 
 export interface ComposeOptions<TData> {
-  enableRowSelection?: boolean | SelectionColumnOptions
+  enableRowSelection?: boolean | SelectionColumnOptions<TData>
   enableSorting?: boolean
   rowActions?: (row: TData) => ActionItem<TData>[]
   rowActionsSheetTitle?: string

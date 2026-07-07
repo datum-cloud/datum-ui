@@ -1,7 +1,7 @@
 import type { Cell, ColumnDef, Row, RowSelectionState, SortingState } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
-import type { SelectionColumnOptions } from '../data-table/types'
-import type { ActionItem } from '../more-actions/types'
+import type { SelectionColumnOptions } from '../data-table'
+import type { ActionItem } from '../more-actions'
 
 export type DefaultExpanded = 'all' | 'none' | string[]
 
@@ -34,7 +34,7 @@ export interface GroupedTableProps<TData> {
   getRowId?: (row: TData, index: number) => string
 
   /** Prepend a checkbox column; pass options to customize. */
-  enableRowSelection?: boolean | SelectionColumnOptions
+  enableRowSelection?: boolean | SelectionColumnOptions<TData>
   rowSelection?: RowSelectionState
   onRowSelectionChange?: (selection: RowSelectionState) => void
 

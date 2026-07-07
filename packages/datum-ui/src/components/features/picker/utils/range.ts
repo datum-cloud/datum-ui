@@ -1,4 +1,4 @@
-import { differenceInCalendarDays } from 'date-fns'
+import { addDays, differenceInCalendarDays } from 'date-fns'
 
 /**
  * Number of calendar days between two dates. Always non-negative.
@@ -37,6 +37,9 @@ export function clampRange(
   if (isRangeValid(from, to, maxRange)) {
     return { from, to }
   }
-  const clampedTo = new Date(from.getTime() + maxRange * 24 * 60 * 60 * 1000)
+  // `addDays` shifts by calendar days (DST-aware), so the clamped span is
+  // exactly `maxRange` calendar days even across a fall-back/spring-forward —
+  // fixed 24h * ms arithmetic drifts by the DST offset.
+  const clampedTo = addDays(from, maxRange)
   return { from, to: clampedTo }
 }

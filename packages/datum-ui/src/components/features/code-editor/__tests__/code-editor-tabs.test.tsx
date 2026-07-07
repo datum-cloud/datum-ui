@@ -141,4 +141,34 @@ describe('codeEditorTabs', () => {
     expect(formatInput).toBeInTheDocument()
     expect(formatInput?.value).toBe('yaml')
   })
+
+  it('switches the active tab when the format prop changes', async () => {
+    const { rerender } = renderWithTheme(<CodeEditorTabs value="name: test" format="yaml" />)
+    expect(screen.getByRole('tab', { name: /yaml/i })).toHaveAttribute('data-state', 'active')
+
+    rerender(
+      <ThemeProvider>
+        <CodeEditorTabs value='{"name":"test"}' format="json" />
+      </ThemeProvider>,
+    )
+
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: /json/i })).toHaveAttribute('data-state', 'active')
+    })
+  })
+
+  it('propagates onChange even when content is transiently invalid', async () => {
+    const handleChange = vi.fn()
+    // Mock onChange appends " updated", turning valid JSON into invalid JSON.
+    renderWithTheme(
+      <CodeEditorTabs value='{"name":"test"}' format="json" onChange={handleChange} />,
+    )
+
+    const jsonEditor = screen.getByTestId('monaco-editor-json')
+    await userEvent.click(jsonEditor)
+
+    await waitFor(() => {
+      expect(handleChange).toHaveBeenCalledWith('{"name":"test"} updated', 'json')
+    })
+  })
 })

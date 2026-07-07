@@ -1,4 +1,4 @@
-import type { AutocompleteOption } from '../autocomplete/autocomplete.types'
+import type { AutocompleteOption } from '../autocomplete'
 import type { AutosearchProps } from './autosearch.types'
 import { AlertCircle, Loader2, X } from 'lucide-react'
 import * as React from 'react'
@@ -90,9 +90,12 @@ export function Autosearch({
         searchDebounceRef.current = null
       }
 
+      // A fresh query invalidates any previously-executed search until the
+      // debounce fires, so stale single-result payloads can't auto-select.
+      setSearchExecuted(false)
+
       if (!normalized) {
         onSearch?.('')
-        setSearchExecuted(false)
         return
       }
 
@@ -124,9 +127,9 @@ export function Autosearch({
       const option = options.find(o => o.value === selected) ?? null
       setPersistedOption(option)
       onValueChange?.(selected)
+      // setSearch('') already forwards onSearch('') and resets searchExecuted
+      // via onSearchChangeForEngine — calling them again would double-fire.
       picker.setSearch('')
-      onSearch?.('')
-      setSearchExecuted(false)
     },
     // Passing onSearchChange disables internal filtering — consumer owns the results list.
     onSearchChange: onSearchChangeForEngine,
@@ -138,7 +141,10 @@ export function Autosearch({
   // ===== Open / close logic =====
   // Open only when there's a search query, no value selected, and results > 1
   const hasSearch = Boolean(picker.search.trim())
-  const showResults = hasSearch && !value && options.length > 1
+  // Open the popover for multiple results, OR for a lone disabled result — that
+  // one option is not auto-selected, so it would otherwise be invisible.
+  const singleDisabledResult = options.length === 1 && Boolean(options[0]?.disabled)
+  const showResults = hasSearch && !value && (options.length > 1 || singleDisabledResult)
   const showNoResults = hasSearch && !loading && options.length === 0 && searchExecuted
 
   // Open popover when input has content
@@ -151,31 +157,31 @@ export function Autosearch({
     }
   }, [hasSearch, value])
 
-  // Auto-select single result
+  // Auto-select single result — only for the search the user actually ran.
+  // Gating on !loading && searchExecuted stops a stale/in-flight 1-item payload
+  // (e.g. a debounced earlier query) from committing a selection unprompted.
   React.useEffect(() => {
-    if (value || !hasSearch)
+    if (value || !hasSearch || loading || !searchExecuted)
       return
 
     if (options.length === 1 && !options[0]!.disabled) {
       const option = options[0]!
       setPersistedOption(option)
       onValueChange?.(option.value)
+      // setSearch('') forwards onSearch('') and resets searchExecuted.
       picker.setSearch('')
-      onSearch?.('')
-      setSearchExecuted(false)
       setOpen(false)
     }
-  }, [options, value, hasSearch]) // eslint-disable-line react/exhaustive-deps
+  }, [options, value, hasSearch, loading, searchExecuted]) // eslint-disable-line react/exhaustive-deps
 
   // ===== Clear =====
   const handleClear = React.useCallback(() => {
     setPersistedOption(null)
+    // setSearch('') forwards onSearch('') and resets searchExecuted.
     picker.setSearch('')
-    onSearch?.('')
     setOpen(false)
-    setSearchExecuted(false)
     onValueChange?.('')
-  }, [onValueChange, onSearch, picker])
+  }, [onValueChange, picker])
 
   // ===== Derived state =====
   const selectedOption = options.find(opt => opt.value === value) ?? persistedOption

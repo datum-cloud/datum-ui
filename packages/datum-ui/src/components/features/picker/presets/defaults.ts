@@ -11,17 +11,24 @@ import {
   subMinutes,
 } from 'date-fns'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
+import { endOfDayInTz, startOfDayInTz } from '../utils/timezone'
 
-function startOfDayInTz(d: Date, tz: string): Date {
-  const zoned = toZonedTime(d, tz)
-  zoned.setHours(0, 0, 0, 0)
-  return fromZonedTime(zoned, tz)
-}
-
-function endOfDayInTz(d: Date, tz: string): Date {
-  const zoned = toZonedTime(d, tz)
-  zoned.setHours(23, 59, 59, 999)
-  return fromZonedTime(zoned, tz)
+/**
+ * Compute a `{ from, to }` window in `tz` wall-clock space using date-fns
+ * boundary helpers, then project both ends back to real UTC instants. Keeps
+ * calendar-unit presets (week/month/year) timezone-aware, matching the
+ * day-granularity presets.
+ */
+function zonedWindow(
+  tz: string,
+  start: (d: Date) => Date,
+  end: (d: Date) => Date,
+): { from: Date, to: Date } {
+  const zonedNow = toZonedTime(new Date(), tz)
+  return {
+    from: fromZonedTime(start(zonedNow), tz),
+    to: fromZonedTime(end(zonedNow), tz),
+  }
 }
 
 /**
@@ -49,13 +56,11 @@ export const DATE_PRESETS: readonly PickerPreset[] = [
   {
     key: 'this-week',
     label: 'This Week',
-    getRange: () => {
-      const now = new Date()
-      return {
-        from: startOfWeek(now, { weekStartsOn: 1 }),
-        to: endOfWeek(now, { weekStartsOn: 1 }),
-      }
-    },
+    getRange: tz => zonedWindow(
+      tz,
+      d => startOfWeek(d, { weekStartsOn: 1 }),
+      d => endOfWeek(d, { weekStartsOn: 1 }),
+    ),
   },
   {
     key: 'last-7-days',
@@ -69,10 +74,7 @@ export const DATE_PRESETS: readonly PickerPreset[] = [
   {
     key: 'this-month',
     label: 'This Month',
-    getRange: () => {
-      const now = new Date()
-      return { from: startOfMonth(now), to: endOfMonth(now) }
-    },
+    getRange: tz => zonedWindow(tz, startOfMonth, endOfMonth),
   },
   {
     key: 'last-30-days',
@@ -86,10 +88,7 @@ export const DATE_PRESETS: readonly PickerPreset[] = [
   {
     key: 'this-year',
     label: 'This Year',
-    getRange: () => {
-      const now = new Date()
-      return { from: startOfYear(now), to: endOfYear(now) }
-    },
+    getRange: tz => zonedWindow(tz, startOfYear, endOfYear),
   },
 ] as const
 
