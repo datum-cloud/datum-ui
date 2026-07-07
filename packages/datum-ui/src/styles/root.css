@@ -30,5 +30,9 @@
 /* Shadcn/ui base variables and component styles */
 @import '@repo/shadcn/styles/shadcn.css';
 
+/* Custom keyframes/utilities used by shadcn components
+ * (.animate-collapsible-*, .tooltip-content, .popover-content-width-full). */
+@import '@repo/shadcn/styles/animations.css';
+
 /* Theme overrides — always loaded after shadcn */
 @import './themes/alpha.css';

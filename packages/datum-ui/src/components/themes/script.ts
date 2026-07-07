@@ -7,16 +7,22 @@ export function script(attribute: string | string[], storageKey: string, default
 
   function updateDOM(theme: string) {
     const attributes = Array.isArray(attribute) ? attribute : [attribute]
+    // Mirror applyTheme: map the resolved theme through `value` for every
+    // attribute kind (class and data-*), not just the class branch.
+    const name = value && value[theme] ? value[theme] : theme
 
     attributes.forEach((attr) => {
       const isClass = attr === 'class'
       const classes = isClass && value ? themes.map(t => value[t] || t) : themes
       if (isClass) {
-        el.classList.remove(...classes)
-        el.classList.add(value && value[theme] ? value[theme] : theme)
+        // Split on spaces so multi-token values (e.g. 'dark high-contrast')
+        // do not throw InvalidCharacterError from classList add/remove.
+        el.classList.remove(...classes.flatMap(c => c.split(' ')))
+        if (name)
+          el.classList.add(...name.split(' '))
       }
       else {
-        el.setAttribute(attr, theme)
+        el.setAttribute(attr, name)
       }
     })
 
