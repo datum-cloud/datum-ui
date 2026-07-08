@@ -1,6 +1,6 @@
 import type { PresetConfig, TimeRangeValue } from './types'
-import { useDeprecationWarning } from '../picker/internal/use-deprecation-warning'
-import { DateTimeRangePicker } from '../picker/wrappers/date-time-range-picker'
+import { useDeprecationWarning } from '../_shared'
+import { DateTimeRangePicker } from '../picker'
 
 /**
  * @deprecated Use `DateTimeRangePickerProps` (or `TimeRangePickerProps` for

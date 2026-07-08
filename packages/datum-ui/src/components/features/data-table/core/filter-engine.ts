@@ -1,6 +1,4 @@
-import type { FilterStrategy } from '../types'
-
-type FilterFn = (cellValue: unknown, filterValue: unknown) => boolean
+import type { FilterFn, FilterStrategy } from '../types'
 
 /**
  * Resolve a dot-path on an object (e.g. "status.registrationApproval").

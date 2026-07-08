@@ -72,4 +72,24 @@ describe('useTransferState', () => {
 
     expect(result.current.sourceGroups).toEqual(['Group A', 'Group B'])
   })
+
+  it('treats missing group values as ungrouped, not a literal "undefined" group', () => {
+    const mixed: TestItem[] = [
+      { id: '1', name: 'Item 1', group: 'Group A' },
+      { id: '2', name: 'Item 2' },
+    ]
+
+    const { result } = renderHook(() =>
+      useTransferState({
+        items: mixed,
+        value: [],
+        itemKey: 'id',
+        itemLabel: 'name',
+        itemGroup: 'group',
+      }),
+    )
+
+    expect(result.current.sourceGroups).toEqual(['Group A'])
+    expect(result.current.sourceItems.find(i => i.key === '2')?.group).toBeUndefined()
+  })
 })

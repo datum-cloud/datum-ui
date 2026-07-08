@@ -74,11 +74,45 @@ describe('jsonToYaml', () => {
 })
 
 describe('yamlToJson', () => {
-  it('converts valid YAML to JSON', () => {
+  it('converts valid YAML to JSON preserving scalar types', () => {
     const yaml = 'name: test\nage: 30'
     const result = yamlToJson(yaml)
     const parsed = JSON.parse(result)
-    expect(parsed).toEqual({ name: 'test', age: '30' })
+    // Numbers, booleans, and null keep their native types (not coerced to
+    // strings) so downstream config consumers receive correctly-typed values.
+    expect(parsed).toEqual({ name: 'test', age: 30 })
+  })
+
+  it('preserves booleans and null as native JSON types', () => {
+    const yaml = 'port: 8080\nenabled: true\nextra: null'
+    const parsed = JSON.parse(yamlToJson(yaml))
+    expect(parsed).toEqual({ port: 8080, enabled: true, extra: null })
+  })
+
+  it('preserves scalars that would lose fidelity as their original strings', () => {
+    // Regression (CR-002): the plain default schema silently corrupts these
+    // numerics on round-trip. They must be preserved losslessly as strings.
+    const yaml = [
+      'id: 12345678901234567890', // > 2^53, precision loss -> ...567000
+      'version: 1.0', // decimal normalizes to 1
+      'mode: 0755', // leading zero normalizes to 755
+      'rate: 1e3', // exponent normalizes to 1000
+    ].join('\n')
+    const parsed = JSON.parse(yamlToJson(yaml))
+    expect(parsed).toEqual({
+      id: '12345678901234567890',
+      version: '1.0',
+      mode: '0755',
+      rate: '1e3',
+    })
+  })
+
+  it('keeps genuine numbers native inside a nested map', () => {
+    const yaml = 'server:\n  port: 8080\n  ratio: 3.14\n  retries: -5\n  name: api'
+    const parsed = JSON.parse(yamlToJson(yaml))
+    expect(parsed).toEqual({
+      server: { port: 8080, ratio: 3.14, retries: -5, name: 'api' },
+    })
   })
 
   it('throws error for invalid YAML', () => {

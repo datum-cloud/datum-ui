@@ -4,27 +4,9 @@ import type { DateRange } from 'react-day-picker'
 import { cva } from 'class-variance-authority'
 
 /**
- * @deprecated Internal constant for the legacy CalendarDatePicker shim.
- * Removed in 1.0.0 alongside `@datum-cloud/datum-ui/calendar-date-picker`.
- */
-export const months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-]
-
-/**
- * @deprecated Internal cva for the legacy CalendarDatePicker trigger.
- * Removed in 1.0.0 alongside `@datum-cloud/datum-ui/calendar-date-picker`.
+ * @deprecated Internal cva retained only to type the legacy
+ * `CalendarDatePicker` `variant` prop. Removed in 1.0.0 alongside
+ * `@datum-cloud/datum-ui/calendar-date-picker`.
  */
 export const multiSelectVariants = cva(
   'flex font-normal shadow-none items-center justify-center whitespace-nowrap rounded-md text-sm text-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',

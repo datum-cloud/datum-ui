@@ -1,25 +1,45 @@
 name: Release
 
+# Release runs only after the CI workflow has completed successfully on a push
+# to `main`. This gates npm publish behind green lint/typecheck/test/build
+# (STRUCT-073) and lets us publish the exact artifact CI validated (STRUCT-081).
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: true
 
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    # Only release for a successful CI run triggered by a push to main.
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main'
     permissions:
       contents: write
       pull-requests: write
       id-token: write
+      # Cross-run artifact download (actions/download-artifact with run-id +
+      # github-token) needs actions:read. Once a permissions block is declared,
+      # every unlisted scope defaults to none, so this must be explicit or the
+      # "Download validated build artifact" step 403s. (CR-001 / STRUCT-081)
+      actions: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          # Full history (all branches) so `pnpm changeset status` can diff
+          # against the `main` baseBranch when generating the PR body; a shallow
+          # detached checkout errors and silently degrades the body. (CR-007 / STRUCT-076)
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
 
@@ -32,26 +52,34 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build packages
-        run: pnpm build
+      # Publish the exact build CI produced and validated instead of rebuilding.
+      - name: Download validated build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: datum-ui-dist
+          path: packages/datum-ui/dist/
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate PR description
         id: pr-body
         run: |
           BODY=$(.github/scripts/generate-version-pr-body.sh)
-          echo "body<<EOF" >> $GITHUB_OUTPUT
-          echo "$BODY" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-          
+          {
+            echo "body<<EOF"
+            echo "$BODY"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
           # Determine title suffix based on bump type
           if grep -q "Release Type: \`major\`" <<< "$BODY"; then
-            echo "title-suffix=(major)" >> $GITHUB_OUTPUT
+            echo "title-suffix=(major)" >> "$GITHUB_OUTPUT"
           elif grep -q "Release Type: \`minor\`" <<< "$BODY"; then
-            echo "title-suffix=(minor)" >> $GITHUB_OUTPUT
+            echo "title-suffix=(minor)" >> "$GITHUB_OUTPUT"
           elif grep -q "Release Type: \`patch\`" <<< "$BODY"; then
-            echo "title-suffix=(patch)" >> $GITHUB_OUTPUT
+            echo "title-suffix=(patch)" >> "$GITHUB_OUTPUT"
           else
-            echo "title-suffix=" >> $GITHUB_OUTPUT
+            echo "title-suffix=" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Create Release Pull Request or Publish
@@ -68,10 +96,13 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # Pass the body through the environment (never interpolated into the shell
+      # command) so backticks/quotes in the changelog can't be executed. (BUG-107)
       - name: Update PR description
         if: steps.changesets.outputs.pullRequestNumber != ''
-        run: |
-          gh pr edit ${{ steps.changesets.outputs.pullRequestNumber }} \
-            --body "${{ steps.pr-body.outputs.body }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BODY: ${{ steps.pr-body.outputs.body }}
+          PR_NUMBER: ${{ steps.changesets.outputs.pullRequestNumber }}
+        run: |
+          gh pr edit "$PR_NUMBER" --body "$PR_BODY"

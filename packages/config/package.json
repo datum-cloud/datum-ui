@@ -9,13 +9,18 @@
     "./tsconfig/react-app": "./tsconfig/react-app.json",
     "./eslint": "./eslint/index.ts"
   },
-  "devDependencies": {
+  "dependencies": {
     "@antfu/eslint-config": "^9.0.0",
     "@eslint-react/eslint-plugin": "^5.9.1",
-    "eslint": "^10.5.0",
     "eslint-plugin-format": "^2.0.1",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.3",
+    "eslint-plugin-react-refresh": "^0.5.3"
+  },
+  "peerDependencies": {
+    "eslint": "^10.5.0"
+  },
+  "devDependencies": {
+    "eslint": "^10.5.0",
     "typescript": "^6.0.3"
   }
 }

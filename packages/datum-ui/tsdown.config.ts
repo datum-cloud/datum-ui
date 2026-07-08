@@ -1,98 +1,12 @@
 import { defineConfig } from 'tsdown'
+import { buildTsdownEntry } from './scripts/exports-manifest.mjs'
 
 export default defineConfig({
-  entry: {
-    // Root barrel (convenience — requires all peer deps)
-    'index': 'src/index.ts',
-
-    // Theme
-    'theme/index': 'src/components/themes/index.ts',
-
-    // Hooks
-    'hooks/index': 'src/hooks/index.ts',
-
-    // Icons
-    'icons/index': 'src/components/icons/index.ts',
-
-    // Utils
-    'utils/index': 'src/utils/index.ts',
-
-    // Base components
-    'alert/index': 'src/components/base/alert/index.ts',
-    'avatar/index': 'src/components/base/avatar/index.ts',
-    'badge/index': 'src/components/base/badge/index.ts',
-    'breadcrumb/index': 'src/components/base/breadcrumb/index.ts',
-    'button/index': 'src/components/base/button/index.tsx',
-    'button-group/index': 'src/components/base/button-group/index.ts',
-    'calendar/index': 'src/components/base/calendar/index.ts',
-    'card/index': 'src/components/base/card/index.ts',
-    'checkbox/index': 'src/components/base/checkbox/index.ts',
-    'collapsible/index': 'src/components/base/collapsible/index.ts',
-    'command/index': 'src/components/base/command/index.ts',
-    'dialog/index': 'src/components/base/dialog/index.ts',
-    'hover-card/index': 'src/components/base/hover-card/index.ts',
-    'input/index': 'src/components/base/input/index.ts',
-    'input-group/index': 'src/components/base/input-group/index.ts',
-    'label/index': 'src/components/base/label/index.ts',
-    'mobile-sheet/index': 'src/components/base/mobile-sheet/index.ts',
-    'popover/index': 'src/components/base/popover/index.ts',
-    'radio-group/index': 'src/components/base/radio-group/index.ts',
-    'responsive-dropdown/index': 'src/components/base/responsive-dropdown/index.ts',
-    'responsive-popover/index': 'src/components/base/responsive-popover/index.ts',
-    'select/index': 'src/components/base/select/index.ts',
-    'separator/index': 'src/components/base/separator/index.ts',
-    'sheet/index': 'src/components/base/sheet/index.ts',
-    'skeleton/index': 'src/components/base/skeleton/index.ts',
-    'spinner/index': 'src/components/base/spinner/index.ts',
-    'switch/index': 'src/components/base/switch/index.ts',
-    'table/index': 'src/components/base/table/index.ts',
-    'tabs/index': 'src/components/base/tabs/index.ts',
-    'textarea/index': 'src/components/base/textarea/index.ts',
-    'tooltip/index': 'src/components/base/tooltip/index.ts',
-    'typography/index': 'src/components/base/typography/index.ts',
-    'visually-hidden/index': 'src/components/base/visuallyhidden/index.ts',
-
-    // Grouped features (shared heavy deps)
-    'chart/index': 'src/components/base/chart/index.ts',
-    'code-editor/index': 'src/components/features/code-editor/index.ts',
-    'date-picker/index': 'src/components/features/date-picker/index.ts',
-    'dropzone/index': 'src/components/features/dropzone/index.ts',
-    'form/index': 'src/components/features/form/index.ts',
-    'form/adapters/conform/index': 'src/components/features/form/adapters/conform/index.ts',
-    'form/adapters/rhf/index': 'src/components/features/form/adapters/rhf/index.ts',
-    'form/stepper/index': 'src/components/features/form/stepper/index.ts',
-    'map/index': 'src/exports/map.ts',
-
-    // Standalone features
-    'autocomplete/index': 'src/components/features/autocomplete/index.ts',
-    'autosearch/index': 'src/components/features/autosearch/index.ts',
-    'avatar-stack/index': 'src/components/features/avatar-stack/index.ts',
-    'dropdown/index': 'src/components/features/dropdown/index.ts',
-    'empty-content/index': 'src/components/features/empty-content/index.ts',
-    'grid/index': 'src/components/features/grid/index.ts',
-    'input-number/index': 'src/components/features/input-number/index.ts',
-    'input-with-addons/index': 'src/components/features/input-with-addons/index.ts',
-    'loader-overlay/index': 'src/components/features/loader-overlay/index.ts',
-    'more-actions/index': 'src/components/features/more-actions/index.ts',
-    'multi-select/index': 'src/components/features/multi-select/index.ts',
-    'nprogress/index': 'src/components/features/nprogress/index.ts',
-    'page-title/index': 'src/components/features/page-title/index.ts',
-    'sidebar/index': 'src/components/base/sidebar/index.ts',
-    'app-navigation/index': 'src/components/features/app-navigation/index.ts',
-    'logo/index': 'src/components/features/logo/index.ts',
-    'logo/themed/index': 'src/components/features/logo/themed/index.ts',
-    'stepper/index': 'src/components/features/stepper/index.ts',
-    'tag-input/index': 'src/components/features/tag-input/index.ts',
-    'task-queue/index': 'src/components/features/task-queue/index.ts',
-    'toast/index': 'src/components/features/toast/index.ts',
-    'data-table/index': 'src/components/features/data-table/index.ts',
-    'rich-text-editor/index': 'src/components/features/rich-text-editor/index.ts',
-    'date-time-picker/index': 'src/components/features/date-time-picker/index.ts',
-    'picker/index': 'src/components/features/picker/index.ts',
-    'time-picker/index': 'src/components/features/time-picker/index.ts',
-    'transfer/index': 'src/components/features/transfer/index.ts',
-    'grouped-table/index': 'src/components/features/grouped-table/index.ts',
-  },
+  // The entry map is DERIVED from scripts/exports-manifest.mjs — the single
+  // source of truth shared with the package.json `exports` map. To add / remove
+  // an entry point, edit the manifest (then run `pnpm gen:exports`), never this
+  // file. See scripts/exports-manifest.mjs for the derivation rules.
+  entry: buildTsdownEntry(),
   format: ['esm'],
   dts: false,
   deps: {
@@ -129,10 +43,6 @@ export default defineConfig({
       /^recharts/,
       'react-hook-form',
       '@hookform/resolvers',
-      'react-resizable-panels',
-      'embla-carousel-react',
-      'input-otp',
-      'vaul',
       // TipTap optional peer deps
       '@tiptap/react',
       '@tiptap/starter-kit',

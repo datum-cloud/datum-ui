@@ -6,6 +6,11 @@ import { LoaderOverlay } from '../loader-overlay'
 
 interface TriggerProps {
   selectedOption: AutocompleteOption | undefined
+  /**
+   * Raw string for a creatable value not present in `options`. Rendered as plain
+   * text so `renderValue` is never called with a fabricated partial option.
+   */
+  createdValue?: string
   renderValue?: (option: any) => React.ReactNode
   placeholder: string
   loading: boolean
@@ -15,16 +20,18 @@ interface TriggerProps {
   className?: string
 }
 
-function Trigger({ ref, selectedOption, renderValue, placeholder, loading, disabled, open, id, className, ...rest }: TriggerProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
+function Trigger({ ref, selectedOption, createdValue, renderValue, placeholder, loading, disabled, open, id, className, ...rest }: TriggerProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
   let displayContent: React.ReactNode
-  if (!selectedOption) {
-    displayContent = <span className="text-muted-foreground">{placeholder}</span>
+  if (selectedOption) {
+    displayContent = renderValue
+      ? renderValue(selectedOption)
+      : <span className="truncate">{selectedOption.label}</span>
   }
-  else if (renderValue) {
-    displayContent = renderValue(selectedOption)
+  else if (createdValue) {
+    displayContent = <span className="truncate">{createdValue}</span>
   }
   else {
-    displayContent = <span className="truncate">{selectedOption.label}</span>
+    displayContent = <span className="text-muted-foreground">{placeholder}</span>
   }
 
   return (

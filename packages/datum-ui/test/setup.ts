@@ -1,19 +1,12 @@
+import { installMatchMedia } from './viewport'
 import '@testing-library/jest-dom/vitest'
 
-// jsdom does not implement window.matchMedia — provide a mock
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: (query: string) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: () => {},
-    removeListener: () => {},
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    dispatchEvent: () => false,
-  }),
-})
+// jsdom does not implement window.matchMedia — install the shared mock that
+// evaluates media queries against a mutable viewport width. Tests drive it via
+// setViewport()/resetViewport() from test/viewport.ts. The default is a desktop
+// width so responsive components render in desktop mode (not mobile) for tests
+// that never touch the viewport; see test/viewport.ts for the rationale.
+installMatchMedia()
 
 // jsdom does not implement ResizeObserver — provide a mock
 globalThis.ResizeObserver = class ResizeObserver {

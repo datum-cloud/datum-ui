@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "declaration": true,
+    "declarationMap": false,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "outDir": "./.dts-tmp",
+    "sourceMap": false,
+    "skipLibCheck": true
+  },
+  "include": ["ui", "hooks", "lib"]
+}

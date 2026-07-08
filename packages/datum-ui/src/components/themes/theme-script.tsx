@@ -22,7 +22,7 @@ export const ThemeScript = React.memo(({
   attribute = 'data-theme',
   enableSystem = true,
   enableColorScheme = true,
-  defaultTheme = 'system',
+  defaultTheme = enableSystem ? 'system' : 'light',
   value,
   themes = ['light', 'dark'],
   nonce,

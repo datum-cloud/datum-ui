@@ -5,13 +5,22 @@ packages:
 # Build scripts allowlist (pnpm 11 home for the former pnpm.onlyBuiltDependencies).
 # Only lefthook needs its install script (git hooks); the rest are not required.
 allowBuilds:
+  '@swc/core': false
   core-js: false
   esbuild: false
   lefthook: true
   sharp: false
+  unrs-resolver: false
 
 # Security overrides
-# undici <=7.27.0 has a critical CRLF Injection vulnerability. It is pulled in
-# transitively via jsdom (test-only). Pin to a patched release.
+# All entries pin transitive, dev/build-only dependencies to patched releases.
+# None ship to consumers (the published package only carries runtime deps).
+# undici <=7.27.0: critical CRLF Injection, pulled in via jsdom (test-only).
+# The rest are dev tooling pulled in via @antfu/eslint-config / @eslint-react
+# and the vite/storybook build; scoped ranges bump only the vulnerable versions.
 overrides:
   undici: "^7.28.0"
+  "esbuild@>=0.28.0 <0.28.1": "0.28.1"
+  "vite@>=7.0.0 <7.3.5": "7.3.6"
+  "brace-expansion@>=5.0.0 <5.0.7": "5.0.7"
+  "postcss-selector-parser@>=7.0.0 <7.1.2": "7.1.2"

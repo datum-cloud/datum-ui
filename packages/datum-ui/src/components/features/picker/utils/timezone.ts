@@ -1,5 +1,10 @@
 import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz'
 
+// Canonical tz-aware day-boundary helpers live in the neutral shared module so
+// sibling features (legacy time-range-picker) can consume them without reaching
+// into picker internals. Re-exported here for picker-internal consumers.
+export { endOfDayInTz, startOfDayInTz } from '../../_shared/timezone'
+
 /** Browser-detected IANA timezone, falling back to UTC if unavailable. */
 export function getBrowserTimezone(): string {
   try {
@@ -57,8 +62,12 @@ export function formatTimezoneLabel(timezone: string): string {
  *
  * Use this to feed Calendar / time slot UI that reads `getHours()` etc.
  *
- * INVARIANT: `zonedDateToIso(isoToZonedDate(iso, tz), tz) === iso` for any
- * valid ISO and tz.
+ * Round-trips exactly outside DST transition windows:
+ * `zonedDateToIso(isoToZonedDate(iso, tz), tz) === iso`. Inside a DST
+ * fall-back the wall-clock hour is ambiguous (it occurs twice), so the
+ * round-trip may shift the resulting instant by the DST offset. Callers that
+ * must survive the ambiguous hour should key off the original ISO, not the
+ * re-encoded one.
  */
 export function isoToZonedDate(iso: string, timezone: string): Date {
   return toZonedTime(new Date(iso), timezone)

@@ -22,6 +22,11 @@ export interface OptionPickerGroup<T extends OptionPickerOption = OptionPickerOp
  * Detect whether an options prop is grouped.
  *
  * Treats empty arrays as flat (zero-option lists do not need group headings).
+ *
+ * A group carries an `options` array and, unlike an option, has no `value`.
+ * Checking for the *absence* of `value` (plus an actual `options` array) avoids
+ * misclassifying flat custom option types that happen to declare their own
+ * `options` field as metadata.
  */
 export function isGroupedOptions<T extends OptionPickerOption>(
   options: T[] | OptionPickerGroup<T>[],
@@ -29,7 +34,11 @@ export function isGroupedOptions<T extends OptionPickerOption>(
   if (options.length === 0)
     return false
   const first = options[0]!
-  return 'options' in first
+  return (
+    'options' in first
+    && Array.isArray((first as { options?: unknown }).options)
+    && !('value' in first)
+  )
 }
 
 /** Internal helper — flatten grouped or flat options into a single array. */
@@ -47,6 +56,16 @@ export interface UseOptionPickerArgs<
 > {
   options: T[] | OptionPickerGroup<T>[]
   multiple: Multiple
+  /**
+   * Extract the emitted/selected id from an option. Default: `option.value`.
+   * Lets the engine be reused for custom option shapes (see Transfer).
+   */
+  getOptionValue?: (option: T) => string
+  /**
+   * Extract the display + internal-filter text from an option.
+   * Default: `option.label`.
+   */
+  getOptionLabel?: (option: T) => string
   value?: Multiple extends true ? string[] : string
   defaultValue?: Multiple extends true ? string[] : string
   onValueChange?: Multiple extends true
@@ -76,7 +95,20 @@ export interface UseOptionPickerReturn<T extends OptionPickerOption> {
   toggle: (value: string) => void
   clear: () => void
   hasSelection: boolean
+  /**
+   * The resolved selected ids — the single source of truth for selection.
+   * Consumers should read this instead of maintaining a parallel mirror.
+   */
+  selection: string[]
+  /**
+   * The resolved selected options (subset of `options`), in selection order.
+   * Ids present in `selection` but absent from `options` (e.g. freshly created
+   * values) are omitted.
+   */
+  selectedOptions: T[]
   creatableValue: string | null
+  /** Custom renderer for the creatable row label, forwarded from args. */
+  creatableLabel?: (search: string) => ReactNode
   listRef: RefObject<HTMLDivElement | null>
 }
 

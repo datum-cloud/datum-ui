@@ -1,54 +1,22 @@
 // app/modules/datum-ui/components/time-range-picker/utils/timezone.ts
+//
+// Consolidated onto the canonical picker timezone module (STRUCT-011). The
+// offset/label/browser helpers and the ISO<->zoned conversions are re-used
+// from `picker/utils/timezone`; only the `TimezoneOption`-shaped helpers and
+// the `datetime-local` input-string helpers (unique to this deprecated shim)
+// live here.
 import type { TimezoneOption } from '../types'
 import { format, parse } from 'date-fns'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
+import {
+  formatTimezoneLabel,
+  getBrowserTimezone,
+  getTimezoneOffset,
+  isoToZonedDate,
+  zonedDateToIso,
+} from '../../picker/utils/timezone'
 
-/**
- * Get the UTC offset string for a timezone
- * @example getTimezoneOffset('Asia/Jakarta') => '+07:00'
- */
-export function getTimezoneOffset(timezone: string): string {
-  try {
-    const now = new Date()
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: timezone,
-      timeZoneName: 'shortOffset',
-    })
-
-    const parts = formatter.formatToParts(now)
-    const offsetPart = parts.find(p => p.type === 'timeZoneName')
-
-    if (offsetPart) {
-      // Convert "GMT+7" to "+07:00" format
-      const match = offsetPart.value.match(/GMT([+-])(\d+)(?::(\d+))?/)
-      if (match) {
-        const sign = match[1]!
-        const hours = match[2]!.padStart(2, '0')
-        const minutes = match[3]?.padStart(2, '0') ?? '00'
-        return `${sign}${hours}:${minutes}`
-      }
-      // Handle "GMT" (UTC)
-      if (offsetPart.value === 'GMT') {
-        return '+00:00'
-      }
-    }
-  }
-  catch {
-    // Fall through
-  }
-
-  return '+00:00'
-}
-
-/**
- * Format a timezone for display
- * @example formatTimezoneLabel('Asia/Jakarta') => 'Asia/Jakarta (UTC+07:00)'
- */
-export function formatTimezoneLabel(timezone: string): string {
-  const offset = getTimezoneOffset(timezone)
-  const displayName = timezone.replace(/_/g, ' ')
-  return `${displayName} (UTC${offset})`
-}
+export { formatTimezoneLabel, getBrowserTimezone, getTimezoneOffset }
 
 /**
  * Create a TimezoneOption from a timezone string
@@ -101,22 +69,6 @@ export function getShortTimezoneDisplay(timezone: string): string {
   return `UTC${offset}`
 }
 
-// ============================================
-// TIMEZONE CONVERSION HELPERS
-// ============================================
-
-/**
- * Get the browser's timezone
- */
-export function getBrowserTimezone(): string {
-  try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone
-  }
-  catch {
-    return 'UTC'
-  }
-}
-
 /**
  * Convert a UTC Date to a local datetime-local input string in the given timezone
  * @example utcToLocalInputString(new Date('2026-01-16T04:00:00Z'), 'Asia/Jakarta') => '2026-01-16T11:00'
@@ -141,16 +93,14 @@ export function localInputStringToUtc(localString: string, timezone: string): Da
  * Convert a UTC ISO string to a Date for display in user's timezone
  */
 export function utcStringToZonedDate(utcString: string, timezone: string): Date {
-  const utcDate = new Date(utcString)
-  return toZonedTime(utcDate, timezone)
+  return isoToZonedDate(utcString, timezone)
 }
 
 /**
  * Convert a zoned Date to UTC ISO string
  */
 export function zonedDateToUtcString(zonedDate: Date, timezone: string): string {
-  const utcDate = fromZonedTime(zonedDate, timezone)
-  return utcDate.toISOString()
+  return zonedDateToIso(zonedDate, timezone)
 }
 
 /**

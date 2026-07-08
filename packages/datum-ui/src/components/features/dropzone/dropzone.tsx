@@ -58,10 +58,11 @@ export function Dropzone({
     onError,
     disabled,
     onDrop: (acceptedFiles, fileRejections, event) => {
+      // Surface the first rejection (if any) without discarding accepted files:
+      // a mixed drop should still deliver the valid files to the consumer.
       if (fileRejections.length > 0) {
         const message = fileRejections.at(0)?.errors.at(0)?.message
         onError?.(new Error(message))
-        return
       }
 
       onDrop?.(acceptedFiles, fileRejections, event)
@@ -130,7 +131,8 @@ export function DropzoneContent({
 }: DropzoneContentProps) {
   const { src } = useDropzoneContext()
 
-  if (!src) {
+  // Treat an empty array as "no files": the empty state should show instead.
+  if (!src || src.length === 0) {
     return null
   }
 
@@ -173,7 +175,8 @@ export function DropzoneEmptyState({
 }: DropzoneEmptyStateProps) {
   const { src, accept, maxSize, minSize } = useDropzoneContext()
 
-  if (src) {
+  // Treat an empty array as "no files": the empty state should still show.
+  if (src && src.length > 0) {
     return null
   }
 
@@ -184,19 +187,26 @@ export function DropzoneEmptyState({
   let caption = ''
 
   if (showCaption) {
-    if (accept) {
-      caption += 'Accepts '
-      caption += new Intl.ListFormat('en').format(Object.keys(accept))
-    }
-
+    let sizeClause = ''
     if (minSize && maxSize) {
-      caption += ` between ${renderBytes(minSize)} and ${renderBytes(maxSize)}`
+      sizeClause = `between ${renderBytes(minSize)} and ${renderBytes(maxSize)}`
     }
     else if (minSize) {
-      caption += ` at least ${renderBytes(minSize)}`
+      sizeClause = `at least ${renderBytes(minSize)}`
     }
     else if (maxSize) {
-      caption += ` less than ${renderBytes(maxSize)}`
+      sizeClause = `less than ${renderBytes(maxSize)}`
+    }
+
+    if (accept) {
+      caption = `Accepts ${new Intl.ListFormat('en').format(Object.keys(accept))}`
+      if (sizeClause) {
+        caption += ` ${sizeClause}`
+      }
+    }
+    else if (sizeClause) {
+      // No accepted-types prefix: give the size clause a grammatical subject.
+      caption = `File size must be ${sizeClause}`
     }
   }
 

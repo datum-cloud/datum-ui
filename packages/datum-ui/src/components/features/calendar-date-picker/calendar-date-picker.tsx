@@ -1,6 +1,6 @@
 import type { CalendarDatePickerProps } from './types'
-import { useDeprecationWarning } from '../picker/internal/use-deprecation-warning'
-import { DateRangePicker } from '../picker/wrappers/date-range-picker'
+import { useDeprecationWarning } from '../_shared'
+import { DateRangePicker } from '../picker'
 
 /**
  * @deprecated Use `DateRangePicker` (or `DatePicker`) from
@@ -30,8 +30,11 @@ export function CalendarDatePicker({
 }: CalendarDatePickerProps) {
   useDeprecationWarning('CalendarDatePicker', 'DateRangePicker')
 
-  const value = date && date.from && date.to
-    ? { from: date.from, to: date.to }
+  // A from-only value (valid per CalendarDatePickerProps, e.g. single-date
+  // usage with numberOfMonths={1}) is rendered as a same-day range so the
+  // selected date is shown instead of the empty placeholder (BUG-140).
+  const value = date?.from
+    ? { from: date.from, to: date.to ?? date.from }
     : null
 
   return (

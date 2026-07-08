@@ -62,6 +62,9 @@ jobs:
 
       - run: pnpm test
 
+      - name: Component test/story coverage matrix
+        run: pnpm --filter @datum-cloud/datum-ui check:coverage-matrix
+
   build:
     name: Build
     runs-on: ubuntu-latest

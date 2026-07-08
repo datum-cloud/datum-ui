@@ -1,6 +1,12 @@
+import type { HeadlessToastVariant } from './headless-toast'
+
 export interface Toast {
-  description: string
   id: string
   title?: string
-  type: 'message' | 'success' | 'error'
+  description?: string
+  /**
+   * Derived from `HeadlessToastVariant` so the exported contract cannot drift
+   * from the runtime toast API (see `toast.ts` / `headless-toast.tsx`).
+   */
+  type: HeadlessToastVariant
 }

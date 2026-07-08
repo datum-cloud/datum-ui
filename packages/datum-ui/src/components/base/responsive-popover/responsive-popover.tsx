@@ -1,10 +1,8 @@
-import type { KeyboardEvent as ReactKeyboardEvent, MouseEvent as ReactMouseEvent, ReactNode } from 'react'
-import { Slot } from '@radix-ui/react-slot'
-import { Popover, PopoverContent, PopoverTrigger } from '@repo/shadcn/ui/popover'
-import { isValidElement } from 'react'
+import type { ReactNode } from 'react'
 import { useBreakpoint } from '../../../hooks/use-breakpoint'
 import { cn } from '../../../utils/cn'
-import { MobileSheet, useInSheet } from '../mobile-sheet'
+import { ResponsiveSheetTrigger, useInSheet } from '../mobile-sheet'
+import { Popover, PopoverContent, PopoverTrigger } from '../popover'
 
 interface ResponsivePopoverProps {
   open: boolean
@@ -43,8 +41,10 @@ interface ResponsivePopoverProps {
   responsive?: boolean
   /**
    * Whether the popover is modal (prevents interaction with elements outside).
-   * Required when used inside a Dialog/Modal component. Desktop only.
-   * @default true
+   * When true, focus is trapped, outside pointer events are blocked, and body
+   * scroll is locked. Set explicitly to `true` when used inside a Dialog/Modal
+   * component. Desktop only.
+   * @default false (matches Radix Popover default)
    */
   modal?: boolean
 }
@@ -68,48 +68,24 @@ export function ResponsivePopover({
   onInteractOutside,
   onEscapeKeyDown,
   responsive = true,
-  modal,
+  modal = false,
 }: ResponsivePopoverProps) {
   const breakpoint = useBreakpoint()
   const inSheet = useInSheet()
   const useMobileSheet = responsive && breakpoint === 'mobile' && !inSheet
 
   if (useMobileSheet) {
-    const handleTriggerClick = (e?: ReactMouseEvent<HTMLElement>) => {
-      if (e && isValidElement<{ onClick?: (e: ReactMouseEvent<HTMLElement>) => void }>(trigger)) {
-        trigger.props.onClick?.(e)
-      }
-      if (!e?.defaultPrevented)
-        onOpenChange(!open)
-    }
-
-    const handleTriggerKeyDown = (e?: ReactKeyboardEvent<HTMLElement>) => {
-      if (!e)
-        return
-      if (isValidElement<{ onKeyDown?: (e: ReactKeyboardEvent<HTMLElement>) => void }>(trigger)) {
-        trigger.props.onKeyDown?.(e)
-      }
-      if (!e.defaultPrevented && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault()
-        onOpenChange(!open)
-      }
-    }
-
     return (
-      <>
-        <Slot onClick={handleTriggerClick} onKeyDown={handleTriggerKeyDown}>
-          {trigger}
-        </Slot>
-        <MobileSheet
-          open={open}
-          onOpenChange={onOpenChange}
-          title={sheetTitle}
-          description={sheetDescription}
-          footer={sheetFooter}
-        >
-          {children}
-        </MobileSheet>
-      </>
+      <ResponsiveSheetTrigger
+        open={open}
+        onOpenChange={onOpenChange}
+        trigger={trigger}
+        sheetTitle={sheetTitle}
+        sheetDescription={sheetDescription}
+        sheetFooter={sheetFooter}
+      >
+        {children}
+      </ResponsiveSheetTrigger>
     )
   }
 

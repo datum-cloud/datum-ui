@@ -1,5 +1,4 @@
 import type {
-  AutocompleteGroup,
   AutocompleteOption,
   AutocompleteProps,
 } from './autocomplete.types'
@@ -80,26 +79,16 @@ export function Autocomplete<T extends AutocompleteOption = AutocompleteOption>(
     onOpenChange: setOpen,
   })
 
-  const flatOptions = React.useMemo(() => {
-    if (
-      Array.isArray(options)
-      && options.length > 0
-      && 'options' in (options[0] as object)
-    ) {
-      return (options as AutocompleteGroup<T>[]).flatMap(g => g.options)
-    }
-    return options as T[]
-  }, [options])
+  // Selection is tracked by the engine, so the trigger reflects the current
+  // pick in BOTH controlled and uncontrolled mode (uncontrolled has no `value`).
+  const selectedValue = picker.selection[0]
+  const selectedOption = picker.selectedOptions[0]
 
-  // When creatable and value doesn't match any option, show raw value in trigger
-  const displayOption = React.useMemo(() => {
-    const found = flatOptions.find(o => o.value === value)
-    if (found)
-      return found
-    if (creatable && value)
-      return { value, label: value } as T
-    return undefined
-  }, [flatOptions, value, creatable])
+  // Creatable: the user committed a value that isn't a real option. Show the raw
+  // string in the trigger — never fabricate a partial `T`, which would hand a
+  // consumer `renderValue` an object missing `T`'s declared fields.
+  const createdValue
+    = !selectedOption && creatable && selectedValue ? selectedValue : undefined
 
   return (
     <div className={cn('relative', className)}>
@@ -113,7 +102,8 @@ export function Autocomplete<T extends AutocompleteOption = AutocompleteOption>(
         align="start"
         trigger={(
           <Trigger
-            selectedOption={displayOption}
+            selectedOption={selectedOption}
+            createdValue={createdValue}
             renderValue={renderValue}
             placeholder={placeholder}
             loading={loading}
@@ -139,7 +129,7 @@ export function Autocomplete<T extends AutocompleteOption = AutocompleteOption>(
       </ResponsivePopover>
 
       {/* Hidden input for non-Conform usage (plain HTML forms) */}
-      {name && <input type="hidden" name={name} value={value ?? ''} />}
+      {name && <input type="hidden" name={name} value={selectedValue ?? ''} />}
     </div>
   )
 }

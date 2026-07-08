@@ -22,12 +22,12 @@ export type { UseDataTableServerOptions }
 // ── useServerTable ──
 
 export interface UseServerTableOptions<TResponse, TData> {
-  readonly columns: ColumnDef<TData, any>[]
+  readonly columns: ColumnDef<TData, unknown>[]
   readonly fetchFn: (args: ServerFetchArgs) => Promise<TResponse>
   readonly transform: (response: TResponse) => ServerTransformResult<TData>
   readonly limit?: number
   readonly getRowId?: (row: TData) => string
-  readonly enableRowSelection?: boolean | SelectionColumnOptions
+  readonly enableRowSelection?: boolean | SelectionColumnOptions<TData>
   readonly stateAdapter?: StateAdapter
 }
 
@@ -93,6 +93,16 @@ export function useServerTable<TResponse, TData>(
       }
     }
     prevQueryRef.current = { sorting, filters, search, pageSize }
+
+    // Cursor pagination is sequential: a cursor only exists for pages already
+    // reached via next/prev. An arbitrary jump to a page with no known cursor
+    // (e.g. store.setPageIndex(5) on a fresh table) would otherwise fetch from
+    // the beginning and render page-0 rows mislabeled as page N. Snap back to
+    // page 0 instead — the store update re-triggers this effect at index 0.
+    if (pageIndex !== 0 && !cursorMapRef.current.has(pageIndex)) {
+      store.setPageIndex(0)
+      return
+    }
 
     let cancelled = false
     store.setLoading(true)

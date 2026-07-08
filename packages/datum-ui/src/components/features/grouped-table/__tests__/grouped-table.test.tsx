@@ -1,6 +1,6 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import type { ColumnDef } from '@tanstack/react-table'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { GroupedTable } from '../grouped-table'
 
@@ -54,9 +54,33 @@ describe('groupedTable', () => {
   })
 
   it('renders a column header row', () => {
-    render(<GroupedTable columns={columns} groups={groups} />)
-    expect(screen.getByText('Resource')).toBeInTheDocument()
-    expect(screen.getByText('Value')).toBeInTheDocument()
+    const { container } = render(<GroupedTable columns={columns} groups={groups} />)
+    // The visible column headers live in the first (shared) header table; each
+    // group table also carries an sr-only copy for screen-reader association.
+    const headerTable = container.querySelector('table')!
+    expect(within(headerTable).getByText('Resource')).toBeInTheDocument()
+    expect(within(headerTable).getByText('Value')).toBeInTheDocument()
+  })
+
+  it('gives each group table its own (screen-reader-only) column headers', () => {
+    const { container } = render(<GroupedTable columns={columns} groups={groups} />)
+    // Header table + one <thead> per group so cells associate with columns.
+    const theads = container.querySelectorAll('thead')
+    expect(theads.length).toBe(1 + groups.length)
+    const groupThead = theads[1]!
+    expect(groupThead.className).toContain('sr-only')
+    expect(within(groupThead as HTMLElement).getByText('Resource')).toBeInTheDocument()
+  })
+
+  it('ignores group-header clicks while searching so stored expansion is preserved', () => {
+    // Search forces every group open. Clicking a header must not flip the
+    // underlying expansion state, otherwise groups collapse once search clears.
+    const { rerender } = render(
+      <GroupedTable columns={columns} groups={groups} enableSearch search="alpha" />,
+    )
+    fireEvent.click(screen.getByText('Group One'))
+    rerender(<GroupedTable columns={columns} groups={groups} enableSearch search="" />)
+    expect(screen.getByText('Group One').closest('button')).toHaveAttribute('aria-expanded', 'true')
   })
 
   it('aligns header and group tables on identical colgroup widths', () => {

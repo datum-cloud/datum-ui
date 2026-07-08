@@ -1,6 +1,10 @@
 {
   "extends": "@repo/config/tsconfig/react-library",
   "compilerOptions": {
+    "paths": {
+      "@test/*": ["./test/*"]
+    },
+    "resolveJsonModule": true,
     "outDir": "./dist",
     "isolatedDeclarations": false
   },

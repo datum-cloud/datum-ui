@@ -1,7 +1,7 @@
 'use client'
 
 import type { SearchProps } from '../types'
-import { useEffect, useState } from 'react'
+import { useDebouncedSearchInput } from '../../../../hooks/use-debounced-search-input'
 import { Input } from '../../../base/input'
 import { DEFAULT_DEBOUNCE_MS } from '../constants'
 import { useDataTableSearch } from '../hooks/use-selectors'
@@ -13,21 +13,7 @@ export function DataTableSearch({
   disabled,
 }: SearchProps) {
   const { search, setSearch } = useDataTableSearch()
-  const [inputValue, setInputValue] = useState(search)
-
-  useEffect(() => {
-    setInputValue(search)
-  }, [search])
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (inputValue !== search) {
-        setSearch(inputValue)
-      }
-    }, debounceMs)
-
-    return () => clearTimeout(timer)
-  }, [inputValue, debounceMs, search, setSearch])
+  const [inputValue, setInputValue] = useDebouncedSearchInput(search, setSearch, debounceMs)
 
   return (
     <Input

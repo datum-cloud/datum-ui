@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { toast } from '../components/features/toast'
 
 interface CopyOptions {
   withToast?: boolean
@@ -30,9 +29,25 @@ export function useCopyToClipboard(): [boolean, CopyFn] {
       setIsCopied(true)
 
       if (options?.withToast) {
-        toast.success(options.toastMessage ?? 'Copied to clipboard')
+        // The clipboard write has already succeeded at this point, so the toast
+        // is a best-effort side effect. Isolate it in its own try/catch: if the
+        // lazily-imported sonner-based toast feature fails to load (optional
+        // `sonner` peer absent) or `toast.success` throws, that must NOT undo
+        // the successful copy by falling into the outer catch.
+        try {
+          const { toast } = await import('../components/features/toast')
+          toast.success(options.toastMessage ?? 'Copied to clipboard')
+        }
+        catch (toastError) {
+          console.warn('useCopyToClipboard: copy succeeded but toast failed', toastError)
+        }
       }
 
+      // Clear any in-flight reset so a rapid second copy keeps its indicator for
+      // the full duration instead of being reset by the previous timer.
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
       timeoutRef.current = setTimeout(() => {
         setIsCopied(false)
       }, 2000)
@@ -40,6 +55,9 @@ export function useCopyToClipboard(): [boolean, CopyFn] {
       return true
     }
     catch {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
       setIsCopied(false)
       return false
     }

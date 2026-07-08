@@ -5,6 +5,7 @@ import { cn } from '../../../../../utils/cn'
 import { defineStepper } from '../../../stepper'
 import { useAdapter } from '../../adapter-context'
 import { FormProvider } from '../../context/form-context'
+import { getObjectShape } from '../../utils/zod-helpers'
 
 // ============================================================================
 // Types
@@ -49,6 +50,35 @@ export function useFormStepperContext(): FormStepperContextValue {
     throw new Error('useFormStepperContext must be used within a Form.Stepper component')
   }
   return context
+}
+
+/**
+ * Pick only the fields that belong to a step's own schema out of a merged form
+ * values object.
+ *
+ * The per-step form is seeded with the merged flow data of ALL steps as its
+ * default values, so `instance.getValues()` returns every step's fields, not
+ * just the current one. Persisting that whole object under the current step's
+ * flow-data key would let stale copies of other steps' fields shadow their real
+ * entries on final submit. Narrowing to the step's own schema keys keeps each
+ * step's flow-data entry isolated.
+ */
+function pickStepValues(
+  schema: StepConfig['schema'],
+  values: Record<string, unknown>,
+): Record<string, unknown> {
+  const shape = getObjectShape(schema)
+  if (!shape) {
+    // Can't introspect the schema (non-object) — fall back to storing as-is.
+    return values
+  }
+  const picked: Record<string, unknown> = {}
+  for (const key of Object.keys(shape)) {
+    if (key in values) {
+      picked[key] = values[key]
+    }
+  }
+  return picked
 }
 
 /**
@@ -278,21 +308,27 @@ function StepForm({
         // Final step - collect all flow data and complete
         setIsSubmitting(true)
         try {
-          const allData = steps.reduce(
+          // Collect every step's committed flow data. For the current (last)
+          // step use the freshly validated `data` rather than the stored entry:
+          // the stored entry can be stale (e.g. polluted by prev()/goTo() or a
+          // prior submission) and reading it back right after `stepper.data.set`
+          // would also observe a stale render closure.
+          const finalData = steps.reduce(
             (acc, step) => ({
               ...acc,
-              ...(stepper.data.get(step.id) || {}),
+              ...(step.id === currentStepConfig.id
+                ? data
+                : ((stepper.data.get(step.id) || {}) as Record<string, unknown>)),
             }),
-            {},
+            {} as Record<string, unknown>,
           )
-          // Include current submission value to ensure latest data
-          const finalData = { ...allData, ...data }
           await onComplete(finalData)
         }
-        catch {
-          // Error propagates through onComplete — no logging in production
-        }
         finally {
+          // Reset the submitting flag whether onComplete resolves or rejects.
+          // The rejection is intentionally NOT swallowed — it propagates so the
+          // consumer (and any global handler) can surface the failure instead of
+          // a failed submission looking like success.
           setIsSubmitting(false)
         }
       }
@@ -305,7 +341,7 @@ function StepForm({
         }
       }
     },
-    [stepper, steps, currentIndex, onComplete, onStepChange],
+    [stepper, steps, currentIndex, currentStepConfig, onComplete, onStepChange],
   )
 
   // Create per-step form via adapter (recreated when component remounts on step change)
@@ -325,10 +361,12 @@ function StepForm({
   }, [])
 
   const prev = React.useCallback(() => {
-    // Before going back, save current form data to flow data (without validation)
-    const currentValues = instance.getValues()
-    if (Object.keys(currentValues).length > 0) {
-      stepper.data.set(currentValues)
+    // Before going back, save ONLY this step's own fields to its flow-data key
+    // (without validation). Persisting the full merged getValues() would write
+    // stale copies of other steps' fields under this step's key.
+    const stepValues = pickStepValues(currentStepConfig.schema, instance.getValues())
+    if (Object.keys(stepValues).length > 0) {
+      stepper.data.set(currentStepConfig.id, stepValues)
     }
 
     const prevStepId = steps[currentIndex - 1]?.id
@@ -336,7 +374,7 @@ function StepForm({
       stepper.goTo(prevStepId)
       onStepChange?.(prevStepId, 'prev')
     }
-  }, [instance, stepper, steps, currentIndex, onStepChange])
+  }, [instance, stepper, steps, currentIndex, currentStepConfig, onStepChange])
 
   const goTo = React.useCallback(
     (stepId: string) => {
@@ -344,17 +382,17 @@ function StepForm({
 
       // Only allow going back without validation
       if (targetIndex < currentIndex) {
-        // Save current data before navigating
-        const currentValues = instance.getValues()
-        if (Object.keys(currentValues).length > 0) {
-          stepper.data.set(currentValues)
+        // Save ONLY this step's own fields before navigating (see prev()).
+        const stepValues = pickStepValues(currentStepConfig.schema, instance.getValues())
+        if (Object.keys(stepValues).length > 0) {
+          stepper.data.set(currentStepConfig.id, stepValues)
         }
         stepper.goTo(stepId)
         onStepChange?.(stepId, 'prev')
       }
       // Going forward requires validation - use next() instead
     },
-    [instance, stepper, steps, currentIndex, onStepChange],
+    [instance, stepper, steps, currentIndex, currentStepConfig, onStepChange],
   )
 
   // Helper to get step data from flow data

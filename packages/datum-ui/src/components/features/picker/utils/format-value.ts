@@ -1,7 +1,7 @@
 import type { HourCycle, PickerMode } from '../types'
 import { format as formatDateFns } from 'date-fns'
 import { dateToHHmm, formatTimeLabel, parseTimeString } from './format'
-import { isoToZonedDate } from './timezone'
+import { getBrowserTimezone, isoToZonedDate } from './timezone'
 
 interface FormatOptions {
   timezone?: string
@@ -45,10 +45,22 @@ function safeIso(input: unknown, timezone: string): Date | null {
   }
 }
 
+/**
+ * Deterministic equivalent of `DATE_OPTS` rendered via date-fns (which pins
+ * its own default locale). Used when no explicit `locale` is supplied so that
+ * SSR and client produce identical text (no `toLocaleDateString(undefined)`
+ * hydration mismatch).
+ */
+const DEFAULT_DATE_FORMAT = 'MMM dd, yyyy'
+
 function formatDate(d: Date, locale?: string, dateFormat?: string): string {
   if (dateFormat)
     return formatDateFns(d, dateFormat)
-  return d.toLocaleDateString(locale, DATE_OPTS)
+  // Only defer to the runtime locale when the caller explicitly asks for one.
+  // Otherwise use a deterministic pattern to avoid SSR/client hydration drift.
+  if (locale)
+    return d.toLocaleDateString(locale, DATE_OPTS)
+  return formatDateFns(d, DEFAULT_DATE_FORMAT)
 }
 
 /** Renders `HH:mm` from a Date whose wall-clock fields are already in the target timezone. */
@@ -94,7 +106,10 @@ export function formatPickerValue(
   if (value === null || value === undefined)
     return ''
 
-  const timezone = opts.timezone ?? 'UTC'
+  // Default must match Picker.Root's timezone default (browser-detected), or
+  // datetime trigger labels render in a different zone than the calendar/time
+  // inputs encode the value in.
+  const timezone = opts.timezone ?? getBrowserTimezone()
   const hourCycle: HourCycle = opts.hourCycle ?? '24'
   const locale = opts.locale
   const dateFormat = opts.dateFormat

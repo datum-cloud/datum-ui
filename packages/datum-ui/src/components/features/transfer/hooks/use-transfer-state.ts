@@ -66,7 +66,12 @@ export function useTransferState<T>({
     (item: T): string | undefined => {
       if (!itemGroup)
         return undefined
-      return typeof itemGroup === 'function' ? itemGroup(item) : String(item[itemGroup])
+      const raw = typeof itemGroup === 'function' ? itemGroup(item) : item[itemGroup]
+      // Treat missing/null group values as ungrouped rather than bucketing them
+      // under a literal "undefined" group.
+      if (raw == null)
+        return undefined
+      return String(raw)
     },
     [itemGroup],
   )
