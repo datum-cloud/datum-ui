@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/refs, react-hooks/purity --
+/*
  * Intentional pattern: `startedAt` and `duration` refs measure render-to-render
  * elapsed time for the thinking indicator. Reading/writing refs during render
  * is required to derive the display label without an extra re-render cycle.

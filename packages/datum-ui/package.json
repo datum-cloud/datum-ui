@@ -489,6 +489,9 @@
     "@stepperize/react": {
       "optional": true
     },
+    "@streamdown/code": {
+      "optional": true
+    },
     "@tanstack/react-table": {
       "optional": true
     },
@@ -511,6 +514,9 @@
       "optional": true
     },
     "@tiptap/starter-kit": {
+      "optional": true
+    },
+    "ai": {
       "optional": true
     },
     "date-fns": {
@@ -574,12 +580,6 @@
     "streamdown": {
       "optional": true
     },
-    "@streamdown/code": {
-      "optional": true
-    },
-    "ai": {
-      "optional": true
-    },
     "zod": {
       "optional": true
     }
@@ -618,6 +618,7 @@
     "@repo/config": "workspace:*",
     "@repo/shadcn": "workspace:*",
     "@stepperize/react": "^7.0.0",
+    "@streamdown/code": "^1.1.1",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.14.3",
     "@testing-library/jest-dom": "^6.9.1",
@@ -637,6 +638,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitest/coverage-v8": "^4.1.9",
+    "ai": "^7.0.0",
     "date-fns": "^4.4.0",
     "date-fns-tz": "^3.2.0",
     "eslint": "^10.5.0",
@@ -662,8 +664,6 @@
     "recharts": "^3.8.1",
     "sonner": "^2.0.7",
     "streamdown": "^2.5.0",
-    "@streamdown/code": "^1.1.1",
-    "ai": "^7.0.0",
     "tailwindcss": "^4.3.1",
     "tsdown": "^0.22.3",
     "typescript": "^6.0.3",
