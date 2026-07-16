@@ -40,6 +40,7 @@ export const manifest = [
   { subpath: './hooks', source: './src/hooks/index.ts' },
   { subpath: './icons', source: './src/components/icons/index.ts' },
   { subpath: './utils', source: './src/utils/index.ts' },
+  { subpath: './assistant', source: './src/components/features/assistant/index.ts' },
   { subpath: './alert', source: './src/components/base/alert/index.ts' },
   { subpath: './avatar', source: './src/components/base/avatar/index.ts' },
   { subpath: './badge', source: './src/components/base/badge/index.ts' },
