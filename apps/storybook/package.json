@@ -1,7 +1,7 @@
 {
   "name": "@repo/storybook",
   "type": "module",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "private": true,
   "scripts": {
     "predev": "[ -d '../../packages/datum-ui/dist' ] || pnpm --filter @datum-cloud/datum-ui build",
