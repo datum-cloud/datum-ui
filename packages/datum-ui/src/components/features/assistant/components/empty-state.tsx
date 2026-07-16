@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { motion } from 'motion/react'
-import { useAssistantConfig } from '../assistant-config'
+import { useAssistantConfig } from '../context'
 import { BrainGlyph } from './brain-glyph'
 
 interface EmptyStateProps {

@@ -7,7 +7,7 @@ import { ArrowUp, Mic, MicOff, RotateCw, Square } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { cn } from '../../../../../utils/cn'
 import { Tooltip } from '../../../../base/tooltip'
-import { useAssistantConfig } from '../../assistant-config'
+import { useAssistantConfig } from '../../context'
 import { Equalizer } from './equalizer'
 import { ModelSelector } from './model-selector'
 

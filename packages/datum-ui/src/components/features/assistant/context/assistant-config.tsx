@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import type { AssistantConfig, LinkRenderProps } from './types'
+import type { AssistantConfig, LinkRenderProps } from '../types'
 import { createContext, useContext } from 'react'
 
 /**

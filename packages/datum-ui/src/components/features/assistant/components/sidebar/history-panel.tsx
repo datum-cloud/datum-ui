@@ -6,7 +6,7 @@ import { Download, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { cn } from '../../../../../utils/cn'
 import { Tooltip } from '../../../../base/tooltip'
-import { formatRelativeTime } from '../../format-relative-time'
+import { formatRelativeTime } from '../../utils'
 
 function downloadChat(chat: ChatSummary) {
   const lines = chat.messages.map((msg) => {

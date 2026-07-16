@@ -1,6 +1,6 @@
 import type { UIMessage } from 'ai'
 import type { RefObject } from 'react'
-import type { Turn } from './types'
+import type { Turn } from '../types'
 import { isTextUIPart } from 'ai'
 import { useCallback, useMemo, useRef, useState } from 'react'
 

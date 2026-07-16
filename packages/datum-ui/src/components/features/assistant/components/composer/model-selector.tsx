@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@repo/shadcn/ui/dropdown-menu'
 import { ChevronDown } from 'lucide-react'
-import { useAssistantConfig } from '../../assistant-config'
+import { useAssistantConfig } from '../../context'
 
 interface ModelSelectorProps {
   modelId: string

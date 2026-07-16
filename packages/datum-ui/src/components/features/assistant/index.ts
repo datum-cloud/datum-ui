@@ -3,7 +3,7 @@ export {
   DEFAULT_ASSISTANT_CONFIG,
   defaultRenderLink,
   useAssistantConfig,
-} from './assistant-config'
+} from './context'
 // Props-driven assistant workspace + its composable pieces. The host owns state
 // and transport (its own chat hook) and feeds them in; staff and cloud reuse
 // the same presentational layer.
@@ -16,8 +16,7 @@ export { EmptyState } from './components/empty-state'
 export * from './components/message'
 export * from './components/sidebar'
 
-export { formatRelativeTime } from './format-relative-time'
-export { sanitizeUserHtml } from './sanitize-html'
+export { formatRelativeTime, sanitizeUserHtml } from './utils'
 export type {
   AssistantConfig,
   ChatSummary,
@@ -29,4 +28,4 @@ export type {
   Turn,
 } from './types'
 
-export { useTurnRail } from './use-turn-rail'
+export { useTurnRail } from './hooks'
