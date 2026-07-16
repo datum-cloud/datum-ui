@@ -44,6 +44,11 @@
       "types": "./dist/utils/index.d.ts",
       "default": "./dist/utils/index.mjs"
     },
+    "./assistant": {
+      "source": "./src/components/features/assistant/index.ts",
+      "types": "./dist/components/features/assistant/index.d.ts",
+      "default": "./dist/assistant/index.mjs"
+    },
     "./alert": {
       "source": "./src/components/base/alert/index.ts",
       "types": "./dist/components/base/alert/index.d.ts",
@@ -427,6 +432,7 @@
     "@hookform/resolvers": ">=5.4.0 <6",
     "@monaco-editor/react": ">=4.7.0 <5",
     "@stepperize/react": ">=7 <8",
+    "@streamdown/code": ">=1 <2",
     "@tanstack/react-table": ">=8.21.3 <9",
     "@tanstack/react-virtual": ">=3.14.3 <4",
     "@tiptap/extension-character-count": ">=3.27.1 <4",
@@ -435,6 +441,7 @@
     "@tiptap/extension-underline": ">=3.27.1 <4",
     "@tiptap/react": ">=3.27.1 <4",
     "@tiptap/starter-kit": ">=3.27.1 <4",
+    "ai": ">=7 <8",
     "date-fns": ">=4.1.0 <5",
     "date-fns-tz": ">=3 <4",
     "js-yaml": ">=5 <6",
@@ -457,6 +464,7 @@
     "react-number-format": ">=5.4.5 <6",
     "recharts": ">=3 <4",
     "sonner": ">=2.0.7 <3",
+    "streamdown": ">=2 <3",
     "zod": ">=4 <5"
   },
   "peerDependenciesMeta": {
@@ -563,6 +571,15 @@
     "sonner": {
       "optional": true
     },
+    "streamdown": {
+      "optional": true
+    },
+    "@streamdown/code": {
+      "optional": true
+    },
+    "ai": {
+      "optional": true
+    },
     "zod": {
       "optional": true
     }
@@ -644,6 +661,9 @@
     "react-number-format": "^5.4.5",
     "recharts": "^3.8.1",
     "sonner": "^2.0.7",
+    "streamdown": "^2.5.0",
+    "@streamdown/code": "^1.1.1",
+    "ai": "^7.0.0",
     "tailwindcss": "^4.3.1",
     "tsdown": "^0.22.3",
     "typescript": "^6.0.3",
