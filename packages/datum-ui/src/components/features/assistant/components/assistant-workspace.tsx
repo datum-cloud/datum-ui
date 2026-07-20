@@ -2,7 +2,7 @@
 
 import type { Editor } from '@tiptap/react'
 import type { UIMessage } from 'ai'
-import type { MouseEvent as ReactMouseEvent, RefObject } from 'react'
+import type { MouseEvent as ReactMouseEvent, ReactNode, RefObject } from 'react'
 import type { AssistantConfig, ChatSummary, EffortId } from '../types'
 import { PanelLeft } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
@@ -34,6 +34,11 @@ export interface AssistantWorkspaceProps {
 
   chatList: ChatSummary[]
   currentChatId: string
+  /**
+   * Optional block pinned above the history search input, naming the scope the
+   * listed chats belong to (cloud-portal shows the current project).
+   */
+  sidebarHeader?: ReactNode
 
   editor: Editor | null
   /** Sanitized HTML per user message index (for exact-render of the user's input). */
@@ -74,6 +79,7 @@ export function AssistantWorkspace({
   isReady,
   chatList,
   currentChatId,
+  sidebarHeader,
   editor,
   htmlByUserMsgIndex,
   bottomRef,
@@ -135,6 +141,7 @@ export function AssistantWorkspace({
               <HistoryPanel
                 chatList={chatList}
                 currentChatId={currentChatId}
+                header={sidebarHeader}
                 onLoadChat={onLoadChat}
                 onDeleteChat={onDeleteChat}
               />

@@ -2,6 +2,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { EmptyState } from '../components/empty-state'
+import { HistoryPanel } from '../components/sidebar'
 import { AssistantConfigProvider, defaultRenderLink } from '../context'
 import { formatRelativeTime, sanitizeUserHtml } from '../utils'
 
@@ -89,5 +90,35 @@ describe('emptyState', () => {
       </AssistantConfigProvider>,
     )
     expect(screen.getByRole('button', { name: /Only prompt/ })).toBeDisabled()
+  })
+})
+
+describe('historyPanel header slot', () => {
+  const chat = { id: 'c1', title: 'Saved chat', updatedAt: Date.now(), messages: [] }
+
+  it('renders the host-supplied header above the chat list', () => {
+    render(
+      <HistoryPanel
+        chatList={[chat]}
+        currentChatId="c1"
+        header={<span>Project: acme-prod</span>}
+        onLoadChat={vi.fn()}
+        onDeleteChat={vi.fn()}
+      />,
+    )
+    expect(screen.getByText('Project: acme-prod')).toBeInTheDocument()
+    expect(screen.getByText('Saved chat')).toBeInTheDocument()
+  })
+
+  it('omits the header block entirely when no header is passed', () => {
+    render(
+      <HistoryPanel
+        chatList={[chat]}
+        currentChatId="c1"
+        onLoadChat={vi.fn()}
+        onDeleteChat={vi.fn()}
+      />,
+    )
+    expect(screen.queryByText('Project: acme-prod')).not.toBeInTheDocument()
   })
 })
