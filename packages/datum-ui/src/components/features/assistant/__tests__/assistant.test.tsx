@@ -1,7 +1,10 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
+import type { UIMessage } from 'ai'
 import { fireEvent, render, screen } from '@testing-library/react'
+import { getToolName } from 'ai'
 import { describe, expect, it, vi } from 'vitest'
 import { EmptyState } from '../components/empty-state'
+import { AssistantMessage } from '../components/message'
 import { HistoryPanel } from '../components/sidebar'
 import { AssistantConfigProvider, defaultRenderLink } from '../context'
 import { formatRelativeTime, sanitizeUserHtml } from '../utils'
@@ -120,5 +123,51 @@ describe('historyPanel header slot', () => {
       />,
     )
     expect(screen.queryByText('Project: acme-prod')).not.toBeInTheDocument()
+  })
+})
+
+describe('renderToolOutput config hook', () => {
+  const msgWith = (part: object): UIMessage =>
+    ({ id: 'm1', role: 'assistant', parts: [{ type: 'text', text: 'here you go' }, part] }) as UIMessage
+
+  const ticketPart = {
+    type: 'tool-openSupportTicket',
+    toolCallId: 't1',
+    state: 'output-available',
+    input: {},
+    output: { subject: 'Help' },
+  }
+
+  it('renders a completed tool call inline when the host opts in', () => {
+    render(
+      <AssistantConfigProvider
+        config={{
+          renderToolOutput: part =>
+            getToolName(part) === 'openSupportTicket' ? <button type="button">Open ticket</button> : null,
+        }}
+      >
+        <AssistantMessage msg={msgWith(ticketPart)} isLastMessage status="ready" />
+      </AssistantConfigProvider>,
+    )
+    expect(screen.getByRole('button', { name: 'Open ticket' })).toBeInTheDocument()
+  })
+
+  it('stays invisible when the host renders nothing for that tool', () => {
+    render(
+      <AssistantConfigProvider config={{ renderToolOutput: () => null }}>
+        <AssistantMessage msg={msgWith(ticketPart)} isLastMessage status="ready" />
+      </AssistantConfigProvider>,
+    )
+    expect(screen.queryByRole('button', { name: 'Open ticket' })).not.toBeInTheDocument()
+  })
+
+  it('ignores tool calls that have not produced output yet', () => {
+    const pending = { ...ticketPart, state: 'input-available', output: undefined }
+    render(
+      <AssistantConfigProvider config={{ renderToolOutput: () => <span>should not render</span> }}>
+        <AssistantMessage msg={msgWith(pending)} isLastMessage={false} status="ready" />
+      </AssistantConfigProvider>,
+    )
+    expect(screen.queryByText('should not render')).not.toBeInTheDocument()
   })
 })

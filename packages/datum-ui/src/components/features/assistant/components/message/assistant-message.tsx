@@ -5,7 +5,7 @@ import type { ExtraProps } from 'streamdown'
 import { code } from '@streamdown/code'
 import { getToolName, isReasoningUIPart, isTextUIPart, isToolUIPart } from 'ai'
 import { Check, Copy, Download } from 'lucide-react'
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { Streamdown } from 'streamdown'
 import { cn } from '../../../../../utils/cn'
 import { Tooltip } from '../../../../base/tooltip'
@@ -28,7 +28,8 @@ function messageText(msg: UIMessage): string {
 }
 
 export function AssistantMessage({ msg, isLastMessage, status }: AssistantMessageProps) {
-  const { toolLabels, showReasoning, messageActions, renderLink } = useAssistantConfig()
+  const { toolLabels, showReasoning, messageActions, renderLink, renderToolOutput }
+    = useAssistantConfig()
   const isStreaming = isLastMessage && status === 'streaming'
   const hasText = msg.parts.some(p => isTextUIPart(p) && p.text)
   const activeToolPart = msg.parts.find(
@@ -84,6 +85,15 @@ export function AssistantMessage({ msg, isLastMessage, status }: AssistantMessag
               {part.text}
             </Streamdown>
           )
+        }
+
+        // Completed tool calls are invisible by default — a host opts a specific
+        // tool into rendering its own output inline (cloud-portal turns an
+        // `openSupportTicket` result into a button).
+        if (isToolUIPart(part) && part.state === 'output-available' && renderToolOutput) {
+          const rendered = renderToolOutput(part, msg)
+          if (rendered)
+            return <Fragment key={i}>{rendered}</Fragment>
         }
 
         return null
