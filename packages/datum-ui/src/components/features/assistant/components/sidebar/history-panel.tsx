@@ -1,5 +1,6 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import type { ChatSummary } from '../../types'
 import { isTextUIPart } from 'ai'
 import { Download, Trash2 } from 'lucide-react'
@@ -32,6 +33,12 @@ interface HistoryPanelProps {
   currentChatId: string
   onLoadChat: (chat: ChatSummary) => void
   onDeleteChat: (e: React.MouseEvent, chatId: string) => void
+  /**
+   * Optional host-supplied block pinned above the search input, naming the scope
+   * the listed chats belong to — cloud-portal shows the current project. Hosts
+   * whose history isn't scoped to anything (staff-portal) omit it.
+   */
+  header?: ReactNode
 }
 
 export function HistoryPanel({
@@ -39,6 +46,7 @@ export function HistoryPanel({
   currentChatId,
   onLoadChat,
   onDeleteChat,
+  header,
 }: HistoryPanelProps) {
   const [query, setQuery] = useState('')
   const filtered = useMemo(() => {
@@ -48,6 +56,8 @@ export function HistoryPanel({
 
   return (
     <div className="bg-background flex h-full w-64 shrink-0 flex-col border-r">
+      {header && <div className="shrink-0 border-b px-3 py-2">{header}</div>}
+
       <div className="flex h-12 items-center border-b px-2">
         <input
           value={query}

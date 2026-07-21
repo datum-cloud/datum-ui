@@ -1,4 +1,4 @@
-import type { UIMessage } from 'ai'
+import type { DynamicToolUIPart, ToolUIPart, UIMessage } from 'ai'
 import type { ReactNode } from 'react'
 
 export type EffortId = 'low' | 'medium' | 'high'
@@ -53,6 +53,13 @@ export interface AssistantConfig {
   renderLink: (props: LinkRenderProps) => ReactNode
   /** Override the per-message action toolbar (defaults to copy + download). */
   messageActions?: (msg: UIMessage) => ReactNode
+  /**
+   * Renders a completed tool call inline, in message order. Return a falsy value
+   * to leave that tool invisible — the default for every tool, since most only
+   * feed the model. Hosts use this to surface a result as UI (cloud-portal turns
+   * an `openSupportTicket` result into a button).
+   */
+  renderToolOutput?: (part: ToolUIPart | DynamicToolUIPart, msg: UIMessage) => ReactNode
 }
 
 /**
