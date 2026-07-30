@@ -1,5 +1,11 @@
 # @datum-cloud/datum-ui
 
+## 1.6.1
+
+### Patch Changes
+
+- c3bb8d0: Fix `ModelSelector` overflowing the viewport when many models are listed. Cap the menu height to available space, scroll only the model list, and keep the Effort section pinned at the bottom.
+
 ## 1.6.0
 
 ### Minor Changes
