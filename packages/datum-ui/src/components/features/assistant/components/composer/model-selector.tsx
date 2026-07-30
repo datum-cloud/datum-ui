@@ -50,24 +50,31 @@ export function ModelSelector({
           <ChevronDown className="size-3.5 shrink-0" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-44">
-        <DropdownMenuLabel className="text-muted-foreground text-[10px] tracking-wide uppercase">
+      <DropdownMenuContent
+        align="end"
+        collisionPadding={16}
+        className="flex w-56 max-h-[min(24rem,var(--radix-dropdown-menu-content-available-height))] flex-col overflow-hidden"
+      >
+        <DropdownMenuLabel className="text-muted-foreground shrink-0 text-[10px] tracking-wide uppercase">
           Model
         </DropdownMenuLabel>
-        <DropdownMenuRadioGroup value={modelId} onValueChange={onModelChange}>
-          {models.map(m => (
-            <DropdownMenuRadioItem key={m.id} value={m.id} className="text-sm">
-              {m.label}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel className="text-muted-foreground text-[10px] tracking-wide uppercase">
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <DropdownMenuRadioGroup value={modelId} onValueChange={onModelChange}>
+            {models.map(m => (
+              <DropdownMenuRadioItem key={m.id} value={m.id} className="text-sm">
+                {m.label}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        </div>
+        <DropdownMenuSeparator className="shrink-0" />
+        <DropdownMenuLabel className="text-muted-foreground shrink-0 text-[10px] tracking-wide uppercase">
           Effort
         </DropdownMenuLabel>
         <DropdownMenuRadioGroup
           value={effortId}
           onValueChange={v => onEffortChange(v as EffortId)}
+          className="shrink-0"
         >
           {efforts.map(e => (
             <DropdownMenuRadioItem key={e.id} value={e.id} className="text-sm">
