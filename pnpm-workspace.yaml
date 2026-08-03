@@ -12,6 +12,10 @@ allowBuilds:
   sharp: false
   unrs-resolver: false
 
+minimumReleaseAgeExclude:
+  - storybook-builder-rsbuild@3.4.0
+  - storybook-react-rsbuild@3.4.0
+
 # Security overrides
 # Scoped entries pin vulnerable transitive dependencies to patched releases.
 #
@@ -36,6 +40,12 @@ overrides:
   # and left the 1.x copy uncovered entirely.
   "brace-expansion@>=1.0.0 <1.1.17": "1.1.17"
   "brace-expansion@>=5.0.0 <5.0.8": "5.0.9"
+  # Not a CVE. @types/leaflet-draw, @types/leaflet.fullscreen and
+  # @types/leaflet.markercluster all augment the `leaflet` module. If more than
+  # one @types/leaflet is resolved, the augmentations attach to one copy and the
+  # build reads the other -- `Control.FullScreen`, `Draw` and friends vanish.
+  # Keep it deduped to a single version.
+  "@types/leaflet@>=1.9.0 <1.9.22": "1.9.22"
   # GHSA HIGH, dev tree only (storybook -> webpack -> schema-utils -> ajv).
   "fast-uri@>=3.0.0 <3.1.4": "3.1.5"
   # GHSA HIGH on all three lines; pulled in by @changesets/cli and the build.
