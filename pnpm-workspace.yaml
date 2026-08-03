@@ -40,6 +40,14 @@ overrides:
   # and left the 1.x copy uncovered entirely.
   "brace-expansion@>=1.0.0 <1.1.17": "1.1.17"
   "brace-expansion@>=5.0.0 <5.0.8": "5.0.9"
+  # Not a CVE. Two React copies cause "Invalid hook call" at test time: the
+  # Radix packages resolve their peer through @repo/shadcn (>=19.2.7 <20) and
+  # bound to 19.2.7, while datum-ui and apps/storybook declare ^19.2.8. Hooks
+  # then run against a different React instance than the renderer. Dedupe.
+  # Workspace-local only -- consumers resolve React themselves and datum-ui's
+  # own peer range is unchanged.
+  "react@>=19.0.0 <19.2.8": "19.2.8"
+  "react-dom@>=19.0.0 <19.2.8": "19.2.8"
   # Not a CVE. @types/leaflet-draw, @types/leaflet.fullscreen and
   # @types/leaflet.markercluster all augment the `leaflet` module. If more than
   # one @types/leaflet is resolved, the augmentations attach to one copy and the
