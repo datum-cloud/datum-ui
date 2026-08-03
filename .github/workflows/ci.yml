@@ -28,6 +28,12 @@ jobs:
 
       - run: pnpm lint
 
+      # The published `exports` map is generated from scripts/exports-manifest.mjs.
+      # Nothing else fails when package.json drifts from it, so a stale map ships
+      # silently and breaks consumer deep-imports. Read-only check.
+      - name: Export map in sync with manifest
+        run: pnpm --filter @datum-cloud/datum-ui check:exports
+
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest
