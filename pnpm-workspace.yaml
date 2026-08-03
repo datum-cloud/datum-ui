@@ -36,3 +36,25 @@ overrides:
   # and left the 1.x copy uncovered entirely.
   "brace-expansion@>=1.0.0 <1.1.17": "1.1.17"
   "brace-expansion@>=5.0.0 <5.0.8": "5.0.9"
+  # GHSA HIGH, dev tree only (storybook -> webpack -> schema-utils -> ajv).
+  "fast-uri@>=3.0.0 <3.1.4": "3.1.5"
+  # GHSA HIGH on all three lines; pulled in by @changesets/cli and the build.
+  "js-yaml@>=3.0.0 <3.15.0": "3.15.1"
+  "js-yaml@>=4.0.0 <4.3.0": "4.3.1"
+  "js-yaml@>=5.0.0 <5.2.2": "5.2.3"
+  # GHSA HIGH, via storybook/vite/tailwind.
+  "postcss@>=8.0.0 <8.5.18": "8.5.25"
+
+  # next, sharp and react-router are here only because `nuqs` (a devDependency,
+  # used for one data-table adapter) declares five framework adapters as
+  # optional peers, and `auto-install-peers=true` in .npmrc installs them
+  # regardless. Nothing imports them -- `pnpm why next` resolves solely through
+  # nuqs, no workspace manifest declares them, and no source file imports
+  # `nuqs/adapters/*`. They accounted for 11 of the HIGH advisories.
+  "next@>=16.0.0 <16.2.11": "16.2.12"
+  "sharp@<0.35.0": "0.35.3"
+  # react-router 7 cannot be fully patched: the RSC CSRF advisory
+  # (>=7.12.0 <8.3.0) is fixed only in 8.3.0, outside nuqs's declared peer range
+  # (^5 || ^6 || ^7). Forcing 8.3.0 emits a peer warning and nothing more --
+  # strict-peer-dependencies is off and the adapter module is never loaded.
+  "react-router@>=7.0.0 <8.3.0": "8.3.0"
