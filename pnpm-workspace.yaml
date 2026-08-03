@@ -13,14 +13,26 @@ allowBuilds:
   unrs-resolver: false
 
 # Security overrides
-# All entries pin transitive, dev/build-only dependencies to patched releases.
-# None ship to consumers (the published package only carries runtime deps).
-# undici <=7.27.0: critical CRLF Injection, pulled in via jsdom (test-only).
-# The rest are dev tooling pulled in via @antfu/eslint-config / @eslint-react
-# and the vite/storybook build; scoped ranges bump only the vulnerable versions.
+# Scoped entries pin vulnerable transitive dependencies to patched releases.
+#
+# SCOPE: these govern THIS workspace's install only (local dev, CI, tests).
+# pnpm overrides are not published -- `files` is ["LICENSE","README.md","dist"]
+# -- so they do not constrain what consumers resolve.
+#
+# They are still not "dev-only" in the sense the previous comment claimed:
+# undici and dompurify DO appear in the published runtime tree, via the
+# `isomorphic-dompurify` runtime dependency (-> jsdom -> undici). A CVE there is
+# real consumer exposure; it just has to be fixed by bumping the dependency
+# itself, because an override here will not reach them.
+#
+# Keep entries scoped (`pkg@range: version`), never blanket (`pkg: range`): a
+# blanket pin silently caps future majors that legitimately need a newer line.
 overrides:
-  undici: "^7.28.0"
-  "esbuild@>=0.28.0 <0.28.1": "0.28.1"
-  "vite@>=7.0.0 <7.3.5": "7.3.6"
-  "brace-expansion@>=5.0.0 <5.0.7": "5.0.7"
-  "postcss-selector-parser@>=7.0.0 <7.1.2": "7.1.2"
+  # jsdom (via isomorphic-dompurify) pulls undici. Previously a blanket
+  # `undici: ^7.28.0`, which would have capped jsdom 30 -- it requires undici ^8.
+  "undici@>=7.0.0 <7.29.0": "7.29.0"
+  # GHSA HIGH on two separate lines: <1.1.17 and >=4.0.0 <5.0.8. The previous
+  # entry pinned exactly 5.0.7, which is itself inside the vulnerable range,
+  # and left the 1.x copy uncovered entirely.
+  "brace-expansion@>=1.0.0 <1.1.17": "1.1.17"
+  "brace-expansion@>=5.0.0 <5.0.8": "5.0.9"
