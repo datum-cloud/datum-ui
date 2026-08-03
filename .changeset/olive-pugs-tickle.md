@@ -6,6 +6,8 @@ Refresh runtime dependencies and raise the `js-yaml` peer floor past a known adv
 
 **Action required if you depend on `js-yaml`.** The peer range moves from `>=5 <6` to `>=5.2.2 <6`. Versions `5.0.0` through `5.2.1` carry a HIGH advisory, and the old floor allowed them. If you pin `js-yaml` below `5.2.2` you will now see a peer warning — upgrade to `5.2.2` or later.
 
+**`react-dropzone` support widened to v20.** The peer range moves from `>=15 <16` to `>=15 <21`, so v15 through v20 are all accepted. This is additive — if you stay on v15 nothing changes. v20 adds an `AcceptGroup[]` form for `accept` alongside the existing object form, and `Dropzone`'s auto-generated caption now handles both.
+
 Everything else here is a patch- or minor-level bump within existing ranges and needs no action:
 
 - **16 Radix primitives** — avatar, checkbox, collapsible, dialog, dropdown-menu, hover-card, label, popover, radio-group, select, separator, slot, switch, tabs, tooltip, visually-hidden. `@radix-ui/react-slot` lands on `1.3.3`, clearing the RSC regression present in `1.3.1`/`1.3.2`.

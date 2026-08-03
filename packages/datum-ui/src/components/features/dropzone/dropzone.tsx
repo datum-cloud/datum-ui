@@ -198,8 +198,15 @@ export function DropzoneEmptyState({
       sizeClause = `less than ${renderBytes(maxSize)}`
     }
 
-    if (accept) {
-      caption = `Accepts ${new Intl.ListFormat('en').format(Object.keys(accept))}`
+    // react-dropzone 20 widened `accept` from `Accept` to `Accept | AcceptGroup[]`.
+    // `Object.keys()` on the array form yields "0", "1", so normalise to MIME keys
+    // first. Both shapes are in range -- the peer is `>=15 <21`.
+    const acceptedTypes = Array.isArray(accept)
+      ? accept.flatMap(group => Object.keys(group.accept))
+      : Object.keys(accept ?? {})
+
+    if (acceptedTypes.length > 0) {
+      caption = `Accepts ${new Intl.ListFormat('en').format(acceptedTypes)}`
       if (sizeClause) {
         caption += ` ${sizeClause}`
       }
