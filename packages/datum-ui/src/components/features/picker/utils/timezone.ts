@@ -8,7 +8,7 @@ export { endOfDayInTz, startOfDayInTz } from '../../_shared/timezone'
 /** Browser-detected IANA timezone, falling back to UTC if unavailable. */
 export function getBrowserTimezone(): string {
   try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone
+    return new Intl.DateTimeFormat().resolvedOptions().timeZone
   }
   catch {
     return 'UTC'

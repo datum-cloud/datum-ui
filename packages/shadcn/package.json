@@ -101,11 +101,11 @@
   "devDependencies": {
     "@repo/config": "workspace:*",
     "@types/geojson": "^7946.0.16",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "eslint": "^10.5.0",
-    "tailwindcss": "^4.3.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "eslint": "^10.8.0",
+    "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.10"
   }
 }
