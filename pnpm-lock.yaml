@@ -472,8 +472,8 @@ importers:
         specifier: ^1.0.4
         version: 1.0.4
       leaflet.fullscreen:
-        specifier: ^5.3.0
-        version: 5.3.1(leaflet@1.9.4)
+        specifier: ^5.3.3
+        version: 5.3.3(leaflet@1.9.4)
       leaflet.markercluster:
         specifier: ^1.5.3
         version: 1.5.3(leaflet@1.9.4)
@@ -5557,11 +5557,6 @@ packages:
 
   leaflet-draw@1.0.4:
     resolution: {integrity: sha512-rsQ6saQO5ST5Aj6XRFylr5zvarWgzWnrg46zQ1MEOEIHsppdC/8hnN8qMoFvACsPvTioAuysya/TVtog15tyAQ==}
-
-  leaflet.fullscreen@5.3.1:
-    resolution: {integrity: sha512-2IO5WJ5xpQWyn2ZLICwwpyiWJ2KdZMuxAUCsrK7b4dj770GZ/zwPp4uVQNKOxqnz9xRWEN1d2VNpLaX4ptSdnA==}
-    peerDependencies:
-      leaflet: ^1.7.0 || >=2.0.0-alpha.1
 
   leaflet.fullscreen@5.3.3:
     resolution: {integrity: sha512-ejA/av8y2/pPHl7kPROQziWuoKXoycxyBiBR+vRucnp6CxlTpsSfrXxWuGyYdQICHHJxtMeJlrYp7fwMtNpRhQ==}
@@ -12491,10 +12486,6 @@ snapshots:
   layout-base@2.0.1: {}
 
   leaflet-draw@1.0.4: {}
-
-  leaflet.fullscreen@5.3.1(leaflet@1.9.4):
-    dependencies:
-      leaflet: 1.9.4
 
   leaflet.fullscreen@5.3.3(leaflet@1.9.4):
     dependencies:
