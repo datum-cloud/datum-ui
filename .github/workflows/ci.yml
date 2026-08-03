@@ -1,8 +1,13 @@
 name: CI
 
+# TEMPORARY (dependency-refresh effort): `integration/**` is present on the
+# pull_request trigger only so stacked wave sub-PRs targeting
+# `integration/dep-refresh` are gated by the same five checks as main. It is
+# development scaffolding and MUST be reverted as the final commit on that
+# branch, before the single PR into main is opened.
 on:
   pull_request:
-    branches: [main]
+    branches: [main, 'integration/**']
   push:
     branches: [main]
 
