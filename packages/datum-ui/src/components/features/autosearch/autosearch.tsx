@@ -251,13 +251,18 @@ export function Autosearch({
                     <Loader2 className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 animate-spin" />
                   )}
 
-                  {/* No results indicator */}
+                  {/* No results indicator. The absolute positioning must live on
+                      a bare span (a direct child of the relative container, like
+                      the spinner above) — NOT on the Tooltip's child. Tooltip wraps
+                      its children in a `relative inline-flex` span, which would both
+                      drop this out of the input (static, in-flow) and re-anchor the
+                      `absolute` to that ~0-size wrapper. */}
                   {showNoResults && (
-                    <Tooltip message={emptyMessage}>
-                      <span className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2">
+                    <span className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2">
+                      <Tooltip message={emptyMessage}>
                         <AlertCircle className="text-destructive h-4 w-4" />
-                      </span>
-                    </Tooltip>
+                      </Tooltip>
+                    </span>
                   )}
                 </div>
               )}
