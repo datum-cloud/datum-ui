@@ -85,7 +85,7 @@ export function LogsToolbar({
       {onRefresh && (
         <Button
           type="secondary"
-          theme="borderless"
+          theme="outline"
           size="icon"
           aria-label="Refresh logs"
           onClick={onRefresh}
@@ -96,7 +96,7 @@ export function LogsToolbar({
       {onExport && (
         <Button
           type="secondary"
-          theme="borderless"
+          theme="outline"
           size="icon"
           aria-label="Export logs"
           onClick={() => onExport(entries)}
