@@ -62,6 +62,8 @@ export function DateTime({
     return trigger
   }
 
+  const showDetailedTooltip = variant === 'detailed' || tooltip === 'detailed'
+
   return (
     <Tooltip
       message={getTooltipContent(
@@ -72,7 +74,7 @@ export function DateTime({
         timeZone,
         timestamp,
       )}
-      contentClassName={variant === 'detailed' ? 'min-w-64 text-left' : undefined}
+      contentClassName={showDetailedTooltip ? 'min-w-64 text-left' : undefined}
     >
       {trigger}
     </Tooltip>
@@ -105,7 +107,7 @@ function getTooltipContent(
   timeZone: string,
   timestamp?: string,
 ): ReactNode {
-  if (variant === 'detailed') {
+  if (variant === 'detailed' || tooltip === 'detailed') {
     const rows = [
       { label: 'UTC', value: formatUTCDate(date) },
       { label: timeZone.replaceAll('_', ' '), value: formatTimezoneDate(date, timeZone) },

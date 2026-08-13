@@ -25,7 +25,7 @@ export function LogsSeverityBadge({ severity }: { severity?: string }) {
     <Badge
       type={severityBadgeType(severity)}
       theme="light"
-      className="font-mono text-[11px] font-medium"
+      className="h-4 px-1.5 py-0 font-mono text-[10px] leading-4 font-medium"
     >
       {severity ?? 'LOG'}
     </Badge>

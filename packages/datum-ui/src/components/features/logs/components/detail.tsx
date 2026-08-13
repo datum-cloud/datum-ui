@@ -1,20 +1,34 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import { ChevronDown, ChevronUp, Copy, X } from 'lucide-react'
 import { useBreakpoint } from '../../../../hooks/use-breakpoint'
 import { useCopyToClipboard } from '../../../../hooks/use-copy-to-clipboard'
 import { cn } from '../../../../utils/cn'
 import { Button } from '../../../base/button'
-import { Separator } from '../../../base/separator'
 import { Sheet } from '../../../base/sheet'
+import { DateTime } from '../../date-time'
 import { useLogs } from '../hooks/use-logs'
-import {
-  formatLocalTimestamp,
-  formatRelativeTimestamp,
-  formatUtcTimestamp,
-} from '../utils/format-timestamp'
 import { parseLogLine } from '../utils/parse-log-line'
-import { LogsSeverityBadge, LogsStatusBadge } from './status-badge'
+import { httpStatusTextClass } from '../utils/severity'
+import { LogsSeverityBadge } from './status-badge'
+
+function MetaCell({
+  label,
+  children,
+  className,
+}: {
+  label: string
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <div className={cn('bg-background min-w-0 px-3 py-2.5', className)}>
+      <div className="text-muted-foreground mb-1 text-[11px] font-medium">{label}</div>
+      <div className="font-mono text-xs break-all">{children}</div>
+    </div>
+  )
+}
 
 function DetailBody({ showClose = true }: { showClose?: boolean }) {
   const { selectedEntry, selectPrevious, selectNext, setSelectedId } = useLogs()
@@ -27,19 +41,31 @@ function DetailBody({ showClose = true }: { showClose?: boolean }) {
   const title = parsed.kind === 'http'
     ? `${parsed.method} ${parsed.path}`
     : selectedEntry.labels.service_name ?? 'Log'
+  const service = selectedEntry.labels.service_name
 
   return (
     <>
       <header className="flex items-start gap-2 border-b px-4 py-3">
         <div className="min-w-0 flex-1">
-          <div className="mb-1 flex items-center gap-2">
+          <div className="mb-1.5">
             <LogsSeverityBadge severity={selectedEntry.labels.severity} />
-            {parsed.kind === 'http' && <LogsStatusBadge parsed={parsed} />}
-            <span className="text-muted-foreground truncate font-mono text-xs">
-              {selectedEntry.labels.service_name}
-            </span>
           </div>
           <h3 className="truncate font-mono text-sm font-medium">{title}</h3>
+          <div className="text-muted-foreground mt-1 flex min-w-0 items-center gap-1.5 text-xs">
+            {service && (
+              <>
+                <span className="truncate font-mono">{service}</span>
+                <span aria-hidden="true">·</span>
+              </>
+            )}
+            <DateTime
+              date={selectedEntry.timestamp}
+              timestamp={selectedEntry.timestampNs}
+              variant="relative"
+              tooltip="detailed"
+              className="text-muted-foreground text-xs"
+            />
+          </div>
         </div>
         <div className="flex shrink-0 items-center gap-1">
           <Button
@@ -83,53 +109,43 @@ function DetailBody({ showClose = true }: { showClose?: boolean }) {
         </div>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
-        <section className="mb-4">
-          <h4 className="text-muted-foreground mb-1 text-xs font-medium">Time</h4>
-          <p className="text-sm">{formatRelativeTimestamp(selectedEntry.timestamp)}</p>
-          <p className="text-muted-foreground font-mono text-xs">
-            {formatUtcTimestamp(selectedEntry.timestamp)}
-          </p>
-          <p className="text-muted-foreground font-mono text-xs">
-            {formatLocalTimestamp(selectedEntry.timestamp)}
-          </p>
-        </section>
-
-        {parsed.kind === 'http' && (
-          <section className="mb-4">
-            <h4 className="text-muted-foreground mb-2 text-xs font-medium">Request</h4>
-            <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
-              <dt className="text-muted-foreground">Method</dt>
-              <dd className="font-mono text-xs">{parsed.method}</dd>
-              <dt className="text-muted-foreground">Path</dt>
-              <dd className="font-mono text-xs">{parsed.path}</dd>
-              <dt className="text-muted-foreground">Status</dt>
-              <dd className="font-mono text-xs">{parsed.status}</dd>
-              <dt className="text-muted-foreground">Duration</dt>
-              <dd className="font-mono text-xs">
-                {parsed.durationMs}
-                ms
-              </dd>
-            </dl>
-          </section>
-        )}
-
-        <section className="mb-4">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4">
+        <section>
           <h4 className="text-muted-foreground mb-2 text-xs font-medium">Message</h4>
-          <pre className="bg-muted/40 overflow-x-auto rounded-md p-3 font-mono text-xs whitespace-pre-wrap">
+          <pre className="bg-muted text-foreground overflow-x-auto rounded-md border p-3 font-mono text-xs leading-5 whitespace-pre-wrap break-all">
             {selectedEntry.line}
           </pre>
         </section>
 
-        <Separator className="mb-4" />
+        {parsed.kind === 'http' && (
+          <section>
+            <h4 className="text-muted-foreground mb-2 text-xs font-medium">Request</h4>
+            <div className="bg-border grid grid-cols-3 gap-px overflow-hidden rounded-md border">
+              <MetaCell label="Method">{parsed.method}</MetaCell>
+              <MetaCell label="Status">
+                <span className={cn('font-medium tabular-nums', httpStatusTextClass(parsed.status))}>
+                  {parsed.status}
+                </span>
+              </MetaCell>
+              <MetaCell label="Duration">
+                {parsed.durationMs}
+                ms
+              </MetaCell>
+              <MetaCell label="Path" className="col-span-3">{parsed.path}</MetaCell>
+            </div>
+          </section>
+        )}
 
         <section>
           <h4 className="text-muted-foreground mb-2 text-xs font-medium">Labels</h4>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
+          <dl className="overflow-hidden rounded-md border">
             {Object.entries(selectedEntry.labels).map(([key, value]) => (
-              <div key={key} className="contents">
-                <dt className="text-muted-foreground font-mono text-xs">{key}</dt>
-                <dd className="font-mono text-xs">{value}</dd>
+              <div
+                key={key}
+                className="grid grid-cols-[minmax(0,8.5rem)_minmax(0,1fr)] gap-x-3 border-b px-3 py-2 last:border-b-0"
+              >
+                <dt className="text-muted-foreground truncate font-mono text-[11px]">{key}</dt>
+                <dd className="min-w-0 font-mono text-xs break-all">{value}</dd>
               </div>
             ))}
           </dl>

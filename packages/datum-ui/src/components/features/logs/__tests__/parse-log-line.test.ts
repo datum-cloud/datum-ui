@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseLogLine } from '../utils/parse-log-line'
+import { logLineDisplay, parseLogLine } from '../utils/parse-log-line'
 
 describe('parseLogLine', () => {
   it('parses envoy access logs', () => {
@@ -20,6 +20,33 @@ describe('parseLogLine', () => {
     expect(parseLogLine('blocked request matched rule-942100-sqli client=1.1.1.1 gateway=gateway-eu-west')).toEqual({
       kind: 'text',
       line: 'blocked request matched rule-942100-sqli client=1.1.1.1 gateway=gateway-eu-west',
+    })
+  })
+})
+
+describe('logLineDisplay', () => {
+  it('leaves message empty when the line is only fields already shown', () => {
+    expect(logLineDisplay('GET /api/v1/checkout 301 393ms upstream=gateway-eu-west')).toEqual({
+      path: '/api/v1/checkout',
+      message: '',
+    })
+    expect(logLineDisplay('GET /healthz 200 12ms')).toEqual({
+      path: '/healthz',
+      message: '',
+    })
+  })
+
+  it('keeps leftover prose in the message', () => {
+    expect(logLineDisplay('GET /api/v1/checkout 503 2100ms connection reset')).toEqual({
+      path: '/api/v1/checkout',
+      message: 'connection reset',
+    })
+  })
+
+  it('keeps unstructured lines in the message when there is no path', () => {
+    expect(logLineDisplay('INFO: payment authorised service=payments-api')).toEqual({
+      path: null,
+      message: 'INFO: payment authorised service=payments-api',
     })
   })
 })

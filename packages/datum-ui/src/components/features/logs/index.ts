@@ -25,6 +25,7 @@ export {
   httpStatusBadgeType,
   httpStatusTextClass,
   lastThirtyMinutes,
+  logLineDisplay,
   nsToDate,
   parseLogLine,
   severityBadgeType,

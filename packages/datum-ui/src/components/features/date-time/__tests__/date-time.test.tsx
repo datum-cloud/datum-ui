@@ -32,6 +32,22 @@ describe('dateTime', () => {
     expect(tooltip).toHaveTextContent('1786620928300123456')
   })
 
+  it('shows the detailed tooltip on a relative date', async () => {
+    const { user } = renderWithProviders(
+      <DateTime date={date} timezone="UTC" variant="relative" tooltip="detailed" />,
+    )
+
+    await user.hover(screen.getByText(/ago$/))
+    await waitFor(() => {
+      expect(screen.getByRole('tooltip')).toBeInTheDocument()
+    })
+
+    const tooltip = screen.getByRole('tooltip')
+    expect(tooltip).toHaveTextContent('UTC')
+    expect(tooltip).toHaveTextContent('Relative')
+    expect(tooltip).toHaveTextContent('Timestamp')
+  })
+
   it('renders custom trigger children', () => {
     renderWithProviders(
       <DateTime date={date} timezone="UTC" tooltip={false}>

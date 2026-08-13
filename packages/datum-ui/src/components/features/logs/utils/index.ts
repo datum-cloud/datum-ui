@@ -14,6 +14,6 @@ export {
   formatRelativeTimestamp,
   formatUtcTimestamp,
 } from './format-timestamp'
-export { parseLogLine } from './parse-log-line'
+export { logLineDisplay, parseLogLine } from './parse-log-line'
 export { httpStatusBadgeType, httpStatusTextClass, severityBadgeType } from './severity'
 export { filtersAreActive, lastThirtyMinutes } from './time-range'

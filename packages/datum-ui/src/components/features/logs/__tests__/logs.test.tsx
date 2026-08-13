@@ -85,6 +85,7 @@ describe('logs explorer', () => {
     expect(screen.getByPlaceholderText('Search logs...')).toBeInTheDocument()
     expect(screen.getByText('Time')).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Severity' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Path' })).toBeInTheDocument()
   })
 })
 

@@ -1,6 +1,13 @@
 import type { LogColumnId } from '../types'
 
-export const DEFAULT_LOG_COLUMNS: readonly LogColumnId[] = ['time', 'severity', 'status', 'service', 'message']
+export const DEFAULT_LOG_COLUMNS: readonly LogColumnId[] = [
+  'time',
+  'severity',
+  'status',
+  'service',
+  'path',
+  'message',
+]
 
 export const CANONICAL_FACET_NAMES = ['severity', 'service_name', 'resource_name'] as const
 

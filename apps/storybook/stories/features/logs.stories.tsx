@@ -107,7 +107,7 @@ export const SingleProxy: Story = {
     <ExplorerStory
       source={proxyEntries}
       facets={proxyFacets}
-      columns={['time', 'severity', 'status', 'message']}
+      columns={['time', 'severity', 'status', 'path', 'message']}
     />
   ),
 }

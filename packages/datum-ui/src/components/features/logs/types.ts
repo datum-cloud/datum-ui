@@ -41,7 +41,7 @@ export interface LogTimeRange {
 
 export type LogFilters = Record<string, string[]>
 
-export type LogColumnId = 'time' | 'severity' | 'status' | 'service' | 'resource' | 'message'
+export type LogColumnId = 'time' | 'severity' | 'status' | 'service' | 'resource' | 'path' | 'message'
 
 export interface ParsedHttpLogLine {
   kind: 'http'

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 
 export type DateTimeVariant = 'absolute' | 'relative' | 'both' | 'detailed'
 
-export type TooltipMode = boolean | 'auto' | 'timezone' | 'alternate'
+export type TooltipMode = boolean | 'auto' | 'timezone' | 'alternate' | 'detailed'
 
 export interface DateTimeProps {
   /** Date to format — a `Date` or parseable ISO string. */
@@ -24,6 +24,7 @@ export interface DateTimeProps {
    * - `auto`: opposite format, or timezone for absolute dates
    * - `timezone`: timezone name and abbreviation
    * - `alternate`: opposite of the visible variant
+   * - `detailed`: UTC, local zone, relative, and epoch
    */
   tooltip?: TooltipMode
   /** IANA timezone. Defaults to the browser timezone. */
