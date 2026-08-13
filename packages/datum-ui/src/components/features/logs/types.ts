@@ -34,11 +34,6 @@ export interface LogFacet {
   options: LogFacetOption[]
 }
 
-export interface LogHistogramBucket {
-  timestamp: Date
-  count: number
-}
-
 export interface LogTimeRange {
   from: string
   to: string
@@ -46,7 +41,7 @@ export interface LogTimeRange {
 
 export type LogFilters = Record<string, string[]>
 
-export type LogColumnId = 'time' | 'status' | 'service' | 'resource' | 'message'
+export type LogColumnId = 'time' | 'severity' | 'status' | 'service' | 'resource' | 'message'
 
 export interface ParsedHttpLogLine {
   kind: 'http'
@@ -73,7 +68,6 @@ export type LogSeverity = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL' | (strin
 export interface LogsRootProps {
   entries: readonly LogEntry[]
   facets?: readonly LogFacet[]
-  histogram?: readonly LogHistogramBucket[]
   timeRange?: LogTimeRange
   defaultTimeRange?: LogTimeRange
   filters?: LogFilters
@@ -101,7 +95,6 @@ export interface LogsRootProps {
 export interface LogsContextValue {
   entries: readonly LogEntry[]
   facets: readonly LogFacet[]
-  histogram: readonly LogHistogramBucket[]
   timeRange: LogTimeRange
   setTimeRange: (range: LogTimeRange) => void
   filters: LogFilters

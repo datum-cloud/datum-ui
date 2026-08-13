@@ -1,4 +1,4 @@
-import type { LogFilters, LogTimeRange } from '@datum-cloud/datum-ui/logs'
+import type { LogColumnId, LogFilters, LogTimeRange } from '@datum-cloud/datum-ui/logs'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import {
   facetsFromEntries,
@@ -22,8 +22,8 @@ const meta: Meta = {
         component:
           'Vercel-style log explorer primitives for Loki/OTEL query results.\n\n'
           + '`Logs.Root` holds UI state. Host apps fetch `/loki/api/v1/query_range` and pass flattened entries. '
-          + '`Logs.Explorer` composes filters, toolbar, timeline, table, and a detail panel. '
-          + 'Requires `date-fns` and `recharts`.',
+          + '`Logs.Explorer` composes filters, toolbar, table, and a detail panel. '
+          + 'Requires `date-fns`.',
       },
     },
   },
@@ -32,25 +32,34 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
-function ExplorerStory() {
+function ExplorerStory({
+  source = allEntries,
+  facets: facetList = facets,
+  columns,
+}: {
+  source?: typeof allEntries
+  facets?: typeof facets
+  columns?: readonly LogColumnId[]
+}) {
   const [filters, setFilters] = useState<LogFilters>({})
   const [search, setSearch] = useState('')
   const [timeRange, setTimeRange] = useState<LogTimeRange>(() => lastThirtyMinutes())
   const [live, setLive] = useState(false)
   const entries = useMemo(
-    () => filterEntries(allEntries, filters, search),
-    [filters, search],
+    () => filterEntries(source, filters, search),
+    [source, filters, search],
   )
 
   return (
     <div className="h-screen">
       <Logs.Root
         entries={entries}
-        facets={facets}
+        facets={facetList}
         filters={filters}
         search={search}
         timeRange={timeRange}
         live={live}
+        columns={columns}
         onFiltersChange={setFilters}
         onSearchChange={setSearch}
         onTimeRangeChange={setTimeRange}
@@ -76,12 +85,39 @@ export const Explorer: Story = {
   render: () => <ExplorerStory />,
 }
 
+const proxyEntries = filterEntries(allEntries, {
+  service_name: ['envoy-gateway'],
+  resource_name: ['gateway-eu-west'],
+})
+const proxyFacets = facetsFromEntries(proxyEntries).filter(facet => facet.name === 'severity')
+
+export const SingleProxy: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Resource-scoped explorer, as on a specific proxy page. The host queries one '
+          + '`service_name` / `resource_name` (here `envoy-gateway` / `gateway-eu-west`), '
+          + 'omits those labels from the facet sidebar, and hides the Service column. '
+          + 'Severity stays visible because it is still a per-line attribute.',
+      },
+    },
+  },
+  render: () => (
+    <ExplorerStory
+      source={proxyEntries}
+      facets={proxyFacets}
+      columns={['time', 'severity', 'status', 'message']}
+    />
+  ),
+}
+
 export const Table: Story = {
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        story: 'Dense log table with HTTP status badges for envoy access logs.',
+        story: 'Dense log table with colored HTTP status codes for envoy access logs.',
       },
     },
   },
@@ -129,20 +165,4 @@ export const Detail: Story = {
       </div>
     )
   },
-}
-
-export const Timeline: Story = {
-  parameters: {
-    layout: 'padded',
-    docs: {
-      description: {
-        story: 'Density histogram derived from the current entries.',
-      },
-    },
-  },
-  render: () => (
-    <Logs.Root entries={allEntries}>
-      <Logs.Timeline />
-    </Logs.Root>
-  ),
 }

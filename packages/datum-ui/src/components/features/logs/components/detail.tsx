@@ -14,7 +14,7 @@ import {
   formatUtcTimestamp,
 } from '../utils/format-timestamp'
 import { parseLogLine } from '../utils/parse-log-line'
-import { LogsStatusBadge } from './status-badge'
+import { LogsSeverityBadge, LogsStatusBadge } from './status-badge'
 
 function DetailBody({ showClose = true }: { showClose?: boolean }) {
   const { selectedEntry, selectPrevious, selectNext, setSelectedId } = useLogs()
@@ -33,7 +33,8 @@ function DetailBody({ showClose = true }: { showClose?: boolean }) {
       <header className="flex items-start gap-2 border-b px-4 py-3">
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex items-center gap-2">
-            <LogsStatusBadge severity={selectedEntry.labels.severity} parsed={parsed} />
+            <LogsSeverityBadge severity={selectedEntry.labels.severity} />
+            {parsed.kind === 'http' && <LogsStatusBadge parsed={parsed} />}
             <span className="text-muted-foreground truncate font-mono text-xs">
               {selectedEntry.labels.service_name}
             </span>

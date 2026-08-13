@@ -374,6 +374,11 @@
       "types": "./dist/components/features/data-table/index.d.ts",
       "default": "./dist/data-table/index.mjs"
     },
+    "./date-time": {
+      "source": "./src/components/features/date-time/index.ts",
+      "types": "./dist/components/features/date-time/index.d.ts",
+      "default": "./dist/date-time/index.mjs"
+    },
     "./date-time-picker": {
       "source": "./src/components/features/date-time-picker/index.ts",
       "types": "./dist/components/features/date-time-picker/index.d.ts",

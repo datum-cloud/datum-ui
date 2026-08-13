@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { httpStatusBadgeType, severityBadgeType } from '../utils/severity'
+import { httpStatusBadgeType, httpStatusTextClass, severityBadgeType } from '../utils/severity'
 
 describe('severityBadgeType', () => {
   it('maps known severities', () => {
@@ -17,5 +17,14 @@ describe('httpStatusBadgeType', () => {
     expect(httpStatusBadgeType(301)).toBe('info')
     expect(httpStatusBadgeType(404)).toBe('warning')
     expect(httpStatusBadgeType(500)).toBe('danger')
+  })
+})
+
+describe('httpStatusTextClass', () => {
+  it('colors only the status number by class', () => {
+    expect(httpStatusTextClass(201)).toContain('--color-badge-success')
+    expect(httpStatusTextClass(301)).toContain('--color-badge-info')
+    expect(httpStatusTextClass(404)).toContain('--color-badge-warning')
+    expect(httpStatusTextClass(500)).toContain('--color-badge-danger')
   })
 })

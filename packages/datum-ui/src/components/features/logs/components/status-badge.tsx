@@ -1,58 +1,26 @@
 'use client'
 
 import type { ParsedLogLine } from '../types'
+import { cn } from '../../../../utils/cn'
 import { Badge } from '../../../base/badge'
-import { Tooltip } from '../../../base/tooltip'
-import {
-  formatLocalTimestamp,
-  formatLogTimestamp,
-  formatRelativeTimestamp,
-  formatUtcTimestamp,
-} from '../utils/format-timestamp'
-import { httpStatusBadgeType, severityBadgeType } from '../utils/severity'
+import { DateTime } from '../../date-time'
+import { formatLogTimestamp } from '../utils/format-timestamp'
+import { httpStatusTextClass, severityBadgeType } from '../utils/severity'
 
-export function LogsTimestamp({ date }: { date: Date }) {
+export function LogsTimestamp({ date, timestampNs }: { date: Date, timestampNs?: string }) {
   return (
-    <Tooltip
-      message={(
-        <div className="flex flex-col gap-1 text-xs">
-          <span>{formatRelativeTimestamp(date)}</span>
-          <span>{formatUtcTimestamp(date)}</span>
-          <span>{formatLocalTimestamp(date)}</span>
-        </div>
-      )}
-    >
+    <DateTime date={date} variant="detailed" timestamp={timestampNs}>
       <time
         dateTime={date.toISOString()}
         className="text-muted-foreground font-mono text-xs whitespace-nowrap"
       >
         {formatLogTimestamp(date)}
       </time>
-    </Tooltip>
+    </DateTime>
   )
 }
 
-export function LogsStatusBadge({
-  severity,
-  parsed,
-}: {
-  severity?: string
-  parsed: ParsedLogLine
-}) {
-  if (parsed.kind === 'http') {
-    return (
-      <Badge
-        type={httpStatusBadgeType(parsed.status)}
-        theme="light"
-        className="font-mono text-[11px] font-medium"
-      >
-        {parsed.method}
-        {' '}
-        {parsed.status}
-      </Badge>
-    )
-  }
-
+export function LogsSeverityBadge({ severity }: { severity?: string }) {
   return (
     <Badge
       type={severityBadgeType(severity)}
@@ -61,5 +29,18 @@ export function LogsStatusBadge({
     >
       {severity ?? 'LOG'}
     </Badge>
+  )
+}
+
+export function LogsStatusBadge({ parsed }: { parsed: ParsedLogLine }) {
+  if (parsed.kind !== 'http') {
+    return <span className="text-muted-foreground">—</span>
+  }
+
+  return (
+    <span className="inline-grid grid-cols-[7ch_auto] gap-x-2 font-mono text-[11px] font-medium">
+      <span className="text-muted-foreground">{parsed.method}</span>
+      <span className={cn('tabular-nums', httpStatusTextClass(parsed.status))}>{parsed.status}</span>
+    </span>
   )
 }

@@ -30,3 +30,18 @@ export function httpStatusBadgeType(status: number): SeverityBadgeType {
     return 'success'
   return 'muted'
 }
+
+export function httpStatusTextClass(status: number): string {
+  switch (httpStatusBadgeType(status)) {
+    case 'danger':
+      return 'text-[var(--color-badge-danger)]'
+    case 'warning':
+      return 'text-[var(--color-badge-warning)]'
+    case 'info':
+      return 'text-[var(--color-badge-info)]'
+    case 'success':
+      return 'text-[var(--color-badge-success)]'
+    default:
+      return 'text-muted-foreground'
+  }
+}

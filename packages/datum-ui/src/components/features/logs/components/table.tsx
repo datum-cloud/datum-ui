@@ -13,7 +13,7 @@ import {
 } from '../../../base/table'
 import { useLogs } from '../hooks/use-logs'
 import { parseLogLine } from '../utils/parse-log-line'
-import { LogsStatusBadge, LogsTimestamp } from './status-badge'
+import { LogsSeverityBadge, LogsStatusBadge, LogsTimestamp } from './status-badge'
 
 export function LogsTable({ className }: { className?: string }) {
   const {
@@ -57,6 +57,7 @@ export function LogsTable({ className }: { className?: string }) {
         <TableHeader className="bg-background sticky top-0 z-10">
           <TableRow>
             {columns.includes('time') && <TableHead className="w-[168px]">Time</TableHead>}
+            {columns.includes('severity') && <TableHead className="w-[88px]">Severity</TableHead>}
             {columns.includes('status') && <TableHead className="w-[110px]">Status</TableHead>}
             {columns.includes('service') && <TableHead className="w-[160px]">Service</TableHead>}
             {columns.includes('resource') && <TableHead className="w-[160px]">Resource</TableHead>}
@@ -94,12 +95,17 @@ export function LogsTable({ className }: { className?: string }) {
               >
                 {columns.includes('time') && (
                   <TableCell>
-                    <LogsTimestamp date={entry.timestamp} />
+                    <LogsTimestamp date={entry.timestamp} timestampNs={entry.timestampNs} />
+                  </TableCell>
+                )}
+                {columns.includes('severity') && (
+                  <TableCell>
+                    <LogsSeverityBadge severity={entry.labels.severity} />
                   </TableCell>
                 )}
                 {columns.includes('status') && (
                   <TableCell>
-                    <LogsStatusBadge severity={entry.labels.severity} parsed={parsed} />
+                    <LogsStatusBadge parsed={parsed} />
                   </TableCell>
                 )}
                 {columns.includes('service') && (

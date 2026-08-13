@@ -52,7 +52,7 @@ export function LogsTimeRangeFilter({ className }: { className?: string }) {
 
   return (
     <div className={cn('border-b border-border px-3 py-3', className)}>
-      <div className="text-muted-foreground mb-2 text-xs font-medium">Timeline</div>
+      <div className="text-muted-foreground mb-2 text-xs font-medium">Time range</div>
       <DateTimeRangePicker
         value={timeRange}
         onChange={(next) => {

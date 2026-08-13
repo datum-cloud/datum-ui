@@ -10,7 +10,6 @@ import { useLogs } from '../hooks/use-logs'
 import { LogsDetail } from './detail'
 import { LogsFilters } from './filters'
 import { LogsTable } from './table'
-import { LogsTimeline } from './timeline'
 import { LogsToolbar } from './toolbar'
 
 export function LogsExplorer({ className }: { className?: string }) {
@@ -50,7 +49,6 @@ export function LogsExplorer({ className }: { className?: string }) {
             </Button>
           )}
         </LogsToolbar>
-        <LogsTimeline />
         <div className="flex min-h-0 flex-1">
           <LogsTable />
           {isDesktop && selectedEntry && <LogsDetail />}

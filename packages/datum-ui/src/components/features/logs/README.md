@@ -29,4 +29,16 @@ const entries = flattenLokiStreams(response)
 
 `buildLogQL({ matchers: filters, lineContains: search })` produces a LogQL selector for `/loki/api/v1/query_range`.
 
-Assemble a custom chrome with `Logs.Filters`, `Logs.Toolbar`, `Logs.Timeline`, `Logs.Table`, and `Logs.Detail` instead of `Logs.Explorer`.
+On a single-resource page, query with that matcher already applied, pass only the remaining facets (usually `severity`), and hide implied columns:
+
+```tsx
+<Logs.Root
+  entries={entries}
+  facets={facets.filter(facet => facet.name === 'severity')}
+  columns={['time', 'severity', 'status', 'message']}
+>
+  <Logs.Explorer />
+</Logs.Root>
+```
+
+Assemble a custom chrome with `Logs.Filters`, `Logs.Toolbar`, `Logs.Table`, and `Logs.Detail` instead of `Logs.Explorer`.
