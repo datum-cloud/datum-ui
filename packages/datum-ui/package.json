@@ -199,6 +199,11 @@
       "types": "./dist/components/features/grouped-table/index.d.ts",
       "default": "./dist/grouped-table/index.mjs"
     },
+    "./logs": {
+      "source": "./src/components/features/logs/index.ts",
+      "types": "./dist/components/features/logs/index.d.ts",
+      "default": "./dist/logs/index.mjs"
+    },
     "./tabs": {
       "source": "./src/components/base/tabs/index.ts",
       "types": "./dist/components/base/tabs/index.d.ts",

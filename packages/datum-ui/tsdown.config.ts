@@ -92,6 +92,7 @@ export default defineConfig({
     'time-picker/index': 'src/components/features/time-picker/index.ts',
     'transfer/index': 'src/components/features/transfer/index.ts',
     'grouped-table/index': 'src/components/features/grouped-table/index.ts',
+    'logs/index': 'src/components/features/logs/index.ts',
   },
   format: ['esm'],
   dts: false,
@@ -146,5 +147,6 @@ export default defineConfig({
   loader: {
     '.png': 'dataurl',
     '.svg': 'dataurl',
+    '.json': 'json',
   },
 })

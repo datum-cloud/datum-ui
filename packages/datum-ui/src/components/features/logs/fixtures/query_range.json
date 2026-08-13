@@ -1,0 +1,543 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "streams",
+    "result": [
+      {
+        "stream": {
+          "resource_name": "payments-api",
+          "service_name": "compute-workload",
+          "severity": "INFO"
+        },
+        "values": [
+          [
+            "1786225024000000000",
+            "INFO: payment authorised service=payments-api"
+          ],
+          [
+            "1786225023000000000",
+            "INFO: cache miss service=payments-api"
+          ],
+          [
+            "1786225017000000000",
+            "INFO: cache miss service=payments-api"
+          ],
+          [
+            "1786225014500000000",
+            "INFO: retrying request service=payments-api"
+          ],
+          [
+            "1786225007500000000",
+            "INFO: payment authorised service=payments-api"
+          ],
+          [
+            "1786225006000000000",
+            "INFO: payment authorised service=payments-api"
+          ],
+          [
+            "1786225004000000000",
+            "INFO: order placed service=payments-api"
+          ],
+          [
+            "1786225001500000000",
+            "INFO: cache miss service=payments-api"
+          ],
+          [
+            "1786224999000000000",
+            "INFO: upstream timeout service=payments-api"
+          ],
+          [
+            "1786224994500000000",
+            "INFO: worker started service=payments-api"
+          ],
+          [
+            "1786224993500000000",
+            "INFO: order placed service=payments-api"
+          ],
+          [
+            "1786224993000000000",
+            "INFO: cache miss service=payments-api"
+          ],
+          [
+            "1786224991500000000",
+            "INFO: cache miss service=payments-api"
+          ],
+          [
+            "1786224990000000000",
+            "INFO: payment authorised service=payments-api"
+          ],
+          [
+            "1786224986000000000",
+            "INFO: payment authorised service=payments-api"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "gateway-eu-west",
+          "service_name": "waf",
+          "severity": "INFO"
+        },
+        "values": [
+          [
+            "1786225023500000000",
+            "blocked request matched rule-942100-sqli client=184.15.207.137 gateway=gateway-eu-west"
+          ],
+          [
+            "1786225020500000000",
+            "blocked request matched rule-942100-sqli client=143.170.20.177 gateway=gateway-eu-west"
+          ],
+          [
+            "1786225018000000000",
+            "blocked request matched rule-942100-sqli client=25.135.242.98 gateway=gateway-eu-west"
+          ],
+          [
+            "1786225016000000000",
+            "logged request matched rule-942100-sqli client=212.57.159.186 gateway=gateway-eu-west"
+          ],
+          [
+            "1786225014000000000",
+            "logged request matched rule-941100-xss client=3.220.211.24 gateway=gateway-eu-west"
+          ],
+          [
+            "1786225013500000000",
+            "logged request matched rule-942100-sqli client=41.231.60.86 gateway=gateway-eu-west"
+          ],
+          [
+            "1786225002000000000",
+            "logged request matched rule-942100-sqli client=227.198.79.147 gateway=gateway-eu-west"
+          ],
+          [
+            "1786224984500000000",
+            "blocked request matched rule-942100-sqli client=60.77.52.67 gateway=gateway-eu-west"
+          ],
+          [
+            "1786224984000000000",
+            "blocked request matched rule-941100-xss client=238.1.247.54 gateway=gateway-eu-west"
+          ],
+          [
+            "1786224975500000000",
+            "logged request matched rule-930100-lfi client=153.22.120.250 gateway=gateway-eu-west"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "gateway-eu-west",
+          "service_name": "envoy-gateway",
+          "severity": "INFO"
+        },
+        "values": [
+          [
+            "1786225022500000000",
+            "GET /api/v1/checkout 301 393ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786225022000000000",
+            "PUT /healthz 429 1856ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786225021000000000",
+            "DELETE /api/v1/payments 200 448ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786225020000000000",
+            "DELETE /healthz 404 187ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786225015500000000",
+            "PUT /api/v1/products 503 343ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786225013000000000",
+            "POST /healthz 404 1437ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786225012000000000",
+            "DELETE /api/v1/checkout 404 1924ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786225009500000000",
+            "GET /api/v1/checkout 201 816ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786225008000000000",
+            "POST /api/v1/products 201 66ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786225006500000000",
+            "POST /api/v1/checkout 201 1481ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786224994000000000",
+            "DELETE /api/v1/products 400 926ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786224990500000000",
+            "DELETE /healthz 400 968ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786224988500000000",
+            "POST /api/v1/products 400 733ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786224987000000000",
+            "PUT /api/v1/payments 301 398ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786224985000000000",
+            "DELETE /api/v1/payments 429 748ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786224982500000000",
+            "DELETE /api/v1/payments 200 319ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786224978500000000",
+            "POST /api/v1/checkout 404 1865ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786224976000000000",
+            "DELETE /api/v1/products 500 991ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786224974500000000",
+            "POST /api/v1/checkout 301 756ms upstream=gateway-eu-west"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "gateway-us-east",
+          "service_name": "envoy-gateway",
+          "severity": "INFO"
+        },
+        "values": [
+          [
+            "1786225021500000000",
+            "POST /api/v1/products 201 1204ms upstream=gateway-us-east"
+          ],
+          [
+            "1786225018500000000",
+            "PUT /api/v1/products 200 1009ms upstream=gateway-us-east"
+          ],
+          [
+            "1786225016500000000",
+            "PUT /api/v1/payments 404 253ms upstream=gateway-us-east"
+          ],
+          [
+            "1786225015000000000",
+            "GET /api/v1/checkout 503 590ms upstream=gateway-us-east"
+          ],
+          [
+            "1786225011000000000",
+            "POST /healthz 404 1279ms upstream=gateway-us-east"
+          ],
+          [
+            "1786225010500000000",
+            "PUT /api/v1/payments 404 78ms upstream=gateway-us-east"
+          ],
+          [
+            "1786225010000000000",
+            "DELETE /api/v1/products 429 1263ms upstream=gateway-us-east"
+          ],
+          [
+            "1786225008500000000",
+            "POST /healthz 400 1784ms upstream=gateway-us-east"
+          ],
+          [
+            "1786225007000000000",
+            "PUT /api/v1/payments 404 788ms upstream=gateway-us-east"
+          ],
+          [
+            "1786225005000000000",
+            "GET /api/v1/payments 201 1056ms upstream=gateway-us-east"
+          ],
+          [
+            "1786225004500000000",
+            "DELETE /healthz 200 1756ms upstream=gateway-us-east"
+          ],
+          [
+            "1786225003500000000",
+            "PUT /healthz 301 1334ms upstream=gateway-us-east"
+          ],
+          [
+            "1786225003000000000",
+            "PUT /api/v1/products 404 1857ms upstream=gateway-us-east"
+          ],
+          [
+            "1786225000500000000",
+            "GET /api/v1/checkout 201 1026ms upstream=gateway-us-east"
+          ],
+          [
+            "1786224999500000000",
+            "GET /healthz 301 1974ms upstream=gateway-us-east"
+          ],
+          [
+            "1786224988000000000",
+            "POST /api/v1/checkout 301 71ms upstream=gateway-us-east"
+          ],
+          [
+            "1786224986500000000",
+            "GET /api/v1/products 200 913ms upstream=gateway-us-east"
+          ],
+          [
+            "1786224985500000000",
+            "POST /api/v1/payments 503 1382ms upstream=gateway-us-east"
+          ],
+          [
+            "1786224982000000000",
+            "DELETE /api/v1/products 400 40ms upstream=gateway-us-east"
+          ],
+          [
+            "1786224981000000000",
+            "POST /api/v1/payments 404 700ms upstream=gateway-us-east"
+          ],
+          [
+            "1786224980000000000",
+            "PUT /api/v1/products 400 1391ms upstream=gateway-us-east"
+          ],
+          [
+            "1786224979500000000",
+            "POST /healthz 429 1250ms upstream=gateway-us-east"
+          ],
+          [
+            "1786224979000000000",
+            "GET /api/v1/payments 200 267ms upstream=gateway-us-east"
+          ],
+          [
+            "1786224977000000000",
+            "GET /healthz 500 410ms upstream=gateway-us-east"
+          ],
+          [
+            "1786224976500000000",
+            "POST /healthz 400 1415ms upstream=gateway-us-east"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "checkout-api",
+          "service_name": "compute-workload",
+          "severity": "INFO"
+        },
+        "values": [
+          [
+            "1786225019500000000",
+            "INFO: payment authorised service=checkout-api"
+          ],
+          [
+            "1786225017500000000",
+            "INFO: cache miss service=checkout-api"
+          ],
+          [
+            "1786225012500000000",
+            "INFO: retrying request service=checkout-api"
+          ],
+          [
+            "1786225009000000000",
+            "INFO: payment authorised service=checkout-api"
+          ],
+          [
+            "1786225005500000000",
+            "INFO: order placed service=checkout-api"
+          ],
+          [
+            "1786224998500000000",
+            "INFO: upstream timeout service=checkout-api"
+          ],
+          [
+            "1786224995500000000",
+            "INFO: order placed service=checkout-api"
+          ],
+          [
+            "1786224992500000000",
+            "INFO: order placed service=checkout-api"
+          ],
+          [
+            "1786224989500000000",
+            "INFO: worker started service=checkout-api"
+          ],
+          [
+            "1786224983000000000",
+            "INFO: worker started service=checkout-api"
+          ],
+          [
+            "1786224975000000000",
+            "INFO: retrying request service=checkout-api"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "gateway-us-east",
+          "service_name": "envoy-gateway",
+          "severity": "WARN"
+        },
+        "values": [
+          [
+            "1786225019000000000",
+            "PUT /healthz 404 1765ms upstream=gateway-us-east"
+          ],
+          [
+            "1786224991000000000",
+            "POST /api/v1/payments 500 1172ms upstream=gateway-us-east"
+          ],
+          [
+            "1786224977500000000",
+            "POST /api/v1/checkout 500 686ms upstream=gateway-us-east"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "gateway-us-east",
+          "service_name": "waf",
+          "severity": "INFO"
+        },
+        "values": [
+          [
+            "1786225011500000000",
+            "blocked request matched rule-942100-sqli client=12.174.43.26 gateway=gateway-us-east"
+          ],
+          [
+            "1786225002500000000",
+            "logged request matched rule-930100-lfi client=48.189.138.241 gateway=gateway-us-east"
+          ],
+          [
+            "1786224997000000000",
+            "logged request matched rule-941100-xss client=84.82.186.160 gateway=gateway-us-east"
+          ],
+          [
+            "1786224980500000000",
+            "logged request matched rule-941100-xss client=84.208.248.171 gateway=gateway-us-east"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "checkout-api",
+          "service_name": "compute-workload",
+          "severity": "WARN"
+        },
+        "values": [
+          [
+            "1786225001000000000",
+            "WARN: upstream timeout service=checkout-api"
+          ],
+          [
+            "1786224992000000000",
+            "WARN: upstream timeout service=checkout-api"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "gateway-eu-west",
+          "service_name": "envoy-gateway",
+          "severity": "ERROR"
+        },
+        "values": [
+          [
+            "1786225000000000000",
+            "POST /api/v1/products 201 1313ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786224987500000000",
+            "DELETE /healthz 404 543ms upstream=gateway-eu-west"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "gateway-eu-west",
+          "service_name": "envoy-gateway",
+          "severity": "WARN"
+        },
+        "values": [
+          [
+            "1786224998000000000",
+            "POST /api/v1/products 503 1754ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786224997500000000",
+            "POST /api/v1/checkout 301 418ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786224996500000000",
+            "POST /healthz 301 1955ms upstream=gateway-eu-west"
+          ],
+          [
+            "1786224995000000000",
+            "GET /api/v1/checkout 404 975ms upstream=gateway-eu-west"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "gateway-us-east",
+          "service_name": "envoy-gateway",
+          "severity": "ERROR"
+        },
+        "values": [
+          [
+            "1786224996000000000",
+            "PUT /api/v1/checkout 301 1655ms upstream=gateway-us-east"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "gateway-eu-west",
+          "service_name": "waf",
+          "severity": "ERROR"
+        },
+        "values": [
+          [
+            "1786224989000000000",
+            "blocked request matched rule-942100-sqli client=17.180.161.188 gateway=gateway-eu-west"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "gateway-us-east",
+          "service_name": "waf",
+          "severity": "WARN"
+        },
+        "values": [
+          [
+            "1786224983500000000",
+            "blocked request matched rule-941100-xss client=40.102.187.65 gateway=gateway-us-east"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "gateway-us-east",
+          "service_name": "waf",
+          "severity": "ERROR"
+        },
+        "values": [
+          [
+            "1786224981500000000",
+            "logged request matched rule-930100-lfi client=133.60.69.145 gateway=gateway-us-east"
+          ]
+        ]
+      },
+      {
+        "stream": {
+          "resource_name": "gateway-eu-west",
+          "service_name": "envoy-gateway",
+          "severity": "DEBUG"
+        },
+        "values": [
+          [
+            "1786224978000000000",
+            "DELETE /api/v1/products 429 525ms upstream=gateway-eu-west"
+          ]
+        ]
+      }
+    ]
+  }
+}

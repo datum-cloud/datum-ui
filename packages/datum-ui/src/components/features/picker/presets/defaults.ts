@@ -108,6 +108,15 @@ export const DATETIME_PRESETS: readonly PickerPreset[] = [
     },
   },
   {
+    key: 'last-30m',
+    label: 'Last 30 minutes',
+    shortcut: '2',
+    getRange: () => {
+      const now = new Date()
+      return { from: subMinutes(now, 30), to: now }
+    },
+  },
+  {
     key: 'last-1h',
     label: 'Last hour',
     shortcut: 'H',
