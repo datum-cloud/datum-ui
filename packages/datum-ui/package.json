@@ -638,7 +638,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitest/coverage-v8": "^4.1.10",
-    "ai": "^7.0.48",
+    "ai": "^7.0.66",
     "date-fns": "^4.4.0",
     "date-fns-tz": "^3.2.0",
     "eslint": "^10.8.0",
