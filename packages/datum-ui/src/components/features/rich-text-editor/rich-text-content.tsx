@@ -8,22 +8,49 @@ const SANITIZE_CONFIG = {
 }
 
 /**
- * Post-sanitization: normalizes link hrefs and ensures safe attributes.
+ * A bare domain (e.g. `example.com`) has no scheme and isn't a relative or
+ * fragment reference, so it needs an https:// prefix to resolve correctly.
+ * Anything already scheme-qualified (mailto:, tel:, http(s):, protocol-relative
+ * //) or relative (/path, #anchor, ?query, ./, ../) must be left untouched.
+ */
+function needsHttpsPrefix(href: string): boolean {
+  if (!href)
+    return false
+  if (/^[a-z][a-z0-9+.-]*:/i.test(href))
+    return false // has a scheme: mailto:, tel:, http:, https:, …
+  if (/^[/#?.]/.test(href))
+    return false // relative path, fragment, query, or ./ ../
+  return true
+}
+
+/**
+ * Post-sanitization: normalizes link hrefs and hardens external links.
  * Applied AFTER DOMPurify so we only touch already-clean HTML.
+ *
+ * Only bare domains get an https:// prefix, and only http(s) links get
+ * target/rel hardening — relative, fragment, tel:, and mailto: links are
+ * preserved as-authored so they keep working.
  */
 function normalizeLinks(html: string): string {
-  return html.replace(/<a\s([^>]*)>/g, (_match, attrs: string) => {
+  return html.replace(/<a\s([^>]*)>/gi, (_match, attrs: string) => {
+    const hrefMatch = attrs.match(/href="([^"]*)"/i)
+    const href = hrefMatch?.[1] ?? ''
+    const prefixed = needsHttpsPrefix(href)
+
     let normalized = attrs
-
-    // Fix bare-domain hrefs (no protocol)
-    normalized = normalized.replace(/href="(?!https?:\/\/|mailto:)([^"]+)"/, 'href="https://$1"')
-
-    // Ensure target and rel for safe external links
-    if (!normalized.includes('target=')) {
-      normalized += ' target="_blank"'
+    if (prefixed) {
+      normalized = normalized.replace(/href="[^"]*"/i, `href="https://${href}"`)
     }
-    if (!normalized.includes('rel=')) {
-      normalized += ' rel="noopener noreferrer"'
+
+    // Harden only external http(s) links (including bare domains we just
+    // prefixed). Same-page/relative/tel:/mailto: links keep their own behavior.
+    if (prefixed || /^https?:\/\//i.test(href)) {
+      if (!/\btarget=/i.test(normalized)) {
+        normalized += ' target="_blank"'
+      }
+      if (!/\brel=/i.test(normalized)) {
+        normalized += ' rel="noopener noreferrer"'
+      }
     }
 
     return `<a ${normalized}>`

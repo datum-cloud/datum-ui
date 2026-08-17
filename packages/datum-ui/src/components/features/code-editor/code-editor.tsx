@@ -1,8 +1,14 @@
+import type { OnMount } from '@monaco-editor/react'
 import type { CodeEditorProps } from './types'
 import Editor from '@monaco-editor/react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { cn } from '../../../utils/cn'
 import { useTheme } from '../../themes'
+
+/** Delay before the initial auto-format runs, giving Monaco time to settle. */
+const AUTO_FORMAT_DELAY_MS = 300
+
+type MonacoEditor = Parameters<OnMount>[0]
 
 /**
  * CodeEditor - Monaco-based code editor component
@@ -72,27 +78,35 @@ export function CodeEditor({
   minHeight = '200px',
 }: CodeEditorProps) {
   const { theme } = useTheme()
-  const editorRef = useRef<any>(null)
-  const [mounted, setMounted] = useState(false)
+  const editorRef = useRef<MonacoEditor | null>(null)
+  const formatTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const monacoTheme = theme === 'dark' ? 'vs-dark' : 'light'
   const showPlaceholder = !!placeholder && value.length === 0
 
+  // Clear any pending auto-format timer on unmount so the callback can't fire
+  // after the component is gone and mutate a controlled value via onChange.
   useEffect(() => {
-    if (editorRef.current && !mounted) {
-      setTimeout(() => {
-        editorRef.current?.getAction('editor.action.formatDocument')?.run()
-      }, 300)
-      setMounted(true)
+    return () => {
+      if (formatTimerRef.current !== null) {
+        clearTimeout(formatTimerRef.current)
+      }
     }
-  }, [mounted])
+  }, [])
 
   const handleEditorChange = (newValue: string | undefined) => {
     onChange?.(newValue || '')
   }
 
-  const handleEditorDidMount = (editor: any) => {
+  const handleEditorDidMount: OnMount = (editor) => {
     editorRef.current = editor
+    // Schedule the initial auto-format here rather than in an effect keyed on
+    // mount state: @monaco-editor/react's onMount fires only after the async
+    // loader creates the editor (post-first-effect), so an effect would never
+    // re-run and the format would never happen.
+    formatTimerRef.current = setTimeout(() => {
+      editor.getAction('editor.action.formatDocument')?.run()
+    }, AUTO_FORMAT_DELAY_MS)
   }
 
   return (

@@ -90,7 +90,9 @@ interface UsePickerStateArgs<M extends PickerMode> {
  * - `date-range`: pass through (Dates).
  * - `datetime-range` / `date-range-time`: `.toISOString()` — instants already match.
  * - `time-range`: extract wall-clock `HH:mm` in the active timezone.
- * - others (date / time / datetime): no preset value — return `null`.
+ * - single `date` / `datetime` / `time`: collapse the preset window to its
+ *   end instant (`range.to`, typically "now") — a preset in single mode should
+ *   set that instant, never wipe the value to `null`.
  */
 function presetValueForMode(
   mode: PickerMode,
@@ -114,9 +116,39 @@ function presetValueForMode(
         to: dateToHHmm(dateToZoned(range.to, timezone)),
         preset: key,
       }
+    case 'date':
+      return range.to
+    case 'datetime':
+      return range.to.toISOString()
+    case 'time':
+      return dateToHHmm(dateToZoned(range.to, timezone))
     default:
       return null
   }
+}
+
+/**
+ * Structural equality for picker value shapes (null, Date, `HH:mm` string,
+ * ISO string, or `{ from, to, preset? }`). Lets prop→pending sync compare by
+ * content rather than object identity.
+ */
+function isSameValue(a: unknown, b: unknown): boolean {
+  if (a === b)
+    return true
+  if (a == null || b == null)
+    return a === b
+  if (a instanceof Date && b instanceof Date)
+    return a.getTime() === b.getTime()
+  if (typeof a === 'object' && typeof b === 'object') {
+    const av = a as Record<string, unknown>
+    const bv = b as Record<string, unknown>
+    return (
+      isSameValue(av.from, bv.from)
+      && isSameValue(av.to, bv.to)
+      && av.preset === bv.preset
+    )
+  }
+  return false
 }
 
 interface UsePickerStateReturn<M extends PickerMode> {
@@ -163,10 +195,25 @@ export function usePickerState<M extends PickerMode>({
     monthTo: undefined,
   }))
 
-  // Sync prop → pending when value changes externally.
+  // Sync prop → pending when the value changes externally, but:
+  //  - ignore a new object identity carrying identical content (inline
+  //    `{ from, to }` props re-created every render) — content compare, not
+  //    identity (BUG-081);
+  //  - while the popover is open, don't clobber in-progress *uncommitted* edits
+  //    (pending diverged from the last synced value) — that would wipe the
+  //    user's half-picked range / preset highlight on any unrelated parent
+  //    re-render (BUG-072). A genuine external value change with no pending
+  //    edits still syncs (e.g. controlled value swapped programmatically).
+  const lastSyncedValueRef = useRef(value)
   useEffect(() => {
+    if (isSameValue(lastSyncedValueRef.current, value))
+      return
+    const hasUncommittedEdits = !isSameValue(state.pendingValue, lastSyncedValueRef.current)
+    if (state.open && hasUncommittedEdits)
+      return
+    lastSyncedValueRef.current = value
     dispatch({ type: 'RESET_TO', payload: value })
-  }, [value])
+  }, [value, state.open, state.pendingValue])
 
   // Refs for the fields the actions object reads at call time. Keeping the
   // moving parts out of the useMemo deps lets `actions` keep a stable
@@ -207,7 +254,15 @@ export function usePickerState<M extends PickerMode>({
       setSingleDatetime: (iso: string | null) => setSingleValue({ type: 'SET_SINGLE_DATETIME', payload: iso }),
       setRange: (r: { from: Date, to: Date } | null) => {
         dispatch({ type: 'SET_RANGE', payload: r })
-        if (effectiveCommitRef.current === 'immediate' && r !== null) {
+        // react-day-picker reports the first calendar click as a same-day
+        // range ({ from: d, to: d }). In immediate mode, committing+closing on
+        // that first click makes multi-day selection impossible (BUG-143), so
+        // wait until the two endpoints differ before auto-committing.
+        if (
+          effectiveCommitRef.current === 'immediate'
+          && r !== null
+          && r.from.getTime() !== r.to.getTime()
+        ) {
           commitValue(r)
           dispatch({ type: 'CLOSE' })
         }

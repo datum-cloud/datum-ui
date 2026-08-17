@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import { endOfDay, format, startOfDay } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Button, Calendar, Input } from '../../..'
@@ -33,6 +33,28 @@ function parseDateTimeParts(zonedDate: Date): { date: Date, time: string } {
     date: zonedDate,
     time: `${hours}:${minutes}`,
   }
+}
+
+/**
+ * Parse a (possibly malformed/empty) UTC string into zoned date+time parts,
+ * degrading to the current instant instead of producing an Invalid Date that
+ * would crash `format()` during render (BUG-145).
+ */
+function safeParseDateTimeParts(utc: string, timezone: string): { date: Date, time: string } {
+  try {
+    const zoned = utcStringToZonedDate(utc, timezone)
+    if (!Number.isNaN(zoned.getTime()))
+      return parseDateTimeParts(zoned)
+  }
+  catch {
+    // fall through to the safe default below
+  }
+  return parseDateTimeParts(utcStringToZonedDate(new Date().toISOString(), timezone))
+}
+
+/** Format a date for the trigger label, tolerating an Invalid Date. */
+function safeFormatDay(date: Date): string {
+  return Number.isNaN(date.getTime()) ? '—' : format(date, 'MMM d, yyyy')
 }
 
 /**
@@ -77,6 +99,7 @@ export function CustomRangePanel({
   // Track previous prop values to detect external changes
   const prevFromUtcRef = useRef(fromUtc)
   const prevToUtcRef = useRef(toUtc)
+  const prevTimezoneRef = useRef(timezone)
 
   // Debounce timer ref
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -85,15 +108,13 @@ export function CustomRangePanel({
   const [startDateOpen, setStartDateOpen] = useState(false)
   const [endDateOpen, setEndDateOpen] = useState(false)
 
-  // Parse initial values
-  const initialFrom = parseDateTimeParts(utcStringToZonedDate(fromUtc, timezone))
-  const initialTo = parseDateTimeParts(utcStringToZonedDate(toUtc, timezone))
-
-  // Local state for date and time (in user's timezone)
-  const [startDate, setStartDate] = useState<Date>(initialFrom.date)
-  const [startTime, setStartTime] = useState<string>(initialFrom.time)
-  const [endDate, setEndDate] = useState<Date>(initialTo.date)
-  const [endTime, setEndTime] = useState<string>(initialTo.time)
+  // Local state for date and time (in user's timezone). Parsed lazily (once)
+  // via safe initializers so a malformed prop can't crash render (BUG-145) and
+  // the parse doesn't re-run on every render (BUG-036).
+  const [startDate, setStartDate] = useState<Date>(() => safeParseDateTimeParts(fromUtc, timezone).date)
+  const [startTime, setStartTime] = useState<string>(() => safeParseDateTimeParts(fromUtc, timezone).time)
+  const [endDate, setEndDate] = useState<Date>(() => safeParseDateTimeParts(toUtc, timezone).date)
+  const [endTime, setEndTime] = useState<string>(() => safeParseDateTimeParts(toUtc, timezone).time)
 
   // Cleanup debounce timer on unmount
   useEffect(() => {
@@ -104,36 +125,31 @@ export function CustomRangePanel({
     }
   }, [])
 
-  // Update local state when UTC props change (from external source like preset selection)
+  // Update local state when UTC props OR the display timezone change (from an
+  // external source like preset selection or a TimezoneSelector). A
+  // timezone-only change must re-derive the wall-clock date/time too (BUG-036).
   useEffect(() => {
+    const tzChanged = timezone !== prevTimezoneRef.current
     const fromChanged = fromUtc !== prevFromUtcRef.current
     const toChanged = toUtc !== prevToUtcRef.current
 
-    if (fromChanged) {
-      try {
-        const parsed = parseDateTimeParts(utcStringToZonedDate(fromUtc, timezone))
-        setStartDate(parsed.date)
-        setStartTime(parsed.time)
-        userHasEditedTimeRef.current = false
-      }
-      catch {
-        // Ignore invalid dates
-      }
+    if (fromChanged || tzChanged) {
+      const parsed = safeParseDateTimeParts(fromUtc, timezone)
+      setStartDate(parsed.date)
+      setStartTime(parsed.time)
+      userHasEditedTimeRef.current = false
       prevFromUtcRef.current = fromUtc
     }
 
-    if (toChanged) {
-      try {
-        const parsed = parseDateTimeParts(utcStringToZonedDate(toUtc, timezone))
-        setEndDate(parsed.date)
-        setEndTime(parsed.time)
-        userHasEditedTimeRef.current = false
-      }
-      catch {
-        // Ignore invalid dates
-      }
+    if (toChanged || tzChanged) {
+      const parsed = safeParseDateTimeParts(toUtc, timezone)
+      setEndDate(parsed.date)
+      setEndTime(parsed.time)
+      userHasEditedTimeRef.current = false
       prevToUtcRef.current = toUtc
     }
+
+    prevTimezoneRef.current = timezone
   }, [fromUtc, toUtc, timezone])
 
   // Notify parent when values change (immediate, no debounce)
@@ -176,16 +192,26 @@ export function CustomRangePanel({
     [notifyChangeImmediate, debounceMs],
   )
 
+  // Cancel any pending debounced time-input update so it can't fire later with
+  // stale captured values and revert an immediate date selection (BUG-144).
+  const cancelPendingDebounce = useCallback(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+      debounceTimerRef.current = null
+    }
+  }, [])
+
   // Handlers for start date (immediate)
   const handleStartDateSelect = useCallback(
     (date: Date | undefined) => {
       if (!date)
         return
+      cancelPendingDebounce()
       setStartDate(date)
       setStartDateOpen(false)
       notifyChangeImmediate(date, startTime, endDate, endTime)
     },
-    [startTime, endDate, endTime, notifyChangeImmediate],
+    [startTime, endDate, endTime, notifyChangeImmediate, cancelPendingDebounce],
   )
 
   // Handlers for start time (debounced)
@@ -206,11 +232,12 @@ export function CustomRangePanel({
     (date: Date | undefined) => {
       if (!date)
         return
+      cancelPendingDebounce()
       setEndDate(date)
       setEndDateOpen(false)
       notifyChangeImmediate(startDate, startTime, date, endTime)
     },
-    [startDate, startTime, endTime, notifyChangeImmediate],
+    [startDate, startTime, endTime, notifyChangeImmediate, cancelPendingDebounce],
   )
 
   // Handlers for end time (debounced)
@@ -226,8 +253,14 @@ export function CustomRangePanel({
     [startDate, startTime, endDate, notifyChangeDebounced],
   )
 
-  // Effective max date for calendar
-  // const effectiveMaxDate = disableFuture ? new Date() : undefined;
+  // "Today" as seen in the display timezone — future-day disabling must be
+  // relative to the display tz, not the browser's local day (BUG-079).
+  const endOfTodayInTz = endOfDay(utcStringToZonedDate(new Date().toISOString(), timezone))
+  const isFutureDay = (date: Date): boolean => date > endOfTodayInTz
+  // The end date must be on or after the start day (compare whole days so a
+  // same-day range is selectable — the start day itself must NOT be disabled).
+  const startDay = startOfDay(startDate)
+  const isBeforeStartDay = (date: Date): boolean => date < startDay
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
@@ -252,7 +285,7 @@ export function CustomRangePanel({
                 className="h-8 min-w-0 flex-1 justify-start gap-1.5 px-2 text-xs font-normal sm:w-full sm:flex-initial"
               >
                 <CalendarIcon className="h-3.5 w-3.5 shrink-0 opacity-50" />
-                <span className="truncate">{format(startDate, 'MMM d, yyyy')}</span>
+                <span className="truncate">{safeFormatDay(startDate)}</span>
               </Button>
             )}
           >
@@ -260,7 +293,7 @@ export function CustomRangePanel({
               mode="single"
               selected={startDate}
               onSelect={handleStartDateSelect}
-              disabled={disableFuture ? date => date > new Date() : undefined}
+              disabled={disableFuture ? isFutureDay : undefined}
               autoFocus
             />
           </ResponsivePopover>
@@ -298,7 +331,7 @@ export function CustomRangePanel({
                 className="h-8 min-w-0 flex-1 justify-start gap-1.5 px-2 text-xs font-normal sm:w-full sm:flex-initial"
               >
                 <CalendarIcon className="h-3.5 w-3.5 shrink-0 opacity-50" />
-                <span className="truncate">{format(endDate, 'MMM d, yyyy')}</span>
+                <span className="truncate">{safeFormatDay(endDate)}</span>
               </Button>
             )}
           >
@@ -308,8 +341,8 @@ export function CustomRangePanel({
               onSelect={handleEndDateSelect}
               disabled={
                 disableFuture
-                  ? date => date > new Date() || date < startDate
-                  : date => date < startDate
+                  ? (date: Date) => isFutureDay(date) || isBeforeStartDay(date)
+                  : isBeforeStartDay
               }
               autoFocus
             />

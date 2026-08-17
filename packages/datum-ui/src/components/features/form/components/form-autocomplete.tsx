@@ -1,4 +1,4 @@
-import type { AutocompleteOption, FormAutocompleteProps } from '../../autocomplete/autocomplete.types'
+import type { AutocompleteOption, FormAutocompleteProps } from '../../autocomplete'
 import { cn } from '../../../../utils/cn'
 import { Autocomplete } from '../../autocomplete'
 import { useFieldContext } from '../context/field-context'

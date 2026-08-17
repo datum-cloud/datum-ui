@@ -1,46 +1,17 @@
+import { resetViewport, setViewport } from '@test/viewport'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { Autocomplete } from '../autocomplete'
-
-const originalInnerWidth = window.innerWidth
-const originalMatchMedia = window.matchMedia
 
 const options = [
   { value: 'a', label: 'Alpha' },
   { value: 'b', label: 'Beta' },
 ]
 
-function setViewport(width: number) {
-  Object.defineProperty(window, 'innerWidth', {
-    configurable: true,
-    writable: true,
-    value: width,
-  })
-  window.matchMedia = vi.fn().mockImplementation((query: string) => {
-    const match = query.match(/min-width:\s*(\d+)px/)
-    const min = match ? Number(match[1]) : 0
-    return {
-      matches: width >= min,
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    } as unknown as MediaQueryList
-  })
-}
-
 describe('autocomplete — responsive', () => {
   afterEach(() => {
-    Object.defineProperty(window, 'innerWidth', {
-      configurable: true,
-      writable: true,
-      value: originalInnerWidth,
-    })
-    window.matchMedia = originalMatchMedia
+    resetViewport()
   })
 
   it('renders mobile sheet heading on mobile viewport', async () => {
@@ -66,5 +37,26 @@ describe('autocomplete — responsive', () => {
     )
     await userEvent.click(screen.getByRole('combobox'))
     expect(screen.queryByRole('heading', { name: 'Search items' })).not.toBeInTheDocument()
+  })
+
+  it('shows the selection in the trigger when uncontrolled (BUG-074)', async () => {
+    setViewport(1200)
+    render(
+      <Autocomplete
+        options={options}
+        placeholder="Select..."
+        responsive={false}
+      />,
+    )
+
+    const trigger = screen.getByRole('combobox')
+    expect(trigger).toHaveTextContent('Select...')
+
+    await userEvent.click(trigger)
+    await userEvent.click(screen.getByText('Beta'))
+
+    // Engine tracks the pick internally — the trigger must reflect it even
+    // though no `value` prop was supplied.
+    expect(screen.getByRole('combobox')).toHaveTextContent('Beta')
   })
 })

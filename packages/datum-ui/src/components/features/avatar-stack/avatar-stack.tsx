@@ -1,9 +1,9 @@
 import type { VariantProps } from 'class-variance-authority'
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/shadcn/ui/avatar'
 import { cva } from 'class-variance-authority'
 import * as React from 'react'
 import { cn } from '../../../utils/cn'
-import { Tooltip } from '../../base/tooltip/tooltip'
+import { Avatar, AvatarFallback, AvatarImage } from '../../base/avatar'
+import { Tooltip } from '../../base/tooltip'
 
 const avatarStackVariants = cva('flex', {
   variants: {

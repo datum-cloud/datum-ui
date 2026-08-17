@@ -1,5 +1,5 @@
 import type * as React from 'react'
-import type { AutocompleteOption } from '../autocomplete/autocomplete.types'
+import type { AutocompleteOption } from '../autocomplete'
 
 // ============================================================================
 // Default Extractor

@@ -23,6 +23,9 @@ export function registerMediaQuery(query: string, callback: MediaQueryCallback):
   if (mediaQuery.matches) {
     callback.match()
   }
+  else {
+    callback.unmatch()
+  }
 
   // Add listener
   mediaQuery.addEventListener('change', handleChange)
@@ -31,6 +34,19 @@ export function registerMediaQuery(query: string, callback: MediaQueryCallback):
   return () => {
     mediaQuery.removeEventListener('change', handleChange)
   }
+}
+
+/**
+ * Whether a gutter needs viewport tracking (i.e. it contains a responsive
+ * breakpoint object). True for the object form (`{ md: 16 }`) AND for the array
+ * form (`[{ md: 16 }, 8]`). Row uses this to decide whether to register media
+ * queries; without it, array-form responsive gutters never track the viewport
+ * and `getGutter` resolves them against the all-true initial `screens`, i.e. the
+ * largest breakpoint (BUG-084).
+ */
+export function isResponsiveGutter(gutter: Gutter | [Gutter, Gutter]): boolean {
+  const parts = Array.isArray(gutter) ? gutter : [gutter]
+  return parts.some(part => typeof part === 'object' && part !== null)
 }
 
 export function getGutter(
@@ -70,6 +86,7 @@ export function getResponsiveValue<T>(
         return responsiveValue[breakpoint]
       }
     }
+    return undefined
   }
   return value as T
 }

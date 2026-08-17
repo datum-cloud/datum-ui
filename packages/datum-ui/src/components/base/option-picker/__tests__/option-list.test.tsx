@@ -95,4 +95,23 @@ describe('optionList', () => {
     await user.type(screen.getByRole('combobox'), 'zzz')
     expect(screen.getByText(/use "zzz"/i)).toBeInTheDocument()
   })
+
+  it('renders a custom creatableLabel when provided (BUG-118)', async () => {
+    const user = userEvent.setup()
+    function Harness() {
+      const picker = useOptionPicker({
+        multiple: false,
+        options: opts,
+        creatable: true,
+        creatableLabel: search => <span>{`Add ${search}`}</span>,
+        open: true,
+        onOpenChange: () => {},
+      })
+      return <OptionList picker={picker} />
+    }
+    render(<Harness />)
+    await user.type(screen.getByRole('combobox'), 'zzz')
+    expect(screen.getByText('Add zzz')).toBeInTheDocument()
+    expect(screen.queryByText(/use "zzz"/i)).not.toBeInTheDocument()
+  })
 })

@@ -1,5 +1,6 @@
 import type { ActionItem } from '../types'
 import { TooltipProvider } from '@repo/shadcn/ui/tooltip'
+import { resetViewport, setViewport } from '@test/viewport'
 /// <reference types="@testing-library/jest-dom/vitest" />
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -11,31 +12,6 @@ import {
   DropdownMenuTrigger,
 } from '../../dropdown/dropdown'
 import { MoreActions } from '../more-actions'
-
-const originalInnerWidth = window.innerWidth
-const originalMatchMedia = window.matchMedia
-
-function setViewport(width: number) {
-  Object.defineProperty(window, 'innerWidth', {
-    configurable: true,
-    writable: true,
-    value: width,
-  })
-  window.matchMedia = vi.fn().mockImplementation((query: string) => {
-    const match = query.match(/min-width:\s*(\d+)px/)
-    const min = match ? Number(match[1]) : 0
-    return {
-      matches: width >= min,
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    } as unknown as MediaQueryList
-  })
-}
 
 function renderWithTooltip(ui: React.ReactElement) {
   return render(<TooltipProvider>{ui}</TooltipProvider>)
@@ -53,12 +29,7 @@ function createActions(overrides?: Partial<ActionItem<unknown>>[]): ActionItem<u
 
 describe('moreActions', () => {
   afterEach(() => {
-    Object.defineProperty(window, 'innerWidth', {
-      configurable: true,
-      writable: true,
-      value: originalInnerWidth,
-    })
-    window.matchMedia = originalMatchMedia
+    resetViewport()
   })
 
   it('renders a trigger button', () => {

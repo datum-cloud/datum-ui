@@ -1,8 +1,8 @@
 {
   "name": "@repo/shadcn",
+  "type": "module",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "exports": {
     "./ui/*": {
       "types": "./ui/*.tsx",
@@ -20,93 +20,92 @@
       "default": "./styles/*"
     }
   },
-  "dependencies": {
-    "@hookform/resolvers": "^5.4.0",
-    "@radix-ui/react-avatar": "^1.2.0",
-    "@radix-ui/react-checkbox": "^1.3.5",
-    "@radix-ui/react-collapsible": "^1.1.14",
-    "@radix-ui/react-dialog": "^1.1.17",
-    "@radix-ui/react-dropdown-menu": "^2.1.18",
-    "@radix-ui/react-hover-card": "^1.1.17",
-    "@radix-ui/react-label": "^2.1.10",
-    "@radix-ui/react-popover": "^1.1.17",
-    "@radix-ui/react-radio-group": "^1.4.1",
-    "@radix-ui/react-select": "^2.3.1",
-    "@radix-ui/react-separator": "^1.1.10",
-    "@radix-ui/react-slot": "^1.3.0",
-    "@radix-ui/react-switch": "^1.3.1",
-    "@radix-ui/react-tabs": "^1.1.15",
-    "@radix-ui/react-tooltip": "^1.2.10",
-    "@radix-ui/react-visually-hidden": "^1.2.6",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "cmdk": "^1.1.1",
-    "date-fns": "^4.4.0",
-    "embla-carousel-react": "^8.6.0",
-    "input-otp": "^1.4.2",
-    "lucide-react": "^1.21.0",
-    "react-day-picker": "^10.0.1",
-    "react-hook-form": "^7.80.0",
-    "react-resizable-panels": "^4.11.2",
-    "recharts": "^3.8.1",
-    "sonner": "^2.0.7",
-    "tailwind-merge": "^3.6.0",
-    "tw-animate-css": "^1.4.0",
-    "vaul": "^1.1.2",
-    "zod": "^4.4.3"
-  },
-  "devDependencies": {
-    "@repo/config": "workspace:*",
-    "@types/geojson": "^7946.0.16",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "tailwindcss": "^4.3.1",
-    "typescript": "^6.0.3"
+  "scripts": {
+    "lint": "eslint . --config lint.config.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "clean": "rm -rf .turbo node_modules coverage .dts-tmp"
   },
   "peerDependencies": {
     "@types/leaflet": "^1",
     "@types/leaflet-draw": "^1",
-    "@types/leaflet.fullscreen": "^3.0.3",
+    "@types/leaflet.fullscreen": "^5.2.0",
     "@types/leaflet.markercluster": "^1.5.6",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
-    "leaflet.fullscreen": "^5.3.0",
+    "leaflet.fullscreen": "^5.3.3",
     "leaflet.markercluster": "^1.5.3",
-    "react": ">=19.2.7",
-    "react-dom": ">=19.2.7",
+    "react": ">=19.2.7 <20",
+    "react-dom": ">=19.2.7 <20",
     "react-leaflet": "^5.0.0",
     "react-leaflet-markercluster": ">=5.0.0-rc.0"
   },
   "peerDependenciesMeta": {
-    "leaflet": {
-      "optional": true
-    },
-    "react-leaflet": {
-      "optional": true
-    },
     "@types/leaflet": {
-      "optional": true
-    },
-    "leaflet-draw": {
       "optional": true
     },
     "@types/leaflet-draw": {
       "optional": true
     },
-    "leaflet.fullscreen": {
-      "optional": true
-    },
     "@types/leaflet.fullscreen": {
-      "optional": true
-    },
-    "leaflet.markercluster": {
       "optional": true
     },
     "@types/leaflet.markercluster": {
       "optional": true
     },
+    "leaflet": {
+      "optional": true
+    },
+    "leaflet-draw": {
+      "optional": true
+    },
+    "leaflet.fullscreen": {
+      "optional": true
+    },
+    "leaflet.markercluster": {
+      "optional": true
+    },
+    "react-leaflet": {
+      "optional": true
+    },
     "react-leaflet-markercluster": {
       "optional": true
     }
+  },
+  "dependencies": {
+    "@radix-ui/react-avatar": "^1.2.6",
+    "@radix-ui/react-checkbox": "^1.3.11",
+    "@radix-ui/react-collapsible": "^1.1.20",
+    "@radix-ui/react-dialog": "^1.1.23",
+    "@radix-ui/react-dropdown-menu": "^2.1.24",
+    "@radix-ui/react-hover-card": "^1.1.23",
+    "@radix-ui/react-label": "^2.1.15",
+    "@radix-ui/react-popover": "^1.1.23",
+    "@radix-ui/react-radio-group": "^1.4.7",
+    "@radix-ui/react-select": "^2.3.7",
+    "@radix-ui/react-separator": "^1.1.15",
+    "@radix-ui/react-slot": "^1.3.3",
+    "@radix-ui/react-switch": "^1.3.7",
+    "@radix-ui/react-tabs": "^1.1.21",
+    "@radix-ui/react-tooltip": "^1.2.16",
+    "@radix-ui/react-visually-hidden": "^1.2.11",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "lucide-react": "^1.28.0",
+    "recharts": "^3.10.1",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.6.0",
+    "tw-animate-css": "^1.4.0"
+  },
+  "devDependencies": {
+    "@repo/config": "workspace:*",
+    "@types/geojson": "^7946.0.16",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "eslint": "^10.8.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
   }
 }

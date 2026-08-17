@@ -1,41 +1,12 @@
+import { resetViewport, setViewport } from '@test/viewport'
 import { render, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { MobileSheet } from '../../mobile-sheet'
 import { ResponsivePopover } from '../responsive-popover'
 
-const originalInnerWidth = window.innerWidth
-const originalMatchMedia = window.matchMedia
-
-function setViewport(width: number) {
-  Object.defineProperty(window, 'innerWidth', {
-    configurable: true,
-    writable: true,
-    value: width,
-  })
-  window.matchMedia = vi.fn().mockImplementation((query: string) => {
-    const match = query.match(/min-width:\s*(\d+)px/)
-    const min = match ? Number(match[1]) : 0
-    return {
-      matches: width >= min,
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    } as unknown as MediaQueryList
-  })
-}
-
 describe('responsivePopover', () => {
   afterEach(() => {
-    Object.defineProperty(window, 'innerWidth', {
-      configurable: true,
-      writable: true,
-      value: originalInnerWidth,
-    })
-    window.matchMedia = originalMatchMedia
+    resetViewport()
   })
 
   it('renders popover content on desktop viewport', () => {
@@ -84,6 +55,39 @@ describe('responsivePopover', () => {
     )
     expect(screen.getByText('Popover body')).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Menu' })).not.toBeInTheDocument()
+  })
+
+  it('is non-modal by default (does not lock body pointer events)', () => {
+    setViewport(1440)
+    render(
+      <ResponsivePopover
+        open
+        onOpenChange={() => {}}
+        trigger={<button type="button">Trigger</button>}
+        sheetTitle="Menu"
+      >
+        <div>Popover body</div>
+      </ResponsivePopover>,
+    )
+    expect(screen.getByText('Popover body')).toBeInTheDocument()
+    expect(document.body.style.pointerEvents).not.toBe('none')
+  })
+
+  it('locks body pointer events when modal is set explicitly', () => {
+    setViewport(1440)
+    render(
+      <ResponsivePopover
+        open
+        onOpenChange={() => {}}
+        trigger={<button type="button">Trigger</button>}
+        sheetTitle="Menu"
+        modal
+      >
+        <div>Popover body</div>
+      </ResponsivePopover>,
+    )
+    expect(screen.getByText('Popover body')).toBeInTheDocument()
+    expect(document.body.style.pointerEvents).toBe('none')
   })
 
   it('stays as popover on mobile when inside a MobileSheet', () => {

@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react'
+import { DEFAULT_SEARCH_DEBOUNCE_MS, useDebouncedSearchInput } from '../../../../hooks/use-debounced-search-input'
 import { cn } from '../../../../utils/cn'
 import { Input } from '../../../base/input'
-
-const DEFAULT_DEBOUNCE_MS = 300
 
 export interface GroupedToolbarProps {
   search: string
@@ -16,22 +14,10 @@ export function GroupedToolbar({
   search,
   onSearchChange,
   placeholder = 'Search...',
-  debounceMs = DEFAULT_DEBOUNCE_MS,
+  debounceMs = DEFAULT_SEARCH_DEBOUNCE_MS,
   className,
 }: GroupedToolbarProps) {
-  const [value, setValue] = useState(search)
-
-  useEffect(() => {
-    setValue(search)
-  }, [search])
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (value !== search)
-        onSearchChange(value)
-    }, debounceMs)
-    return () => clearTimeout(timer)
-  }, [value, debounceMs, search, onSearchChange])
+  const [value, setValue] = useDebouncedSearchInput(search, onSearchChange, debounceMs)
 
   return (
     <div className={cn('pb-3', className)} data-slot="gt-toolbar">

@@ -8,11 +8,11 @@ import type {
   Table,
 } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
-import type { ActionItem } from '../more-actions/types'
+import type { ActionItem } from '../more-actions'
 
 // ── Action Types ──
 
-export type { ActionItem } from '../more-actions/types'
+export type { ActionItem } from '../more-actions'
 
 // ── Filter Types ──
 
@@ -22,6 +22,12 @@ export interface FilterOption {
 }
 
 export type FilterValue = Record<string, unknown>
+
+/** Predicate deciding whether a cell value matches a filter value. */
+export type FilterFn = (cellValue: unknown, filterValue: unknown) => boolean
+
+/** Map of named filter predicates keyed by column. */
+export type FilterFnMap = Record<string, FilterFn>
 
 // ── Pagination Types ──
 
@@ -42,17 +48,34 @@ export interface ServerPaginationState {
   readonly setLimit: (limit: number) => void
 }
 
-export interface PaginationState {
+interface PaginationControlsBase {
   readonly canNextPage: boolean
   readonly canPrevPage: boolean
   readonly nextPage: () => void
   readonly prevPage: () => void
-  readonly pageIndex?: number
-  readonly pageCount?: number
-  readonly setPageIndex?: (index: number) => void
+  readonly pageIndex: number
   readonly pageSize: number
   readonly setPageSize: (size: number) => void
 }
+
+/** Client pagination exposes random access (page numbers) and a known page count. */
+export interface ClientPaginationControls extends PaginationControlsBase {
+  readonly mode: 'client'
+  readonly pageCount: number
+  readonly setPageIndex: (index: number) => void
+}
+
+/** Server (cursor) pagination is sequential — no random access or total page count. */
+export interface ServerPaginationControls extends PaginationControlsBase {
+  readonly mode: 'server'
+}
+
+/**
+ * Runtime pagination controls, discriminated on `mode` so consumers narrow to
+ * the client (random-access) or server (sequential) shape instead of
+ * null-checking a merged optional bag.
+ */
+export type PaginationState = ClientPaginationControls | ServerPaginationControls
 
 // ── State Adapter ──
 
@@ -115,15 +138,15 @@ export interface InlineContentProps<TData> {
 
 // ── Selection Column ──
 
-export interface SelectionColumnOptions {
+export interface SelectionColumnOptions<TData = unknown> {
   /** CSS class for cell checkboxes */
   readonly className?: string
   /** CSS class for header checkbox */
   readonly headerClassName?: string
   /** Custom header render (replaces default "select all" checkbox) */
-  readonly renderHeader?: (props: { table: Table<any> }) => ReactNode
+  readonly renderHeader?: (props: { table: Table<TData> }) => ReactNode
   /** Custom cell render (replaces default row checkbox) */
-  readonly renderCell?: (props: { row: Row<any> }) => ReactNode
+  readonly renderCell?: (props: { row: Row<TData> }) => ReactNode
 }
 
 // ── Context ──
@@ -153,25 +176,25 @@ export interface DataTableContextValue<TData> {
 
 export interface UseDataTableClientOptions<TData> {
   readonly data: TData[]
-  readonly columns: ColumnDef<TData, any>[]
+  readonly columns: ColumnDef<TData, unknown>[]
   readonly pageSize?: number
   readonly getRowId?: (row: TData) => string
-  readonly enableRowSelection?: boolean | SelectionColumnOptions
+  readonly enableRowSelection?: boolean | SelectionColumnOptions<TData>
   readonly defaultSort?: SortingState
   readonly defaultFilters?: FilterValue
   readonly searchableColumns?: string[]
   readonly searchFn?: (row: TData, search: string) => boolean
-  readonly filterFns?: Record<string, (cellValue: unknown, filterValue: unknown) => boolean>
+  readonly filterFns?: FilterFnMap
   readonly stateAdapter?: StateAdapter
 }
 
 export interface UseDataTableServerOptions<TResponse, TData> {
-  readonly columns: ColumnDef<TData, any>[]
+  readonly columns: ColumnDef<TData, unknown>[]
   readonly fetchFn: (args: ServerFetchArgs) => Promise<TResponse>
   readonly transform: (response: TResponse) => ServerTransformResult<TData>
   readonly limit?: number
   readonly getRowId?: (row: TData) => string
-  readonly enableRowSelection?: boolean | SelectionColumnOptions
+  readonly enableRowSelection?: boolean | SelectionColumnOptions<TData>
   readonly defaultSort?: SortingState
   readonly defaultFilters?: FilterValue
   readonly stateAdapter?: StateAdapter
@@ -181,7 +204,7 @@ export interface UseDataTableServerOptions<TResponse, TData> {
 
 interface DataTableBaseProps<TData> {
   readonly data: TData[]
-  readonly columns: ColumnDef<TData, any>[]
+  readonly columns: ColumnDef<TData, unknown>[]
   readonly sorting: SortingState
   readonly setSorting: (sorting: SortingState) => void
   readonly filters: FilterValue
@@ -194,7 +217,7 @@ interface DataTableBaseProps<TData> {
   readonly rowSelection: RowSelectionState
   readonly setRowSelection: (selection: RowSelectionState) => void
   readonly getRowId?: (row: TData) => string
-  readonly enableRowSelection?: boolean | SelectionColumnOptions
+  readonly enableRowSelection?: boolean | SelectionColumnOptions<TData>
   readonly className?: string
   readonly children: ReactNode
 }
@@ -321,8 +344,7 @@ export interface LoadingProps {
 
 // ── Store Types ──
 
-export type FilterStrategy = 'checkbox' | 'select' | 'date-gte' | 'date-lte'
-  | ((cellValue: unknown, filterValue: unknown) => boolean)
+export type FilterStrategy = 'checkbox' | 'select' | 'date-gte' | 'date-lte' | FilterFn
 
 export interface DataTableStoreState<TData> {
   readonly data: TData[]
@@ -373,7 +395,7 @@ export interface CreateStoreOptions<TData> {
   readonly pageSize?: number
   readonly searchableColumns?: string[]
   readonly searchFn?: (row: TData, query: string) => boolean
-  readonly filterFns?: Record<string, (cellValue: unknown, filterValue: unknown) => boolean>
+  readonly filterFns?: FilterFnMap
   readonly isLoading?: boolean
   readonly columnCount?: number
 }

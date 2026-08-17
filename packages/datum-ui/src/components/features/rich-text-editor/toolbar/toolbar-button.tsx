@@ -26,6 +26,12 @@ export function ToolbarButton({ ref, active, disabled, onClick, tooltip, childre
       }}
       onClick={onClick}
       disabled={disabled}
+      // The tooltip is only a description while open, never an accessible name,
+      // so expose it as aria-label. aria-pressed is emitted only for toggle
+      // buttons (those that pass a boolean `active`); trigger-style buttons
+      // (e.g. the link popover opener) leave `active` undefined and stay plain.
+      aria-label={tooltip}
+      aria-pressed={active}
       className={cn(
         'flex h-7 w-7 items-center justify-center rounded',
         'text-muted-foreground hover:bg-accent hover:text-accent-foreground',

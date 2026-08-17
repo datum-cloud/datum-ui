@@ -1,4 +1,4 @@
-import type { AutocompleteGroup, AutocompleteOption } from '../../autocomplete/autocomplete.types'
+import type { AutocompleteGroup, AutocompleteOption } from '../../autocomplete'
 import * as React from 'react'
 import { cn } from '../../../../utils/cn'
 import { Autocomplete } from '../../autocomplete'

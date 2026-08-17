@@ -7,7 +7,7 @@ import { Checkbox } from '../../../base/checkbox'
 const SELECTION_COLUMN_ID = 'select'
 
 export function createSelectionColumn<TData>(
-  options: SelectionColumnOptions = {},
+  options: SelectionColumnOptions<TData> = {},
 ): ColumnDef<TData> {
   const { className, headerClassName, renderHeader, renderCell } = options
 
@@ -46,7 +46,7 @@ export function hasSelectionColumn<TData>(columns: ColumnDef<TData, any>[]): boo
 
 export function withSelectionColumn<TData>(
   columns: ColumnDef<TData, any>[],
-  options: SelectionColumnOptions = {},
+  options: SelectionColumnOptions<TData> = {},
 ): ColumnDef<TData, any>[] {
   if (hasSelectionColumn(columns)) {
     return columns

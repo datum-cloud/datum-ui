@@ -70,7 +70,8 @@ export interface AlertProps
    */
   closable?: boolean
   /**
-   * Callback function called when the close button is clicked.
+   * Callback fired when the close button is clicked. The alert always
+   * self-dismisses on close; this callback runs in addition to dismissal.
    */
   onClose?: () => void
 }
@@ -79,12 +80,11 @@ function Alert({ className, variant, closable = false, onClose, ...props }: Aler
   const [isVisible, setIsVisible] = React.useState(true)
 
   const handleClose = () => {
-    if (onClose) {
-      onClose()
-    }
-    else {
-      setIsVisible(false)
-    }
+    // Always self-dismiss, then notify. Passing onClose adds a callback; it does
+    // not opt out of the built-in dismissal (which previously left a dead close
+    // button when a consumer supplied onClose).
+    setIsVisible(false)
+    onClose?.()
   }
 
   if (!isVisible) {

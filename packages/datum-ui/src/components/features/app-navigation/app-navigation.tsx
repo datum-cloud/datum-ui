@@ -13,7 +13,7 @@ import {
   SidebarSeparator,
   SidebarTrigger,
   useSidebar,
-} from '../../base/sidebar/sidebar'
+} from '../../base/sidebar'
 import { NavMenu } from './nav-menu'
 
 /** Skeleton that mirrors the project nav layout: Home, separator, 6 items, separator, Project Settings */

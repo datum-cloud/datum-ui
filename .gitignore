@@ -4,6 +4,7 @@ storybook-static/
 .next/
 .turbo/
 coverage/
+.dts-tmp/
 *.tsbuildinfo
 .env*
 .source/

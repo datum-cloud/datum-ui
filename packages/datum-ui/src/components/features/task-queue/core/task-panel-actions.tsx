@@ -1,6 +1,6 @@
-import type { ButtonProps } from '../../../base/button/button'
+import type { ButtonProps } from '../../../base/button'
 import type { Task } from '../types'
-import { Button } from '../../../base/button/button'
+import { Button } from '../../../base/button'
 import { useTaskQueue } from '../hooks/use-task-queue'
 import { extractItemId } from '../utils'
 

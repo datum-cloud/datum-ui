@@ -1,34 +1,10 @@
+import { resetViewport, setViewport } from '@test/viewport'
 /// <reference types="@testing-library/jest-dom/vitest" />
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { CheckboxFilter } from '../filters/checkbox-filter'
 import { renderWithStore } from './test-helpers'
-
-const originalInnerWidth = window.innerWidth
-const originalMatchMedia = window.matchMedia
-
-function setViewport(width: number) {
-  Object.defineProperty(window, 'innerWidth', {
-    configurable: true,
-    writable: true,
-    value: width,
-  })
-  window.matchMedia = vi.fn().mockImplementation((query: string) => {
-    const match = query.match(/min-width:\s*(\d+)px/)
-    const min = match ? Number(match[1]) : 0
-    return {
-      matches: width >= min,
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    } as unknown as MediaQueryList
-  })
-}
 
 const statusOptions = [
   { label: 'Running', value: 'running' },
@@ -43,12 +19,7 @@ function getTrigger() {
 
 describe('checkboxFilter', () => {
   afterEach(() => {
-    Object.defineProperty(window, 'innerWidth', {
-      configurable: true,
-      writable: true,
-      value: originalInnerWidth,
-    })
-    window.matchMedia = originalMatchMedia
+    resetViewport()
   })
 
   it('renders trigger button with label when no selection', () => {
@@ -99,6 +70,15 @@ describe('checkboxFilter', () => {
     expect(screen.getByText('Running')).toBeInTheDocument()
     expect(screen.getByText('Pending')).toBeInTheDocument()
     expect(screen.getByText(/\+ 1 more/)).toBeInTheDocument()
+  })
+
+  it('coerces a scalar (string) filter value into a selected badge without crashing', () => {
+    // URL hydration can set filters.status to a bare string instead of string[].
+    renderWithStore(
+      <CheckboxFilter column="status" label="Status" options={statusOptions} />,
+      { filters: { status: 'running' } },
+    )
+    expect(screen.getByText('Running')).toBeInTheDocument()
   })
 
   it('renders as mobile sheet on narrow viewport', async () => {

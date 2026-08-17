@@ -37,6 +37,23 @@ function trackMinWidth<TData>(resolvedColumns: ColumnDef<TData, unknown>[]): num
   )
 }
 
+/**
+ * Plain-text column label for the per-group screen-reader-only header.
+ * Sortable columns wrap their string header in an interactive component, so we
+ * fall back to the accessor key; the injected selection/actions columns get
+ * generic labels. Interactive header controls are intentionally NOT duplicated.
+ */
+function columnTitle<TData>(col: ColumnDef<TData, unknown>): string {
+  if (typeof col.header === 'string')
+    return col.header
+  if (col.id === 'select')
+    return 'Select'
+  if (col.id === 'actions')
+    return 'Actions'
+  const accessorKey = (col as { accessorKey?: unknown }).accessorKey
+  return typeof accessorKey === 'string' ? accessorKey : ''
+}
+
 function renderColGroup<TData>(resolvedColumns: ColumnDef<TData, unknown>[]): ReactNode {
   return (
     <colgroup>
@@ -190,7 +207,17 @@ export function GroupedTable<TData>(props: GroupedTableProps<TData>) {
       {visibleSlices.map((slice) => {
         const open = isSearching ? true : isOpen(slice.id)
         return (
-          <Collapsible key={slice.id} open={open} onOpenChange={() => toggle(slice.id)}>
+          <Collapsible
+            key={slice.id}
+            open={open}
+            // While searching, groups are force-opened; swallow toggles so a
+            // header click doesn't silently flip the stored expansion state
+            // (which would surface unexpectedly once the search is cleared).
+            onOpenChange={() => {
+              if (!isSearching)
+                toggle(slice.id)
+            }}
+          >
             <CollapsibleTrigger
               className={cn(
                 'flex h-10 w-full items-center gap-2 border-b bg-muted/40 px-2 text-left align-middle text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
@@ -214,6 +241,22 @@ export function GroupedTable<TData>(props: GroupedTableProps<TData>) {
                 aria-label={typeof slice.title === 'string' ? slice.title : undefined}
               >
                 {renderColGroup(resolvedColumns)}
+                {/*
+                  Each group is its own <table>, so it needs its own column
+                  headers for screen readers to associate cells with columns
+                  (header/cell association cannot cross table boundaries). This
+                  header is visually hidden and non-interactive — the visible,
+                  interactive header lives in the shared header table above.
+                */}
+                <TableHeader className="sr-only">
+                  <TableRow>
+                    {resolvedColumns.map((col, i) => (
+                      <TableHead key={`group-header-${i}`} scope="col">
+                        {columnTitle(col)}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
                 <TableBody className={bodyClassName}>
                   {slice.rows.map((row: Row<TData>) => (
                     <TableRow

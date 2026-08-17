@@ -1,6 +1,6 @@
 import type { DateTimePickerProps } from './types'
-import { useDeprecationWarning } from '../picker/internal/use-deprecation-warning'
-import { DateTimePicker as PickerDateTimePicker } from '../picker/wrappers/date-time-picker'
+import { useDeprecationWarning } from '../_shared'
+import { DateTimePicker as PickerDateTimePicker } from '../picker'
 
 /**
  * @deprecated Use `DateTimePicker` from `@datum-cloud/datum-ui/picker`

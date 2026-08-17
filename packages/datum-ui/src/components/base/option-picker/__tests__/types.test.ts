@@ -16,6 +16,17 @@ describe('optionPicker types', () => {
     expect(isGroupedOptions([])).toBe(false)
   })
 
+  it('treats flat options carrying an `options` field as flat (BUG-103)', () => {
+    interface RegionOption extends OptionPickerOption {
+      options: string[]
+    }
+    const regions: RegionOption[] = [
+      { label: 'Americas', value: 'americas', options: ['us', 'ca'] },
+    ]
+    expect(isGroupedOptions(regions)).toBe(false)
+    expect(flattenOptions(regions)).toEqual(regions)
+  })
+
   it('flattens grouped options', () => {
     const grouped: OptionPickerGroup<OptionPickerOption>[] = [
       { label: 'G1', options: [{ label: 'A', value: 'a' }, { label: 'B', value: 'b' }] },

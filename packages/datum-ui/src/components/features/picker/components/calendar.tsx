@@ -1,5 +1,5 @@
 import type { DateRange } from 'react-day-picker'
-import { Calendar } from '../../../base/calendar/calendar'
+import { Calendar } from '../../../base/calendar'
 import { useDateConstraints } from '../../../base/date-picker'
 import { isDateBearingMode } from '../types'
 import { isoToZonedDate, zonedDateToIso } from '../utils/timezone'
@@ -11,6 +11,23 @@ import { usePickerContext } from './context'
  * intrinsic width on `md` and above.
  */
 const CALENDAR_RESPONSIVE_CLASSNAMES = { root: 'w-full md:w-fit' }
+
+/**
+ * react-day-picker hands back the clicked day cell at midnight, discarding any
+ * time-of-day the user already chose via the time input. Re-apply the previous
+ * wall-clock time (read from the pending ISO in the display timezone) onto the
+ * newly clicked day so selecting a different date keeps the time (BUG-033).
+ */
+function mergeTimeFromIso(day: Date, prevIso: unknown, timezone: string): Date {
+  const merged = new Date(day)
+  if (typeof prevIso === 'string') {
+    const prev = isoToZonedDate(prevIso, timezone)
+    if (!Number.isNaN(prev.getTime())) {
+      merged.setHours(prev.getHours(), prev.getMinutes(), prev.getSeconds(), prev.getMilliseconds())
+    }
+  }
+  return merged
+}
 
 interface PickerCalendarProps {
   numberOfMonths?: 1 | 2
@@ -68,9 +85,10 @@ export function PickerCalendar({
             actions.setRange({ from: range.from, to: range.to })
           }
           else {
+            const prev = v as { from?: unknown, to?: unknown } | null
             actions.setDatetimeRange({
-              from: zonedDateToIso(range.from, timezone),
-              to: zonedDateToIso(range.to, timezone),
+              from: zonedDateToIso(mergeTimeFromIso(range.from, prev?.from, timezone), timezone),
+              to: zonedDateToIso(mergeTimeFromIso(range.to, prev?.to, timezone), timezone),
             })
           }
         }}
@@ -105,7 +123,8 @@ export function PickerCalendar({
           actions.setSingleDate(d)
         }
         else if (mode === 'datetime') {
-          actions.setSingleDatetime(zonedDateToIso(d, timezone))
+          const merged = mergeTimeFromIso(d, state.pendingValue, timezone)
+          actions.setSingleDatetime(zonedDateToIso(merged, timezone))
         }
       }}
       defaultMonth={month}

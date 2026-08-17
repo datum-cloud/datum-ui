@@ -3,6 +3,7 @@ import { cva } from 'class-variance-authority'
 import * as React from 'react'
 import { cn } from '../../../utils/cn'
 import { SpinnerIcon } from '../../icons/spinner.icon'
+import { getIconOnlyClass } from './icon-only'
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50',
@@ -292,7 +293,7 @@ function Button({
     return (
       loadingIcon || (
         <SpinnerIcon
-          size={size === 'small' ? 'xs' : size === 'large' ? 'sm' : 'md'}
+          size={size === 'small' || size === 'xs' ? 'xs' : size === 'large' ? 'sm' : 'md'}
           aria-hidden="true"
         />
       )
@@ -308,21 +309,11 @@ function Button({
             <SpinnerIcon size="sm" aria-hidden="true" />
           ))
 
-  const getIconOnlyClass = () => {
-    if (!isIconOnly || size === 'icon')
-      return ''
-    if (size === 'small')
-      return 'w-8 px-0'
-    if (size === 'large')
-      return 'w-11 px-0'
-    return 'w-9 px-0' // default
-  }
-
   return (
     <button
       className={cn(
         buttonVariants({ type, theme, size, block }),
-        getIconOnlyClass(),
+        getIconOnlyClass(size, Boolean(isIconOnly)),
         className,
       )}
       ref={ref}

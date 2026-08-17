@@ -1,4 +1,3 @@
-import type { DateRange } from 'react-day-picker'
 import * as React from 'react'
 import { cn } from '../../../../utils/cn'
 import { CalendarDatePicker } from '../../../features/calendar-date-picker'
@@ -74,9 +73,15 @@ export function FormDatePicker({
       return { from: date, to: date }
     }
 
-    // Handle DateRange object
+    // Handle DateRange object. Values are persisted as ISO strings (see
+    // handleDateSelect), so convert them back to Date instances before handing
+    // them to the Date-typed picker — otherwise the selection never displays.
     if (typeof val === 'object' && 'from' in val) {
-      return val as DateRange
+      const range = val as { from?: unknown, to?: unknown }
+      return {
+        from: range.from ? new Date(range.from as string | number | Date) : undefined,
+        to: range.to ? new Date(range.to as string | number | Date) : undefined,
+      }
     }
 
     return { from: undefined, to: undefined }

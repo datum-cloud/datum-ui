@@ -80,7 +80,7 @@ describe('useKeyboardShortcuts', () => {
     expect(onSelect).not.toHaveBeenCalled()
   })
 
-  it('does not bind on document — keypresses outside the root are ignored', () => {
+  it('fires for keys dispatched on document.body (portaled popover content)', () => {
     const onSelect = vi.fn()
     const presets: PickerPreset[] = [{
       key: 'today',
@@ -89,8 +89,25 @@ describe('useKeyboardShortcuts', () => {
       getRange: () => ({ from: new Date(), to: new Date() }),
     }]
     render(<Harness presets={presets} onSelect={onSelect} enabled={true} />)
-    // Fire on document body (outside the root)
+    // The popover content is portaled to document.body, outside the root
+    // subtree — shortcuts must still fire (BUG-078).
     fireEvent.keyDown(document.body, { key: 'd' })
+    expect(onSelect).toHaveBeenCalledWith(presets[0])
+  })
+
+  it('ignores keys typed inside editable controls', () => {
+    const onSelect = vi.fn()
+    const presets: PickerPreset[] = [{
+      key: 'today',
+      label: 'Today',
+      shortcut: 'D',
+      getRange: () => ({ from: new Date(), to: new Date() }),
+    }]
+    const { getByTestId } = render(
+      <Harness presets={presets} onSelect={onSelect} enabled={true} />,
+    )
+    // Typing 'd' in an input must not trigger the preset shortcut.
+    fireEvent.keyDown(getByTestId('input'), { key: 'd' })
     expect(onSelect).not.toHaveBeenCalled()
   })
 })

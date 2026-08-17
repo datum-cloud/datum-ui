@@ -4,83 +4,69 @@ import process from 'node:process'
 
 const PKG_ROOT = path.resolve(import.meta.dirname, '..')
 const SRC_STYLES = path.join(PKG_ROOT, 'src', 'styles')
-const DIST_STYLES = path.join(PKG_ROOT, 'dist', 'styles')
+const DIST = path.join(PKG_ROOT, 'dist')
+const DIST_STYLES = path.join(DIST, 'styles')
 const SHADCN_STYLES = path.resolve(PKG_ROOT, '..', 'shadcn', 'styles')
 
-// 1. Copy src/styles/ assets to dist/styles/
-fs.mkdirSync(DIST_STYLES, { recursive: true })
+// 1. Copy the whole src/styles/ tree to dist/styles/ (fonts, tokens, themes,
+//    and top-level *.css). Copying the tree wholesale avoids a hand-maintained
+//    per-file list that drifts as stylesheets are added.
+fs.rmSync(DIST_STYLES, { recursive: true, force: true })
+fs.cpSync(SRC_STYLES, DIST_STYLES, { recursive: true })
 
-fs.copyFileSync(
-  path.join(SRC_STYLES, 'root.css'),
-  path.join(DIST_STYLES, 'root.css'),
-)
-
-fs.copyFileSync(
-  path.join(SRC_STYLES, 'fonts.css'),
-  path.join(DIST_STYLES, 'fonts.css'),
-)
-
-fs.copyFileSync(
-  path.join(SRC_STYLES, 'canela.css'),
-  path.join(DIST_STYLES, 'canela.css'),
-)
-
-fs.cpSync(
-  path.join(SRC_STYLES, 'fonts'),
-  path.join(DIST_STYLES, 'fonts'),
-  { recursive: true },
-)
-
-fs.cpSync(
-  path.join(SRC_STYLES, 'tokens'),
-  path.join(DIST_STYLES, 'tokens'),
-  { recursive: true },
-)
-
-fs.cpSync(
-  path.join(SRC_STYLES, 'themes'),
-  path.join(DIST_STYLES, 'themes'),
-  { recursive: true },
-)
-
-// 2. Copy shadcn CSS to dist/styles/shadcn/
+// 2. Copy every shadcn stylesheet to dist/styles/shadcn/ (glob, not a fixed
+//    list) so any CSS referenced from datum-ui's stylesheets is reachable.
 const DIST_SHADCN = path.join(DIST_STYLES, 'shadcn')
 fs.mkdirSync(DIST_SHADCN, { recursive: true })
 
-fs.copyFileSync(
-  path.join(SHADCN_STYLES, 'shadcn.css'),
-  path.join(DIST_SHADCN, 'shadcn.css'),
-)
-
-fs.copyFileSync(
-  path.join(SHADCN_STYLES, 'animations.css'),
-  path.join(DIST_SHADCN, 'animations.css'),
-)
-
-// 3. Rewrite import path in dist/styles/root.css
-const rootCssPath = path.join(DIST_STYLES, 'root.css')
-const rootCss = fs.readFileSync(rootCssPath, 'utf-8')
-const rewritten = rootCss.replace(
-  '@import \'@repo/shadcn/styles/shadcn.css\'',
-  '@import \'./shadcn/shadcn.css\'',
-)
-fs.writeFileSync(rootCssPath, rewritten, 'utf-8')
-
-// Validate no @repo/ references remain
-if (rewritten.includes('@repo/')) {
-  console.error('ERROR: Unrewritten @repo/ imports remain in dist/styles/root.css')
-  process.exit(1)
+for (const entry of fs.readdirSync(SHADCN_STYLES, { withFileTypes: true })) {
+  if (!entry.isFile() || !entry.name.endsWith('.css'))
+    continue
+  fs.copyFileSync(
+    path.join(SHADCN_STYLES, entry.name),
+    path.join(DIST_SHADCN, entry.name),
+  )
 }
 
-// 4. Copy component CSS to separate export locations
+// 3. Rewrite every `@repo/shadcn/styles/*` import in EVERY copied CSS file to
+//    the local ./shadcn/ copy, walking dist/styles recursively so nested CSS
+//    (the copied dist/styles/shadcn/ subdir and any future src/styles subdir)
+//    is rewritten and guarded too — not just the top-level files. Generic regex
+//    (not a single literal) so new @import lines are rewritten automatically.
+function rewriteStylesRecursively(dir) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const entryPath = path.join(dir, entry.name)
+    if (entry.isDirectory()) {
+      rewriteStylesRecursively(entryPath)
+      continue
+    }
+    if (!entry.isFile() || !entry.name.endsWith('.css'))
+      continue
+    const css = fs.readFileSync(entryPath, 'utf-8')
+    const rewritten = css.replace(/@repo\/shadcn\/styles\//g, './shadcn/')
+    if (rewritten !== css)
+      fs.writeFileSync(entryPath, rewritten, 'utf-8')
+
+    // Validate no @repo/ references remain (the guard the rewrite must satisfy).
+    if (rewritten.includes('@repo/')) {
+      const rel = path.relative(DIST_STYLES, entryPath)
+      console.error(`ERROR: Unrewritten @repo/ imports remain in dist/styles/${rel}`)
+      process.exit(1)
+    }
+  }
+}
+
+rewriteStylesRecursively(DIST_STYLES)
+
+// 4. Copy component CSS to its published subpath (the `style` export condition).
 const componentCopies = [
   {
     src: path.join(PKG_ROOT, 'src', 'components', 'features', 'grid', 'style.css'),
-    dest: path.join(PKG_ROOT, 'dist', 'grid', 'style.css'),
+    dest: path.join(DIST, 'grid', 'style.css'),
   },
   {
     src: path.join(PKG_ROOT, 'src', 'components', 'features', 'nprogress', 'nprogress.css'),
-    dest: path.join(PKG_ROOT, 'dist', 'nprogress', 'nprogress.css'),
+    dest: path.join(DIST, 'nprogress', 'nprogress.css'),
   },
 ]
 

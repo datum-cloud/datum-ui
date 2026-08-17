@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react'
 import type { TaskSummaryItem } from '../types'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@repo/shadcn/ui/table'
 import { CircleCheck, XCircle } from 'lucide-react'
 import { useMemo } from 'react'
 import { cn } from '../../../../utils/cn'
-import { Button } from '../../../base/button/button'
+import { Button } from '../../../base/button'
 import { Dialog } from '../../../base/dialog'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../base/table'
 import { Icon } from '../../../icons/icon-wrapper'
 import { useTaskQueue } from '../hooks/use-task-queue'
 

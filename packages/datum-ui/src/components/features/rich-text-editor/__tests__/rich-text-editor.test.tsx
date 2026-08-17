@@ -28,4 +28,30 @@ describe('richTextContent', () => {
     const { container } = render(<RichTextContent content="" />)
     expect(container.firstChild).toBeNull()
   })
+
+  it('preserves relative, anchor, and tel links without corrupting hrefs', () => {
+    const { container } = render(
+      <RichTextContent content={'<p><a href="/pricing">Pricing</a> <a href="#faq">FAQ</a> <a href="tel:+15550100">Call</a></p>'} />,
+    )
+    const hrefs = Array.from(container.querySelectorAll('a')).map(a => a.getAttribute('href'))
+    expect(hrefs).toEqual(['/pricing', '#faq', 'tel:+15550100'])
+  })
+
+  it('does not force new-tab on same-page and relative links', () => {
+    const { container } = render(
+      <RichTextContent content={'<p><a href="#faq">FAQ</a></p>'} />,
+    )
+    const link = container.querySelector('a')
+    expect(link?.getAttribute('target')).toBeNull()
+  })
+
+  it('prefixes bare domains with https and hardens them as external links', () => {
+    const { container } = render(
+      <RichTextContent content={'<p><a href="example.com">Example</a></p>'} />,
+    )
+    const link = container.querySelector('a')
+    expect(link?.getAttribute('href')).toBe('https://example.com')
+    expect(link?.getAttribute('target')).toBe('_blank')
+    expect(link?.getAttribute('rel')).toBe('noopener noreferrer')
+  })
 })

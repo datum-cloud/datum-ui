@@ -1,33 +1,33 @@
-import { cn } from '@repo/shadcn/lib/utils';
-import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@repo/shadcn/ui/command';
-import { InputGroup, InputGroupAddon, InputGroupInput } from '@repo/shadcn/ui/input-group';
-import { Spinner } from '@repo/shadcn/ui/spinner';
-import type { BBox, Feature, FeatureCollection, Point } from 'geojson';
-import { MapPinIcon, SearchIcon } from 'lucide-react';
-import * as React from 'react';
+import type { BBox, Feature, FeatureCollection, Point } from 'geojson'
+import { cn } from '@repo/shadcn/lib/utils'
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@repo/shadcn/ui/command'
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@repo/shadcn/ui/input-group'
+import { Spinner } from '@repo/shadcn/ui/spinner'
+import { MapPinIcon, SearchIcon } from 'lucide-react'
+import * as React from 'react'
 
 interface PlaceFeatureProperties {
-  osm_id: number;
-  osm_type: 'N' | 'W' | 'R';
-  osm_key: string;
-  osm_value: string;
-  type: string;
-  name?: string;
-  housenumber?: string;
-  street?: string;
-  locality?: string;
-  district?: string;
-  postcode?: string;
-  city?: string;
-  county?: string;
-  state?: string;
-  country?: string;
-  countrycode?: string;
-  extent?: [number, number, number, number];
-  extra?: Record<string, string>;
+  osm_id: number
+  osm_type: 'N' | 'W' | 'R'
+  osm_key: string
+  osm_value: string
+  type: string
+  name?: string
+  housenumber?: string
+  street?: string
+  locality?: string
+  district?: string
+  postcode?: string
+  city?: string
+  county?: string
+  state?: string
+  country?: string
+  countrycode?: string
+  extent?: [number, number, number, number]
+  extra?: Record<string, string>
 }
-type PlaceFeature = Feature<Point, PlaceFeatureProperties>;
-type PlaceFeatureCollection = FeatureCollection<Point, PlaceFeatureProperties>;
+type PlaceFeature = Feature<Point, PlaceFeatureProperties>
+type PlaceFeatureCollection = FeatureCollection<Point, PlaceFeatureProperties>
 
 /**
  * Query parameters for Photon geocoding API
@@ -35,71 +35,73 @@ type PlaceFeatureCollection = FeatureCollection<Point, PlaceFeatureProperties>;
  */
 interface PlaceSearchOptions {
   /** Search text (address, place name, or POI) */
-  query: string;
+  query: string
   /** Preferred language for results (e.g., "en", "de", "fr") */
-  lang?: string;
+  lang?: string
   /** Maximum number of results to return */
-  limit?: number;
+  limit?: number
   /**
    * Bounding box used to restrict results.
    * Format: [minLongitude, minLatitude, maxLongitude, maxLatitude]
    */
-  bbox?: BBox;
+  bbox?: BBox
   /** Latitude used to bias results toward a specific location */
-  lat?: number;
+  lat?: number
   /** Longitude used to bias results toward a specific location */
-  lon?: number;
+  lon?: number
   /**
    * Zoom level used for location biasing.
    * Higher values increase locality.
    */
-  zoom?: number;
+  zoom?: number
   /**
    * Strength of the location bias.
    */
-  locationBiasScale?: number;
+  locationBiasScale?: number
 }
 
 interface PlaceAutocompleteProps
   extends
-    Omit<PlaceSearchOptions, 'query'>,
-    Omit<React.ComponentProps<'input'>, 'value' | 'onChange'> {
-  debounceMs?: number;
-  value?: string;
-  defaultValue?: string;
-  onChange?: (value: string) => void;
-  onPlaceSelect?: (feature: PlaceFeature) => void;
-  onResultsChange?: (results: PlaceFeature[]) => void;
+  Omit<PlaceSearchOptions, 'query'>,
+  Omit<React.ComponentProps<'input'>, 'value' | 'onChange'> {
+  debounceMs?: number
+  value?: string
+  defaultValue?: string
+  onChange?: (value: string) => void
+  onPlaceSelect?: (feature: PlaceFeature) => void
+  onResultsChange?: (results: PlaceFeature[]) => void
 }
 
 function formatAddress(properties: PlaceFeatureProperties) {
-  const parts = [];
+  const parts = []
 
   if (properties.name) {
-    parts.push(properties.name);
+    parts.push(properties.name)
   }
 
   if (properties.housenumber && properties.street) {
-    parts.push(`${properties.housenumber} ${properties.street}`);
-  } else if (properties.street) {
-    parts.push(properties.street);
+    parts.push(`${properties.housenumber} ${properties.street}`)
+  }
+  else if (properties.street) {
+    parts.push(properties.street)
   }
 
   if (properties.city) {
-    parts.push(properties.city);
-  } else if (properties.locality) {
-    parts.push(properties.locality);
+    parts.push(properties.city)
+  }
+  else if (properties.locality) {
+    parts.push(properties.locality)
   }
 
   if (properties.state && properties.state !== properties.city) {
-    parts.push(properties.state);
+    parts.push(properties.state)
   }
 
   if (properties.country) {
-    parts.push(properties.country);
+    parts.push(properties.country)
   }
 
-  return [...new Set(parts)].join(', ');
+  return [...new Set(parts)].join(', ')
 }
 
 function buildSearchUrl({
@@ -112,46 +114,46 @@ function buildSearchUrl({
   lon,
   zoom,
 }: PlaceSearchOptions) {
-  const url = new URL('https://photon.komoot.io/api');
-  url.searchParams.set('q', query);
+  const url = new URL('https://photon.komoot.io/api')
+  url.searchParams.set('q', query)
 
   if (lang) {
-    url.searchParams.set('lang', lang);
+    url.searchParams.set('lang', lang)
   }
 
   if (limit) {
-    url.searchParams.set('limit', String(limit));
+    url.searchParams.set('limit', String(limit))
   }
 
   if (bbox) {
-    url.searchParams.set('bbox', bbox.join(','));
+    url.searchParams.set('bbox', bbox.join(','))
   }
 
   if (lat !== undefined && lon !== undefined) {
-    url.searchParams.set('lat', String(lat));
-    url.searchParams.set('lon', String(lon));
+    url.searchParams.set('lat', String(lat))
+    url.searchParams.set('lon', String(lon))
   }
 
   if (zoom !== undefined) {
-    url.searchParams.set('zoom', String(zoom));
+    url.searchParams.set('zoom', String(zoom))
   }
 
   if (locationBiasScale !== undefined) {
-    url.searchParams.set('location_bias_scale', String(locationBiasScale));
+    url.searchParams.set('location_bias_scale', String(locationBiasScale))
   }
 
-  return String(url);
+  return String(url)
 }
 
 function useDebounce<T>(value: T, delay: number = 300) {
-  const [debouncedValue, setDebouncedValue] = React.useState<T>(value);
+  const [debouncedValue, setDebouncedValue] = React.useState<T>(value)
 
   React.useEffect(() => {
-    const timer = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(timer);
-  }, [value, delay]);
+    const timer = setTimeout(setDebouncedValue, delay, value)
+    return () => clearTimeout(timer)
+  }, [value, delay])
 
-  return debouncedValue;
+  return debouncedValue
 }
 
 function usePlaceSearch({
@@ -159,74 +161,87 @@ function usePlaceSearch({
   query,
   ...props
 }: {
-  debounceMs: number;
+  debounceMs: number
 } & PlaceSearchOptions) {
-  const [results, setResults] = React.useState<PlaceFeature[]>([]);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState<Error | null>(null);
-  const [hasSearched, setHasSearched] = React.useState(false);
+  const [results, setResults] = React.useState<PlaceFeature[]>([])
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [error, setError] = React.useState<Error | null>(null)
+  const [hasSearched, setHasSearched] = React.useState(false)
 
-  const debouncedQuery = useDebounce(query, debounceMs);
+  const debouncedQuery = useDebounce(query, debounceMs)
+  // Serialize bbox so an inline `bbox={[...]}` prop (new array identity every
+  // render) does not re-fire the fetch effect on each parent re-render, which
+  // caused an infinite refetch loop against the Photon API.
+  const bboxKey = props.bbox?.join(',')
 
   React.useEffect(() => {
     if (!debouncedQuery.trim()) {
-      setResults([]);
-      setIsLoading(false);
-      setHasSearched(false);
-      return;
+      setResults([])
+      setIsLoading(false)
+      setHasSearched(false)
+      // Also clear any prior error so an emptied input doesn't leave a stale
+      // error dropdown rendered under a blank field.
+      setError(null)
+      return
     }
 
-    const abortController = new AbortController();
+    const abortController = new AbortController()
 
     async function fetchResults() {
-      setIsLoading(true);
-      setError(null);
-      setHasSearched(true);
+      setIsLoading(true)
+      setError(null)
+      setHasSearched(true)
 
       try {
-        const url = buildSearchUrl({ query: debouncedQuery, ...props });
+        const url = buildSearchUrl({ query: debouncedQuery, ...props })
         const response = await fetch(url, {
           signal: abortController.signal,
-        });
+        })
 
         if (!response.ok) {
-          throw new Error(`Photon API error: ${response.status} ${response.statusText}`);
+          throw new Error(`Photon API error: ${response.status} ${response.statusText}`)
         }
 
-        const data: PlaceFeatureCollection = await response.json();
-        const addressOsmIds = new Set();
+        const data: PlaceFeatureCollection = await response.json()
+        const seenOsmKeys = new Set<string>()
         const dedupedFeatures = data.features.filter((feature) => {
-          const id = feature.properties.osm_id;
-          if (addressOsmIds.has(id)) return false;
-          addressOsmIds.add(id);
-          return true;
-        });
-        setResults(dedupedFeatures);
-      } catch (err) {
+          // OSM node/way/relation id spaces overlap numerically, so dedupe on
+          // the composite osm_type:osm_id — keying on osm_id alone dropped
+          // distinct places (e.g. way #123 vs node #123).
+          const key = `${feature.properties.osm_type}:${feature.properties.osm_id}`
+          if (seenOsmKeys.has(key))
+            return false
+          seenOsmKeys.add(key)
+          return true
+        })
+        setResults(dedupedFeatures)
+      }
+      catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
-          setError(err);
-          setResults([]);
+          setError(err)
+          setResults([])
         }
-      } finally {
-        setIsLoading(false);
+      }
+      finally {
+        setIsLoading(false)
       }
     }
 
-    fetchResults();
+    fetchResults()
 
-    return () => abortController.abort();
+    return () => abortController.abort()
   }, [
     debouncedQuery,
     props.lang,
     props.limit,
-    props.bbox,
+    bboxKey,
     props.lat,
     props.lon,
     props.zoom,
     props.locationBiasScale,
-  ]);
+  ])
 
-  return { results, isLoading, error, hasSearched };
+  return { results, isLoading, error, hasSearched }
 }
 
 function PlaceAutocomplete({
@@ -246,11 +261,16 @@ function PlaceAutocomplete({
   onResultsChange,
   ...props
 }: PlaceAutocompleteProps) {
-  const [internalValue, setInternalValue] = React.useState(defaultValue);
-  const [searchQuery, setSearchQuery] = React.useState('');
+  const [internalValue, setInternalValue] = React.useState(defaultValue)
+  const [searchQuery, setSearchQuery] = React.useState('')
+  // Explicit open state so the suggestion list can be dismissed. Without it the
+  // absolutely-positioned dropdown stayed open indefinitely (no outside-click,
+  // blur, or Escape path) and lingered after selecting a result.
+  const [isOpen, setIsOpen] = React.useState(false)
+  const containerRef = React.useRef<HTMLDivElement>(null)
 
-  const isControlled = controlledValue !== undefined;
-  const displayValue = isControlled ? controlledValue : internalValue;
+  const isControlled = controlledValue !== undefined
+  const displayValue = isControlled ? controlledValue : internalValue
 
   const { results, isLoading, error, hasSearched } = usePlaceSearch({
     query: searchQuery,
@@ -262,20 +282,44 @@ function PlaceAutocomplete({
     lon,
     zoom,
     locationBiasScale,
-  });
+  })
 
   React.useEffect(() => {
-    onResultsChange?.(results);
-  }, [results, onResultsChange]);
+    onResultsChange?.(results)
+  }, [results, onResultsChange])
 
-  const hasNoResults = hasSearched && !isLoading && !error && results.length === 0;
-  const showCommandList = error || hasNoResults || results.length > 0;
+  // Close the dropdown when the user clicks anywhere outside this component.
+  React.useEffect(() => {
+    if (!isOpen)
+      return
+
+    function handlePointerDown(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+    return () => document.removeEventListener('mousedown', handlePointerDown)
+  }, [isOpen])
+
+  const hasNoResults = hasSearched && !isLoading && !error && results.length === 0
+  const showCommandList = isOpen && (Boolean(error) || hasNoResults || results.length > 0)
 
   return (
     <Command className={cn('h-fit overflow-visible', className)} shouldFilter={false} loop>
-      <div className="relative">
+      <div
+        ref={containerRef}
+        className="relative"
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            setIsOpen(false)
+          }
+        }}
+      >
         <InputGroup
-          className={cn('border-input! bg-popover! ring-0!', showCommandList && 'rounded-b-none')}>
+          className={cn('border-input! bg-popover! ring-0!', showCommandList && 'rounded-b-none')}
+        >
           <InputGroupAddon>
             <SearchIcon />
           </InputGroupAddon>
@@ -283,13 +327,15 @@ function PlaceAutocomplete({
             placeholder="Search"
             value={displayValue}
             onChange={(event) => {
-              const newValue = event.target.value;
+              const newValue = event.target.value
               if (!isControlled) {
-                setInternalValue(newValue);
+                setInternalValue(newValue)
               }
-              setSearchQuery(newValue);
-              controlledOnChange?.(newValue);
+              setSearchQuery(newValue)
+              setIsOpen(true)
+              controlledOnChange?.(newValue)
             }}
+            onFocus={() => setIsOpen(true)}
             {...props}
           />
           {isLoading && (
@@ -306,29 +352,43 @@ function PlaceAutocomplete({
               'data-[state=open]:animate-in data-[state=closed]:animate-out',
               'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
               'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-              'data-[state=open]:slide-in-from-top-2 data-[state=closed]:slide-out-to-top-2'
-            )}>
-            {error && <CommandEmpty>Error: {error.message}</CommandEmpty>}
-            {hasNoResults && <CommandEmpty>Can&apos;t find {displayValue}.</CommandEmpty>}
+              'data-[state=open]:slide-in-from-top-2 data-[state=closed]:slide-out-to-top-2',
+            )}
+          >
+            {error && (
+              <CommandEmpty>
+                Error:
+                {error.message}
+              </CommandEmpty>
+            )}
+            {hasNoResults && (
+              <CommandEmpty>
+                Can&apos;t find
+                {displayValue}
+                .
+              </CommandEmpty>
+            )}
             {results.length > 0 && (
               <CommandGroup>
                 {results.map((feature) => {
-                  const formattedAddress = formatAddress(feature.properties);
+                  const formattedAddress = formatAddress(feature.properties)
                   return (
                     <CommandItem
-                      key={feature.properties.osm_id}
-                      value={String(feature.properties.osm_id)}
+                      key={`${feature.properties.osm_type}:${feature.properties.osm_id}`}
+                      value={`${feature.properties.osm_type}:${feature.properties.osm_id}`}
                       onSelect={() => {
-                        const formattedAddress = formatAddress(feature.properties);
+                        const formattedAddress = formatAddress(feature.properties)
 
                         if (!isControlled) {
-                          setInternalValue(formattedAddress);
+                          setInternalValue(formattedAddress)
                         }
 
-                        setSearchQuery('');
-                        controlledOnChange?.(formattedAddress);
-                        onPlaceSelect?.(feature);
-                      }}>
+                        setSearchQuery('')
+                        setIsOpen(false)
+                        controlledOnChange?.(formattedAddress)
+                        onPlaceSelect?.(feature)
+                      }}
+                    >
                       <MapPinIcon />
                       <div className="flex flex-col items-start text-start">
                         <span className="font-medium">
@@ -337,7 +397,7 @@ function PlaceAutocomplete({
                         <span className="text-muted-foreground text-xs">{formattedAddress}</span>
                       </div>
                     </CommandItem>
-                  );
+                  )
                 })}
               </CommandGroup>
             )}
@@ -345,7 +405,7 @@ function PlaceAutocomplete({
         )}
       </div>
     </Command>
-  );
+  )
 }
 
-export { PlaceAutocomplete, type PlaceAutocompleteProps, type PlaceFeature };
+export { PlaceAutocomplete, type PlaceAutocompleteProps, type PlaceFeature }

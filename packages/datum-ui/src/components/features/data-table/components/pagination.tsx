@@ -56,6 +56,7 @@ export function DataTablePagination({
   className,
 }: PaginationProps) {
   const {
+    mode,
     canNextPage,
     canPrevPage,
     nextPage,
@@ -68,8 +69,10 @@ export function DataTablePagination({
     totalRows,
   } = useDataTablePagination()
 
-  // pageCount > 0 means client mode (TanStack returns -1 for manual/server pagination)
-  const isClientMode = pageCount > 0
+  // Detect mode from the store's own `mode` flag. Server tables set an explicit
+  // (non-negative) pageCount for the pagination component, so a `pageCount > 0`
+  // heuristic would misclassify them as client mode.
+  const isClientMode = mode === 'client'
 
   const startRow = pageIndex * pageSize + 1
   const endRow = Math.min((pageIndex + 1) * pageSize, totalRows)

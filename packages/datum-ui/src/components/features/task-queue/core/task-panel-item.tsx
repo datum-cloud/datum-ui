@@ -126,7 +126,7 @@ function TaskStatusAction({ task, onCancel }: { task: Task, onCancel: () => void
   if (task.status === 'running') {
     return (
       <div className="relative size-5">
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity group-hover:opacity-0">
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity group-hover:opacity-0 group-focus-within:opacity-0">
           <SpinnerIcon size="sm" />
         </div>
         {task.cancelable && (
@@ -138,7 +138,10 @@ function TaskStatusAction({ task, onCancel }: { task: Task, onCancel: () => void
                 className={cn(
                   'flex size-5 items-center justify-center rounded-md transition-colors',
                   'text-muted-foreground hover:bg-accent hover:text-foreground',
-                  'absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100',
+                  // Reveal on hover OR keyboard focus so focus is never on an
+                  // invisible control.
+                  'absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100',
+                  'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                 )}
                 aria-label="Cancel task"
               >

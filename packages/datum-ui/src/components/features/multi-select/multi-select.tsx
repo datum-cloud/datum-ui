@@ -1,49 +1,21 @@
-import type { VariantProps } from 'class-variance-authority'
-import { Separator } from '@repo/shadcn/ui/separator'
-import { cva } from 'class-variance-authority'
-import { CheckIcon, ChevronDown, WandSparkles, XCircle, XIcon } from 'lucide-react'
+import type { MultiSelectOption, MultiSelectVariant } from './multi-select-shared'
+import { CheckIcon, ChevronDown, WandSparkles } from 'lucide-react'
 import * as React from 'react'
-import { useEffect } from 'react'
 import { cn } from '../../../utils/cn'
-import { Badge } from '../../base/badge'
-import { OptionList, useOptionPicker } from '../../base/option-picker'
+import { useControllableState } from '../../base/hooks'
+import { useOptionPicker } from '../../base/option-picker'
 import { ResponsivePopover } from '../../base/responsive-popover'
+import { Separator } from '../../base/separator'
 import { LoaderOverlay } from '../loader-overlay'
+import { MultiSelectOptions } from './multi-select-options'
+import { SelectedBadgeList } from './selected-badge-list'
 
-/**
- * Variants for the multi-select component to handle different styles.
- * Uses class-variance-authority (cva) to define different styles based on "variant" prop.
- */
-const multiSelectVariants = cva(
-  'flex items-center gap-1 rounded-md border px-2 py-1 text-xs transition-colors whitespace-nowrap',
-  {
-    variants: {
-      variant: {
-        default: 'border-input-border bg-input-background/80 text-input-foreground',
-        secondary: 'border-secondary/40 bg-secondary/20 text-secondary-foreground',
-        destructive: 'border-destructive/60 bg-destructive/20 text-destructive',
-        inverted: 'border-transparent bg-foreground text-background',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-    },
-  },
-)
+export type { MultiSelectOption } from './multi-select-shared'
 
 /**
  * Props for MultiSelect component
  */
-
-export interface MultiSelectOption {
-  label: string
-  value: string
-  icon?: React.ComponentType<{ className?: string }>
-}
-
-interface MultiSelectProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-  VariantProps<typeof multiSelectVariants> {
+interface MultiSelectProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * An array of option objects to be displayed in the multi-select component.
    * Each option object has a label, value, and an optional icon.
@@ -55,6 +27,9 @@ interface MultiSelectProps
    * Receives an array of the new selected values.
    */
   onValueChange: (value: string[]) => void
+
+  /** Visual variant applied to the selected-value badges. */
+  variant?: MultiSelectVariant
 
   /** The default selected values when the component mounts. */
   defaultValue?: string[]
@@ -213,70 +188,49 @@ export function MultiSelect({
   emptyContent = 'No results found.',
   responsive = true,
   sheetTitle,
+  asChild: _asChild,
+  onClick: onTriggerClick,
+  ...rest
 }: MultiSelectProps) {
   const [isPopoverOpen, setIsPopoverOpen] = React.useState(false)
   const [isAnimating, setIsAnimating] = React.useState(false)
 
-  // Mirror of engine selection for uncontrolled badge rendering. In controlled
-  // mode this is unused — we read directly from the `value` prop.
-  const [internalValues, setInternalValues] = React.useState<string[]>(defaultValue)
-
-  // Sync defaultValue changes in uncontrolled mode (same contract as original).
-  useEffect(() => {
-    if (value === undefined && defaultValue) {
-      setInternalValues(defaultValue)
-    }
-  }, [defaultValue]) // eslint-disable-line react/exhaustive-deps
+  // Single source of truth for the selection. Uncontrolled by default; the
+  // `value` prop takes over when provided. The option-picker engine is driven
+  // as a *controlled* view of this state, so there is exactly one owner and
+  // Select-All / clear / "+N more" can never desync from the list checkmarks.
+  const [selectedValues, setSelectedValues] = useControllableState<string[]>(
+    value,
+    defaultValue,
+    onValueChange,
+  )
 
   const picker = useOptionPicker({
     multiple: true,
     options,
-    value,
-    defaultValue,
-    onValueChange: (next: string[]) => {
-      if (value === undefined) {
-        setInternalValues(next)
-      }
-      onValueChange(next)
-    },
+    value: selectedValues,
+    onValueChange: setSelectedValues,
     open: isPopoverOpen,
     onOpenChange: setIsPopoverOpen,
   })
 
-  // Derive badge list from controlled prop when available, otherwise use the
-  // local mirror so the trigger re-renders on each uncontrolled toggle.
-  const currentSelectedValues = value !== undefined ? value : internalValues
+  const selection = picker.selection
+  const selectedOptions = picker.selectedOptions
+  const hasSelection = selection.length > 0
 
-  const handleClear = () => {
-    picker.clear()
-    // Ensure local mirror is cleared even if the engine's internal update is
-    // asynchronous with respect to React's batching.
-    if (value === undefined) {
-      setInternalValues([])
-    }
-  }
+  const handleClear = () => setSelectedValues(EMPTY_ARRAY)
 
   const clearExtraOptions = () => {
-    const next = currentSelectedValues.slice(0, maxCount)
-    if (value === undefined) {
-      setInternalValues(next)
-    }
-    onValueChange(next)
+    setSelectedValues(prev => (maxCount === -1 ? prev : prev.slice(0, maxCount)))
   }
 
-  const allSelected = options.length > 0 && currentSelectedValues.length === options.length
+  const allSelected = options.length > 0 && selection.length === options.length
 
   const toggleAll = () => {
-    if (allSelected) {
-      handleClear()
-    }
-    else {
-      const allValues = options.map(o => o.value)
-      if (value === undefined) {
-        setInternalValues(allValues)
-      }
-      onValueChange(allValues)
-    }
+    if (allSelected)
+      setSelectedValues(EMPTY_ARRAY)
+    else
+      setSelectedValues(options.map(o => o.value))
   }
 
   // ---- Slots ----
@@ -309,7 +263,7 @@ export function MultiSelect({
     : undefined
 
   const showFooter
-    = (showClearButton && currentSelectedValues.length > 0)
+    = (showClearButton && hasSelection)
       || showCloseButton
       || (actions && actions.length > 0)
 
@@ -337,7 +291,7 @@ export function MultiSelect({
               </div>
             )}
             <div className="flex flex-1 items-center justify-between">
-              {showClearButton && currentSelectedValues.length > 0 && (
+              {showClearButton && hasSelection && (
                 <button
                   type="button"
                   onClick={handleClear}
@@ -346,7 +300,7 @@ export function MultiSelect({
                   Clear
                 </button>
               )}
-              {showClearButton && currentSelectedValues.length > 0 && showCloseButton && (
+              {showClearButton && hasSelection && showCloseButton && (
                 <Separator orientation="vertical" className="flex h-full min-h-6" />
               )}
               {showCloseButton && (
@@ -368,10 +322,14 @@ export function MultiSelect({
 
   const triggerJSX = (
     <button
+      {...rest}
       type="button"
       disabled={disabled || isLoading}
       data-slot="multi-select-trigger"
-      onClick={() => setIsPopoverOpen(prev => !prev)}
+      onClick={(event) => {
+        onTriggerClick?.(event)
+        setIsPopoverOpen(prev => !prev)
+      }}
       className={cn(
         'text-input-foreground placeholder:text-input-placeholder',
         'border-input-border bg-input-background/50 relative flex min-h-10 w-full items-center justify-between rounded-lg border px-2 py-1 text-left text-sm transition-all',
@@ -381,86 +339,26 @@ export function MultiSelect({
         className,
       )}
     >
-      {currentSelectedValues.length > 0 && !isLoading && options.length > 0
+      {hasSelection && !isLoading && options.length > 0
         ? (
-            <div className="flex w-full items-center justify-between">
-              <div className="flex flex-wrap items-center gap-2">
-                {currentSelectedValues
-                  .slice(0, maxCount === -1 ? undefined : maxCount)
-                  .map((val) => {
-                    const option = options.find(o => o.value === val)
-                    const IconComponent = option?.icon
-                    return (
-                      <Badge
-                        key={val}
-                        className={cn(
-                          multiSelectVariants({ variant }),
-                          'truncate',
-                          isAnimating && 'animate-bounce',
-                          clickableBadges && 'cursor-pointer',
-                          badgeClassName,
-                        )}
-                        style={{ animationDuration: `${animation}s` }}
-                        onClick={(event) => {
-                          if (clickableBadges) {
-                            event.stopPropagation()
-                            event.preventDefault()
-                            onBadgeClick?.(option ?? { label: '', value: '' })
-                          }
-                        }}
-                      >
-                        {IconComponent && (
-                          <IconComponent className="text-muted-foreground size-3" />
-                        )}
-                        <span className="max-w-[120px] truncate">{option?.label}</span>
-                        <XCircle
-                          className="text-muted-foreground ml-1 size-3 cursor-pointer"
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            event.preventDefault()
-                            picker.toggle(val)
-                          }}
-                        />
-                      </Badge>
-                    )
-                  })}
-                {currentSelectedValues.length > maxCount && maxCount !== -1 && (
-                  <Badge
-                    className={cn(
-                      multiSelectVariants({ variant }),
-                      'text-muted-foreground',
-                      isAnimating && 'animate-bounce',
-                    )}
-                    style={{ animationDuration: `${animation}s` }}
-                  >
-                    {`+ ${currentSelectedValues.length - maxCount} more`}
-                    <XCircle
-                      className="text-muted-foreground ml-1 size-3 cursor-pointer"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        clearExtraOptions()
-                      }}
-                    />
-                  </Badge>
-                )}
-              </div>
-              <div className="flex items-center justify-between">
-                <XIcon
-                  className="text-muted-foreground mx-2 h-4 cursor-pointer"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    handleClear()
-                  }}
-                />
-                <Separator orientation="vertical" className="flex h-full min-h-6" />
-                <ChevronDown className="text-muted-foreground mx-2 h-4 cursor-pointer" />
-              </div>
-            </div>
+            <SelectedBadgeList
+              selectedOptions={selectedOptions}
+              maxCount={maxCount}
+              variant={variant}
+              badgeClassName={badgeClassName}
+              clickableBadges={clickableBadges}
+              isAnimating={isAnimating}
+              animation={animation}
+              onRemove={picker.toggle}
+              onClearExtra={clearExtraOptions}
+              onClearAll={handleClear}
+              onBadgeClick={onBadgeClick}
+            />
           )
         : (
             <div className="flex w-full items-center justify-between px-2">
               <span className="text-muted-foreground text-sm">{placeholder}</span>
-              <ChevronDown className="text-muted-foreground mx-1 h-4 cursor-pointer" />
+              <ChevronDown className="text-muted-foreground mx-1 h-4" aria-hidden="true" />
             </div>
           )}
 
@@ -481,38 +379,17 @@ export function MultiSelect({
         modal={modalPopover}
         onEscapeKeyDown={() => setIsPopoverOpen(false)}
       >
-        <OptionList
+        <MultiSelectOptions
           picker={picker}
           searchPlaceholder={`Search ${(placeholder ?? 'options').toLowerCase()}...`}
           emptyContent={emptyContent}
           header={header}
           footer={footer}
           loading={isLoading}
-          listClassName={cn(
-            'min-h-[200px] max-h-[50svh]',
-            !responsive && 'max-h-[250px]',
-          )}
-          renderOption={(opt, isSelected) => (
-            <>
-              <div
-                className={cn(
-                  'border-primary mr-2 flex size-4 items-center justify-center rounded-sm border',
-                  isSelected
-                    ? 'bg-primary text-primary-foreground'
-                    : 'opacity-50 [&_svg]:invisible',
-                )}
-              >
-                <CheckIcon className="text-background size-4" />
-              </div>
-              {opt.icon && (
-                <opt.icon className="text-muted-foreground mr-2 size-4" />
-              )}
-              <span>{opt.label}</span>
-            </>
-          )}
+          responsive={responsive}
         />
       </ResponsivePopover>
-      {animation > 0 && currentSelectedValues.length > 0 && (
+      {animation > 0 && hasSelection && (
         <WandSparkles
           className={cn(
             'bg-background text-foreground my-2 h-3 w-3 cursor-pointer',
@@ -521,14 +398,17 @@ export function MultiSelect({
           onClick={() => setIsAnimating(!isAnimating)}
         />
       )}
-      {/* Hidden input for form submission */}
+      {/* Hidden input for form submission. Kept out of the tab order and hidden
+          from assistive tech — it exists solely to carry values on submit. */}
       <select
         name={name}
         id={id}
         multiple
-        value={currentSelectedValues ?? []}
+        value={selection}
         defaultValue={undefined}
         className="absolute top-0 left-0 h-0 w-0"
+        tabIndex={-1}
+        aria-hidden="true"
         onChange={() => undefined}
       >
         <option value=""></option>

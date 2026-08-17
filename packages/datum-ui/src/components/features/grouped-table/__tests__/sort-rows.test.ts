@@ -30,4 +30,15 @@ describe('sortRows', () => {
     sortRows(rows, [{ id: 'n', desc: false }])
     expect(rows).toEqual(copy)
   })
+
+  it('keeps original order for tied keys when descending (stable sort)', () => {
+    const tied = [
+      fakeRow({ id: 'a', k: 1 }),
+      fakeRow({ id: 'b', k: 1 }),
+      fakeRow({ id: 'c', k: 1 }),
+    ]
+    const out = sortRows(tied, [{ id: 'k', desc: true }])
+    // A reverse()-based descending sort would flip these to c, b, a.
+    expect(out.map(r => r.getValue('id'))).toEqual(['a', 'b', 'c'])
+  })
 })

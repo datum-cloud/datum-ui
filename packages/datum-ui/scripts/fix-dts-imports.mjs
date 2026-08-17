@@ -5,7 +5,10 @@
  * `import { X } from '@repo/shadcn/ui/foo'` which doesn't exist for consumers.
  *
  * This script:
- *   1. Generates declarations for the shadcn workspace package via tsc
+ *   1. Generates declarations for the shadcn workspace package via the
+ *      workspace-pinned compiler using shadcn's dedicated `tsconfig.dts.json`
+ *      (which encodes declaration/outDir/rootDir explicitly — no conflicting
+ *      CLI flags, no unpinned `npx` resolution).
  *   2. Copies them into dist/_shadcn/
  *   3. Rewrites every @repo/shadcn/* reference in dist/**\/*.d.ts to a
  *      relative path pointing at dist/_shadcn/
@@ -22,7 +25,8 @@ const ROOT = path.resolve(import.meta.dirname, '..')
 const DIST = path.join(ROOT, 'dist')
 const SHADCN_PKG = path.resolve(ROOT, '..', 'shadcn')
 const SHADCN_DEST = path.join(DIST, '_shadcn')
-const TMP_DIR = path.join(ROOT, '.shadcn-dts-tmp')
+// Must match the `outDir` in packages/shadcn/tsconfig.dts.json.
+const TMP_DIR = path.join(SHADCN_PKG, '.dts-tmp')
 
 // ── Step 1: Generate shadcn declarations ────────────────────────────
 console.log('Generating shadcn declarations...')
@@ -33,18 +37,12 @@ if (fs.existsSync(TMP_DIR)) {
 }
 
 try {
-  execSync(
-    [
-      'npx tsc',
-      '--declaration',
-      '--emitDeclarationOnly',
-      '--skipLibCheck',
-      `--outDir ${TMP_DIR}`,
-      `--rootDir ${SHADCN_PKG}`,
-      `--project ${path.join(SHADCN_PKG, 'tsconfig.json')}`,
-    ].join(' '),
-    { cwd: SHADCN_PKG, stdio: 'pipe' },
-  )
+  // Run the workspace-pinned TypeScript with a dedicated declaration-only
+  // config. `-p` is the sole argument, so there are no conflicting CLI flags.
+  execSync('pnpm exec tsc -p tsconfig.dts.json', {
+    cwd: SHADCN_PKG,
+    stdio: 'pipe',
+  })
 }
 catch (err) {
   console.error('tsc failed:', err.stderr?.toString() || err.message)

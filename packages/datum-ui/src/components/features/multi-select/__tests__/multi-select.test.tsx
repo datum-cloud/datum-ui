@@ -1,3 +1,4 @@
+import { resetViewport, setViewport } from '@test/viewport'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -9,31 +10,6 @@ const opts = [
   { label: 'Cherry', value: 'cherry' },
 ]
 
-const originalInnerWidth = window.innerWidth
-const originalMatchMedia = window.matchMedia
-
-function setViewport(width: number) {
-  Object.defineProperty(window, 'innerWidth', {
-    configurable: true,
-    writable: true,
-    value: width,
-  })
-  window.matchMedia = vi.fn().mockImplementation((query: string) => {
-    const match = query.match(/min-width:\s*(\d+)px/)
-    const min = match ? Number(match[1]) : 0
-    return {
-      matches: width >= min,
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    } as unknown as MediaQueryList
-  })
-}
-
 /** Returns the trigger <button> (by data-slot, avoids the role=button wrapper on mobile) */
 function getTrigger() {
   return document.querySelector<HTMLButtonElement>('[data-slot="multi-select-trigger"]')!
@@ -41,12 +17,7 @@ function getTrigger() {
 
 describe('multiSelect', () => {
   afterEach(() => {
-    Object.defineProperty(window, 'innerWidth', {
-      configurable: true,
-      writable: true,
-      value: originalInnerWidth,
-    })
-    window.matchMedia = originalMatchMedia
+    resetViewport()
   })
 
   it('renders the trigger with placeholder when no value is selected', () => {

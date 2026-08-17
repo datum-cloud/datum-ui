@@ -11,7 +11,6 @@ const config: StorybookConfig = {
   addons: [
     '@storybook/addon-docs',
     '@storybook/addon-a11y',
-    '@storybook/addon-interactions',
     '@storybook/addon-links',
     'storybook-addon-pseudo-states',
     'storybook-addon-tag-badges',

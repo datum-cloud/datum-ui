@@ -23,7 +23,15 @@ export function CheckboxFilter({
     return () => unregisterFilter(column)
   }, [column, registerFilter, unregisterFilter])
 
-  const selectedValues = (filters[column] as string[] | undefined) ?? []
+  // Filter values can arrive as a string (e.g. a single value hydrated from the
+  // URL) rather than a string[]. MultiSelect requires an array, so normalize
+  // scalars into a single-element array instead of blindly casting.
+  const rawValue = filters[column]
+  const selectedValues = Array.isArray(rawValue)
+    ? (rawValue as string[])
+    : rawValue == null
+      ? []
+      : [String(rawValue)]
 
   return (
     <MultiSelect

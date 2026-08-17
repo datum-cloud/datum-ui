@@ -5,7 +5,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import Underline from '@tiptap/extension-underline'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { createContext, use } from 'react'
+import { createContext, use, useEffect } from 'react'
 import { cn } from '../../../utils/cn'
 import { BoldToolbar } from './toolbar/bold-toolbar'
 import { ItalicToolbar } from './toolbar/italic-toolbar'
@@ -31,6 +31,11 @@ function RichTextEditorRoot({
   className,
 }: RichTextEditorProps) {
   const editor = useEditor({
+    // Re-render this subtree on every Tiptap transaction so live editor reads
+    // (toolbar isActive states, character count) stay in sync with the document.
+    // Without this, Tiptap v3's useEditor never re-renders on transactions and
+    // those derived values go stale after the first paint.
+    shouldRerenderOnTransaction: true,
     extensions: [
       StarterKit.configure({
         heading: false,
@@ -80,6 +85,41 @@ function RichTextEditorRoot({
       },
     },
   })
+
+  // Honor `disabled` changes after mount — the initial `editable` value would
+  // otherwise be the only one that ever takes effect.
+  useEffect(() => {
+    if (!editor)
+      return
+    if (editor.isEditable === disabled)
+      editor.setEditable(!disabled)
+  }, [editor, disabled])
+
+  // Honor `content` changes after mount (async loads, form resets). Guarded so a
+  // controlled parent echoing onChange back into `content` doesn't reset the
+  // selection on every keystroke, and empty-vs-`<p></p>` doesn't loop.
+  useEffect(() => {
+    if (!editor)
+      return
+    const next = content ?? ''
+    const isNextEmpty = next === '' || next === '<p></p>'
+    if (next !== editor.getHTML() && !(isNextEmpty && editor.isEmpty))
+      editor.commands.setContent(next, { emitUpdate: false })
+  }, [editor, content])
+
+  // Honor `placeholder` changes after mount (e.g. i18n locale switch).
+  useEffect(() => {
+    if (!editor)
+      return
+    const placeholderExtension = editor.extensionManager.extensions.find(
+      ext => ext.name === 'placeholder',
+    )
+    if (!placeholderExtension)
+      return
+    placeholderExtension.options.placeholder = placeholder ?? 'Write something...'
+    // Re-dispatch an empty transaction so the placeholder decoration re-renders.
+    editor.view.dispatch(editor.state.tr)
+  }, [editor, placeholder])
 
   return (
     <RichTextEditorContext value={{ editor }}>

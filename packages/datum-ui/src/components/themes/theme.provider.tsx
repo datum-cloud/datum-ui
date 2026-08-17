@@ -2,6 +2,7 @@
 
 import type { Attribute, Theme, ThemeProviderProps, UseThemeProps } from './types'
 import * as React from 'react'
+import { ThemeScript } from './theme-script'
 
 const colorSchemes = ['light', 'dark']
 const MEDIA = '(prefers-color-scheme: dark)'
@@ -47,7 +48,7 @@ function ThemeImpl({
   value,
   children,
   nonce,
-  scriptProps: _scriptProps,
+  scriptProps,
 }: ThemeProviderProps) {
   const [theme, setThemeState] = React.useState<Theme>(
     () => (isServer ? defaultTheme : getTheme(storageKey, defaultTheme)) as Theme,
@@ -57,7 +58,10 @@ function ThemeImpl({
       return defaultTheme === 'dark' ? 'dark' : 'light'
     return (theme === 'system' ? getSystemTheme() : theme) as 'light' | 'dark'
   })
-  const attrs = !value ? themes : Object.values(value)
+  const attrs = React.useMemo(
+    () => (!value ? themes : Object.values(value)),
+    [themes, value],
+  )
 
   const applyTheme = React.useCallback(
     (theme: string) => {
@@ -103,7 +107,7 @@ function ThemeImpl({
 
       enable?.()
     },
-    [nonce],
+    [attribute, attrs, defaultTheme, disableTransitionOnChange, enableColorScheme, enableSystem, nonce, value],
   )
 
   const setTheme = React.useCallback((value: Theme | ((theme: Theme) => Theme)) => {
@@ -118,7 +122,7 @@ function ThemeImpl({
       setThemeState(value)
       saveToLS(storageKey, value)
     }
-  }, [])
+  }, [storageKey])
 
   const handleMediaQuery = React.useCallback(
     (e: MediaQueryListEvent | MediaQueryList) => {
@@ -129,7 +133,7 @@ function ThemeImpl({
         applyTheme('system')
       }
     },
-    [theme, forcedTheme],
+    [applyTheme, enableSystem, forcedTheme, theme],
   )
 
   // Always listen to System preference
@@ -167,28 +171,46 @@ function ThemeImpl({
 
     window.addEventListener('storage', handleStorage)
     return () => window.removeEventListener('storage', handleStorage)
-  }, [setTheme])
+  }, [defaultTheme, setTheme, storageKey])
 
   // Whenever theme or forcedTheme changes, apply it
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       applyTheme(forcedTheme ?? theme)
     }
-  }, [forcedTheme, theme])
+  }, [applyTheme, forcedTheme, theme])
 
-  const providerValue = React.useMemo(
-    () => ({
+  const providerValue = React.useMemo(() => {
+    // Mirror the DOM: the apply effect writes `forcedTheme ?? theme`, so the
+    // resolved value must reflect forcedTheme when it is set.
+    const effectiveTheme = forcedTheme ?? theme
+    return {
       theme,
       setTheme,
       forcedTheme,
-      resolvedTheme: (theme === 'system' ? resolvedTheme : theme) as Theme,
+      resolvedTheme: (effectiveTheme === 'system' ? resolvedTheme : effectiveTheme) as Theme,
       themes: enableSystem ? [...themes, 'system'] : themes,
       systemTheme: (enableSystem ? resolvedTheme : undefined) as 'light' | 'dark' | undefined,
-    }),
-    [theme, setTheme, forcedTheme, resolvedTheme, enableSystem, themes],
-  )
+    }
+  }, [theme, setTheme, forcedTheme, resolvedTheme, enableSystem, themes])
 
-  return <ThemeContext value={providerValue}>{children}</ThemeContext>
+  return (
+    <ThemeContext value={providerValue}>
+      <ThemeScript
+        forcedTheme={forcedTheme}
+        storageKey={storageKey}
+        attribute={attribute}
+        enableSystem={enableSystem}
+        enableColorScheme={enableColorScheme}
+        defaultTheme={defaultTheme}
+        value={value}
+        themes={themes}
+        nonce={nonce}
+        scriptProps={scriptProps}
+      />
+      {children}
+    </ThemeContext>
+  )
 }
 
 // Helpers

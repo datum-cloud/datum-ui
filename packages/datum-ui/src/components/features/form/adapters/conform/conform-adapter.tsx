@@ -100,25 +100,45 @@ function resolveConformField(fields: any, name: string): any {
 function convertFromString(value: string | string[] | undefined): unknown {
   if (value === undefined)
     return undefined
+  // Multi-value FormData entries (checkbox groups / multi-selects sharing one
+  // name) arrive as string[]. Preserve the whole array instead of dropping all
+  // but the first selection.
   if (Array.isArray(value))
-    return value[0]
+    return value
   // Only convert the Conform-specific boolean sentinel 'on' to true.
   // All other strings (including '' and 'false') stay as strings.
   // Checkbox/Switch components handle boolean conversion via Boolean(value).
   if (value === 'on')
     return true
-  // Deserialize JSON arrays serialized by convertToString (Transfer, multi-select).
-  // Only attempt parse when the string looks like a JSON array (starts with `["`).
-  // Plain strings like "[hello]" are returned as-is.
-  if (value.startsWith('["') && value.endsWith(']')) {
-    try {
-      return JSON.parse(value)
-    }
-    catch {
-      return value
-    }
-  }
+  // Deserialize arrays serialized by convertToString (Transfer, multi-select).
+  // Only parse when the string is the *canonical* JSON serialization of an
+  // array (i.e. re-serializing yields the identical string). This lets any
+  // primitive array — including number arrays like [1,2] — round-trip, while
+  // hand-typed text such as `["foo", "bar"]` (note the spacing) or `[hello]`
+  // is left untouched as a string.
+  const parsed = tryParseSerializedArray(value)
+  if (parsed !== undefined)
+    return parsed
   return value
+}
+
+/**
+ * Parse a string only if it is the canonical JSON serialization of an array,
+ * matching exactly what `convertToString` produces. Returns the parsed array,
+ * or `undefined` when the string is not a serialized array.
+ */
+function tryParseSerializedArray(value: string): unknown[] | undefined {
+  if (value.length < 2 || value[0] !== '[' || !value.endsWith(']'))
+    return undefined
+  try {
+    const parsed = JSON.parse(value)
+    if (Array.isArray(parsed) && JSON.stringify(parsed) === value)
+      return parsed
+  }
+  catch {
+    // Not valid JSON — treat as a plain string.
+  }
+  return undefined
 }
 
 function convertToString(value: unknown): string {
@@ -130,6 +150,49 @@ function convertToString(value: unknown): string {
   if (Array.isArray(value))
     return JSON.stringify(value)
   return String(value)
+}
+
+/**
+ * Whether a value is a plain object (an object literal or `Object.create(null)`),
+ * as opposed to a class/exotic instance such as `Date`, `Map`, `Set`, or a Zod
+ * coerced/class value. Only plain objects should be walked as nested field
+ * groups; non-plain instances have no meaningful `Object.entries()` and must be
+ * kept as leaf values so their default survives.
+ */
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  if (value === null || typeof value !== 'object')
+    return false
+  const proto = Object.getPrototypeOf(value)
+  return proto === Object.prototype || proto === null
+}
+
+/**
+ * Flatten nested object defaults into dot-notation keys (e.g.
+ * `{ address: { city: 'x' } }` -> `{ 'address.city': 'x' }`) so they match the
+ * flat field names Conform writes into FormData. Arrays are treated as leaf
+ * values because convertToString serializes them into a single hidden input.
+ *
+ * Only *plain* objects are recursed into. Non-plain object instances (Date, Map,
+ * Set, class instances, Zod-coerced values) are kept as leaf values — recursing
+ * into them yields no `Object.entries()`, which would drop the field's default
+ * and cause the dirty-tracking to flag the field as dirty on mount with no user
+ * edit.
+ */
+export function flattenDefaults(
+  obj: Record<string, unknown>,
+  prefix = '',
+): Record<string, unknown> {
+  const result: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(obj)) {
+    const path = prefix ? `${prefix}.${key}` : key
+    if (isPlainObject(value)) {
+      Object.assign(result, flattenDefaults(value, path))
+    }
+    else {
+      result[path] = value
+    }
+  }
+  return result
 }
 
 // ============================================================================
@@ -185,17 +248,16 @@ function useConformCreateForm(props: CreateFormProps): NormalizedFormInstance {
     formRef as any,
     (formData: URLSearchParams) => {
       const result: Record<string, boolean> = {}
-      const defaults = (defaultValues ?? {}) as Record<string, unknown>
+      // Flatten nested object defaults to dot-notation keys so they line up
+      // with the flat field names Conform writes into FormData.
+      const defaults = flattenDefaults((defaultValues ?? {}) as Record<string, unknown>)
 
-      // Check fields with known defaults
+      // Check fields with known defaults. Serialize the default with the same
+      // convertToString used to write the hidden inputs so arrays/booleans
+      // compare correctly (e.g. ['a','b'] -> '["a","b"]', not 'a,b').
       for (const key of Object.keys(defaults)) {
         const current = formData.get(key)
-        const defaultVal = defaults[key]
-        const defaultStr = defaultVal === true
-          ? 'on'
-          : (defaultVal === false || defaultVal === null || defaultVal === undefined)
-              ? ''
-              : String(defaultVal)
+        const defaultStr = convertToString(defaults[key])
         result[key] = current !== defaultStr
       }
 
@@ -261,16 +323,41 @@ function useConformCreateForm(props: CreateFormProps): NormalizedFormInstance {
   }, [formRef])
 
   // ---------------------------------------------------------------------------
+  // Submit tracking via the form element's submit event.
+  // Conform has no native submitCount, so we count real submit attempts.
+  // Its hidden intent buttons (name="__intent__", used for field-level
+  // validation) are excluded so validation churn does not mark the form
+  // submitted.
+  // ---------------------------------------------------------------------------
+  const [submitCount, setSubmitCount] = React.useState(0)
+
+  React.useEffect(() => {
+    const formEl = formRef?.current
+    if (!formEl)
+      return
+
+    const handleSubmit = (event: SubmitEvent) => {
+      const submitter = event.submitter as HTMLElement | null
+      if (submitter instanceof HTMLButtonElement && submitter.hidden)
+        return
+      setSubmitCount(count => count + 1)
+    }
+
+    formEl.addEventListener('submit', handleSubmit)
+    return () => formEl.removeEventListener('submit', handleSubmit)
+  }, [formRef])
+
+  // ---------------------------------------------------------------------------
   // Normalized form state
   // ---------------------------------------------------------------------------
   const formState: NormalizedFormState = React.useMemo(() => ({
     isDirty: formIsDirty,
     isValid,
-    isSubmitted: false,
-    submitCount: 0,
+    isSubmitted: submitCount > 0,
+    submitCount,
     dirtyFields,
     touchedFields,
-  }), [formIsDirty, isValid, dirtyFields, touchedFields])
+  }), [formIsDirty, isValid, submitCount, dirtyFields, touchedFields])
 
   const normalizedFields = React.useMemo(() => {
     const result: Record<string, NormalizedFieldMeta> = {}
@@ -306,8 +393,18 @@ function useConformCreateForm(props: CreateFormProps): NormalizedFormInstance {
         return {}
       const formData = new FormData(formRef.current)
       const values: Record<string, unknown> = {}
-      for (const [key, value] of formData.entries()) {
-        values[key] = value
+      // Collapse each field name once. Multi-value entries (checkbox groups /
+      // multi-selects sharing a name) are preserved as arrays instead of being
+      // clobbered by last-value-wins, and every value is decoded to its native
+      // JS type ('on' -> true, '["a","b"]' -> ['a','b']) so re-mounted step
+      // defaults are not corrupted with raw serialized strings.
+      for (const key of new Set(formData.keys())) {
+        // Skip Conform internal fields (prefixed with $).
+        if (key.startsWith('$'))
+          continue
+        const all = formData.getAll(key).map(entry => String(entry))
+        const raw = all.length > 1 ? all : all[0]
+        values[key] = convertFromString(raw)
       }
       return values
     },
@@ -339,7 +436,11 @@ function useConformField(name: string): NormalizedFieldState {
   const defaultValue = convertFromString(fieldMeta.initialValue)
   // Normalize comparison: undefined initialValue means empty string for text fields
   const normalizedDefault = defaultValue === undefined ? '' : defaultValue
-  const fieldIsDirty = currentValue !== normalizedDefault
+  // Compare serialized forms rather than references. convertFromString returns
+  // a fresh array/object for serialized values each render, so `!==` would flag
+  // array/object fields as always dirty. Serializing both sides makes the
+  // comparison value-based.
+  const fieldIsDirty = convertToString(currentValue) !== convertToString(normalizedDefault)
   const fieldIsTouched = touchedFieldsRef.current.has(name)
 
   return React.useMemo(() => ({

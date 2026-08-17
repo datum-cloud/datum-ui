@@ -1,44 +1,15 @@
+import { resetViewport, setViewport } from '@test/viewport'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { CalendarDatePicker } from '../calendar-date-picker'
-
-const originalInnerWidth = window.innerWidth
-const originalMatchMedia = window.matchMedia
-
-function setViewport(width: number) {
-  Object.defineProperty(window, 'innerWidth', {
-    configurable: true,
-    writable: true,
-    value: width,
-  })
-  window.matchMedia = vi.fn().mockImplementation((query: string) => {
-    const match = query.match(/min-width:\s*(\d+)px/)
-    const min = match ? Number(match[1]) : 0
-    return {
-      matches: width >= min,
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    } as unknown as MediaQueryList
-  })
-}
 
 // Use an empty date range so the placeholder is shown in the trigger button
 const emptyDate = { from: undefined as unknown as Date, to: undefined as unknown as Date }
 
 describe('calendarDatePicker — responsive', () => {
   afterEach(() => {
-    Object.defineProperty(window, 'innerWidth', {
-      configurable: true,
-      writable: true,
-      value: originalInnerWidth,
-    })
-    window.matchMedia = originalMatchMedia
+    resetViewport()
   })
 
   it('renders mobile sheet heading with placeholder as title on mobile viewport', async () => {
@@ -92,5 +63,28 @@ describe('calendarDatePicker — responsive', () => {
     )
     await userEvent.click(screen.getAllByRole('combobox')[0] as HTMLElement)
     expect(screen.getByRole('heading', { name: 'Pick a date' })).toBeInTheDocument()
+  })
+})
+
+describe('calendarDatePicker — from-only value (BUG-140)', () => {
+  afterEach(() => {
+    resetViewport()
+  })
+
+  it('shows the selected date, not the placeholder, for a from-only value', () => {
+    const fromOnly = { from: new Date(2026, 0, 15) } as unknown as {
+      from: Date
+      to: Date
+    }
+    render(
+      <CalendarDatePicker
+        date={fromOnly}
+        onDateSelect={vi.fn()}
+        placeholder="Pick a date"
+      />,
+    )
+    const trigger = screen.getAllByRole('combobox')[0] as HTMLElement
+    expect(trigger).toHaveTextContent('Jan 15, 2026')
+    expect(trigger).not.toHaveTextContent('Pick a date')
   })
 })

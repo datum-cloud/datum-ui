@@ -1,6 +1,6 @@
 import type { TimePickerProps } from './types'
-import { useDeprecationWarning } from '../picker/internal/use-deprecation-warning'
-import { TimePicker as PickerTimePicker } from '../picker/wrappers/time-picker'
+import { useDeprecationWarning } from '../_shared'
+import { TimePicker as PickerTimePicker } from '../picker'
 
 const STEP_VALUES = [1, 5, 10, 15, 30, 60] as const
 type AllowedStep = (typeof STEP_VALUES)[number]

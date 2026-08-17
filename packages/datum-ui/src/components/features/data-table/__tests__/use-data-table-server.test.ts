@@ -103,6 +103,25 @@ describe('useDataTableServer', () => {
     expect(result.current.store.getSnapshot().pageSize).toBe(25)
   })
 
+  it('snaps an arbitrary page jump with no known cursor back to page 0', async () => {
+    const { result } = renderHook(() =>
+      useDataTableServer<TestResponse, TestRow>({
+        columns: testColumns,
+        fetchFn: mockFetchFn,
+        transform: mockTransform,
+      }),
+    )
+
+    // Cursor pagination is sequential; page 5 has no cursor on a fresh table.
+    // Jumping there must not render page-0 data mislabeled as page 5.
+    await act(async () => {
+      result.current.store.setPageIndex(5)
+      await Promise.resolve()
+    })
+
+    expect(result.current.store.getSnapshot().pageIndex).toBe(0)
+  })
+
   it('clears all filters', () => {
     const { result } = renderHook(() =>
       useDataTableServer<TestResponse, TestRow>({

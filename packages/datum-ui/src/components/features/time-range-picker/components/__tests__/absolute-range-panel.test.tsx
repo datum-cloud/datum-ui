@@ -1,32 +1,8 @@
+import { resetViewport, setViewport } from '@test/viewport'
 import { render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { InSheetContext } from '../../../../base/mobile-sheet'
 import { AbsoluteRangePanel } from '../absolute-range-panel'
-
-const originalInnerWidth = window.innerWidth
-const originalMatchMedia = window.matchMedia
-
-function setViewport(width: number) {
-  Object.defineProperty(window, 'innerWidth', {
-    configurable: true,
-    writable: true,
-    value: width,
-  })
-  window.matchMedia = vi.fn().mockImplementation((query: string) => {
-    const match = query.match(/min-width:\s*(\d+)px/)
-    const min = match ? Number(match[1]) : 0
-    return {
-      matches: width >= min,
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    } as unknown as MediaQueryList
-  })
-}
 
 const baseProps = {
   fromUtc: '2024-01-15T04:00:00Z',
@@ -37,12 +13,7 @@ const baseProps = {
 
 describe('absoluteRangePanel — context suppression', () => {
   afterEach(() => {
-    Object.defineProperty(window, 'innerWidth', {
-      configurable: true,
-      writable: true,
-      value: originalInnerWidth,
-    })
-    window.matchMedia = originalMatchMedia
+    resetViewport()
   })
 
   it('stays as popover (no sheet heading) when InSheetContext is true on mobile viewport', () => {

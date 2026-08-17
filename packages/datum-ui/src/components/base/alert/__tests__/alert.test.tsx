@@ -66,6 +66,21 @@ describe('alert', () => {
     expect(handleClose).toHaveBeenCalledTimes(1)
   })
 
+  it('self-dismisses even when onClose is provided', async () => {
+    const user = userEvent.setup()
+    const handleClose = vi.fn()
+    render(
+      <Alert closable onClose={handleClose}>
+        Callback
+      </Alert>,
+    )
+
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Close alert' }))
+    expect(handleClose).toHaveBeenCalledTimes(1)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
   it('supports keyboard close (Enter key)', async () => {
     const user = userEvent.setup()
     render(<Alert closable>Keyboard close</Alert>)

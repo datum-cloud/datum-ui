@@ -1,0 +1,53 @@
+name: Renovate Changeset
+
+# Hosted Renovate (Mend) disables postUpgradeTasks and ignores
+# allowedPostUpgradeCommands in repo config, so the runtime-dependency patch
+# changeset can't be generated inside Renovate itself. We generate it here
+# instead: Renovate labels `dependencies` bumps `runtime-deps` (see
+# renovate.json), and this workflow commits `.changeset/renovate-dependencies.md`
+# back to the PR branch so the bump flows through changesets into a real
+# @datum-cloud/datum-ui release. devDependency-only PRs are never labelled and
+# so intentionally get no changeset. (STRUCT-075 / CR-006)
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled]
+
+concurrency:
+  group: renovate-changeset-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  changeset:
+    name: Add runtime-dependency changeset
+    runs-on: ubuntu-latest
+    # Only for Renovate branches carrying the runtime-deps label.
+    if: >-
+      startsWith(github.event.pull_request.head.ref, 'renovate/') &&
+      contains(github.event.pull_request.labels.*.name, 'runtime-deps')
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create changeset if missing
+        id: changeset
+        run: |
+          bash .github/scripts/renovate-changeset.sh
+          if git diff --quiet -- .changeset; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit changeset
+        if: steps.changeset.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .changeset
+          git commit -m "chore(deps): add runtime-dependency changeset"
+          git push

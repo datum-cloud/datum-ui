@@ -1,0 +1,68 @@
+{
+  "base/avatar": [
+    "test"
+  ],
+  "base/breadcrumb": [
+    "test"
+  ],
+  "base/button-group": [
+    "test"
+  ],
+  "base/calendar": [
+    "test"
+  ],
+  "base/chart": [
+    "test"
+  ],
+  "base/collapsible": [
+    "test"
+  ],
+  "base/command": [
+    "test"
+  ],
+  "base/hover-card": [
+    "test"
+  ],
+  "base/input-group": [
+    "test"
+  ],
+  "base/popover": [
+    "test"
+  ],
+  "base/separator": [
+    "test"
+  ],
+  "base/sidebar": [
+    "test"
+  ],
+  "base/skeleton": [
+    "test"
+  ],
+  "base/spinner": [
+    "test"
+  ],
+  "base/table": [
+    "test"
+  ],
+  "base/typography": [
+    "test"
+  ],
+  "base/visuallyhidden": [
+    "test"
+  ],
+  "features/app-navigation": [
+    "test"
+  ],
+  "features/date-picker": [
+    "test"
+  ],
+  "features/grid": [
+    "test"
+  ],
+  "features/nprogress": [
+    "test"
+  ],
+  "features/stepper": [
+    "test"
+  ]
+}

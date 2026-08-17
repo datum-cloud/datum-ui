@@ -42,7 +42,7 @@ export const TransferItem: React.FC<TransferItemProps> = ({
         <button
           type="button"
           aria-label={`Remove ${label}`}
-          className="h-6 w-6 p-0 rounded opacity-0 group-hover:opacity-100 hover:bg-muted transition-opacity inline-flex items-center justify-center"
+          className="h-6 w-6 p-0 rounded opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:bg-muted transition-opacity inline-flex items-center justify-center"
           onClick={onClick}
           disabled={disabled}
         >

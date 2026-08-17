@@ -1,5 +1,86 @@
 # @datum-cloud/datum-ui
 
+## 1.7.1
+
+### Patch Changes
+
+- 0481e3e: fix(autosearch): keep the no-results indicator icon inside the input
+
+  The no-results `AlertCircle` was rendered as the `Tooltip`'s direct child. `Tooltip` wraps its children in a `relative inline-flex` span, which (a) is static/in-flow — so the icon dropped below the full-width input — and (b) re-anchored the icon's `absolute` positioning to that ~0-size wrapper. The result was an icon rendering below-left of the input and getting clipped inside dialogs.
+
+  The `absolute` positioning now lives on a bare span that is a direct child of the input's `relative` container (matching the loading spinner), with `Tooltip` wrapping only the icon. The indicator sits at the input's right edge again, with the message on hover.
+
+## 1.7.0
+
+### Minor Changes
+
+- 2df7062: Refresh runtime dependencies and raise the `js-yaml` peer floor past a known advisory.
+
+  **Action required if you depend on `js-yaml`.** The peer range moves from `>=5 <6` to `>=5.2.2 <6`. Versions `5.0.0` through `5.2.1` carry a HIGH advisory, and the old floor allowed them. If you pin `js-yaml` below `5.2.2` you will now see a peer warning — upgrade to `5.2.2` or later.
+
+  **`react-dropzone` support widened to v20.** The peer range moves from `>=15 <16` to `>=15 <21`, so v15 through v20 are all accepted. This is additive — if you stay on v15 nothing changes. v20 adds an `AcceptGroup[]` form for `accept` alongside the existing object form, and `Dropzone`'s auto-generated caption now handles both.
+
+  Everything else here is a patch- or minor-level bump within existing ranges and needs no action:
+  - **16 Radix primitives** — avatar, checkbox, collapsible, dialog, dropdown-menu, hover-card, label, popover, radio-group, select, separator, slot, switch, tabs, tooltip, visually-hidden. `@radix-ui/react-slot` lands on `1.3.3`, clearing the RSC regression present in `1.3.1`/`1.3.2`.
+  - `isomorphic-dompurify` `3.18.0` → `3.21.0`, which clears the transitive `dompurify` advisories.
+  - `lucide-react` `1.21.0` → `1.28.0`, `recharts` `3.8.1` → `3.10.1`, `@tanstack/react-virtual` `3.14.3` → `3.14.9`, `motion` `12.40.0` → `12.43.0`, `nuqs` `2.8.9` → `2.9.4`, `react-hook-form` `7.80.0` → `7.84.0`, `leaflet.fullscreen` `5.3.1` → `5.3.3`.
+  - Editor and form stacks: `@tiptap/*` `3.27.1` → `3.29.2`, `@conform-to/react` and `@conform-to/zod` `1.19.4` → `1.20.2`, `@hookform/resolvers` `5.4.0` → `5.7.1`, `ai` `7.0.0` → `7.0.48`.
+
+  No component API changed. All 1016 tests pass.
+
+## 1.6.1
+
+### Patch Changes
+
+- c3bb8d0: Fix `ModelSelector` overflowing the viewport when many models are listed. Cap the menu height to available space, scroll only the model list, and keep the Effort section pinned at the bottom.
+
+## 1.6.0
+
+### Minor Changes
+
+- 297f74a: Add two optional host slots to `AssistantWorkspace`, both prep for migrating cloud-portal onto the shared assistant:
+  - `sidebarHeader` — forwarded to the history panel and rendered above the search input, so a host can name the scope its saved chats belong to (cloud-portal shows the current project).
+  - `renderToolOutput` (on `AssistantConfig`) — renders a completed tool call inline, in message order. Tool calls are invisible by default; a host opts a specific tool into rendering UI from its output (cloud-portal turns an `openSupportTicket` result into a button).
+
+  Both are purely additive — hosts that omit them render exactly as before, so staff-portal needs no change.
+
+## 1.5.0
+
+### Minor Changes
+
+- fe5921a: Add the `assistant` feature (`@datum-cloud/datum-ui/assistant`): a props-driven AI assistant workspace plus composable pieces (conversation, composer, message rendering, turn rail, history) and an `AssistantConfig` context for host-specific copy, models, tool labels, and link rendering. Host apps own state and transport and feed the workspace via props, so staff-portal and cloud-portal share one presentational layer.
+
+## 1.4.0
+
+### Minor Changes
+
+- f82947b: Broad correctness and hardening pass across the component library:
+  - Fixed bugs across base and feature components: button sizing, alert dismissal,
+    responsive dropdown/popover handlers and modal default, sidebar state, multi-select
+    selection, autocomplete/autosearch, tag-input, transfer, input-number, task-queue
+    scheduling/timeout/reload, date-time pickers, grid gutters, code-editor YAML precision,
+    rich-text editor, and data-table.
+  - Fixed form data integrity: multi-step value merging, adapter type preservation, and
+    dirty-state detection for Date/Map defaults.
+  - Fixed the map module (listener leaks, crash paths) and place-autocomplete refetch loop.
+  - Fixed theming/no-flash scripts and shared hooks (copy-to-clipboard, debounce, breakpoint).
+  - Tightened peer dependency ranges to the tested majors (e.g. react-day-picker v10);
+    consumers on older majors should verify.
+  - Internal: split oversized modules, removed the legacy picker family, added import-layering
+    enforcement, an export generator, and coverage/test gates.
+
+## 1.3.2
+
+### Patch Changes
+
+- 22b1506: Fix `ResponsiveDropdown` closing when the window loses focus. `@radix-ui/react-menu` ≥2.1.17 closes menus on window blur, which unmounted dropdown content whenever the native file picker opened (or the user switched apps to drag a file in) — silently breaking flows like the DNS record import dropzone. The desktop variant now renders a Radix Popover, which keeps the same anchored dropdown UX without the blur-close behavior and is the correct semantics for the arbitrary interactive content this component hosts.
+
+## 1.3.1
+
+### Patch Changes
+
+- f760a10: If the dialog content was scrollable it would scroll into and past the footer.
+
 ## 1.3.0
 
 ### Minor Changes

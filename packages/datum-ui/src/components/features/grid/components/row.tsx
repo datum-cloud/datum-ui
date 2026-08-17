@@ -3,7 +3,7 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { cn } from '../../../../utils/cn'
 import { GRID_PREFIX, RESPONSIVE_MAP } from '../constants/grid.constants'
-import { getGutter, registerMediaQuery } from '../utils/responsive'
+import { getGutter, isResponsiveGutter, registerMediaQuery } from '../utils/responsive'
 
 export const RowContext = React.createContext<RowContextType | null>(null)
 
@@ -27,28 +27,32 @@ const Row: React.FC<RowProps> = ({
     xxl: true,
   })
 
-  const [unRegisters, setUnRegisters] = useState<Array<() => void>>([])
-
   useEffect(() => {
-    if (typeof gutter === 'object' && !Array.isArray(gutter)) {
-      const newUnRegisters = Object.keys(RESPONSIVE_MAP).map(screen =>
-        registerMediaQuery(RESPONSIVE_MAP[screen as keyof typeof RESPONSIVE_MAP], {
-          match: () => {
-            setScreens(prevState => ({
-              ...prevState,
-              [screen]: true,
-            }))
-          },
-          unmatch: () => {
-            setScreens(prevState => ({
-              ...prevState,
-              [screen]: false,
-            }))
-          },
-        }),
-      )
-      setUnRegisters(newUnRegisters)
+    // Register viewport tracking whenever the gutter contains a responsive
+    // breakpoint object — for the object form AND the array form (e.g.
+    // `[{ md: 16 }, 8]`). Previously the array form bailed here, so its screens
+    // never updated and getGutter always resolved to the largest breakpoint
+    // (BUG-084).
+    if (!isResponsiveGutter(gutter)) {
+      return
     }
+
+    const unRegisters = Object.keys(RESPONSIVE_MAP).map(screen =>
+      registerMediaQuery(RESPONSIVE_MAP[screen as keyof typeof RESPONSIVE_MAP], {
+        match: () => {
+          setScreens(prevState => ({
+            ...prevState,
+            [screen]: true,
+          }))
+        },
+        unmatch: () => {
+          setScreens(prevState => ({
+            ...prevState,
+            [screen]: false,
+          }))
+        },
+      }),
+    )
 
     return () => {
       unRegisters.forEach(unRegister => unRegister())

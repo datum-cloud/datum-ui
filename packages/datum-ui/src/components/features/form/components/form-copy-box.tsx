@@ -63,8 +63,13 @@ export function FormCopyBox({
     if (!value)
       return
 
-    copy(value).then(() => {
-      toast.success('Copied to clipboard')
+    // `copy` resolves `false` (never rejects) when the Clipboard API is
+    // unavailable or the write is denied — only surface success when it actually
+    // succeeded, otherwise we'd show a green toast for a copy that never happened.
+    void copy(value).then((didCopy) => {
+      if (didCopy) {
+        toast.success('Copied to clipboard')
+      }
     })
   }
 
@@ -88,6 +93,8 @@ export function FormCopyBox({
           ? (
               <button
                 type="button"
+                aria-label={copied ? 'Copied to clipboard' : 'Copy to clipboard'}
+                title={copied ? 'Copied' : 'Copy'}
                 className={cn(
                   'text-muted-foreground hover:text-foreground flex size-7 items-center justify-center rounded-sm transition-colors',
                   buttonClassName,
