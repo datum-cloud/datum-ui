@@ -343,8 +343,8 @@ importers:
         specifier: ^0.2.0
         version: 0.2.0
       nuqs:
-        specifier: ^2.9.4
-        version: 2.9.4(react@19.2.8)
+        specifier: ^2.9.6
+        version: 2.9.6(react@19.2.8)
       react:
         specifier: ^19.2.8
         version: 19.2.8
@@ -6063,8 +6063,8 @@ packages:
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
 
-  nuqs@2.9.4:
-    resolution: {integrity: sha512-lsz3NyCOKmuNAyW052i9RWqcTntoYb2Qm6FxSWnkTDwOJnGS6fzpXDAp0VcwTevw3xgnWebYpDr9rm6+o4DHbw==}
+  nuqs@2.9.6:
+    resolution: {integrity: sha512-JexjSkA6mPV5HjobxyYMMIoItbPLLz5KcVKkMJLLJJDRfd07nFZ1gr40du30l8KnsOtZ+yubhYkqRyRCQiqVDg==}
     peerDependencies:
       '@remix-run/react': '>=2'
       '@tanstack/react-router': ^1
@@ -13179,7 +13179,7 @@ snapshots:
     dependencies:
       boolbase: 1.0.0
 
-  nuqs@2.9.4(react@19.2.8):
+  nuqs@2.9.6(react@19.2.8):
     dependencies:
       '@standard-schema/spec': 1.1.0
       react: 19.2.8
