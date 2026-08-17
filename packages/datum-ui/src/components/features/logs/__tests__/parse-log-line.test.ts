@@ -26,25 +26,25 @@ describe('parseLogLine', () => {
 
 describe('logLineDisplay', () => {
   it('leaves message empty when the line is only fields already shown', () => {
-    expect(logLineDisplay('GET /api/v1/checkout 301 393ms upstream=gateway-eu-west')).toEqual({
+    expect(logLineDisplay('GET /api/v1/checkout 301 393ms upstream=gateway-eu-west')).toMatchObject({
       path: '/api/v1/checkout',
       message: '',
     })
-    expect(logLineDisplay('GET /healthz 200 12ms')).toEqual({
+    expect(logLineDisplay('GET /healthz 200 12ms')).toMatchObject({
       path: '/healthz',
       message: '',
     })
   })
 
   it('keeps leftover prose in the message', () => {
-    expect(logLineDisplay('GET /api/v1/checkout 503 2100ms connection reset')).toEqual({
+    expect(logLineDisplay('GET /api/v1/checkout 503 2100ms connection reset')).toMatchObject({
       path: '/api/v1/checkout',
       message: 'connection reset',
     })
   })
 
   it('keeps unstructured lines in the message when there is no path', () => {
-    expect(logLineDisplay('INFO: payment authorised service=payments-api')).toEqual({
+    expect(logLineDisplay('INFO: payment authorised service=payments-api')).toMatchObject({
       path: null,
       message: 'INFO: payment authorised service=payments-api',
     })

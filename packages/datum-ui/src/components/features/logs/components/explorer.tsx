@@ -6,7 +6,6 @@ import { useBreakpoint } from '../../../../hooks/use-breakpoint'
 import { cn } from '../../../../utils/cn'
 import { Button } from '../../../base/button'
 import { Sheet } from '../../../base/sheet'
-import { useLogs } from '../hooks/use-logs'
 import { LogsDetail } from './detail'
 import { LogsFilters } from './filters'
 import { LogsTable } from './table'
@@ -15,7 +14,6 @@ import { LogsToolbar } from './toolbar'
 export function LogsExplorer({ className }: { className?: string }) {
   const breakpoint = useBreakpoint()
   const isDesktop = breakpoint === 'desktop'
-  const { selectedEntry } = useLogs()
   const [filtersOpen, setFiltersOpen] = useState(false)
 
   return (
@@ -30,7 +28,7 @@ export function LogsExplorer({ className }: { className?: string }) {
               <Sheet.Content side="left" className="w-72 p-0 sm:max-w-72">
                 <Sheet.Title className="sr-only">Filters</Sheet.Title>
                 <Sheet.Description className="sr-only">Log filters</Sheet.Description>
-                <LogsFilters className="w-full border-r-0" />
+                <LogsFilters className="w-full border-r-0 [&>div:first-child]:pr-12" />
               </Sheet.Content>
             </Sheet>
           )}
@@ -51,7 +49,7 @@ export function LogsExplorer({ className }: { className?: string }) {
         </LogsToolbar>
         <div className="flex min-h-0 flex-1">
           <LogsTable />
-          {isDesktop && selectedEntry && <LogsDetail />}
+          {isDesktop && <LogsDetail />}
         </div>
       </div>
 

@@ -22,8 +22,8 @@ const meta: Meta = {
         component:
           'Vercel-style log explorer primitives for Loki/OTEL query results.\n\n'
           + '`Logs.Root` holds UI state. Host apps fetch `/loki/api/v1/query_range` and pass flattened entries. '
-          + '`Logs.Explorer` composes filters, toolbar, table, and a detail panel. '
-          + 'Requires `date-fns`.',
+          + '`Logs.Explorer` is the batteries-included layout. To assemble Filters, Toolbar, Table, and Detail '
+          + 'yourself, see Features/Logs/Composition. Requires `date-fns`.',
       },
     },
   },

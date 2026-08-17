@@ -1,7 +1,7 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import type { ReactNode } from 'react'
 import type { LogEntry } from '../types'
-import { render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
@@ -50,6 +50,16 @@ function Wrapper({
       ]}
     >
       {children}
+    </Logs.Root>
+  )
+}
+
+function SearchHarness() {
+  const [search, setSearch] = useState('timeout')
+  return (
+    <Logs.Root entries={entries} search={search} onSearchChange={setSearch}>
+      <Logs.Search />
+      <button type="button" onClick={() => setSearch('')}>Clear search</button>
     </Logs.Root>
   )
 }
@@ -127,7 +137,9 @@ describe('logs table and detail', () => {
     )
 
     await user.click(screen.getByRole('button', { name: 'Close details' }))
-    expect(screen.queryByRole('heading', { name: 'GET /api/v1/checkout' })).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByRole('heading', { name: 'GET /api/v1/checkout' })).not.toBeInTheDocument()
+    })
   })
 
   it('moves to the previous row', async () => {
@@ -141,6 +153,21 @@ describe('logs table and detail', () => {
 
     await user.click(screen.getByRole('button', { name: 'Previous log' }))
     expect(screen.getByRole('heading', { name: 'GET /api/v1/checkout' })).toBeInTheDocument()
+  })
+
+  it('focuses the table on row click so keyboard navigation works', async () => {
+    const user = userEvent.setup()
+    render(
+      <Wrapper>
+        <Logs.Table />
+        <Logs.Detail />
+      </Wrapper>,
+    )
+
+    await user.click(screen.getByText('/api/v1/checkout'))
+    expect(screen.getByRole('row', { selected: true })).toBeInTheDocument()
+    await user.keyboard('j')
+    expect(screen.getByRole('heading', { name: 'compute-workload' })).toBeInTheDocument()
   })
 })
 
@@ -168,6 +195,24 @@ describe('logs toolbar and empty states', () => {
     expect(onExport).toHaveBeenCalled()
   })
 
+  it('does not write a stale search back after the host clears it', () => {
+    vi.useFakeTimers()
+
+    render(<SearchHarness />)
+    const input = screen.getByRole('textbox', { name: 'Search logs...' })
+    expect(input).toHaveValue('timeout')
+
+    act(() => {
+      screen.getByRole('button', { name: 'Clear search' }).click()
+    })
+    expect(input).toHaveValue('')
+    act(() => {
+      vi.advanceTimersByTime(300)
+    })
+    expect(input).toHaveValue('')
+    vi.useRealTimers()
+  })
+
   it('shows loading skeletons and an empty state', () => {
     const { rerender } = render(
       <Logs.Root entries={[]} isLoading>
@@ -182,6 +227,6 @@ describe('logs toolbar and empty states', () => {
       </Logs.Root>,
     )
     expect(screen.getByRole('alert')).toHaveTextContent('Query failed')
-    expect(screen.getByText('No logs in this time range')).toBeInTheDocument()
+    expect(screen.queryByText('No logs in this time range')).not.toBeInTheDocument()
   })
 })

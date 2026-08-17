@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react'
 import { ChevronDown, ChevronUp, Copy, X } from 'lucide-react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useBreakpoint } from '../../../../hooks/use-breakpoint'
 import { useCopyToClipboard } from '../../../../hooks/use-copy-to-clipboard'
 import { cn } from '../../../../utils/cn'
@@ -158,10 +159,11 @@ function DetailBody({ showClose = true }: { showClose?: boolean }) {
 export function LogsDetail({ className }: { className?: string }) {
   const { selectedEntry, setSelectedId } = useLogs()
   const breakpoint = useBreakpoint()
-  const isMobile = breakpoint === 'mobile'
+  const reduceMotion = useReducedMotion()
+  const isDesktop = breakpoint === 'desktop'
   const open = selectedEntry !== null
 
-  if (isMobile) {
+  if (!isDesktop) {
     return (
       <Sheet
         open={open}
@@ -172,28 +174,36 @@ export function LogsDetail({ className }: { className?: string }) {
       >
         <Sheet.Content
           side="right"
+          showCloseButton={false}
           className="sm:max-w-md w-full gap-0 p-0"
           data-slot="logs-detail"
         >
           <Sheet.Title className="sr-only">Log details</Sheet.Title>
           <Sheet.Description className="sr-only">Selected log entry</Sheet.Description>
           <div className="flex h-full flex-col">
-            <DetailBody showClose={false} />
+            <DetailBody />
           </div>
         </Sheet.Content>
       </Sheet>
     )
   }
 
-  if (!open)
-    return null
-
   return (
-    <aside
-      data-slot="logs-detail"
-      className={cn('bg-background flex h-full w-[400px] shrink-0 flex-col border-l', className)}
-    >
-      <DetailBody />
-    </aside>
+    <AnimatePresence>
+      {open && (
+        <motion.aside
+          data-slot="logs-detail"
+          initial={reduceMotion ? false : { width: 0 }}
+          animate={{ width: 400 }}
+          exit={{ width: 0 }}
+          transition={reduceMotion ? { duration: 0 } : { duration: 0.2, ease: 'easeOut' }}
+          className={cn('bg-background flex h-full shrink-0 flex-col overflow-hidden border-l', className)}
+        >
+          <div className="flex h-full w-[400px] flex-col">
+            <DetailBody />
+          </div>
+        </motion.aside>
+      )}
+    </AnimatePresence>
   )
 }

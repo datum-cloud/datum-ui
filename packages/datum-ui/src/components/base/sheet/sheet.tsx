@@ -42,9 +42,16 @@ function SheetOverlay({ className, ...props }: SheetOverlayProps) {
 
 interface SheetContentProps extends React.ComponentProps<typeof SheetPrimitive.Content> {
   side?: 'top' | 'right' | 'bottom' | 'left'
+  showCloseButton?: boolean
 }
 
-function SheetContent({ className, children, side = 'right', ...props }: SheetContentProps) {
+function SheetContent({
+  className,
+  children,
+  side = 'right',
+  showCloseButton = true,
+  ...props
+}: SheetContentProps) {
   return (
     <SheetPrimitive.Portal data-slot="sheet-portal">
       <SheetOverlay />
@@ -65,10 +72,12 @@ function SheetContent({ className, children, side = 'right', ...props }: SheetCo
         {...props}
       >
         {children}
-        <SheetPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 cursor-pointer rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0">
-          <CloseIcon className="size-4" />
-          <span className="sr-only">Close</span>
-        </SheetPrimitive.Close>
+        {showCloseButton && (
+          <SheetPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 cursor-pointer rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0">
+            <CloseIcon className="size-4" />
+            <span className="sr-only">Close</span>
+          </SheetPrimitive.Close>
+        )}
       </SheetPrimitive.Content>
     </SheetPrimitive.Portal>
   )

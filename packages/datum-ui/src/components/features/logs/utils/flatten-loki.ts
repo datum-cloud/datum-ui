@@ -1,21 +1,5 @@
 import type { LogEntry, LokiQueryRangeResponse, LokiStream } from '../types'
 
-function hashString(input: string): string {
-  let hash = 5381
-  for (let i = 0; i < input.length; i++) {
-    hash = ((hash << 5) + hash) + input.charCodeAt(i)
-    hash |= 0
-  }
-  return (hash >>> 0).toString(36)
-}
-
-function stableLabels(labels: Record<string, string>): string {
-  return Object.keys(labels)
-    .sort()
-    .map(key => `${key}=${labels[key] ?? ''}`)
-    .join(',')
-}
-
 export function nsToDate(timestampNs: string): Date {
   try {
     const ms = BigInt(timestampNs) / 1_000_000n
@@ -26,16 +10,12 @@ export function nsToDate(timestampNs: string): Date {
   }
 }
 
-function entryId(timestampNs: string, labels: Record<string, string>, line: string): string {
-  return `${timestampNs}-${hashString(`${stableLabels(labels)}|${line}`)}`
-}
-
-function flattenStream(stream: LokiStream): LogEntry[] {
+function flattenStream(stream: LokiStream, streamIndex: number): LogEntry[] {
   const labels = stream.stream ?? {}
   const values = stream.values ?? []
   const entries: LogEntry[] = []
 
-  for (const pair of values) {
+  for (const [valueIndex, pair] of values.entries()) {
     const timestampNs = pair[0]
     const line = pair[1]
     if (!timestampNs || line === undefined)
@@ -46,11 +26,11 @@ function flattenStream(stream: LokiStream): LogEntry[] {
       continue
 
     entries.push({
-      id: entryId(timestampNs, labels, line),
+      id: `${timestampNs}-${streamIndex}-${valueIndex}`,
       timestamp,
       timestampNs,
       line,
-      labels,
+      labels: { ...labels },
     })
   }
 
@@ -58,14 +38,20 @@ function flattenStream(stream: LokiStream): LogEntry[] {
 }
 
 export function flattenLokiStreams(response: LokiQueryRangeResponse): LogEntry[] {
-  if (response.status !== 'success' || !response.data?.result)
+  if (response.status !== 'success' || response.data?.resultType !== 'streams' || !response.data.result)
     return []
 
   const entries = response.data.result.flatMap(flattenStream)
   entries.sort((a, b) => {
-    if (a.timestampNs === b.timestampNs)
-      return a.id < b.id ? 1 : -1
-    return a.timestampNs < b.timestampNs ? 1 : -1
+    try {
+      const delta = BigInt(b.timestampNs) - BigInt(a.timestampNs)
+      if (delta === 0n)
+        return a.id < b.id ? 1 : -1
+      return delta > 0n ? 1 : -1
+    }
+    catch {
+      return a.timestampNs < b.timestampNs ? 1 : -1
+    }
   })
   return entries
 }

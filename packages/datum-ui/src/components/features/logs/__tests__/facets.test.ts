@@ -16,6 +16,30 @@ describe('facetsFromEntries', () => {
     expect(severity.options[0]?.value).toBe('ERROR')
     expect(severity.options.some(option => option.value === 'INFO' && (option.count ?? 0) > 0)).toBe(true)
   })
+
+  it('ignores non-canonical labels unless they are requested', () => {
+    const facets = facetsFromEntries([
+      {
+        id: '1',
+        timestamp: new Date(),
+        timestampNs: '1',
+        line: 'hello',
+        labels: { severity: 'INFO', trace_id: 'abc', job: 'api' },
+      },
+    ])
+    expect(facets.map(facet => facet.name)).toEqual(['severity'])
+
+    const all = facetsFromEntries([
+      {
+        id: '1',
+        timestamp: new Date(),
+        timestampNs: '1',
+        line: 'hello',
+        labels: { severity: 'INFO', trace_id: 'abc' },
+      },
+    ], ['severity', 'trace_id'])
+    expect(all.map(facet => facet.name)).toEqual(['severity', 'trace_id'])
+  })
 })
 
 describe('filterEntries', () => {

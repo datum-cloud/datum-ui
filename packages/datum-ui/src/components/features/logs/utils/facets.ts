@@ -27,12 +27,16 @@ function compareFacetNames(a: string, b: string): number {
   return a.localeCompare(b)
 }
 
-export function facetsFromEntries(entries: readonly LogEntry[]): LogFacet[] {
+export function facetsFromEntries(
+  entries: readonly LogEntry[],
+  names: readonly string[] = CANONICAL_FACET_NAMES,
+): LogFacet[] {
+  const allow = new Set(names)
   const counts = new Map<string, Map<string, number>>()
 
   for (const entry of entries) {
     for (const [name, value] of Object.entries(entry.labels)) {
-      if (!value)
+      if (!value || !allow.has(name))
         continue
       let values = counts.get(name)
       if (!values) {

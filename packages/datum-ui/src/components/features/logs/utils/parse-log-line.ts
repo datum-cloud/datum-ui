@@ -28,20 +28,24 @@ export function parseLogLine(line: string): ParsedLogLine {
   }
 }
 
-export function logLineDisplay(line: string): { path: string | null, message: string } {
+export function logLineDisplay(line: string): {
+  parsed: ParsedLogLine
+  path: string | null
+  message: string
+} {
   const parsed = parseLogLine(line)
   if (parsed.kind === 'http') {
     const match = ACCESS_LOG_RE.exec(line)
     const rest = match ? line.slice(match[0].length).trim() : ''
-    return { path: parsed.path, message: extraMessage(rest) }
+    return { parsed, path: parsed.path, message: extraMessage(rest) }
   }
 
   const path = PATH_TOKEN_RE.exec(line)?.[1] ?? null
   if (!path) {
-    return { path: null, message: line }
+    return { parsed, path: null, message: line }
   }
 
-  return { path, message: extraMessage(stripOnce(line, path)) }
+  return { parsed, path, message: extraMessage(stripOnce(line, path)) }
 }
 
 /** Drop leftover that is only fields already shown (method, status, path, duration, label=value). */

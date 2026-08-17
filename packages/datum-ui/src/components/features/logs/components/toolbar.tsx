@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react'
 import { Download, RefreshCw, Search } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { cn } from '../../../../utils/cn'
 import { Button } from '../../../base/button'
 import { Input } from '../../../base/input'
@@ -17,14 +17,27 @@ export function LogsSearch({
 }) {
   const { search, setSearch } = useLogs()
   const [value, setValue] = useState(search)
+  const searchRef = useRef(search)
+  const skipNextSync = useRef(false)
+  searchRef.current = search
 
   useEffect(() => {
+    if (skipNextSync.current) {
+      skipNextSync.current = false
+      return
+    }
+    setValue(search)
+  }, [search])
+
+  useEffect(() => {
+    if (value === searchRef.current)
+      return
     const timer = setTimeout(() => {
-      if (value !== search)
-        setSearch(value)
+      skipNextSync.current = true
+      setSearch(value)
     }, 250)
     return () => clearTimeout(timer)
-  }, [value, search, setSearch])
+  }, [value, setSearch])
 
   return (
     <div className={cn('relative min-w-0 flex-1', className)}>

@@ -2,10 +2,10 @@
 
 import type { KeyboardEvent } from 'react'
 import type { LogColumnId, LogEntry, ParsedLogLine } from '../types'
+import { useRef } from 'react'
 import { cn } from '../../../../utils/cn'
 import { Skeleton } from '../../../base/skeleton'
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -13,7 +13,7 @@ import {
   TableRow,
 } from '../../../base/table'
 import { useLogs } from '../hooks/use-logs'
-import { logLineDisplay, parseLogLine } from '../utils/parse-log-line'
+import { logLineDisplay } from '../utils/parse-log-line'
 import { LogsSeverityBadge, LogsStatusBadge, LogsTimestamp } from './status-badge'
 
 const COLUMN_LABEL: Record<LogColumnId, string> = {
@@ -82,8 +82,11 @@ function LogCell({
       )
     case 'path':
       return (
-        <TableCell className="truncate font-mono text-xs" title={path ?? undefined}>
-          {path ?? ''}
+        <TableCell
+          className={cn('truncate font-mono text-xs', !path && 'text-muted-foreground')}
+          title={path ?? undefined}
+        >
+          {path ?? '—'}
         </TableCell>
       )
     case 'message':
@@ -104,6 +107,7 @@ export function LogsTable({ className }: { className?: string }) {
     selectPrevious,
     selectNext,
   } = useLogs()
+  const scrollerRef = useRef<HTMLDivElement>(null)
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key === 'ArrowDown' || event.key === 'j') {
@@ -121,9 +125,11 @@ export function LogsTable({ className }: { className?: string }) {
 
   return (
     <div
+      ref={scrollerRef}
       data-slot="logs-table"
       className={cn('min-h-0 flex-1 overflow-auto outline-none', className)}
       tabIndex={0}
+      aria-busy={isLoading || undefined}
       onKeyDown={onKeyDown}
     >
       {error && (
@@ -131,7 +137,7 @@ export function LogsTable({ className }: { className?: string }) {
           {error}
         </div>
       )}
-      <Table className="table-fixed">
+      <table className="w-full caption-bottom table-fixed text-sm">
         <TableHeader className="bg-background sticky top-0 z-10">
           <TableRow>
             {columns.map(column => (
@@ -151,7 +157,7 @@ export function LogsTable({ className }: { className?: string }) {
               </TableRow>
             ))
           )}
-          {!isLoading && entries.length === 0 && (
+          {!isLoading && entries.length === 0 && !error && (
             <TableRow>
               <TableCell colSpan={columns.length} className="text-muted-foreground py-10 text-center text-sm">
                 No logs in this time range
@@ -159,16 +165,23 @@ export function LogsTable({ className }: { className?: string }) {
             </TableRow>
           )}
           {entries.map((entry) => {
-            const parsed = parseLogLine(entry.line)
-            const { path, message } = logLineDisplay(entry.line)
+            const { parsed, path, message } = logLineDisplay(entry.line)
             const selected = entry.id === selectedId
 
             return (
               <TableRow
                 key={entry.id}
                 data-state={selected ? 'selected' : undefined}
-                className="cursor-pointer"
-                onClick={() => setSelectedId(selected ? null : entry.id)}
+                aria-selected={selected}
+                className={cn(
+                  'cursor-pointer hover:bg-foreground/[0.08]',
+                  'data-[state=selected]:bg-foreground/[0.14]',
+                  'data-[state=selected]:hover:bg-foreground/[0.14]',
+                )}
+                onClick={() => {
+                  setSelectedId(selected ? null : entry.id)
+                  scrollerRef.current?.focus()
+                }}
               >
                 {columns.map(column => (
                   <LogCell
@@ -184,7 +197,7 @@ export function LogsTable({ className }: { className?: string }) {
             )
           })}
         </TableBody>
-      </Table>
+      </table>
     </div>
   )
 }
