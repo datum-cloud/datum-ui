@@ -1,4 +1,4 @@
-import type { BadgeProps } from '../../../base/badge/badge'
+import type { BadgeProps } from '../../../base/badge'
 
 export type SeverityBadgeType = NonNullable<BadgeProps['type']>
 

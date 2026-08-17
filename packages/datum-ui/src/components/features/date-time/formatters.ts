@@ -8,7 +8,7 @@ export const DEFAULT_DATE_FORMAT = 'MMMM do \'at\' h:mm a'
 
 export function getBrowserTimezone(): string {
   try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone
+    return new Intl.DateTimeFormat().resolvedOptions().timeZone
   }
   catch {
     return 'UTC'
