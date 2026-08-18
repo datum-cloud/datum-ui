@@ -1,6 +1,7 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import type { ColumnDef } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
+import type { DataTableFeatures } from '../core/features'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { DataTablePagination } from '../components/pagination'
@@ -11,7 +12,7 @@ interface TestRow {
   readonly name: string
 }
 
-const testColumns: ColumnDef<TestRow, any>[] = [{ accessorKey: 'name', header: 'Name' }]
+const testColumns: ColumnDef<DataTableFeatures, TestRow, any>[] = [{ accessorKey: 'name', header: 'Name' }]
 const testData: TestRow[] = Array.from({ length: 25 }, (_, i) => ({ id: String(i), name: `Pod ${i}` }))
 
 function TestWrapper({
@@ -21,7 +22,7 @@ function TestWrapper({
   children,
 }: {
   readonly data: TestRow[]
-  readonly columns: ColumnDef<TestRow, any>[]
+  readonly columns: ColumnDef<DataTableFeatures, TestRow, any>[]
   readonly pageSize?: number
   readonly children: ReactNode
 }) {

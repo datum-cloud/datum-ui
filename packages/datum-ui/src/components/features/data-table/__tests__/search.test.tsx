@@ -1,6 +1,7 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import type { ColumnDef } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
+import type { DataTableFeatures } from '../core/features'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
@@ -11,7 +12,7 @@ interface TestRow {
   readonly id: string
 }
 
-const testColumns: ColumnDef<TestRow, any>[] = [{ accessorKey: 'id', header: 'ID' }]
+const testColumns: ColumnDef<DataTableFeatures, TestRow, any>[] = [{ accessorKey: 'id', header: 'ID' }]
 const emptyData: TestRow[] = []
 
 function TestWrapper({ children }: { readonly children: ReactNode }) {

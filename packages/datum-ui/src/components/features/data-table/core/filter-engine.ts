@@ -1,3 +1,4 @@
+import type { RowData } from '@tanstack/react-table'
 import type { FilterFn, FilterStrategy } from '../types'
 
 /**
@@ -73,13 +74,13 @@ function resolveStrategy(strategy: FilterStrategy | undefined): FilterFn | undef
   return FILTER_STRATEGIES[strategy]
 }
 
-export interface SearchConfig<TData> {
+export interface SearchConfig<TData extends RowData> {
   searchFn?: (row: TData, query: string) => boolean
   searchableColumns?: string[]
 }
 
 /** True when a row matches a free-text query (custom fn → columns → all values). */
-export function rowMatchesSearch<TData>(
+export function rowMatchesSearch<TData extends RowData>(
   row: TData,
   search: string,
   config: SearchConfig<TData>,
@@ -101,7 +102,7 @@ export function rowMatchesSearch<TData>(
   )
 }
 
-export function applyFilters<TData>(
+export function applyFilters<TData extends RowData>(
   data: TData[],
   filters: Record<string, unknown>,
   search: string,

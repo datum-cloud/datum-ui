@@ -1,7 +1,8 @@
+import type { RowData } from '@tanstack/react-table'
 import type { DefaultExpanded, GroupedTableGroup } from './types'
 import { useCallback, useState } from 'react'
 
-function defaultFor<TData>(group: GroupedTableGroup<TData>, def: DefaultExpanded): boolean {
+function defaultFor<TData extends RowData>(group: GroupedTableGroup<TData>, def: DefaultExpanded): boolean {
   const fallback
     = def === 'all'
       ? true
@@ -11,7 +12,7 @@ function defaultFor<TData>(group: GroupedTableGroup<TData>, def: DefaultExpanded
   return group.defaultOpen ?? fallback
 }
 
-export function useGroupedExpansion<TData>(
+export function useGroupedExpansion<TData extends RowData>(
   groups: GroupedTableGroup<TData>[],
   opts: { defaultExpanded?: DefaultExpanded, expanded?: string[], onExpandedChange?: (ids: string[]) => void },
 ) {

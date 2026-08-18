@@ -1,4 +1,5 @@
-import type { Row, SortingState } from '@tanstack/react-table'
+import type { Row, RowData, SortingState } from '@tanstack/react-table'
+import type { DataTableFeatures } from '../../data-table/core/features'
 
 function compare(a: unknown, b: unknown): number {
   if (a == null && b == null)
@@ -16,7 +17,7 @@ function compare(a: unknown, b: unknown): number {
  * Sort a single group's rows by the active sort (first entry; v1 is single-sort).
  * Returns the same reference when there is no sort, so React can skip re-renders.
  */
-export function sortRows<TData>(rows: Row<TData>[], sorting: SortingState): Row<TData>[] {
+export function sortRows<TData extends RowData>(rows: Row<DataTableFeatures, TData>[], sorting: SortingState): Row<DataTableFeatures, TData>[] {
   if (sorting.length === 0)
     return rows
   const { id, desc } = sorting[0]!

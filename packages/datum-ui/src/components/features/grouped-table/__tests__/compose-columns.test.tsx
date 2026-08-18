@@ -1,9 +1,10 @@
 import type { ColumnDef } from '@tanstack/react-table'
+import type { DataTableFeatures } from '../../data-table/core/features'
 import { describe, expect, it } from 'vitest'
 import { composeColumns } from '../lib/compose-columns'
 
 interface Row { name: string }
-const base: ColumnDef<Row, unknown>[] = [{ accessorKey: 'name', header: 'Name', cell: i => i.getValue() as string }]
+const base: ColumnDef<DataTableFeatures, Row, unknown>[] = [{ accessorKey: 'name', header: 'Name', cell: i => i.getValue() as string }]
 
 describe('composeColumns', () => {
   it('returns base columns unchanged when no options are set', () => {
@@ -31,7 +32,7 @@ describe('composeColumns', () => {
   })
 
   it('leaves columns with custom header renderers untouched', () => {
-    const custom: ColumnDef<Row, unknown>[] = [{ id: 'x', header: () => null, cell: () => null }]
+    const custom: ColumnDef<DataTableFeatures, Row, unknown>[] = [{ id: 'x', header: () => null, cell: () => null }]
     const out = composeColumns(custom, { enableSorting: true })
     expect(out[0]).toBe(custom[0]) // same reference — not modified
   })

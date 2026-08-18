@@ -2,13 +2,16 @@ import type {
   Cell,
   Column,
   ColumnDef,
+  ReactTable,
   Row,
+  RowData,
   RowSelectionState,
   SortingState,
   Table,
 } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
 import type { ActionItem } from '../more-actions'
+import type { DataTableFeatures } from './core/features'
 
 // ── Action Types ──
 
@@ -104,7 +107,7 @@ export interface ServerFetchArgs {
   readonly search: string
 }
 
-export interface ServerTransformResult<TData> {
+export interface ServerTransformResult<TData extends RowData> {
   readonly data: TData[]
   readonly cursor?: string
   readonly hasNextPage: boolean
@@ -112,12 +115,12 @@ export interface ServerTransformResult<TData> {
 
 // ── Inline Content ──
 
-export interface InlineContentRenderParams<TData> {
+export interface InlineContentRenderParams<TData extends RowData> {
   readonly onClose: () => void
   readonly rowData: TData | null
 }
 
-export interface InlineContentEntry<TData> {
+export interface InlineContentEntry<TData extends RowData> {
   readonly id: string
   readonly position: 'top' | 'row'
   readonly rowId?: string
@@ -127,7 +130,7 @@ export interface InlineContentEntry<TData> {
   readonly render: (params: InlineContentRenderParams<TData>) => ReactNode
 }
 
-export interface InlineContentProps<TData> {
+export interface InlineContentProps<TData extends RowData> {
   readonly position: 'top' | 'row'
   readonly rowId?: string
   readonly open: boolean
@@ -138,21 +141,21 @@ export interface InlineContentProps<TData> {
 
 // ── Selection Column ──
 
-export interface SelectionColumnOptions<TData = unknown> {
+export interface SelectionColumnOptions<TData extends RowData = Record<string, any>> {
   /** CSS class for cell checkboxes */
   readonly className?: string
   /** CSS class for header checkbox */
   readonly headerClassName?: string
   /** Custom header render (replaces default "select all" checkbox) */
-  readonly renderHeader?: (props: { table: Table<TData> }) => ReactNode
+  readonly renderHeader?: (props: { table: Table<DataTableFeatures, TData> }) => ReactNode
   /** Custom cell render (replaces default row checkbox) */
-  readonly renderCell?: (props: { row: Row<TData> }) => ReactNode
+  readonly renderCell?: (props: { row: Row<DataTableFeatures, TData> }) => ReactNode
 }
 
 // ── Context ──
 
-export interface DataTableContextValue<TData> {
-  readonly table: Table<TData>
+export interface DataTableContextValue<TData extends RowData> {
+  readonly table: ReactTable<DataTableFeatures, TData>
   readonly mode: 'client' | 'server'
   readonly sorting: SortingState
   readonly filters: FilterValue
@@ -174,9 +177,9 @@ export interface DataTableContextValue<TData> {
 
 // ── Hook Options ──
 
-export interface UseDataTableClientOptions<TData> {
+export interface UseDataTableClientOptions<TData extends RowData> {
   readonly data: TData[]
-  readonly columns: ColumnDef<TData, unknown>[]
+  readonly columns: ColumnDef<DataTableFeatures, TData, unknown>[]
   readonly pageSize?: number
   readonly getRowId?: (row: TData) => string
   readonly enableRowSelection?: boolean | SelectionColumnOptions<TData>
@@ -188,8 +191,8 @@ export interface UseDataTableClientOptions<TData> {
   readonly stateAdapter?: StateAdapter
 }
 
-export interface UseDataTableServerOptions<TResponse, TData> {
-  readonly columns: ColumnDef<TData, unknown>[]
+export interface UseDataTableServerOptions<TResponse, TData extends RowData> {
+  readonly columns: ColumnDef<DataTableFeatures, TData, unknown>[]
   readonly fetchFn: (args: ServerFetchArgs) => Promise<TResponse>
   readonly transform: (response: TResponse) => ServerTransformResult<TData>
   readonly limit?: number
@@ -202,9 +205,9 @@ export interface UseDataTableServerOptions<TResponse, TData> {
 
 // ── Component Props ──
 
-interface DataTableBaseProps<TData> {
+interface DataTableBaseProps<TData extends RowData> {
   readonly data: TData[]
-  readonly columns: ColumnDef<TData, unknown>[]
+  readonly columns: ColumnDef<DataTableFeatures, TData, unknown>[]
   readonly sorting: SortingState
   readonly setSorting: (sorting: SortingState) => void
   readonly filters: FilterValue
@@ -222,13 +225,13 @@ interface DataTableBaseProps<TData> {
   readonly children: ReactNode
 }
 
-export interface DataTableClientProps<TData> extends DataTableBaseProps<TData> {
+export interface DataTableClientProps<TData extends RowData> extends DataTableBaseProps<TData> {
   readonly pagination: ClientPaginationState
   readonly searchableColumns?: string[]
   readonly searchFn?: (row: TData, search: string) => boolean
 }
 
-export interface DataTableServerProps<TData> extends DataTableBaseProps<TData> {
+export interface DataTableServerProps<TData extends RowData> extends DataTableBaseProps<TData> {
   readonly isLoading: boolean
   readonly pagination: ServerPaginationState
 }
@@ -278,14 +281,14 @@ export interface FilterCheckboxProps {
   readonly modal?: boolean
 }
 
-export interface ColumnHeaderProps<TData, TValue> {
-  readonly column: Column<TData, TValue>
+export interface ColumnHeaderProps<TData extends RowData, TValue> {
+  readonly column: Column<DataTableFeatures, TData, TValue>
   readonly title: string
   readonly className?: string
 }
 
-export interface RowActionsProps<TData> {
-  readonly row: Row<TData>
+export interface RowActionsProps<TData extends RowData> {
+  readonly row: Row<DataTableFeatures, TData>
   readonly actions: readonly ActionItem<TData>[]
   readonly isLoading?: boolean
   readonly className?: string
@@ -293,12 +296,12 @@ export interface RowActionsProps<TData> {
   readonly sheetTitle?: string
 }
 
-export interface BulkActionsProps<TData> {
+export interface BulkActionsProps<TData extends RowData> {
   readonly children: (selectedRows: TData[]) => ReactNode
   readonly className?: string
 }
 
-export interface ContentProps<TData = unknown> {
+export interface ContentProps<TData extends RowData = Record<string, any>> {
   readonly emptyMessage?: ReactNode
   readonly className?: string
   readonly tableClassName?: string
@@ -306,8 +309,8 @@ export interface ContentProps<TData = unknown> {
   readonly headerRowClassName?: string
   readonly headerCellClassName?: string
   readonly bodyClassName?: string
-  readonly rowClassName?: string | ((row: Row<TData>) => string)
-  readonly cellClassName?: string | ((cell: Cell<TData, unknown>) => string)
+  readonly rowClassName?: string | ((row: Row<DataTableFeatures, TData>) => string)
+  readonly cellClassName?: string | ((cell: Cell<DataTableFeatures, TData, unknown>) => string)
 }
 
 export interface PaginationProps {
@@ -346,7 +349,7 @@ export interface LoadingProps {
 
 export type FilterStrategy = 'checkbox' | 'select' | 'date-gte' | 'date-lte' | FilterFn
 
-export interface DataTableStoreState<TData> {
+export interface DataTableStoreState<TData extends RowData> {
   readonly data: TData[]
   readonly filteredData: TData[]
   readonly sorting: SortingState
@@ -364,7 +367,7 @@ export interface DataTableStoreState<TData> {
   readonly _version: number
 }
 
-export interface DataTableStore<TData> {
+export interface DataTableStore<TData extends RowData> {
   readonly getSnapshot: () => DataTableStoreState<TData>
   readonly subscribe: (listener: () => void) => () => void
   readonly setData: (data: TData[]) => void
@@ -387,7 +390,7 @@ export interface DataTableStore<TData> {
   readonly unregisterInlineContent: (id: string) => void
 }
 
-export interface CreateStoreOptions<TData> {
+export interface CreateStoreOptions<TData extends RowData> {
   readonly data: TData[]
   readonly mode: 'client' | 'server'
   readonly defaultSort?: SortingState

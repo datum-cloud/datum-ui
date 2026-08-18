@@ -1,12 +1,8 @@
-import type { ColumnDef, Row } from '@tanstack/react-table'
+import type { ColumnDef, Row, RowData } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
+import type { DataTableFeatures } from '../data-table/core/features'
 import type { GroupedTableProps } from './types'
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
+import { flexRender, useTable } from '@tanstack/react-table'
 import { ChevronRight } from 'lucide-react'
 import { useMemo } from 'react'
 import { cn } from '../../../utils/cn'
@@ -14,6 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../base/
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../base/table'
 import { Icon } from '../../icons/icon-wrapper'
 import { rowMatchesSearch } from '../data-table'
+import { dataTableFeatures } from '../data-table/core/features'
 import { GroupedSkeleton } from './components/grouped-skeleton'
 import { GroupedToolbar } from './components/grouped-toolbar'
 import { bucketRows } from './lib/bucket-rows'
@@ -25,12 +22,12 @@ import { useGroupedExpansion } from './use-grouped-expansion'
 /** Floor width for unsized (flex) columns so they keep their share instead of collapsing on narrow viewports. */
 const MIN_FLEX_COLUMN_WIDTH = 120
 
-function columnWidth<TData>(col: ColumnDef<TData, unknown>): string {
+function columnWidth<TData extends RowData>(col: ColumnDef<DataTableFeatures, TData, unknown>): string {
   return typeof col.size === 'number' ? `${col.size}px` : 'auto'
 }
 
 /** Minimum width the table track needs so every column keeps a usable size; below this the area scrolls horizontally. */
-function trackMinWidth<TData>(resolvedColumns: ColumnDef<TData, unknown>[]): number {
+function trackMinWidth<TData extends RowData>(resolvedColumns: ColumnDef<DataTableFeatures, TData, unknown>[]): number {
   return resolvedColumns.reduce(
     (total, col) => total + (typeof col.size === 'number' ? col.size : MIN_FLEX_COLUMN_WIDTH),
     0,
@@ -43,7 +40,7 @@ function trackMinWidth<TData>(resolvedColumns: ColumnDef<TData, unknown>[]): num
  * fall back to the accessor key; the injected selection/actions columns get
  * generic labels. Interactive header controls are intentionally NOT duplicated.
  */
-function columnTitle<TData>(col: ColumnDef<TData, unknown>): string {
+function columnTitle<TData extends RowData>(col: ColumnDef<DataTableFeatures, TData, unknown>): string {
   if (typeof col.header === 'string')
     return col.header
   if (col.id === 'select')
@@ -54,7 +51,7 @@ function columnTitle<TData>(col: ColumnDef<TData, unknown>): string {
   return typeof accessorKey === 'string' ? accessorKey : ''
 }
 
-function renderColGroup<TData>(resolvedColumns: ColumnDef<TData, unknown>[]): ReactNode {
+function renderColGroup<TData extends RowData>(resolvedColumns: ColumnDef<DataTableFeatures, TData, unknown>[]): ReactNode {
   return (
     <colgroup>
       {resolvedColumns.map((col, i) => (
@@ -69,7 +66,7 @@ function resolveClassName<T>(value: string | ((item: T) => string) | undefined, 
   return typeof value === 'function' ? value(item) : value
 }
 
-export function GroupedTable<TData>(props: GroupedTableProps<TData>) {
+export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TData>) {
   const {
     columns,
     groups,
@@ -121,7 +118,8 @@ export function GroupedTable<TData>(props: GroupedTableProps<TData>) {
 
   const flatData = useMemo(() => groups.flatMap(g => g.rows), [groups])
 
-  const table = useReactTable({
+  const table = useTable({
+    features: dataTableFeatures,
     data: flatData,
     columns: resolvedColumns,
     state: { sorting, rowSelection, globalFilter: search },
@@ -134,8 +132,6 @@ export function GroupedTable<TData>(props: GroupedTableProps<TData>) {
     globalFilterFn: (row, _columnId, value) =>
       rowMatchesSearch(row.original as TData, String(value ?? ''), { searchFn, searchableColumns }),
     getRowId,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
   })
 
   const headerGroups = table.getHeaderGroups()
@@ -258,7 +254,7 @@ export function GroupedTable<TData>(props: GroupedTableProps<TData>) {
                   </TableRow>
                 </TableHeader>
                 <TableBody className={bodyClassName}>
-                  {slice.rows.map((row: Row<TData>) => (
+                  {slice.rows.map((row: Row<DataTableFeatures, TData>) => (
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() ? 'selected' : undefined}

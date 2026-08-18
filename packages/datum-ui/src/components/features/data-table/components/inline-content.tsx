@@ -1,10 +1,11 @@
 'use client'
 
+import type { RowData } from '@tanstack/react-table'
 import type { InlineContentProps } from '../types'
 import { useEffect, useId, useRef } from 'react'
 import { useDataTableInlineContents } from '../hooks/use-selectors'
 
-export function DataTableInlineContent<TData>({
+export function DataTableInlineContent<TData extends RowData>({
   position,
   rowId,
   open,

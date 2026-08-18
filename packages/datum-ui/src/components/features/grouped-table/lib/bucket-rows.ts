@@ -1,4 +1,5 @@
-import type { Row } from '@tanstack/react-table'
+import type { Row, RowData } from '@tanstack/react-table'
+import type { DataTableFeatures } from '../../data-table/core/features'
 
 interface GroupLike { id: string, rows: unknown[] }
 
@@ -8,11 +9,11 @@ interface GroupLike { id: string, rows: unknown[] }
  * positions to learn which row id belongs to which group, so bucketing is correct
  * regardless of a custom getRowId.
  */
-export function bucketRows<TData>(
+export function bucketRows<TData extends RowData>(
   groups: GroupLike[],
-  coreRows: Row<TData>[],
-  filteredRows: Row<TData>[],
-): Map<string, Row<TData>[]> {
+  coreRows: Row<DataTableFeatures, TData>[],
+  filteredRows: Row<DataTableFeatures, TData>[],
+): Map<string, Row<DataTableFeatures, TData>[]> {
   const idToGroup = new Map<string, string>()
   let offset = 0
   for (const group of groups) {
@@ -24,7 +25,7 @@ export function bucketRows<TData>(
     offset += group.rows.length
   }
 
-  const buckets = new Map<string, Row<TData>[]>(groups.map(g => [g.id, []]))
+  const buckets = new Map<string, Row<DataTableFeatures, TData>[]>(groups.map(g => [g.id, []]))
   for (const row of filteredRows) {
     const groupId = idToGroup.get(row.id)
     if (groupId)

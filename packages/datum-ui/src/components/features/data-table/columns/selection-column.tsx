@@ -1,14 +1,15 @@
 'use client'
 
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef, RowData } from '@tanstack/react-table'
+import type { DataTableFeatures } from '../core/features'
 import type { SelectionColumnOptions } from '../types'
 import { Checkbox } from '../../../base/checkbox'
 
 const SELECTION_COLUMN_ID = 'select'
 
-export function createSelectionColumn<TData>(
+export function createSelectionColumn<TData extends RowData>(
   options: SelectionColumnOptions<TData> = {},
-): ColumnDef<TData> {
+): ColumnDef<DataTableFeatures, TData> {
   const { className, headerClassName, renderHeader, renderCell } = options
 
   return {
@@ -40,14 +41,14 @@ export function createSelectionColumn<TData>(
   }
 }
 
-export function hasSelectionColumn<TData>(columns: ColumnDef<TData, any>[]): boolean {
+export function hasSelectionColumn<TData extends RowData>(columns: ColumnDef<DataTableFeatures, TData, any>[]): boolean {
   return columns.some(col => 'id' in col && col.id === SELECTION_COLUMN_ID)
 }
 
-export function withSelectionColumn<TData>(
-  columns: ColumnDef<TData, any>[],
+export function withSelectionColumn<TData extends RowData>(
+  columns: ColumnDef<DataTableFeatures, TData, any>[],
   options: SelectionColumnOptions<TData> = {},
-): ColumnDef<TData, any>[] {
+): ColumnDef<DataTableFeatures, TData, any>[] {
   if (hasSelectionColumn(columns)) {
     return columns
   }

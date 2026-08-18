@@ -1,6 +1,7 @@
 'use client'
 
-import type { HeaderGroup, Row } from '@tanstack/react-table'
+import type { HeaderGroup, Row, RowData } from '@tanstack/react-table'
+import type { DataTableFeatures } from '../core/features'
 import type { DataTableStoreState, InlineContentEntry } from '../types'
 import { useCallback, useRef, useSyncExternalStore } from 'react'
 import { useDataTableStore, useRenderKey, useTableInstanceOrNull } from '../core/data-table-context'
@@ -30,7 +31,7 @@ function shallowEqual(a: Record<string, unknown>, b: Record<string, unknown>): b
   return true
 }
 
-function useSliceSelector<TData, TSlice extends Record<string, unknown>>(
+function useSliceSelector<TData extends RowData, TSlice extends Record<string, unknown>>(
   selector: (state: DataTableStoreState<TData>) => TSlice,
 ): TSlice {
   const store = useDataTableStore<TData>()
@@ -83,7 +84,7 @@ export function useDataTableSorting() {
   )
 }
 
-export function useDataTableSelection<TData>() {
+export function useDataTableSelection<TData extends RowData>() {
   useRenderKey() // re-render when store changes (table is mutable singleton)
   const store = useDataTableStore<TData>()
   const table = useTableInstanceOrNull<TData>()
@@ -135,11 +136,11 @@ export function useDataTablePagination() {
   }
 }
 
-export function useDataTableRows<TData>() {
+export function useDataTableRows<TData extends RowData>() {
   useRenderKey() // re-render when store changes (table is mutable singleton)
   const table = useTableInstanceOrNull<TData>()
   if (!table) {
-    return { rows: [] as Row<TData>[], headerGroups: [] as HeaderGroup<TData>[], totalColumns: 0 }
+    return { rows: [] as Row<DataTableFeatures, TData>[], headerGroups: [] as HeaderGroup<DataTableFeatures, TData>[], totalColumns: 0 }
   }
   return {
     rows: table.getRowModel().rows,
@@ -158,7 +159,7 @@ export function useDataTableLoading() {
   )
 }
 
-export function useDataTableInlineContents<TData>() {
+export function useDataTableInlineContents<TData extends RowData>() {
   const store = useDataTableStore<TData>()
   return useSliceSelector<TData, {
     inlineContents: readonly InlineContentEntry<TData>[]

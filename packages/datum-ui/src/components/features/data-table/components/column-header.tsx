@@ -1,10 +1,11 @@
 'use client'
 
+import type { RowData } from '@tanstack/react-table'
 import type { ColumnHeaderProps } from '../types'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 import { cn } from '../../../../utils/cn'
 
-export function DataTableColumnHeader<TData, TValue>({
+export function DataTableColumnHeader<TData extends RowData, TValue>({
   column,
   title,
   className,

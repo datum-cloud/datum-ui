@@ -1,3 +1,4 @@
+import type { RowData } from '@tanstack/react-table'
 import type {
   CreateStoreOptions,
   DataTableStore,
@@ -7,7 +8,7 @@ import type {
 import { DEFAULT_PAGE_SIZE } from '../constants'
 import { applyFilters } from './filter-engine'
 
-export function createDataTableStore<TData>(
+export function createDataTableStore<TData extends RowData>(
   options: CreateStoreOptions<TData>,
 ): DataTableStore<TData> {
   let registeredFilters = new Map<string, FilterStrategy>()

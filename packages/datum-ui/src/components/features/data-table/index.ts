@@ -7,6 +7,7 @@ export { createSelectionColumn } from './columns/selection-column'
 
 // Components (reusable, context-free)
 export { DataTableColumnHeader } from './components/column-header'
+
 export { DataTableRowActions } from './components/row-actions'
 
 // Constants
@@ -16,6 +17,11 @@ export {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_SIZES,
 } from './constants'
+// TanStack Table v9 feature set. Consumers annotating their own column defs
+// need this as the first type argument: ColumnDef<DataTableFeatures, MyRow>.
+export { dataTableFeatures } from './core/features'
+
+export type { DataTableFeatures } from './core/features'
 // Search utilities (reused by grouped-table)
 export { resolvePath, rowMatchesSearch } from './core/filter-engine'
 
