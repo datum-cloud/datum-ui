@@ -448,7 +448,7 @@ importers:
         specifier: 1.9.22
         version: 1.9.22
       '@types/leaflet-draw':
-        specifier: ^1
+        specifier: ^1.0.13
         version: 1.0.13
       '@types/leaflet.fullscreen':
         specifier: ^5.2.0
