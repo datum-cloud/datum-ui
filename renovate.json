@@ -52,6 +52,11 @@
       "groupName": "testing libraries"
     },
     {
+      "description": "Cap TypeScript below 7 until typescript-eslint supports the TS 7 compiler API. TS 7.0 ships no public programmatic API, and typescript-eslint@8 (pulled in as a hard dependency of @antfu/eslint-config) declares peer `typescript >=4.8.4 <6.1.0`. Type-aware linting via @typescript-eslint/project-service is active in packages/config, so TS 7 breaks `pnpm lint` in every workspace package. tsc, tsdown and vitest are all already TS 7-ready — ESLint is the sole blocker. Support is expected in TS 7.1 (~Autumn 2026); remove this cap then.",
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<7"
+    },
+    {
       "description": "Label major updates",
       "matchUpdateTypes": ["major"],
       "addLabels": ["major-update"]
