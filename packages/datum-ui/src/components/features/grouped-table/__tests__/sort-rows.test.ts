@@ -1,10 +1,11 @@
 import type { Row } from '@tanstack/react-table'
+import type { DataTableFeatures } from '../../data-table/core/features'
 import { describe, expect, it } from 'vitest'
 import { sortRows } from '../lib/sort-rows'
 
 // Minimal fake rows: sortRows only uses row.getValue(columnId).
-function fakeRow<T extends Record<string, unknown>>(values: T): Row<unknown> {
-  return { getValue: (id: string) => values[id] } as unknown as Row<unknown>
+function fakeRow<T extends Record<string, unknown>>(values: T): Row<DataTableFeatures, Record<string, unknown>> {
+  return { getValue: (id: string) => values[id] } as unknown as Row<DataTableFeatures, Record<string, unknown>>
 }
 
 const rows = [

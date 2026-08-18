@@ -33,7 +33,7 @@ jobs:
       actions: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
           # Full history (all branches) so `pnpm changeset status` can diff
@@ -41,9 +41,15 @@ jobs:
           # detached checkout errors and silently degrades the body. (CR-007 / STRUCT-076)
           fetch-depth: 0
 
+      # Deliberately held at v4. This repo relies on action-setup inferring the
+      # pnpm version from the root packageManager field (no version input), and
+      # v6 has open regressions for exactly that -- pnpm/action-setup#225 and
+      # #227 report v6 ignoring the requested version. Installing the wrong pnpm
+      # here would silently change lockfile resolution and the minimumReleaseAge
+      # supply-chain gate, so the bump waits until those are fixed.
       - uses: pnpm/action-setup@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: pnpm
@@ -54,7 +60,7 @@ jobs:
 
       # Publish the exact build CI produced and validated instead of rebuilding.
       - name: Download validated build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: datum-ui-dist
           path: packages/datum-ui/dist/
@@ -84,13 +90,18 @@ jobs:
 
       - name: Create Release Pull Request or Publish
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          version: pnpm changeset version
-          publish: pnpm changeset publish
-          commit: "chore: version packages"
-          title: "chore: version packages ${{ steps.pr-body.outputs.title-suffix }}"
-          createGithubReleases: true
+          # v2 renamed every input from v1: version -> version-script,
+          # publish -> publish-script, commit -> commit-message,
+          # title -> pr-title, createGithubReleases -> create-github-releases.
+          # Unknown inputs are silently ignored by Actions, so a partial rename
+          # would quietly fall back to defaults instead of failing loudly.
+          version-script: pnpm changeset version
+          publish-script: pnpm changeset publish
+          commit-message: "chore: version packages"
+          pr-title: "chore: version packages ${{ steps.pr-body.outputs.title-suffix }}"
+          create-github-releases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -99,10 +110,10 @@ jobs:
       # Pass the body through the environment (never interpolated into the shell
       # command) so backticks/quotes in the changelog can't be executed. (BUG-107)
       - name: Update PR description
-        if: steps.changesets.outputs.pullRequestNumber != ''
+        if: steps.changesets.outputs.pr-number != ''
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_BODY: ${{ steps.pr-body.outputs.body }}
-          PR_NUMBER: ${{ steps.changesets.outputs.pullRequestNumber }}
+          PR_NUMBER: ${{ steps.changesets.outputs.pr-number }}
         run: |
           gh pr edit "$PR_NUMBER" --body "$PR_BODY"

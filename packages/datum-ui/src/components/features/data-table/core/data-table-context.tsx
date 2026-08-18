@@ -1,11 +1,12 @@
 'use client'
 
-import type { Table } from '@tanstack/react-table'
+import type { ReactTable, RowData } from '@tanstack/react-table'
 import type { DataTableContextValue, DataTableStore } from '../types'
+import type { DataTableFeatures } from './features'
 import { createContext, use, useContext } from 'react'
 
 export const DataTableStoreContext = createContext<DataTableStore<any> | null>(null)
-export const TableInstanceContext = createContext<Table<any> | null>(null)
+export const TableInstanceContext = createContext<ReactTable<DataTableFeatures, any> | null>(null)
 
 /**
  * Monotonic counter that increments on every store mutation.
@@ -30,7 +31,7 @@ export function useRenderKey(): number {
 export const DataTableContext = createContext<DataTableContextValue<any> | null>(null)
 
 /** @deprecated Use selector hooks from hooks/use-selectors instead */
-export function useDataTableContext<TData>(): DataTableContextValue<TData> {
+export function useDataTableContext<TData extends RowData>(): DataTableContextValue<TData> {
   const context = use(DataTableContext)
   if (!context) {
     throw new Error('useDataTableContext must be used within a DataTable provider')
@@ -38,7 +39,7 @@ export function useDataTableContext<TData>(): DataTableContextValue<TData> {
   return context as DataTableContextValue<TData>
 }
 
-export function useDataTableStore<TData>(): DataTableStore<TData> {
+export function useDataTableStore<TData extends RowData>(): DataTableStore<TData> {
   const store = use(DataTableStoreContext)
   if (!store) {
     throw new Error('useDataTableStore must be used within a <DataTable.Client> or <DataTable.Server> provider')
@@ -50,7 +51,7 @@ export function useDataTableStore<TData>(): DataTableStore<TData> {
  * @deprecated Use `useTableInstanceOrNull` instead — this throws during the
  * SSR/hydration window when the table instance is not yet mounted.
  */
-export function useTableInstance<TData>(): Table<TData> {
+export function useTableInstance<TData extends RowData>(): ReactTable<DataTableFeatures, TData> {
   const table = use(TableInstanceContext)
   if (!table) {
     throw new Error(
@@ -58,13 +59,13 @@ export function useTableInstance<TData>(): Table<TData> {
       + 'The table mounts after hydration. Use useTableInstanceOrNull to handle the loading window.',
     )
   }
-  return table as Table<TData>
+  return table as ReactTable<DataTableFeatures, TData>
 }
 
 /**
  * Returns the table instance or null if not yet available.
  * Used by hooks that need to handle the null-table window during SSR.
  */
-export function useTableInstanceOrNull<TData>(): Table<TData> | null {
-  return use(TableInstanceContext) as Table<TData> | null
+export function useTableInstanceOrNull<TData extends RowData>(): ReactTable<DataTableFeatures, TData> | null {
+  return use(TableInstanceContext) as ReactTable<DataTableFeatures, TData> | null
 }

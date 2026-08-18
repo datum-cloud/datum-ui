@@ -1,10 +1,11 @@
+import type { DataTableFeatures } from '@datum-cloud/datum-ui/data-table'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import { Badge } from '@datum-cloud/datum-ui/badge'
 import { GroupedTable } from '@datum-cloud/datum-ui/grouped-table'
 
 interface Row { name: string, used: number, total: number, status: string }
-const columns: ColumnDef<Row, unknown>[] = [
+const columns: ColumnDef<DataTableFeatures, Row, unknown>[] = [
   { accessorKey: 'name', header: 'Resource', cell: i => i.getValue() as string, size: 220 },
   { id: 'usage', header: 'Usage', cell: i => `${i.row.original.used} / ${i.row.original.total}` },
   { accessorKey: 'status', header: 'Status', cell: i => i.getValue() as string, size: 140 },

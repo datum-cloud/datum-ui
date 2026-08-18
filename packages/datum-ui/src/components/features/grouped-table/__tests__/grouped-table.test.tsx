@@ -1,11 +1,12 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import type { ColumnDef } from '@tanstack/react-table'
+import type { DataTableFeatures } from '../../data-table/core/features'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { GroupedTable } from '../grouped-table'
 
 interface Row { name: string, value: number }
-const columns: ColumnDef<Row, unknown>[] = [
+const columns: ColumnDef<DataTableFeatures, Row, unknown>[] = [
   { accessorKey: 'name', header: 'Resource', cell: info => info.getValue() as string, size: 160 },
   { accessorKey: 'value', header: 'Value', cell: info => String(info.getValue()) },
 ]

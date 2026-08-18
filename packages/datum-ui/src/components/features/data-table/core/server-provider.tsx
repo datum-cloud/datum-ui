@@ -1,14 +1,16 @@
 'use client'
 
+import type { ReactTable, RowData } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
 import type { UseServerTableOptions } from '../hooks/use-data-table-server'
 import type { DataTableStore, UseDataTableServerOptions } from '../types'
+import type { DataTableFeatures } from './features'
 import { useEffect, useMemo, useState } from 'react'
 import { useServerTable } from '../hooks/use-data-table-server'
 import { DataTableRenderKeyContext, DataTableStoreContext, TableInstanceContext } from './data-table-context'
 import { createDataTableStore } from './store'
 
-export type DataTableServerProviderProps<TResponse, TData> = UseDataTableServerOptions<TResponse, TData> & {
+export type DataTableServerProviderProps<TResponse, TData extends RowData> = UseDataTableServerOptions<TResponse, TData> & {
   readonly className?: string
   readonly children: ReactNode
 }
@@ -17,7 +19,7 @@ export type DataTableServerProviderProps<TResponse, TData> = UseDataTableServerO
  * Inner component that calls useServerTable.
  * Only rendered after hydration (gated by tableReady).
  */
-function ServerProviderInner<TResponse, TData>({
+function ServerProviderInner<TResponse, TData extends RowData>({
   store,
   className,
   children,
@@ -30,7 +32,7 @@ function ServerProviderInner<TResponse, TData>({
   const { table } = useServerTable(store, options)
 
   return (
-    <TableInstanceContext value={table}>
+    <TableInstanceContext value={table as ReactTable<DataTableFeatures, any>}>
       <DataTableRenderKeyContext value={store.getSnapshot()._version}>
         <div className={className}>{children}</div>
       </DataTableRenderKeyContext>
@@ -38,7 +40,7 @@ function ServerProviderInner<TResponse, TData>({
   )
 }
 
-export function ServerProvider<TResponse, TData>(props: DataTableServerProviderProps<TResponse, TData>) {
+export function ServerProvider<TResponse, TData extends RowData>(props: DataTableServerProviderProps<TResponse, TData>) {
   const {
     columns,
     fetchFn,

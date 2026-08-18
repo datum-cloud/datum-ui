@@ -1,14 +1,16 @@
 'use client'
 
+import type { ReactTable, RowData } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
 import type { UseClientTableOptions } from '../hooks/use-data-table-client'
 import type { CreateStoreOptions, DataTableStore, UseDataTableClientOptions } from '../types'
+import type { DataTableFeatures } from './features'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useClientTable } from '../hooks/use-data-table-client'
 import { DataTableRenderKeyContext, DataTableStoreContext, TableInstanceContext } from './data-table-context'
 import { createDataTableStore } from './store'
 
-export type DataTableClientProviderProps<TData> = UseDataTableClientOptions<TData> & {
+export type DataTableClientProviderProps<TData extends RowData> = UseDataTableClientOptions<TData> & {
   readonly loading?: boolean
   readonly className?: string
   readonly children: ReactNode
@@ -18,7 +20,7 @@ export type DataTableClientProviderProps<TData> = UseDataTableClientOptions<TDat
  * Inner component that calls useClientTable.
  * Only rendered after hydration (gated by tableReady).
  */
-function ClientProviderInner<TData>({
+function ClientProviderInner<TData extends RowData>({
   store,
   className,
   children,
@@ -31,7 +33,7 @@ function ClientProviderInner<TData>({
   const { table } = useClientTable(store, options)
 
   return (
-    <TableInstanceContext value={table}>
+    <TableInstanceContext value={table as ReactTable<DataTableFeatures, any>}>
       <DataTableRenderKeyContext value={store.getSnapshot()._version}>
         <div className={className}>{children}</div>
       </DataTableRenderKeyContext>
@@ -39,7 +41,7 @@ function ClientProviderInner<TData>({
   )
 }
 
-export function ClientProvider<TData>(props: DataTableClientProviderProps<TData>) {
+export function ClientProvider<TData extends RowData>(props: DataTableClientProviderProps<TData>) {
   const {
     data,
     columns,

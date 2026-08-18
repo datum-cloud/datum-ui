@@ -1,3 +1,4 @@
+import type { DataTableFeatures } from '@datum-cloud/datum-ui/data-table'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import type { User } from '../helpers/mock-data'
@@ -14,7 +15,7 @@ type Story = StoryObj
 function AdvancedTableDemo() {
   const [editingRowId, setEditingRowId] = useState<string | null>(null)
 
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<DataTableFeatures, User>[] = [
     {
       accessorKey: 'name',
       header: ({ column }) => <DataTable.ColumnHeader column={column} title="Name" />,

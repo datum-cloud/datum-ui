@@ -1,8 +1,9 @@
 import type { Row } from '@tanstack/react-table'
+import type { DataTableFeatures } from '../../data-table/core/features'
 import { describe, expect, it } from 'vitest'
 import { bucketRows } from '../lib/bucket-rows'
 
-const row = (id: string) => ({ id } as Row<unknown>)
+const row = (id: string) => ({ id } as Row<DataTableFeatures, Record<string, unknown>>)
 const groups = [
   { id: 'g1', rows: [{}, {}] },
   { id: 'g2', rows: [{}] },

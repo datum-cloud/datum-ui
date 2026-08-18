@@ -1,6 +1,7 @@
 'use client'
 
-import type { Cell, Row } from '@tanstack/react-table'
+import type { Cell, Row, RowData } from '@tanstack/react-table'
+import type { DataTableFeatures } from '../core/features'
 import type { ContentProps, InlineContentEntry } from '../types'
 import { flexRender } from '@tanstack/react-table'
 import { useMemo } from 'react'
@@ -26,10 +27,10 @@ function resolveClassName<T>(
   return value
 }
 
-function renderInlineContentRow<TData>(
+function renderInlineContentRow<TData extends RowData>(
   entry: InlineContentEntry<TData>,
   colSpan: number,
-  rows: Row<TData>[],
+  rows: Row<DataTableFeatures, TData>[],
 ) {
   return (
     <TableRow
@@ -101,7 +102,7 @@ export function DataTableContent({
                   return (
                     <TableRow
                       key={row.id}
-                      className={cn(resolveClassName(rowClassName, row as Row<unknown>))}
+                      className={cn(resolveClassName(rowClassName, row as Row<DataTableFeatures, RowData>))}
                       style={{ transitionProperty: 'none' }}
                       data-slot="dt-row"
                       data-state={row.getIsSelected() ? 'selected' : undefined}
@@ -109,7 +110,7 @@ export function DataTableContent({
                       {row.getVisibleCells().map(cell => (
                         <TableCell
                           key={cell.id}
-                          className={cn(resolveClassName(cellClassName, cell as Cell<unknown, unknown>))}
+                          className={cn(resolveClassName(cellClassName, cell as Cell<DataTableFeatures, RowData, unknown>))}
                           data-slot="dt-cell"
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}

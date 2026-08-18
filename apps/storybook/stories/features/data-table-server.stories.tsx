@@ -1,9 +1,10 @@
+import type { DataTableFeatures } from '@datum-cloud/datum-ui/data-table'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import type { Post } from '../helpers/mock-data'
 import { DataTable } from '@datum-cloud/datum-ui/data-table'
 
-const postColumns: ColumnDef<Post>[] = [
+const postColumns: ColumnDef<DataTableFeatures, Post>[] = [
   {
     accessorKey: 'id',
     header: ({ column }) => <DataTable.ColumnHeader column={column} title="ID" />,
