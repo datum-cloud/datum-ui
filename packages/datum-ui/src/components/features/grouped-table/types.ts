@@ -1,11 +1,12 @@
-import type { Cell, ColumnDef, Row, RowSelectionState, SortingState } from '@tanstack/react-table'
+import type { Cell, ColumnDef, Row, RowData, RowSelectionState, SortingState } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
 import type { SelectionColumnOptions } from '../data-table'
+import type { DataTableFeatures } from '../data-table/core/features'
 import type { ActionItem } from '../more-actions'
 
 export type DefaultExpanded = 'all' | 'none' | string[]
 
-export interface GroupedTableGroup<TData> {
+export interface GroupedTableGroup<TData extends RowData> {
   /** Stable key used for expand state. */
   id: string
   /** Group header label. */
@@ -17,9 +18,9 @@ export interface GroupedTableGroup<TData> {
   defaultOpen?: boolean
 }
 
-export interface GroupedTableProps<TData> {
+export interface GroupedTableProps<TData extends RowData> {
   /** TanStack column defs. `size` (px) drives the shared grid template; unsized columns flex. */
-  columns: ColumnDef<TData, unknown>[]
+  columns: ColumnDef<DataTableFeatures, TData, unknown>[]
   groups: GroupedTableGroup<TData>[]
   /** Uncontrolled initial state. Default `'all'`. A string[] opens exactly those ids. */
   defaultExpanded?: DefaultExpanded
@@ -78,7 +79,7 @@ export interface GroupedTableProps<TData> {
   /** Each group's `<tbody>`. */
   bodyClassName?: string
   /** Each data `<tr>`; receives the row for per-row styling. */
-  rowClassName?: string | ((row: Row<TData>) => string)
+  rowClassName?: string | ((row: Row<DataTableFeatures, TData>) => string)
   /** Each data `<td>`; receives the cell for per-cell styling. */
-  cellClassName?: string | ((cell: Cell<TData, unknown>) => string)
+  cellClassName?: string | ((cell: Cell<DataTableFeatures, TData, unknown>) => string)
 }

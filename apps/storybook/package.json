@@ -29,7 +29,7 @@
     "@storybook/addon-docs": "^10.5.8",
     "@storybook/addon-links": "^10.5.8",
     "@tailwindcss/postcss": "^4.3.3",
-    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-table": "^9.1.2",
     "@types/react": "^19.2.18",
     "eslint": "^10.8.1",
     "react-day-picker": "^10.0.1",

@@ -1,10 +1,11 @@
+import type { DataTableFeatures } from '@datum-cloud/datum-ui/data-table'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import type { User } from '../helpers/mock-data'
 import { DataTable } from '@datum-cloud/datum-ui/data-table'
 import { sampleUsers } from '../helpers/mock-data'
 
-const columns: ColumnDef<User>[] = [
+const columns: ColumnDef<DataTableFeatures, User>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => <DataTable.ColumnHeader column={column} title="Name" />,

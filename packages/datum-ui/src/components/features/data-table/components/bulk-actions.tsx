@@ -1,9 +1,10 @@
 'use client'
 
+import type { RowData } from '@tanstack/react-table'
 import type { BulkActionsProps } from '../types'
 import { useDataTableSelection } from '../hooks/use-selectors'
 
-export function DataTableBulkActions<TData>({
+export function DataTableBulkActions<TData extends RowData>({
   children,
   className,
 }: BulkActionsProps<TData>) {

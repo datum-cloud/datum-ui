@@ -1,6 +1,7 @@
 'use client'
 
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef, RowData } from '@tanstack/react-table'
+import type { DataTableFeatures } from '../core/features'
 import type {
   CreateStoreOptions,
   DataTableStore,
@@ -8,22 +9,18 @@ import type {
   StateAdapter,
   UseDataTableClientOptions,
 } from '../types'
-import {
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
+import { useTable } from '@tanstack/react-table'
 import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react'
 import { withSelectionColumn } from '../columns/selection-column'
+import { dataTableFeatures } from '../core/features'
 import { createDataTableStore } from '../core/store'
 
 export type { UseDataTableClientOptions }
 
 // ── useClientTable ──
 
-export interface UseClientTableOptions<TData> {
-  readonly columns: ColumnDef<TData, unknown>[]
+export interface UseClientTableOptions<TData extends RowData> {
+  readonly columns: ColumnDef<DataTableFeatures, TData, unknown>[]
   readonly getRowId?: (row: TData) => string
   readonly enableRowSelection?: boolean | SelectionColumnOptions<TData>
   readonly stateAdapter?: StateAdapter
@@ -33,7 +30,7 @@ export interface UseClientTableOptions<TData> {
  * Creates a TanStack Table instance from an existing store.
  * Does NOT create the store or sync data — the caller is responsible for that.
  */
-export function useClientTable<TData>(
+export function useClientTable<TData extends RowData>(
   store: DataTableStore<TData>,
   options: UseClientTableOptions<TData>,
 ) {
@@ -52,7 +49,8 @@ export function useClientTable<TData>(
     = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot)
 
   // 3. Create TanStack table (sort + paginate only, no filtering)
-  const table = useReactTable({
+  const table = useTable({
+    features: dataTableFeatures,
     data: filteredData,
     columns: resolvedColumns,
     state: {
@@ -73,9 +71,6 @@ export function useClientTable<TData>(
       const next = typeof updater === 'function' ? updater(prev) : updater
       store.setPagination(next.pageIndex, next.pageSize)
     },
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getRowId,
     enableRowSelection: !!enableRowSelection,
   })
@@ -123,7 +118,7 @@ export function useClientTable<TData>(
 
 // ── useDataTableClient (convenience wrapper) ──
 
-export function useDataTableClient<TData>(options: UseDataTableClientOptions<TData>) {
+export function useDataTableClient<TData extends RowData>(options: UseDataTableClientOptions<TData>) {
   const {
     data,
     columns,

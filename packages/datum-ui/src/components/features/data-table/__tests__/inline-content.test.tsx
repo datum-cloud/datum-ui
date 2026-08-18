@@ -1,6 +1,7 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import type { ColumnDef } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
+import type { DataTableFeatures } from '../core/features'
 import { render } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { DataTableInlineContent } from '../components/inline-content'
@@ -12,7 +13,7 @@ interface TestRow {
   readonly name: string
 }
 
-const testColumns: ColumnDef<TestRow, any>[] = [{ accessorKey: 'name', header: 'Name' }]
+const testColumns: ColumnDef<DataTableFeatures, TestRow, any>[] = [{ accessorKey: 'name', header: 'Name' }]
 const testData: TestRow[] = [
   { id: '1', name: 'Row A' },
   { id: '2', name: 'Row B' },

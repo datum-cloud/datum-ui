@@ -1,5 +1,6 @@
 'use client'
 
+import type { RowData } from '@tanstack/react-table'
 import type { RowActionsProps } from '../types'
 import { MoreHorizontal } from 'lucide-react'
 import { useState } from 'react'
@@ -7,7 +8,7 @@ import { Button } from '../../../base/button'
 import { ResponsiveDropdown } from '../../../base/responsive-dropdown'
 import { ActionRow } from '../../more-actions/action-row'
 
-export function DataTableRowActions<TData>({
+export function DataTableRowActions<TData extends RowData>({
   row,
   actions,
   isLoading = false,

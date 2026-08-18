@@ -1,6 +1,7 @@
 'use client'
 
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef, RowData } from '@tanstack/react-table'
+import type { DataTableFeatures } from '../core/features'
 import type {
   DataTableStore,
   SelectionColumnOptions,
@@ -9,20 +10,18 @@ import type {
   StateAdapter,
   UseDataTableServerOptions,
 } from '../types'
-import {
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
+import { useTable } from '@tanstack/react-table'
 import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react'
 import { withSelectionColumn } from '../columns/selection-column'
+import { dataTableFeatures } from '../core/features'
 import { createDataTableStore } from '../core/store'
 
 export type { UseDataTableServerOptions }
 
 // ── useServerTable ──
 
-export interface UseServerTableOptions<TResponse, TData> {
-  readonly columns: ColumnDef<TData, unknown>[]
+export interface UseServerTableOptions<TResponse, TData extends RowData> {
+  readonly columns: ColumnDef<DataTableFeatures, TData, unknown>[]
   readonly fetchFn: (args: ServerFetchArgs) => Promise<TResponse>
   readonly transform: (response: TResponse) => ServerTransformResult<TData>
   readonly limit?: number
@@ -36,7 +35,7 @@ export interface UseServerTableOptions<TResponse, TData> {
  * Handles fetch-on-query-change, cursor pagination, and state adapter sync.
  * Does NOT create the store — the caller is responsible for that.
  */
-export function useServerTable<TResponse, TData>(
+export function useServerTable<TResponse, TData extends RowData>(
   store: DataTableStore<TData>,
   options: UseServerTableOptions<TResponse, TData>,
 ) {
@@ -155,7 +154,8 @@ export function useServerTable<TResponse, TData>(
   )
 
   // 4. Create TanStack table (display only — no sorting/filtering/pagination)
-  const table = useReactTable({
+  const table = useTable({
+    features: dataTableFeatures,
     data: store.getSnapshot().data,
     columns: resolvedColumns,
     state: {
@@ -168,7 +168,6 @@ export function useServerTable<TResponse, TData>(
     manualFiltering: true,
     // Tell TanStack about page capabilities so pagination component works
     pageCount: hasNextPageRef.current ? pageIndex + 2 : pageIndex + 1,
-    getCoreRowModel: getCoreRowModel(),
     getRowId,
     enableRowSelection: !!enableRowSelection,
     onSortingChange: (updater) => {
@@ -203,7 +202,7 @@ export function useServerTable<TResponse, TData>(
 
 // ── useDataTableServer (convenience wrapper) ──
 
-export function useDataTableServer<TResponse, TData>(
+export function useDataTableServer<TResponse, TData extends RowData>(
   options: UseDataTableServerOptions<TResponse, TData>,
 ) {
   const {

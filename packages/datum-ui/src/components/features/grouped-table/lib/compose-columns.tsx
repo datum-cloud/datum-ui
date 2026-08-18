@@ -1,9 +1,10 @@
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef, RowData } from '@tanstack/react-table'
 import type { SelectionColumnOptions } from '../../data-table'
+import type { DataTableFeatures } from '../../data-table/core/features'
 import type { ActionItem } from '../../more-actions'
 import { createSelectionColumn, DataTableColumnHeader, DataTableRowActions } from '../../data-table'
 
-export interface ComposeOptions<TData> {
+export interface ComposeOptions<TData extends RowData> {
   enableRowSelection?: boolean | SelectionColumnOptions<TData>
   enableSorting?: boolean
   rowActions?: (row: TData) => ActionItem<TData>[]
@@ -11,7 +12,7 @@ export interface ComposeOptions<TData> {
 }
 
 /** Wrap plain string headers in the sortable header; leave all other columns untouched. */
-function withSortableHeaders<TData>(columns: ColumnDef<TData, unknown>[]): ColumnDef<TData, unknown>[] {
+function withSortableHeaders<TData extends RowData>(columns: ColumnDef<DataTableFeatures, TData, unknown>[]): ColumnDef<DataTableFeatures, TData, unknown>[] {
   return columns.map((col) => {
     if (typeof col.header !== 'string')
       return col
@@ -20,14 +21,14 @@ function withSortableHeaders<TData>(columns: ColumnDef<TData, unknown>[]): Colum
       ...col,
       enableSorting: col.enableSorting ?? true,
       header: ({ column }) => <DataTableColumnHeader column={column} title={title} />,
-    } as ColumnDef<TData, unknown>
+    } as ColumnDef<DataTableFeatures, TData, unknown>
   })
 }
 
-export function composeColumns<TData>(
-  columns: ColumnDef<TData, unknown>[],
+export function composeColumns<TData extends RowData>(
+  columns: ColumnDef<DataTableFeatures, TData, unknown>[],
   options: ComposeOptions<TData>,
-): ColumnDef<TData, unknown>[] {
+): ColumnDef<DataTableFeatures, TData, unknown>[] {
   const { enableRowSelection, enableSorting, rowActions, rowActionsSheetTitle } = options
   let cols = columns
 
@@ -36,7 +37,7 @@ export function composeColumns<TData>(
 
   if (enableRowSelection) {
     const selOpts = typeof enableRowSelection === 'object' ? enableRowSelection : {}
-    cols = [createSelectionColumn<TData>(selOpts) as ColumnDef<TData, unknown>, ...cols]
+    cols = [createSelectionColumn<TData>(selOpts) as ColumnDef<DataTableFeatures, TData, unknown>, ...cols]
   }
 
   if (rowActions) {
