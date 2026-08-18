@@ -45,3 +45,7 @@ export * from './transfer'
 //               so it stays subpath-only. Import it via `@datum-cloud/datum-ui/picker`.
 //   ./date-picker — thin compatibility alias for ./calendar-date-picker +
 //               ./time-range-picker (both already in this barrel); subpath-only.
+//   ./logs — compound Loki explorer plus helpers. Kept off this barrel so a
+//               root `@datum-cloud/datum-ui` import does not pull Loki types or
+//               explorer chrome. Import via `@datum-cloud/datum-ui/logs`.
+//   ./assistant — same idea; import via `@datum-cloud/datum-ui/assistant`.

@@ -209,6 +209,11 @@
       "types": "./dist/components/features/logs/index.d.ts",
       "default": "./dist/logs/index.mjs"
     },
+    "./logs/fixtures": {
+      "source": "./src/components/features/logs/fixtures/index.ts",
+      "types": "./dist/components/features/logs/fixtures/index.d.ts",
+      "default": "./dist/logs/fixtures/index.mjs"
+    },
     "./tabs": {
       "source": "./src/components/base/tabs/index.ts",
       "types": "./dist/components/base/tabs/index.d.ts",

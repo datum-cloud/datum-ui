@@ -1,4 +1,3 @@
-export { queryRangeFixture } from './fixtures'
 export { useLogs } from './hooks/use-logs'
 export { Logs } from './logs'
 export type {

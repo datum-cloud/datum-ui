@@ -58,7 +58,7 @@ export const CompactLog: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Log-table style: compact mono trigger, same detailed tooltip.',
+        story: 'Compact mono trigger with the detailed tooltip. The log table itself uses a plain timestamp to avoid mounting a tooltip per row.',
       },
     },
   },

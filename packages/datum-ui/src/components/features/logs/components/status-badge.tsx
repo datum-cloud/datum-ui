@@ -3,22 +3,7 @@
 import type { ParsedLogLine } from '../types'
 import { cn } from '../../../../utils/cn'
 import { Badge } from '../../../base/badge'
-import { DateTime } from '../../date-time'
-import { formatLogTimestamp } from '../utils/format-timestamp'
 import { httpStatusTextClass, severityBadgeType } from '../utils/severity'
-
-export function LogsTimestamp({ date, timestampNs }: { date: Date, timestampNs?: string }) {
-  return (
-    <DateTime date={date} variant="detailed" timestamp={timestampNs}>
-      <time
-        dateTime={date.toISOString()}
-        className="text-muted-foreground font-mono text-xs whitespace-nowrap"
-      >
-        {formatLogTimestamp(date)}
-      </time>
-    </DateTime>
-  )
-}
 
 export function LogsSeverityBadge({ severity }: { severity?: string }) {
   return (

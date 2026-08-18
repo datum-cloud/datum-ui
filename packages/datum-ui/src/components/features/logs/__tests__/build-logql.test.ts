@@ -36,4 +36,19 @@ describe('buildLogQL', () => {
       lineContains: 'say "hello"',
     })).toBe('{service_name="api"} |= "say \\"hello\\""')
   })
+
+  it('drops label names that are not valid Loki identifiers', () => {
+    const injected = 'severity="ERROR"} |= "password" #'
+    expect(buildLogQL({
+      matchers: { [injected]: ['INFO'] },
+    })).toBe('{service_name=~".+"}')
+
+    const invalidName = 'foo}'
+    expect(buildLogQL({
+      matchers: {
+        severity: ['ERROR'],
+        [invalidName]: ['injected'],
+      },
+    })).toBe('{severity="ERROR"}')
+  })
 })

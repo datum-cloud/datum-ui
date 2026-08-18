@@ -13,8 +13,9 @@ import {
   TableRow,
 } from '../../../base/table'
 import { useLogs } from '../hooks/use-logs'
+import { formatLogTimestamp } from '../utils/format-timestamp'
 import { logLineDisplay } from '../utils/parse-log-line'
-import { LogsSeverityBadge, LogsStatusBadge, LogsTimestamp } from './status-badge'
+import { LogsSeverityBadge, LogsStatusBadge } from './status-badge'
 
 const COLUMN_LABEL: Record<LogColumnId, string> = {
   time: 'Time',
@@ -53,7 +54,12 @@ function LogCell({
     case 'time':
       return (
         <TableCell>
-          <LogsTimestamp date={entry.timestamp} timestampNs={entry.timestampNs} />
+          <time
+            dateTime={entry.timestamp.toISOString()}
+            className="text-muted-foreground font-mono text-xs whitespace-nowrap"
+          >
+            {formatLogTimestamp(entry.timestamp)}
+          </time>
         </TableCell>
       )
     case 'severity':

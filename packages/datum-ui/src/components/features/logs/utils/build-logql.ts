@@ -1,6 +1,9 @@
 import type { BuildLogQLOptions, LogFilters } from '../types'
 import { DEFAULT_LOGQL_MATCHER } from './constants'
 
+/** Loki/Prometheus label names. Anything else is dropped, not interpolated. */
+const LOKI_LABEL_NAME = /^[a-z_]\w*$/i
+
 function escapeQuoted(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
 }
@@ -10,6 +13,9 @@ function escapeRegex(value: string): string {
 }
 
 function matcherClause(label: string, values: readonly string[]): string | null {
+  if (!LOKI_LABEL_NAME.test(label))
+    return null
+
   const unique = [...new Set(values.map(v => v.trim()).filter(Boolean))]
   if (unique.length === 0)
     return null

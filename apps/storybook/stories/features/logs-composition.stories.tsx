@@ -8,9 +8,9 @@ import {
   flattenLokiStreams,
   lastThirtyMinutes,
   Logs,
-  queryRangeFixture,
   useLogs,
 } from '@datum-cloud/datum-ui/logs'
+import { queryRangeFixture } from '@datum-cloud/datum-ui/logs/fixtures'
 import { useMemo, useState } from 'react'
 
 const allEntries = flattenLokiStreams(queryRangeFixture)

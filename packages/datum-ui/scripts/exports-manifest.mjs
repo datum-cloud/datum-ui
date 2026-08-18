@@ -73,6 +73,7 @@ export const manifest = [
   { subpath: './table', source: './src/components/base/table/index.ts' },
   { subpath: './grouped-table', source: './src/components/features/grouped-table/index.ts' },
   { subpath: './logs', source: './src/components/features/logs/index.ts' },
+  { subpath: './logs/fixtures', source: './src/components/features/logs/fixtures/index.ts' },
   { subpath: './tabs', source: './src/components/base/tabs/index.ts' },
   { subpath: './textarea', source: './src/components/base/textarea/index.ts' },
   { subpath: './tooltip', source: './src/components/base/tooltip/index.ts' },
