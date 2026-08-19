@@ -1,5 +1,12 @@
 # @datum-cloud/datum-ui
 
+## 2.1.0
+
+### Minor Changes
+
+- 10a86f1: Add a DateTime display with the shared UTC / timezone / relative tooltip, and use it for log table date hovers.
+- a00d726: Add compound Logs primitives for Loki/OTEL log explorers, including filters, a dense table, and a detail panel.
+
 ## 2.0.0
 
 ### Major Changes
