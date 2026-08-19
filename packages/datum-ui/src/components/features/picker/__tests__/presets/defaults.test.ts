@@ -45,6 +45,13 @@ describe('dATETIME_PRESETS', () => {
     expect(diffMinutes).toBeCloseTo(15, 0)
   })
 
+  it('"last-30m" returns a 30-minute window ending now', () => {
+    const last30 = DATETIME_PRESETS.find(p => p.key === 'last-30m')!
+    const { from, to } = last30.getRange('UTC')
+    const diffMinutes = (to.getTime() - from.getTime()) / 60000
+    expect(diffMinutes).toBeCloseTo(30, 0)
+  })
+
   it('"last-24h" returns a 24-hour window ending now', () => {
     const last24 = DATETIME_PRESETS.find(p => p.key === 'last-24h')!
     const { from, to } = last24.getRange('UTC')

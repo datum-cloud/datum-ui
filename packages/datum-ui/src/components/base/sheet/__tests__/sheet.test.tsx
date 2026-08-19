@@ -60,5 +60,18 @@ describe('sheet', () => {
       </Sheet>,
     )
     expect(screen.getByText('Controlled content')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument()
+  })
+
+  it('can hide the built-in close button', () => {
+    render(
+      <Sheet open>
+        <Sheet.Content showCloseButton={false}>
+          <Sheet.Title>Hidden close</Sheet.Title>
+          <p>Body</p>
+        </Sheet.Content>
+      </Sheet>,
+    )
+    expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
   })
 })
