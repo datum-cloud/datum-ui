@@ -26,8 +26,6 @@ function Sidebar({
     state,
     openMobile,
     setOpenMobile,
-    handleMouseEnter,
-    handleMouseLeave,
     expandBehavior,
     showBackdrop,
     forceClose,
@@ -111,13 +109,11 @@ function Sidebar({
       data-variant={variant}
       data-side={side}
       data-slot="sidebar"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
     >
       {/* This is what handles the sidebar gap on desktop */}
       <div
         className={cn(
-          'relative w-(--sidebar-width) bg-transparent transition-[width] duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]',
+          'relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear',
           'group-data-[collapsible=offcanvas]:w-0',
           'group-data-[side=right]:rotate-180',
           // In overlay mode, gap stays at collapsed width; in push mode, gap transitions
@@ -133,16 +129,15 @@ function Sidebar({
       <div
         ref={sidebarRef}
         className={cn(
-          'border-sidebar-border fixed inset-y-0 hidden w-(--sidebar-width) transition-[left,right,width] duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] md:flex',
-          // Z-index: Higher for overlay mode to float above content
-          expandBehavior === 'overlay' ? 'z-50' : 'z-10',
+          'fixed inset-y-0 hidden w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex',
           side === 'left'
             ? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]'
             : 'right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]',
-          // Adjust the padding for floating and inset variants.
+          // Stay above the inset during push so the edge rule is never covered mid-transition.
+          expandBehavior === 'overlay' ? 'z-50' : 'z-20',
           variant === 'floating' || variant === 'inset'
             ? 'p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]'
-            : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l',
+            : 'bg-sidebar group-data-[collapsible=icon]:w-(--sidebar-width-icon)',
           className,
         )}
         {...props}
@@ -150,13 +145,26 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           className={cn(
-            'bg-sidebar flex h-full w-full flex-col',
+            'relative flex h-full w-full flex-col',
+            variant === 'floating' || variant === 'inset' ? 'bg-sidebar' : null,
             'group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm',
-            // Add shadow when expanded in overlay mode
             expandBehavior === 'overlay' && state === 'expanded' && 'shadow-lg',
           )}
         >
           {children}
+          {/*
+            Edge rule after children so it paints above nav rows. Kept inside the
+            sidebar so the pushing main column cannot cover it mid-transition.
+          */}
+          {variant !== 'floating' && variant !== 'inset' && (
+            <div
+              aria-hidden
+              className={cn(
+                'bg-sidebar-border pointer-events-none absolute inset-y-0 z-20 w-px',
+                side === 'left' ? 'right-0' : 'left-0',
+              )}
+            />
+          )}
         </div>
       </div>
 
@@ -275,12 +283,30 @@ function SidebarHeader({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
-function SidebarFooter({ className, ...props }: React.ComponentProps<'div'>) {
+function SidebarFooter({
+  className,
+  onMouseEnter,
+  onMouseLeave,
+  ...props
+}: React.ComponentProps<'div'>) {
+  const { cancelHoverLeave, handleMouseLeave } = useSidebar()
+
   return (
     <div
       data-slot="sidebar-footer"
       data-sidebar="footer"
       className={cn('flex flex-col gap-2 p-2', className)}
+      // Hovering the open/close control must not expand or collapse via expand-on-hover.
+      onMouseEnter={(event) => {
+        cancelHoverLeave()
+        onMouseEnter?.(event)
+      }}
+      onMouseLeave={(event) => {
+        const next = event.relatedTarget
+        if (!(next instanceof Element && next.closest('[data-sidebar="content"]')))
+          handleMouseLeave()
+        onMouseLeave?.(event)
+      }}
       {...props}
     />
   )
@@ -297,7 +323,14 @@ function SidebarSeparator({ className, ...props }: React.ComponentProps<typeof S
   )
 }
 
-function SidebarContent({ className, ...props }: React.ComponentProps<'div'>) {
+function SidebarContent({
+  className,
+  onMouseEnter,
+  onMouseLeave,
+  ...props
+}: React.ComponentProps<'div'>) {
+  const { handleMouseEnter, handleMouseLeave } = useSidebar()
+
   return (
     <div
       data-slot="sidebar-content"
@@ -306,6 +339,17 @@ function SidebarContent({ className, ...props }: React.ComponentProps<'div'>) {
         'flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden',
         className,
       )}
+      onMouseEnter={(event) => {
+        handleMouseEnter()
+        onMouseEnter?.(event)
+      }}
+      onMouseLeave={(event) => {
+        const next = event.relatedTarget
+        // Moving into the footer should not collapse a hover-expanded sidebar.
+        if (!(next instanceof Element && next.closest('[data-sidebar="footer"]')))
+          handleMouseLeave()
+        onMouseLeave?.(event)
+      }}
       {...props}
     />
   )

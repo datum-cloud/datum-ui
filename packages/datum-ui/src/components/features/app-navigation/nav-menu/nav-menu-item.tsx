@@ -1,4 +1,4 @@
-import type { NavItem } from './types'
+import type { NavItem, NavItemBadge } from './types'
 import { ChevronRight, ExternalLinkIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 import { memo } from 'react'
@@ -7,9 +7,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../../ba
 import {
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarSeparator,
@@ -24,19 +22,57 @@ interface NavItemProps {
   level: number
 }
 
+const COLLAPSIBLE_CONTAINER_VARIANTS = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.04, delayChildren: 0.06 },
+  },
+} as const
+
+const COLLAPSIBLE_CHILD_VARIANTS = {
+  hidden: { opacity: 0, y: -4 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] as const },
+  },
+} as const
+
 /** Stable React key for a rendered nav item at a given depth. */
 function itemKeyOf(item: NavItem, level: number): string {
   return `${item.title}-${item.href || ''}-${level}`
 }
 
 /**
+ * Cloudflare-style nav status chip: short inline pill with a dashed border,
+ * sitting immediately after the title (never overlapping / corner-pinned).
+ * Uses `div` (not `span`) so SidebarMenuButton's `[&>span:last-child]:truncate`
+ * does not clip the chip.
+ */
+function NavBadge({ badge }: { badge: NavItemBadge }) {
+  return (
+    <div
+      className={cn(
+        'text-muted-foreground inline-flex shrink-0 items-center rounded-full border border-dashed px-1.5 py-px',
+        'text-[10px] leading-none font-medium tracking-wide',
+        'border-border/80',
+      )}
+    >
+      {badge.label}
+    </div>
+  )
+}
+
+/**
  * Recursive nav row. Dispatches to the correct presentational part based on the
  * item type and the current sidebar state, and renders itself for children.
  * Memoized so unchanged subtrees skip re-rendering when their props are stable.
+ *
+ * Items with children use {@link NavCollapsibleItem}. Section headers use
+ * {@link NavGroup} (always open, no dropdown).
  */
 export const NavMenuItem = memo(({ item, level = 0 }: { item: NavItem, level?: number }) => {
-  const { state, isMobile } = useNavMenuContext()
-
   if (item.hidden) {
     return null
   }
@@ -47,12 +83,6 @@ export const NavMenuItem = memo(({ item, level = 0 }: { item: NavItem, level?: n
 
   const hasChildren = (item.children || []).length > 0
 
-  // Collapsed sidebar: items with children expand the sidebar and show dots.
-  if (state === 'collapsed' && !isMobile && level <= 2 && hasChildren) {
-    return <NavCollapsedItem item={item} level={level} />
-  }
-
-  // Expanded sidebar: items with children render as collapsible sections.
   if (hasChildren) {
     return <NavCollapsibleItem item={item} level={level} />
   }
@@ -62,129 +92,97 @@ export const NavMenuItem = memo(({ item, level = 0 }: { item: NavItem, level?: n
 
 NavMenuItem.displayName = 'NavMenuItem'
 
-/** A labelled group of nav items (recurses into `NavMenuItem` for children). */
+/** A labelled group of nav items (always open — Vercel-style section headers). */
 function NavGroup({ item, level }: NavItemProps) {
+  const ctx = useNavMenuContext()
+  const { pathname, isIconRail, isMobile } = ctx
+  const hasActiveChild
+    = (item.children?.some(child => hasActiveDescendant(child, pathname)) ?? false)
+  const sidebarCollapsed = isIconRail && !isMobile
+
+  // Icon rail: one button per section (avoids flooding the rail with every leaf).
+  if (sidebarCollapsed) {
+    return (
+      <>
+        {item.showSeparatorAbove && <SidebarSeparator className="my-1" />}
+        <SidebarMenu className="px-2">
+          <NavSidebarMenuButton
+            item={item}
+            isActive={hasActiveChild}
+            disableTooltip={ctx.disableTooltip}
+            className={cn(
+              ctx.itemClassName,
+              hasActiveChild && '[&>svg:first-of-type]:text-primary',
+            )}
+            activeClassName={ctx.activeItemClassName}
+            onClick={() => ctx.setOpen(true)}
+          />
+        </SidebarMenu>
+        {item.showSeparatorBelow && <SidebarSeparator className="my-2" />}
+      </>
+    )
+  }
+
   return (
     <>
-      <SidebarGroup className="mb-2 p-0! px-2">
+      {item.showSeparatorAbove && <SidebarSeparator className="my-2" />}
+      <SidebarGroup className="mb-1 p-0! px-2">
         {item.title && (
-          <SidebarGroupLabel className="lowercase group-data-[state=collapsed]:hidden first-letter:uppercase">
-            {item.title}
-          </SidebarGroupLabel>
+          <SidebarMenu className="w-full">
+            <NavSidebarMenuButton
+              item={item}
+              isActive={hasActiveChild}
+              disableTooltip
+              className={cn(
+                ctx.itemClassName,
+                hasActiveChild && '[&>svg:first-of-type]:text-primary',
+                'pointer-events-none h-7 text-xs font-medium text-muted-foreground hover:bg-transparent',
+                hasActiveChild && 'text-primary',
+              )}
+              activeClassName={ctx.activeItemClassName}
+            >
+              <span className="min-w-0 truncate">{item.title}</span>
+            </NavSidebarMenuButton>
+          </SidebarMenu>
         )}
-        <SidebarGroupContent className="flex flex-col gap-1">
+        <SidebarGroupContent className="flex flex-col gap-0.5">
           {(item.children || []).map(child => (
             <NavMenuItem key={itemKeyOf(child, level + 1)} item={child} level={level + 1} />
           ))}
         </SidebarGroupContent>
       </SidebarGroup>
-      <SidebarSeparator className="my-2 hidden group-data-[state=collapsed]:block" />
-    </>
-  )
-}
-
-/**
- * Collapsed-sidebar rendering for an item with children: the parent button
- * expands the sidebar, and active descendants are represented as dots.
- */
-function NavCollapsedItem({ item, level }: NavItemProps) {
-  const ctx = useNavMenuContext()
-  const { pathname, getLinkProps, handleNavigation } = ctx
-  const stateKey = getNavItemKey(item, level)
-  const isActive = isNavItemActive(item, pathname)
-  const hasActiveChild
-    = (item.children?.filter(child => hasActiveDescendant(child, pathname)) || []).length > 0
-
-  return (
-    <>
-      {item.showSeparatorAbove && <SidebarSeparator className="my-1" />}
-      <SidebarMenu>
-        <div className="flex flex-col px-2">
-          <NavSidebarMenuButton
-            item={item}
-            isActive={isActive}
-            disableTooltip={ctx.disableTooltip}
-            className={ctx.itemClassName}
-            activeClassName={ctx.activeItemClassName}
-            onClick={() => {
-              // Expand sidebar when clicking an item with children
-              ctx.setOpen(true)
-              // Also open the collapsible for this item
-              ctx.setOpenItems(prev => ({ ...prev, [stateKey]: true }))
-            }}
-          />
-          {/* Show dots for each sub-item only if one is active */}
-          {hasActiveChild && (
-            <motion.div
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.05, delayChildren: 0.1 },
-                },
-              }}
-              initial="hidden"
-              animate="visible"
-              className="flex flex-col gap-0.5"
-            >
-              {item.children?.map((subItem) => {
-                const isSubItemActive = isNavItemActive(subItem, pathname)
-                return (
-                  <motion.div
-                    key={`collapsed-dot-${subItem.href}-${level}`}
-                    variants={{
-                      hidden: { opacity: 0 },
-                      visible: {
-                        opacity: 1,
-                        transition: { duration: 0.2, ease: 'easeOut' },
-                      },
-                    }}
-                  >
-                    <SidebarMenuButton
-                      tooltip={subItem.title}
-                      isActive={isSubItemActive}
-                      className="h-6 p-0 group-data-[collapsible=icon]:h-6! group-data-[collapsible=icon]:p-0!"
-                      asChild
-                    >
-                      <ctx.linkComponent
-                        className="flex items-center justify-center"
-                        {...getLinkProps(subItem.href || '')}
-                        onClick={() => {
-                          handleNavigation()
-                        }}
-                      >
-                        <span
-                          className={cn(
-                            'size-1 rounded-full',
-                            isSubItemActive ? 'bg-primary' : 'bg-sidebar-primary-foreground',
-                          )}
-                        />
-                      </ctx.linkComponent>
-                    </SidebarMenuButton>
-                  </motion.div>
-                )
-              })}
-            </motion.div>
-          )}
-        </div>
-      </SidebarMenu>
       {item.showSeparatorBelow && <SidebarSeparator className="my-2" />}
     </>
   )
 }
 
 /**
- * Expanded-sidebar rendering for an item with children: a collapsible section
- * whose contents recurse into `NavMenuItem`.
+ * Collapsible section for items with children. Used in both expanded and
+ * icon-collapsed sidebar modes so width animation does not remount the tree.
+ * When the sidebar is icon-collapsed, the panel is forced closed; clicking the
+ * parent expands the sidebar and opens this section.
  */
 function NavCollapsibleItem({ item, level }: NavItemProps) {
   const ctx = useNavMenuContext()
-  const { pathname, state, openItems, isInitialMount, previousOpenItems, previousState, previousPathname } = ctx
+  const {
+    pathname,
+    state,
+    isIconRail,
+    isMobile,
+    openItems,
+    isInitialMount,
+    previousOpenItems,
+    previousState,
+    previousPathname,
+  } = ctx
   const stateKey = getNavItemKey(item, level)
   const isActive = isNavItemActive(item, pathname)
   const hasActiveChild
     = (item.children?.filter(child => hasActiveDescendant(child, pathname)) || []).length > 0
+  const sidebarCollapsed = isIconRail && !isMobile
   const isOpen = openItems[stateKey] !== undefined ? openItems[stateKey] : hasActiveChild
+  // Keep closed while icon-collapsed so nested rows don't reserve height mid-transition.
+  const panelOpen = sidebarCollapsed ? false : isOpen
 
   return (
     <>
@@ -193,9 +191,14 @@ function NavCollapsibleItem({ item, level }: NavItemProps) {
         <Collapsible
           key={`collapsed-item-drop-down-item-${item.title}-${level}`}
           asChild
-          open={isOpen}
+          open={panelOpen}
           onOpenChange={(open) => {
-            // Allow toggling even if it has an active child
+            if (sidebarCollapsed) {
+              // Icon rail click: expand the sidebar and open this section.
+              ctx.setOpen(true)
+              ctx.setOpenItems(prev => ({ ...prev, [stateKey]: true }))
+              return
+            }
             ctx.setOpenItems(prev => ({ ...prev, [stateKey]: open }))
           }}
           className="group/collapsible"
@@ -204,29 +207,34 @@ function NavCollapsibleItem({ item, level }: NavItemProps) {
             <CollapsibleTrigger asChild className="w-full">
               <NavSidebarMenuButton
                 item={item}
-                isActive={isActive}
+                isActive={isActive || (sidebarCollapsed && hasActiveChild)}
                 disableTooltip={ctx.disableTooltip}
-                className={ctx.itemClassName}
+                className={cn(
+                  ctx.itemClassName,
+                  // Emphasize label + leading icon when a nested route is active.
+                  hasActiveChild && 'font-semibold [&>svg:first-of-type]:text-primary',
+                )}
                 activeClassName={ctx.activeItemClassName}
               >
-                <span>{item.title}</span>
+                <span className="min-w-0 truncate group-data-[collapsible=icon]:hidden">
+                  {item.title}
+                </span>
+                {item.badge && (
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    <NavBadge badge={item.badge} />
+                  </span>
+                )}
                 <Icon
                   icon={ChevronRight}
-                  className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+                  className="ml-auto shrink-0 transition-transform duration-200 group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-90"
                 />
               </NavSidebarMenuButton>
             </CollapsibleTrigger>
-            <CollapsibleContent className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden">
+            <CollapsibleContent className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden group-data-[collapsible=icon]:hidden">
               <div style={{ minHeight: 0, overflow: 'hidden' }}>
                 <motion.div
-                  key={`collapsible-${stateKey}-${isOpen}`}
-                  variants={{
-                    hidden: { opacity: 0 },
-                    visible: {
-                      opacity: 1,
-                      transition: { staggerChildren: 0.05, delayChildren: 0.1 },
-                    },
-                  }}
+                  key={`collapsible-${stateKey}-${panelOpen}`}
+                  variants={COLLAPSIBLE_CONTAINER_VARIANTS}
                   initial={
                     isInitialMount.current
                     || (previousOpenItems.current[stateKey]
@@ -237,7 +245,7 @@ function NavCollapsibleItem({ item, level }: NavItemProps) {
                       ? 'visible'
                       : 'hidden'
                   }
-                  animate={isOpen ? 'visible' : 'hidden'}
+                  animate={panelOpen ? 'visible' : 'hidden'}
                 >
                   <SidebarMenuSub
                     className={cn(
@@ -250,13 +258,7 @@ function NavCollapsibleItem({ item, level }: NavItemProps) {
                     {item.children?.map((subItem, index) => (
                       <motion.div
                         key={`${subItem.href}-${level}-${index}`}
-                        variants={{
-                          hidden: { opacity: 0 },
-                          visible: {
-                            opacity: 1,
-                            transition: { duration: 0.2, ease: 'easeOut' },
-                          },
-                        }}
+                        variants={COLLAPSIBLE_CHILD_VARIANTS}
                       >
                         <NavMenuItem item={subItem} level={level + 1} />
                       </motion.div>
@@ -280,7 +282,6 @@ function NavLeafItem({ item, level }: NavItemProps) {
   const isActive = isNavItemActive(item, pathname)
   const hasActiveChild
     = (item.children?.filter(child => hasActiveDescendant(child, pathname)) || []).length > 0
-
   return (
     <>
       {item.showSeparatorAbove && <SidebarSeparator className="my-2" />}
@@ -291,7 +292,12 @@ function NavLeafItem({ item, level }: NavItemProps) {
             item={item}
             isActive={isActive && !hasActiveChild}
             disableTooltip={ctx.disableTooltip}
-            className={cn(level >= 1 && 'h-6', ctx.itemClassName)}
+            className={cn(
+              level >= 1 && 'h-7',
+              // Soften icon only — keep the label readable; badge carries "planned" signal.
+              item.muted && '[&_svg]:text-muted-foreground',
+              ctx.itemClassName,
+            )}
             activeClassName={ctx.activeItemClassName}
           >
             {item.type === 'externalLink'
@@ -300,15 +306,24 @@ function NavLeafItem({ item, level }: NavItemProps) {
                     href={item.href || ''}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between"
+                    className="flex min-w-0 items-center gap-2"
                   >
-                    <div className="flex items-center gap-2">
-                      {item?.icon && (
-                        <Icon icon={item.icon} className="size-4 transition-all duration-300" />
-                      )}
-                      <span>{item.title}</span>
-                    </div>
-                    <Icon icon={ExternalLinkIcon} className="ml-auto size-4" />
+                    {item?.icon && (
+                      <Icon icon={item.icon} className="size-4 shrink-0 transition-all duration-300" />
+                    )}
+                    <span className="min-w-0 truncate group-data-[collapsible=icon]:hidden">{item.title}</span>
+                    {item.badge
+                      ? (
+                          <span className="group-data-[collapsible=icon]:hidden">
+                            <NavBadge badge={item.badge} />
+                          </span>
+                        )
+                      : (
+                          <Icon
+                            icon={ExternalLinkIcon}
+                            className="ml-auto size-4 shrink-0 group-data-[collapsible=icon]:hidden"
+                          />
+                        )}
                   </a>
                 )
               : (
@@ -316,14 +331,20 @@ function NavLeafItem({ item, level }: NavItemProps) {
                     {...getLinkProps(item.href || '')}
                     onClick={handleNavigation}
                     onMouseEnter={() => item.onPrefetch?.()}
+                    className="flex min-w-0 items-center gap-2"
                   >
                     {item?.icon && (
                       <Icon
                         icon={item.icon}
-                        className="text-sidebar-primary transition-all duration-300"
+                        className="text-sidebar-primary shrink-0 transition-all duration-300"
                       />
                     )}
-                    <span>{item.title}</span>
+                    <span className="min-w-0 truncate group-data-[collapsible=icon]:hidden">{item.title}</span>
+                    {item.badge && (
+                      <span className="group-data-[collapsible=icon]:hidden">
+                        <NavBadge badge={item.badge} />
+                      </span>
+                    )}
                   </ctx.linkComponent>
                 )}
           </NavSidebarMenuButton>

@@ -38,7 +38,7 @@ export function NavMenu({ ref, className, items, currentPath, linkComponent: Lin
   closeOnNavigation?: boolean
 } & { ref?: React.RefObject<HTMLUListElement | null> }) {
   const pathname = currentPath
-  const { state: sidebarState, isMobile, closeForNavigation, setOpen } = useSidebar()
+  const { state: sidebarState, isIconRail: sidebarIsIconRail, isMobile, closeForNavigation, setOpen } = useSidebar()
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({})
   const isInitialMount = useRef(true)
   const previousOpenItems = useRef<Record<string, boolean>>({})
@@ -46,6 +46,7 @@ export function NavMenu({ ref, className, items, currentPath, linkComponent: Lin
 
   // Use overrideState if provided, otherwise use sidebar state
   const state = overrideState ?? sidebarState
+  const isIconRail = overrideState ? overrideState === 'collapsed' : sidebarIsIconRail
   const previousState = useRef(state)
 
   // Track previous open state to detect transitions
@@ -106,6 +107,7 @@ export function NavMenu({ ref, className, items, currentPath, linkComponent: Lin
     () => ({
       pathname,
       state,
+      isIconRail,
       isMobile,
       openItems,
       setOpenItems,
@@ -124,6 +126,7 @@ export function NavMenu({ ref, className, items, currentPath, linkComponent: Lin
     [
       pathname,
       state,
+      isIconRail,
       isMobile,
       openItems,
       setOpen,

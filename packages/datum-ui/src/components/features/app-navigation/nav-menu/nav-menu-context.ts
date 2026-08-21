@@ -18,6 +18,10 @@ export interface NavMenuContextValue {
   pathname: string
   /** Resolved sidebar state (override wins over the sidebar provider). */
   state: 'expanded' | 'collapsed'
+  /**
+   * True when the sidebar is in icon-rail (collapsed) mode.
+   */
+  isIconRail: boolean
   isMobile: boolean
   openItems: Record<string, boolean>
   setOpenItems: Dispatch<SetStateAction<Record<string, boolean>>>
