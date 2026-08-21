@@ -1,4 +1,19 @@
 import type { LucideIcon } from 'lucide-react'
+import type { BadgeProps } from '../../../base/badge'
+
+/**
+ * Declarative status chip rendered inline after a nav item title
+ * (Cloudflare-style dashed pill: "Beta", "New", "Soon").
+ * Data-only so hosts/plugins never pass React nodes into the sidebar.
+ *
+ * `type` / `theme` are retained for API compatibility but unused — nav chips
+ * always use the shared dashed-pill treatment.
+ */
+export interface NavItemBadge {
+  label: string
+  type?: BadgeProps['type']
+  theme?: BadgeProps['theme']
+}
 
 export interface NavItem {
   title: string
@@ -12,6 +27,10 @@ export interface NavItem {
   hidden?: boolean
   showSeparatorAbove?: boolean
   showSeparatorBelow?: boolean
+  /** Optional status badge (e.g. "Coming soon", "Beta"). */
+  badge?: NavItemBadge
+  /** Soften label/icon color (e.g. planned services) without disabling the link. */
+  muted?: boolean
 
   // Exclude specific sub-paths from activating this nav item
   // Use this for sibling routes like `/export-policies` and `/export-policies/new`

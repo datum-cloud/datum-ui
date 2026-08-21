@@ -118,13 +118,13 @@ export function AppNavigation({
                 />
               )
             )}
-
-        {props.collapsible !== 'none' && (
-          <SidebarFooter className="mt-auto p-2">
-            <SidebarTrigger />
-          </SidebarFooter>
-        )}
       </SidebarContent>
+
+      {props.collapsible !== 'none' && (
+        <SidebarFooter className="border-sidebar-border shrink-0 border-t p-2">
+          <SidebarTrigger />
+        </SidebarFooter>
+      )}
     </Sidebar>
   )
 }

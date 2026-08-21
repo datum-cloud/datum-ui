@@ -13,6 +13,8 @@ const LG_BREAKPOINT = 1024
 
 interface SidebarContext {
   state: 'expanded' | 'collapsed'
+  /** True when the sidebar is width-collapsed (icon rail). */
+  isIconRail: boolean
   open: boolean
   setOpen: (open: boolean) => void
   openMobile: boolean
@@ -21,6 +23,7 @@ interface SidebarContext {
   toggleSidebar: () => void
   handleMouseEnter: () => void
   handleMouseLeave: () => void
+  cancelHoverLeave: () => void
   forceClose: () => void
   closeForNavigation: () => void
   hasSubLayout: boolean
@@ -129,6 +132,7 @@ function SidebarProvider({
 
   // Determine the effective open state, considering hover if enabled.
   const effectiveOpen = open || (expandOnHover && isHovered)
+  const isIconRail = !effectiveOpen
 
   // Handlers for the hover functionality.
   const handleMouseEnter = React.useCallback(() => {
@@ -139,6 +143,7 @@ function SidebarProvider({
       return
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current)
+      hoverTimeoutRef.current = null
     }
     setIsHovered(true)
   }, [expandOnHover])
@@ -146,13 +151,22 @@ function SidebarProvider({
   const handleMouseLeave = React.useCallback(() => {
     if (!expandOnHover)
       return
-    // In overlay mode, use shorter delay for more responsive feel
-    // In push mode, use a longer delay for better UX
-    const delay = expandBehavior === 'overlay' ? 200 : 300
-    hoverTimeoutRef.current = setTimeout(() => {
-      setIsHovered(false)
-    }, delay)
-  }, [expandOnHover, expandBehavior])
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current)
+      hoverTimeoutRef.current = null
+    }
+    // Collapse immediately — the width transition handles the visual ease-out.
+    setIsHovered(false)
+  }, [expandOnHover])
+
+  // Keep hover-expanded open when the pointer moves into chrome that should not
+  // toggle expand-on-hover (e.g. the open/close footer control).
+  const cancelHoverLeave = React.useCallback(() => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current)
+      hoverTimeoutRef.current = null
+    }
+  }, [])
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
@@ -235,6 +249,7 @@ function SidebarProvider({
   const contextValue = React.useMemo<SidebarContext>(
     () => ({
       state,
+      isIconRail,
       open: effectiveOpen,
       setOpen,
       isMobile,
@@ -243,6 +258,7 @@ function SidebarProvider({
       toggleSidebar,
       handleMouseEnter,
       handleMouseLeave,
+      cancelHoverLeave,
       forceClose,
       closeForNavigation,
       hasSubLayout,
@@ -252,6 +268,7 @@ function SidebarProvider({
     }),
     [
       state,
+      isIconRail,
       effectiveOpen,
       setOpen,
       isMobile,
@@ -260,6 +277,7 @@ function SidebarProvider({
       toggleSidebar,
       handleMouseEnter,
       handleMouseLeave,
+      cancelHoverLeave,
       forceClose,
       closeForNavigation,
       hasSubLayout,

@@ -92,10 +92,10 @@
   }
 
   .animate-collapsible-down {
-    animation: collapsibleDown 0.2s ease-out;
+    animation: collapsibleDown 0.28s cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   .animate-collapsible-up {
-    animation: collapsibleUp 0.2s ease-out;
+    animation: collapsibleUp 0.22s cubic-bezier(0.32, 0.72, 0, 1);
   }
 }

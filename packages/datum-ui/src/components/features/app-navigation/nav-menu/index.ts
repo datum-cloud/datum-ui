@@ -6,4 +6,4 @@ export {
 } from './active-path'
 export { NavMenu } from './nav-menu'
 export { NavMenuItem } from './nav-menu-item'
-export type { NavItem } from './types'
+export type { NavItem, NavItemBadge } from './types'
