@@ -1,4 +1,5 @@
 import type { NavItem } from '@datum-cloud/datum-ui/app-navigation'
+import type { ComponentProps, CSSProperties } from 'react'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import {
   AppNavigation,
@@ -6,12 +7,18 @@ import {
   SidebarProvider,
 } from '@datum-cloud/datum-ui/app-navigation'
 import {
+  Boxes,
+  ChartSpline,
   FileText,
+  Globe,
   Home,
   LayoutDashboard,
+  Network,
   Settings,
   Users,
 } from 'lucide-react'
+
+const comingSoon = { label: 'Coming Soon' }
 
 const navItems: NavItem[] = [
   {
@@ -210,5 +217,211 @@ export const CollapsedState: Story = {
   },
   args: {
     defaultOpen: false,
+  },
+}
+
+/**
+ * Shared project IA (#849) used by both the flat-groups and collapsible stories.
+ */
+const projectServiceSections: Array<{
+  title: string
+  icon: typeof Globe
+  showSeparatorAbove?: boolean
+  children: NavItem[]
+}> = [
+  {
+    title: 'Deliver',
+    icon: Globe,
+    showSeparatorAbove: true,
+    children: [
+      { title: 'Domains', href: '/project/demo/domains', type: 'link' },
+      { title: 'DNS', href: '/project/demo/dns-zones', type: 'link' },
+      { title: 'ALB', href: '/project/demo/alb', type: 'link' },
+      {
+        title: 'GSLB',
+        href: 'https://github.com/datum-cloud/enhancements/issues/849',
+        type: 'externalLink',
+        muted: true,
+        badge: comingSoon,
+      },
+    ],
+  },
+  {
+    title: 'Build',
+    icon: Boxes,
+    children: [
+      {
+        title: 'Compute',
+        href: 'https://github.com/datum-cloud/enhancements/issues/849',
+        type: 'externalLink',
+        muted: true,
+        badge: comingSoon,
+      },
+      {
+        title: 'Object Storage',
+        href: 'https://github.com/datum-cloud/enhancements/issues/849',
+        type: 'externalLink',
+        muted: true,
+        badge: comingSoon,
+      },
+      {
+        title: 'Edge Apps',
+        href: 'https://github.com/datum-cloud/enhancements/issues/849',
+        type: 'externalLink',
+        muted: true,
+        badge: comingSoon,
+      },
+    ],
+  },
+  {
+    title: 'Connect',
+    icon: Network,
+    children: [
+      {
+        title: 'Galactic VPC',
+        href: 'https://github.com/datum-cloud/enhancements/issues/849',
+        type: 'externalLink',
+        muted: true,
+        badge: comingSoon,
+      },
+      { title: 'Connectors', href: '/project/demo/connectors', type: 'link' },
+      {
+        title: 'Interconnects',
+        href: 'https://github.com/datum-cloud/enhancements/issues/849',
+        type: 'externalLink',
+        muted: true,
+        badge: comingSoon,
+      },
+    ],
+  },
+  {
+    title: 'Observe',
+    icon: ChartSpline,
+    children: [
+      { title: 'Activity', href: '/project/demo/activity', type: 'link' },
+      { title: 'Metrics Export', href: '/project/demo/metrics', type: 'link' },
+      {
+        title: 'Usage',
+        href: 'https://github.com/datum-cloud/enhancements/issues/849',
+        type: 'externalLink',
+        muted: true,
+        badge: comingSoon,
+      },
+    ],
+  },
+  {
+    title: 'Project Settings',
+    icon: Settings,
+    showSeparatorAbove: true,
+    children: [
+      { title: 'General', href: '/project/demo/settings', type: 'link' },
+      { title: 'Service Accounts', href: '/project/demo/service-accounts', type: 'link' },
+      { title: 'Secrets', href: '/project/demo/secrets', type: 'link' },
+    ],
+  },
+]
+
+function buildProjectNavItems(sectionType: 'group' | 'collapsible'): NavItem[] {
+  return [
+    {
+      title: 'Home',
+      href: '/project/demo',
+      type: 'link',
+      icon: Home,
+    },
+    ...projectServiceSections.map(section => ({
+      title: section.title,
+      href: null,
+      type: sectionType,
+      icon: section.icon,
+      showSeparatorAbove: section.showSeparatorAbove,
+      children: section.children,
+    })),
+  ]
+}
+
+const nestedServiceNavItems = buildProjectNavItems('group')
+const nestedServiceDropdownNavItems = buildProjectNavItems('collapsible')
+
+const projectNavPathOptions = [
+  '/project/demo',
+  '/project/demo/domains',
+  '/project/demo/dns-zones',
+  '/project/demo/alb',
+  '/project/demo/connectors',
+  '/project/demo/activity',
+  '/project/demo/metrics',
+  '/project/demo/settings',
+  '/project/demo/service-accounts',
+  '/project/demo/secrets',
+  'https://github.com/datum-cloud/enhancements/issues/849',
+]
+
+function ProjectNavStoryRender(args: ComponentProps<typeof AppNavigation> & { defaultOpen?: boolean }) {
+  return (
+    <div className="h-[600px] w-full">
+      <SidebarProvider
+        defaultOpen={args.defaultOpen}
+        expandOnHover
+        style={{ '--sidebar-width': '17rem' } as CSSProperties}
+      >
+        <AppNavigation {...args} />
+        <SidebarInset>
+          <div className="flex h-full items-center justify-center p-6">
+            <p className="text-muted-foreground text-sm">Main content area</p>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </div>
+  )
+}
+
+export const NestedServiceCategories: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Datum cloud-portal project sidebar: flat Deliver / Build / Connect / Observe / '
+          + 'Project Settings groups (no dropdowns). Planned services use a dashed '
+          + '`Coming Soon` pill and open the enhancement URL externally.',
+      },
+    },
+  },
+  args: {
+    navItems: nestedServiceNavItems,
+    currentPath: '/project/demo/domains',
+    title: '',
+  },
+  render: ProjectNavStoryRender,
+  argTypes: {
+    currentPath: {
+      control: 'select',
+      options: projectNavPathOptions,
+    },
+  },
+}
+
+/** Earlier collapsible-dropdown exploration of the same project IA. */
+export const NestedServiceDropdowns: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Same project service IA as Nested Service Categories, but categories are '
+          + '`type: \'collapsible\'` dropdowns with chevrons (the original nested-menu exploration).',
+      },
+    },
+  },
+  args: {
+    navItems: nestedServiceDropdownNavItems,
+    currentPath: '/project/demo/domains',
+    title: '',
+  },
+  render: ProjectNavStoryRender,
+  argTypes: {
+    currentPath: {
+      control: 'select',
+      options: projectNavPathOptions,
+    },
   },
 }
