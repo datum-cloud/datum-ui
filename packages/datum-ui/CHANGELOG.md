@@ -1,5 +1,11 @@
 # @datum-cloud/datum-ui
 
+## 2.3.0
+
+### Minor Changes
+
+- 702b054: Add nav group badges, sticky sidebar footer, expand-on-hover polish, and Storybook coverage for nested service categories
+
 ## 2.1.0
 
 ### Minor Changes
