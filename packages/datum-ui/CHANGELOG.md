@@ -1,5 +1,11 @@
 # @datum-cloud/datum-ui
 
+## 2.3.1
+
+### Patch Changes
+
+- 190ca39: Fix GroupedTable last-group rows collapsing to height 0 on mount, and stop open group headers from stacking a bottom border on the first data row.
+
 ## 2.3.0
 
 ### Minor Changes
