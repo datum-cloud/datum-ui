@@ -4,13 +4,15 @@ import type { DataTableFeatures } from '../data-table/core/features'
 import type { GroupedTableProps } from './types'
 import { flexRender, useTable } from '@tanstack/react-table'
 import { ChevronRight } from 'lucide-react'
+import { useReducedMotion } from 'motion/react'
 import { useMemo } from 'react'
 import { cn } from '../../../utils/cn'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../base/collapsible'
+import { Collapsible, CollapsibleTrigger } from '../../base/collapsible'
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../base/table'
 import { Icon } from '../../icons/icon-wrapper'
 import { rowMatchesSearch } from '../data-table'
 import { dataTableFeatures } from '../data-table/core/features'
+import { GroupedCollapsibleBody } from './components/grouped-collapsible-body'
 import { GroupedSkeleton } from './components/grouped-skeleton'
 import { GroupedToolbar } from './components/grouped-toolbar'
 import { bucketRows } from './lib/bucket-rows'
@@ -108,6 +110,7 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
   const isSearching = search.trim().length > 0
 
   const { isOpen, toggle } = useGroupedExpansion(groups, { defaultExpanded, expanded, onExpandedChange })
+  const reduceMotion = Boolean(useReducedMotion())
 
   const resolvedColumns = useMemo(
     () => composeColumns(columns, { enableRowSelection, enableSorting, rowActions, rowActionsSheetTitle }),
@@ -122,7 +125,16 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
     features: dataTableFeatures,
     data: flatData,
     columns: resolvedColumns,
-    state: { sorting, rowSelection, globalFilter: search },
+    state: {
+      sorting,
+      rowSelection,
+      globalFilter: search,
+      // GroupedTable is not a paged table. The shared feature set still
+      // registers pagination, and TanStack's default pageSize (10) would
+      // silently drop every row after the first page — later groups render
+      // as open headers with empty bodies.
+      pagination: { pageIndex: 0, pageSize: Math.max(flatData.length, 1) },
+    },
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setSearch,
@@ -136,7 +148,7 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
 
   const headerGroups = table.getHeaderGroups()
   const coreRows = table.getCoreRowModel().rows
-  const filteredRows = table.getRowModel().rows
+  const filteredRows = table.getFilteredRowModel().rows
 
   const buckets = useMemo(
     () => bucketRows(groups, coreRows, filteredRows),
@@ -237,13 +249,7 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
               )}
             </CollapsibleTrigger>
 
-            {/*
-              Do not animate height. `animate-collapsible-down` plus
-              overflow-hidden can leave the last group at 0px when
-              `--radix-collapsible-content-height` is unset on mount,
-              which is common inside overflow-hidden cards.
-            */}
-            <CollapsibleContent data-slot="grouped-table-group-content">
+            <GroupedCollapsibleBody open={open} reduceMotion={reduceMotion}>
               <table
                 className={cn('w-full table-fixed text-sm', tableClassName)}
                 aria-label={typeof slice.title === 'string' ? slice.title : undefined}
@@ -266,14 +272,11 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
                   </TableRow>
                 </TableHeader>
                 <TableBody className={bodyClassName}>
-                  {slice.rows.map((row: Row<DataTableFeatures, TData>, rowIndex) => (
+                  {slice.rows.map((row: Row<DataTableFeatures, TData>) => (
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() ? 'selected' : undefined}
-                      className={cn(
-                        rowIndex === 0 && 'border-t',
-                        resolveClassName(rowClassName, row),
-                      )}
+                      className={resolveClassName(rowClassName, row)}
                     >
                       {row.getVisibleCells().map(cell => (
                         <TableCell key={cell.id} className={resolveClassName(cellClassName, cell)}>
@@ -284,7 +287,7 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
                   ))}
                 </TableBody>
               </table>
-            </CollapsibleContent>
+            </GroupedCollapsibleBody>
           </Collapsible>
         )
       })}

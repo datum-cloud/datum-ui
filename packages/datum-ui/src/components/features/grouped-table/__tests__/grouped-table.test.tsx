@@ -2,7 +2,8 @@
 import type { ColumnDef } from '@tanstack/react-table'
 import type { DataTableFeatures } from '../../data-table/core/features'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { MotionGlobalConfig } from 'motion/react'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { GroupedTable } from '../grouped-table'
 
 interface Row { name: string, value: number }
@@ -16,6 +17,13 @@ const groups = [
 ]
 
 describe('groupedTable', () => {
+  beforeAll(() => {
+    MotionGlobalConfig.skipAnimations = true
+  })
+  afterAll(() => {
+    MotionGlobalConfig.skipAnimations = false
+  })
+
   it('renders group titles, meta, and rows (all expanded by default)', () => {
     render(<GroupedTable columns={columns} groups={groups} />)
     expect(screen.getByText('Group One')).toBeInTheDocument()
@@ -28,6 +36,7 @@ describe('groupedTable', () => {
     render(<GroupedTable columns={columns} groups={groups} />)
     fireEvent.click(screen.getByText('Group One'))
     expect(screen.getByText('Group One').closest('button')).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.getByText('alpha').closest('[data-slot="grouped-table-group-content"]')).toHaveAttribute('inert')
   })
 
   it('respects defaultExpanded=\'none\'', () => {
@@ -205,13 +214,15 @@ describe('groupedTable', () => {
     expect(screen.getByText('connections')).toBeVisible()
   })
 
-  it('does not run Radix height animations on group content', () => {
+  it('does not wrap group content in Radix CollapsibleContent', () => {
     const { container } = render(<GroupedTable columns={columns} groups={manyGroups} />)
     const contents = container.querySelectorAll('[data-slot="grouped-table-group-content"]')
     expect(contents).toHaveLength(manyGroups.length)
     for (const content of Array.from(contents)) {
+      expect(content.tagName).toBe('DIV')
+      expect(content).not.toHaveAttribute('data-state')
+      expect(content).not.toHaveAttribute('hidden')
       expect(content.className).not.toMatch(/animate-collapsible/)
-      expect(content.className.split(/\s+/)).not.toContain('overflow-hidden')
     }
   })
 
@@ -233,14 +244,22 @@ describe('groupedTable', () => {
     expect(screen.getByText('Group Two').closest('button')).toHaveAttribute('aria-expanded', 'true')
   })
 
-  it('gives the first data row of an open group a top border', () => {
+  it('draws a header divider inside the group body, including one-row groups', () => {
     const { container } = render(<GroupedTable columns={columns} groups={manyGroups} />)
-    const bodies = container.querySelectorAll('[data-slot="table-body"]')
-    expect(bodies.length).toBe(manyGroups.length)
-    for (const body of Array.from(bodies)) {
-      const firstRow = body.querySelector('[data-slot="table-row"]')
-      expect(firstRow?.className.split(/\s+/)).toContain('border-t')
+    const contents = container.querySelectorAll('[data-slot="grouped-table-group-content"]')
+    expect(contents).toHaveLength(manyGroups.length)
+    for (const content of Array.from(contents)) {
+      const rule = content.querySelector('[data-slot="grouped-table-group-rule"]')
+      expect(rule).toBeInTheDocument()
     }
+
+    const oneRow = render(
+      <GroupedTable
+        columns={columns}
+        groups={[{ id: 'compute', title: 'Compute', rows: [{ name: 'vcpu', value: 1 }] }]}
+      />,
+    )
+    expect(oneRow.container.querySelector('[data-slot="grouped-table-group-rule"]')).toBeInTheDocument()
   })
 
   it('keeps a single top border on later groups when they are collapsed', () => {
@@ -255,9 +274,30 @@ describe('groupedTable', () => {
   it('restores last-group rows after collapse and expand', () => {
     render(<GroupedTable columns={columns} groups={manyGroups} />)
     fireEvent.click(screen.getByText('Networking'))
+    expect(screen.getByText('requests').closest('[data-slot="grouped-table-group-content"]')).toHaveAttribute('inert')
     fireEvent.click(screen.getByText('Networking'))
     expect(screen.getByText('Networking').closest('button')).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText('requests').closest('[data-slot="grouped-table-group-content"]')).not.toHaveAttribute('inert')
     expect(screen.getByText('requests')).toBeVisible()
     expect(screen.getByText('connections')).toBeVisible()
+  })
+
+  it('does not drop rows after TanStack\'s default page size of 10', () => {
+    const extra = [
+      ...manyGroups,
+      { id: 'notes', title: 'Notes', rows: [{ name: 'notebooks', value: 8 }] },
+      { id: 'platform', title: 'Platform Core', rows: [{ name: 'projects', value: 9 }, { name: 'orgs', value: 10 }] },
+      { id: 'other', title: 'Other', rows: [{ name: 'misc-a', value: 11 }, { name: 'misc-b', value: 12 }] },
+    ]
+    render(
+      <div className="overflow-hidden rounded-xl border">
+        <GroupedTable columns={columns} groups={extra} />
+      </div>,
+    )
+    expect(screen.getByText('notebooks')).toBeVisible()
+    expect(screen.getByText('projects')).toBeVisible()
+    expect(screen.getByText('orgs')).toBeVisible()
+    expect(screen.getByText('misc-a')).toBeVisible()
+    expect(screen.getByText('misc-b')).toBeVisible()
   })
 })
