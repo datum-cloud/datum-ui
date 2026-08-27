@@ -200,12 +200,18 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
         </TableHeader>
       </table>
 
-      {visibleSlices.map((slice) => {
+      {visibleSlices.map((slice, sliceIndex) => {
         const open = isSearching ? true : isOpen(slice.id)
         return (
           <Collapsible
             key={slice.id}
             open={open}
+            data-slot="grouped-table-group"
+            // One divider above every group after the first, open or closed.
+            // Putting it here (a div) rather than the trigger avoids button
+            // preflight swallowing `border-t`, and avoids stacking a closed
+            // header's `border-b` against the next group's `border-t`.
+            className={cn(sliceIndex > 0 && 'border-border border-t')}
             // While searching, groups are force-opened; swallow toggles so a
             // header click doesn't silently flip the stored expansion state
             // (which would surface unexpectedly once the search is cleared).
@@ -216,7 +222,7 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
           >
             <CollapsibleTrigger
               className={cn(
-                'flex h-10 w-full items-center gap-2 border-b bg-muted/40 px-2 text-left align-middle text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                'flex h-10 w-full items-center gap-2 bg-muted/40 px-2 text-left align-middle text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                 resolveClassName(groupHeaderClassName, slice.group),
               )}
             >
@@ -231,7 +237,13 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
               )}
             </CollapsibleTrigger>
 
-            <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+            {/*
+              Do not animate height. `animate-collapsible-down` plus
+              overflow-hidden can leave the last group at 0px when
+              `--radix-collapsible-content-height` is unset on mount,
+              which is common inside overflow-hidden cards.
+            */}
+            <CollapsibleContent data-slot="grouped-table-group-content">
               <table
                 className={cn('w-full table-fixed text-sm', tableClassName)}
                 aria-label={typeof slice.title === 'string' ? slice.title : undefined}
@@ -254,11 +266,14 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
                   </TableRow>
                 </TableHeader>
                 <TableBody className={bodyClassName}>
-                  {slice.rows.map((row: Row<DataTableFeatures, TData>) => (
+                  {slice.rows.map((row: Row<DataTableFeatures, TData>, rowIndex) => (
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() ? 'selected' : undefined}
-                      className={resolveClassName(rowClassName, row)}
+                      className={cn(
+                        rowIndex === 0 && 'border-t',
+                        resolveClassName(rowClassName, row),
+                      )}
                     >
                       {row.getVisibleCells().map(cell => (
                         <TableCell key={cell.id} className={resolveClassName(cellClassName, cell)}>

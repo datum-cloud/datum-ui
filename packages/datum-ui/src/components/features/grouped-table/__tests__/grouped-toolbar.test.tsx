@@ -10,4 +10,11 @@ describe('groupedToolbar', () => {
     expect(onSearchChange).not.toHaveBeenCalledWith('http')
     await waitFor(() => expect(onSearchChange).toHaveBeenCalledWith('http'))
   })
+
+  it('clears the query from the trailing button', async () => {
+    const onSearchChange = vi.fn()
+    render(<GroupedToolbar search="http" onSearchChange={onSearchChange} debounceMs={20} placeholder="Search resources" />)
+    fireEvent.click(screen.getByRole('button', { name: 'Clear search' }))
+    await waitFor(() => expect(onSearchChange).toHaveBeenCalledWith(''))
+  })
 })
