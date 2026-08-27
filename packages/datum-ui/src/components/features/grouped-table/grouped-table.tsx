@@ -4,6 +4,7 @@ import type { DataTableFeatures } from '../data-table/core/features'
 import type { GroupedTableProps } from './types'
 import { flexRender, useTable } from '@tanstack/react-table'
 import { ChevronRight } from 'lucide-react'
+import { useReducedMotion } from 'motion/react'
 import { useMemo } from 'react'
 import { cn } from '../../../utils/cn'
 import { Collapsible, CollapsibleTrigger } from '../../base/collapsible'
@@ -11,6 +12,7 @@ import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ba
 import { Icon } from '../../icons/icon-wrapper'
 import { rowMatchesSearch } from '../data-table'
 import { dataTableFeatures } from '../data-table/core/features'
+import { GroupedCollapsibleBody } from './components/grouped-collapsible-body'
 import { GroupedSkeleton } from './components/grouped-skeleton'
 import { GroupedToolbar } from './components/grouped-toolbar'
 import { bucketRows } from './lib/bucket-rows'
@@ -108,6 +110,7 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
   const isSearching = search.trim().length > 0
 
   const { isOpen, toggle } = useGroupedExpansion(groups, { defaultExpanded, expanded, onExpandedChange })
+  const reduceMotion = Boolean(useReducedMotion())
 
   const resolvedColumns = useMemo(
     () => composeColumns(columns, { enableRowSelection, enableSorting, rowActions, rowActionsSheetTitle }),
@@ -246,58 +249,45 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
               )}
             </CollapsibleTrigger>
 
-            {/*
-              Do not use Radix CollapsibleContent. It measures
-              `--radix-collapsible-content-height` on mount via
-              getBoundingClientRect; later groups often measure as 0px
-              (overflow-x-auto computes overflow-y to auto, so rows below
-              the first paint box get a zero rect). Removing the height
-              animation in 2.3.1 was not enough — the wrapper still clips.
-            */}
-            {open && (
-              <div data-slot="grouped-table-group-content">
-                <table
-                  className={cn('w-full table-fixed text-sm', tableClassName)}
-                  aria-label={typeof slice.title === 'string' ? slice.title : undefined}
-                >
-                  {renderColGroup(resolvedColumns)}
-                  {/*
-                    Each group is its own <table>, so it needs its own column
-                    headers for screen readers to associate cells with columns
-                    (header/cell association cannot cross table boundaries). This
-                    header is visually hidden and non-interactive — the visible,
-                    interactive header lives in the shared header table above.
-                  */}
-                  <TableHeader className="sr-only">
-                    <TableRow>
-                      {resolvedColumns.map((col, i) => (
-                        <TableHead key={`group-header-${i}`} scope="col">
-                          {columnTitle(col)}
-                        </TableHead>
+            <GroupedCollapsibleBody open={open} reduceMotion={reduceMotion}>
+              <table
+                className={cn('w-full table-fixed text-sm', tableClassName)}
+                aria-label={typeof slice.title === 'string' ? slice.title : undefined}
+              >
+                {renderColGroup(resolvedColumns)}
+                {/*
+                  Each group is its own <table>, so it needs its own column
+                  headers for screen readers to associate cells with columns
+                  (header/cell association cannot cross table boundaries). This
+                  header is visually hidden and non-interactive — the visible,
+                  interactive header lives in the shared header table above.
+                */}
+                <TableHeader className="sr-only">
+                  <TableRow>
+                    {resolvedColumns.map((col, i) => (
+                      <TableHead key={`group-header-${i}`} scope="col">
+                        {columnTitle(col)}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody className={bodyClassName}>
+                  {slice.rows.map((row: Row<DataTableFeatures, TData>) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() ? 'selected' : undefined}
+                      className={resolveClassName(rowClassName, row)}
+                    >
+                      {row.getVisibleCells().map(cell => (
+                        <TableCell key={cell.id} className={resolveClassName(cellClassName, cell)}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
                       ))}
                     </TableRow>
-                  </TableHeader>
-                  <TableBody className={bodyClassName}>
-                    {slice.rows.map((row: Row<DataTableFeatures, TData>, rowIndex) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() ? 'selected' : undefined}
-                        className={cn(
-                          rowIndex === 0 && 'border-t',
-                          resolveClassName(rowClassName, row),
-                        )}
-                      >
-                        {row.getVisibleCells().map(cell => (
-                          <TableCell key={cell.id} className={resolveClassName(cellClassName, cell)}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </table>
-              </div>
-            )}
+                  ))}
+                </TableBody>
+              </table>
+            </GroupedCollapsibleBody>
           </Collapsible>
         )
       })}
