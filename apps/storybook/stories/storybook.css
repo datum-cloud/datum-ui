@@ -46,3 +46,20 @@ html.dark .sbdocs-preview,
 html.dark .docs-story {
   background-color: #0c1d31 !important;
 }
+
+/* Portal quotas chrome — same selectors as cloud-portal `.quotas-grouped-table`. */
+.grouped-table-portal [data-slot='table-header'] [data-slot='table-row'] {
+  @apply hover:bg-transparent;
+}
+.grouped-table-portal [data-slot='table-head'] {
+  @apply bg-background text-foreground h-[42px] border-r px-4 py-3 text-xs font-medium transition-all dark:bg-white/2 dark:hover:bg-white/5;
+}
+.grouped-table-portal [data-slot='table-body'] [data-slot='table-row'] {
+  @apply bg-table-cell relative transition-colors;
+}
+.grouped-table-portal [data-slot='table-body'] [data-slot='table-cell'] {
+  @apply px-4 py-3 align-middle text-xs;
+}
+.grouped-table-portal [data-slot='table-body'] [data-slot='table-cell']:first-child {
+  @apply whitespace-normal;
+}

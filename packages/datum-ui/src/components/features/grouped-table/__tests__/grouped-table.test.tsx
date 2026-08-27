@@ -175,4 +175,89 @@ describe('groupedTable', () => {
     expect(screen.getByText('Group One').closest('button')).toHaveClass('band-g1')
     expect(screen.getByText('Group Two').closest('button')).toHaveClass('band-g2')
   })
+
+  const manyGroups = [
+    { id: 'compute', title: 'Compute', rows: [{ name: 'vcpu', value: 1 }] },
+    { id: 'git', title: 'Git Assistant', rows: [{ name: 'tokens', value: 2 }] },
+    { id: 'storage', title: 'Storage', rows: [{ name: 'bytes', value: 3 }] },
+    { id: 'networking', title: 'Networking', rows: [
+      { name: 'requests', value: 4 },
+      { name: 'egress', value: 5 },
+      { name: 'ingress', value: 6 },
+      { name: 'connections', value: 7 },
+    ] },
+  ]
+
+  function groupTriggers() {
+    return screen.getAllByRole('button').filter(el => el.getAttribute('aria-expanded') != null)
+  }
+
+  it('keeps the last group\'s rows visible when every group starts expanded', () => {
+    render(
+      <div className="overflow-hidden rounded-xl border">
+        <GroupedTable columns={columns} groups={manyGroups} />
+      </div>,
+    )
+    expect(screen.getByText('Networking').closest('button')).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText('requests')).toBeVisible()
+    expect(screen.getByText('egress')).toBeVisible()
+    expect(screen.getByText('ingress')).toBeVisible()
+    expect(screen.getByText('connections')).toBeVisible()
+  })
+
+  it('does not run Radix height animations on group content', () => {
+    const { container } = render(<GroupedTable columns={columns} groups={manyGroups} />)
+    const contents = container.querySelectorAll('[data-slot="grouped-table-group-content"]')
+    expect(contents).toHaveLength(manyGroups.length)
+    for (const content of Array.from(contents)) {
+      expect(content.className).not.toMatch(/animate-collapsible/)
+      expect(content.className.split(/\s+/)).not.toContain('overflow-hidden')
+    }
+  })
+
+  it('does not put a border-b on group headers (open or closed)', () => {
+    render(<GroupedTable columns={columns} groups={groups} defaultExpanded="none" />)
+    for (const trigger of groupTriggers()) {
+      expect(trigger.className.split(/\s+/)).not.toContain('border-b')
+      expect(trigger.className).not.toContain('data-[state=closed]:border-b')
+    }
+  })
+
+  it('draws a top border on every group after the first, including when open', () => {
+    const { container } = render(<GroupedTable columns={columns} groups={groups} />)
+    const groupEls = container.querySelectorAll('[data-slot="grouped-table-group"]')
+    expect(groupEls).toHaveLength(groups.length)
+    expect(groupEls[0]!.className.split(/\s+/)).not.toContain('border-t')
+    expect(groupEls[1]!.className.split(/\s+/)).toContain('border-t')
+    expect(groupEls[1]!.className.split(/\s+/)).toContain('border-border')
+    expect(screen.getByText('Group Two').closest('button')).toHaveAttribute('aria-expanded', 'true')
+  })
+
+  it('gives the first data row of an open group a top border', () => {
+    const { container } = render(<GroupedTable columns={columns} groups={manyGroups} />)
+    const bodies = container.querySelectorAll('[data-slot="table-body"]')
+    expect(bodies.length).toBe(manyGroups.length)
+    for (const body of Array.from(bodies)) {
+      const firstRow = body.querySelector('[data-slot="table-row"]')
+      expect(firstRow?.className.split(/\s+/)).toContain('border-t')
+    }
+  })
+
+  it('keeps a single top border on later groups when they are collapsed', () => {
+    const { container } = render(<GroupedTable columns={columns} groups={groups} defaultExpanded="none" />)
+    const groupEls = container.querySelectorAll('[data-slot="grouped-table-group"]')
+    expect(groupEls[1]!.className.split(/\s+/)).toContain('border-t')
+    expect(groupEls[1]!.className.split(/\s+/)).toContain('border-border')
+    expect(groupTriggers()[1]!.className.split(/\s+/)).not.toContain('border-b')
+    expect(screen.getByText('Group Two').closest('button')).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it('restores last-group rows after collapse and expand', () => {
+    render(<GroupedTable columns={columns} groups={manyGroups} />)
+    fireEvent.click(screen.getByText('Networking'))
+    fireEvent.click(screen.getByText('Networking'))
+    expect(screen.getByText('Networking').closest('button')).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText('requests')).toBeVisible()
+    expect(screen.getByText('connections')).toBeVisible()
+  })
 })
