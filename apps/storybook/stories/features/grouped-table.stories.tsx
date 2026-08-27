@@ -273,7 +273,7 @@ const quotaGroups = [
 const portalChrome = {
   className: 'grouped-table-portal',
   groupHeaderClassName:
-    'bg-background text-foreground hover:bg-background h-[42px] border-r px-4 py-3 text-xs font-medium transition-all dark:bg-white/2 dark:hover:bg-white/5',
+    'bg-background text-foreground hover:bg-table-cell-hover h-[42px] border-r px-4 py-3 text-xs font-medium transition-all',
   enableSorting: true,
   enableSearch: true,
   searchPlaceholder: 'Search resources…',

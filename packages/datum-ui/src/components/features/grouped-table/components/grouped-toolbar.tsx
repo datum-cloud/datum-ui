@@ -30,15 +30,15 @@ export function GroupedToolbar({
           placeholder={placeholder}
           value={value}
           onChange={e => setValue(e.target.value)}
-          containerClassName="h-9 bg-transparent"
-          className="placeholder:text-secondary text-secondary h-full bg-transparent text-xs placeholder:text-xs md:text-xs dark:text-white dark:placeholder:text-white"
+          containerClassName="h-9"
+          className="h-full text-xs placeholder:text-xs md:text-xs"
           aria-label={placeholder}
           data-slot="gt-search"
           leading={(
             <Icon
               icon={SearchIconLucide}
               size={14}
-              className="text-icon-quaternary dark:text-white"
+              className="text-icon-quaternary"
             />
           )}
           trailing={
@@ -49,7 +49,7 @@ export function GroupedToolbar({
                     theme="borderless"
                     size="icon"
                     onClick={() => setValue('')}
-                    className="hover:text-destructive text-icon-quaternary size-4 p-0 hover:bg-transparent dark:text-white"
+                    className="hover:text-destructive text-icon-quaternary size-4 p-0 hover:bg-transparent"
                   >
                     <Icon icon={XIconLucide} size={14} />
                     <span className="sr-only">Clear search</span>

@@ -52,7 +52,7 @@ html.dark .docs-story {
   @apply hover:bg-transparent;
 }
 .grouped-table-portal [data-slot='table-head'] {
-  @apply bg-background text-foreground h-[42px] border-r px-4 py-3 text-xs font-medium transition-all dark:bg-white/2 dark:hover:bg-white/5;
+  @apply bg-background text-foreground hover:bg-table-cell-hover h-[42px] border-r px-4 py-3 text-xs font-medium transition-all;
 }
 .grouped-table-portal [data-slot='table-body'] [data-slot='table-row'] {
   @apply bg-table-cell relative transition-colors;
