@@ -28,6 +28,7 @@ describe('groupedTable', () => {
     render(<GroupedTable columns={columns} groups={groups} />)
     fireEvent.click(screen.getByText('Group One'))
     expect(screen.getByText('Group One').closest('button')).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByText('alpha')).not.toBeInTheDocument()
   })
 
   it('respects defaultExpanded=\'none\'', () => {
@@ -205,13 +206,15 @@ describe('groupedTable', () => {
     expect(screen.getByText('connections')).toBeVisible()
   })
 
-  it('does not run Radix height animations on group content', () => {
+  it('does not wrap group content in Radix CollapsibleContent', () => {
     const { container } = render(<GroupedTable columns={columns} groups={manyGroups} />)
     const contents = container.querySelectorAll('[data-slot="grouped-table-group-content"]')
     expect(contents).toHaveLength(manyGroups.length)
     for (const content of Array.from(contents)) {
+      expect(content.tagName).toBe('DIV')
+      expect(content).not.toHaveAttribute('data-state')
+      expect(content).not.toHaveAttribute('hidden')
       expect(content.className).not.toMatch(/animate-collapsible/)
-      expect(content.className.split(/\s+/)).not.toContain('overflow-hidden')
     }
   })
 
@@ -255,9 +258,29 @@ describe('groupedTable', () => {
   it('restores last-group rows after collapse and expand', () => {
     render(<GroupedTable columns={columns} groups={manyGroups} />)
     fireEvent.click(screen.getByText('Networking'))
+    expect(screen.queryByText('requests')).not.toBeInTheDocument()
     fireEvent.click(screen.getByText('Networking'))
     expect(screen.getByText('Networking').closest('button')).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByText('requests')).toBeVisible()
     expect(screen.getByText('connections')).toBeVisible()
+  })
+
+  it('does not drop rows after TanStack\'s default page size of 10', () => {
+    const extra = [
+      ...manyGroups,
+      { id: 'notes', title: 'Notes', rows: [{ name: 'notebooks', value: 8 }] },
+      { id: 'platform', title: 'Platform Core', rows: [{ name: 'projects', value: 9 }, { name: 'orgs', value: 10 }] },
+      { id: 'other', title: 'Other', rows: [{ name: 'misc-a', value: 11 }, { name: 'misc-b', value: 12 }] },
+    ]
+    render(
+      <div className="overflow-hidden rounded-xl border">
+        <GroupedTable columns={columns} groups={extra} />
+      </div>,
+    )
+    expect(screen.getByText('notebooks')).toBeVisible()
+    expect(screen.getByText('projects')).toBeVisible()
+    expect(screen.getByText('orgs')).toBeVisible()
+    expect(screen.getByText('misc-a')).toBeVisible()
+    expect(screen.getByText('misc-b')).toBeVisible()
   })
 })

@@ -6,7 +6,7 @@ import { flexRender, useTable } from '@tanstack/react-table'
 import { ChevronRight } from 'lucide-react'
 import { useMemo } from 'react'
 import { cn } from '../../../utils/cn'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../base/collapsible'
+import { Collapsible, CollapsibleTrigger } from '../../base/collapsible'
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../base/table'
 import { Icon } from '../../icons/icon-wrapper'
 import { rowMatchesSearch } from '../data-table'
@@ -122,7 +122,16 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
     features: dataTableFeatures,
     data: flatData,
     columns: resolvedColumns,
-    state: { sorting, rowSelection, globalFilter: search },
+    state: {
+      sorting,
+      rowSelection,
+      globalFilter: search,
+      // GroupedTable is not a paged table. The shared feature set still
+      // registers pagination, and TanStack's default pageSize (10) would
+      // silently drop every row after the first page — later groups render
+      // as open headers with empty bodies.
+      pagination: { pageIndex: 0, pageSize: Math.max(flatData.length, 1) },
+    },
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setSearch,
@@ -136,7 +145,7 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
 
   const headerGroups = table.getHeaderGroups()
   const coreRows = table.getCoreRowModel().rows
-  const filteredRows = table.getRowModel().rows
+  const filteredRows = table.getFilteredRowModel().rows
 
   const buckets = useMemo(
     () => bucketRows(groups, coreRows, filteredRows),
@@ -238,53 +247,57 @@ export function GroupedTable<TData extends RowData>(props: GroupedTableProps<TDa
             </CollapsibleTrigger>
 
             {/*
-              Do not animate height. `animate-collapsible-down` plus
-              overflow-hidden can leave the last group at 0px when
-              `--radix-collapsible-content-height` is unset on mount,
-              which is common inside overflow-hidden cards.
+              Do not use Radix CollapsibleContent. It measures
+              `--radix-collapsible-content-height` on mount via
+              getBoundingClientRect; later groups often measure as 0px
+              (overflow-x-auto computes overflow-y to auto, so rows below
+              the first paint box get a zero rect). Removing the height
+              animation in 2.3.1 was not enough — the wrapper still clips.
             */}
-            <CollapsibleContent data-slot="grouped-table-group-content">
-              <table
-                className={cn('w-full table-fixed text-sm', tableClassName)}
-                aria-label={typeof slice.title === 'string' ? slice.title : undefined}
-              >
-                {renderColGroup(resolvedColumns)}
-                {/*
-                  Each group is its own <table>, so it needs its own column
-                  headers for screen readers to associate cells with columns
-                  (header/cell association cannot cross table boundaries). This
-                  header is visually hidden and non-interactive — the visible,
-                  interactive header lives in the shared header table above.
-                */}
-                <TableHeader className="sr-only">
-                  <TableRow>
-                    {resolvedColumns.map((col, i) => (
-                      <TableHead key={`group-header-${i}`} scope="col">
-                        {columnTitle(col)}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody className={bodyClassName}>
-                  {slice.rows.map((row: Row<DataTableFeatures, TData>, rowIndex) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() ? 'selected' : undefined}
-                      className={cn(
-                        rowIndex === 0 && 'border-t',
-                        resolveClassName(rowClassName, row),
-                      )}
-                    >
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id} className={resolveClassName(cellClassName, cell)}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
+            {open && (
+              <div data-slot="grouped-table-group-content">
+                <table
+                  className={cn('w-full table-fixed text-sm', tableClassName)}
+                  aria-label={typeof slice.title === 'string' ? slice.title : undefined}
+                >
+                  {renderColGroup(resolvedColumns)}
+                  {/*
+                    Each group is its own <table>, so it needs its own column
+                    headers for screen readers to associate cells with columns
+                    (header/cell association cannot cross table boundaries). This
+                    header is visually hidden and non-interactive — the visible,
+                    interactive header lives in the shared header table above.
+                  */}
+                  <TableHeader className="sr-only">
+                    <TableRow>
+                      {resolvedColumns.map((col, i) => (
+                        <TableHead key={`group-header-${i}`} scope="col">
+                          {columnTitle(col)}
+                        </TableHead>
                       ))}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </table>
-            </CollapsibleContent>
+                  </TableHeader>
+                  <TableBody className={bodyClassName}>
+                    {slice.rows.map((row: Row<DataTableFeatures, TData>, rowIndex) => (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() ? 'selected' : undefined}
+                        className={cn(
+                          rowIndex === 0 && 'border-t',
+                          resolveClassName(rowClassName, row),
+                        )}
+                      >
+                        {row.getVisibleCells().map(cell => (
+                          <TableCell key={cell.id} className={resolveClassName(cellClassName, cell)}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </table>
+              </div>
+            )}
           </Collapsible>
         )
       })}
