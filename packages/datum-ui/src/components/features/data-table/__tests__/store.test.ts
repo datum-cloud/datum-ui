@@ -149,8 +149,10 @@ describe('store actions', () => {
     store.setPageIndex(2)
     expect(store.getSnapshot().pageIndex).toBe(2)
 
-    store.setData([sampleData[0]!])
-    expect(store.getSnapshot().pageIndex).toBe(0)
+    // 3 rows -> 2 rows at pageSize 1 means pages 0..1; page 2 no longer exists.
+    // Landing on 1 (not 0) is the whole point: stay as close as the data allows.
+    store.setData([sampleData[0]!, sampleData[1]!])
+    expect(store.getSnapshot().pageIndex).toBe(1)
   })
 
   it('setData clamps pageIndex to 0 when the filtered set empties', () => {
