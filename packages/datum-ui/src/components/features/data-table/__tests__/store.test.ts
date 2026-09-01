@@ -131,17 +131,65 @@ describe('store actions', () => {
     expect(state.rowSelection).toEqual({})
   })
 
-  it('setData updates data, recomputes filteredData, and resets pageIndex', () => {
-    const store = createDataTableStore({ data: sampleData, mode: 'client' })
+  it('setData updates data, recomputes filteredData, and preserves pageIndex', () => {
+    const store = createDataTableStore({ data: sampleData, mode: 'client', pageSize: 1 })
     store.registerFilter('department', 'checkbox')
-    store.setFilter('department', ['Design'])
-    store.setPageIndex(2)
-    expect(store.getSnapshot().filteredData).toHaveLength(1)
-
-    const newData = [...sampleData, { id: '4', name: 'Diana', department: 'Design', status: 'pending' }]
-    store.setData(newData)
+    store.setFilter('department', ['Engineering'])
+    store.setPageIndex(1)
     expect(store.getSnapshot().filteredData).toHaveLength(2)
+
+    const newData = [...sampleData, { id: '4', name: 'Diana', department: 'Engineering', status: 'pending' }]
+    store.setData(newData)
+    expect(store.getSnapshot().filteredData).toHaveLength(3)
+    expect(store.getSnapshot().pageIndex).toBe(1)
+  })
+
+  it('setData clamps pageIndex to the last page when data shrinks', () => {
+    const store = createDataTableStore({ data: sampleData, mode: 'client', pageSize: 1 })
+    store.setPageIndex(2)
+    expect(store.getSnapshot().pageIndex).toBe(2)
+
+    store.setData([sampleData[0]!])
     expect(store.getSnapshot().pageIndex).toBe(0)
+  })
+
+  it('setData clamps pageIndex to 0 when the filtered set empties', () => {
+    const store = createDataTableStore({ data: sampleData, mode: 'client', pageSize: 1 })
+    store.setPageIndex(2)
+
+    store.setData([])
+    expect(store.getSnapshot().pageIndex).toBe(0)
+  })
+
+  it('setData preserves selection for surviving rows when getRowId is supplied', () => {
+    const store = createDataTableStore({
+      data: sampleData,
+      mode: 'client',
+      getRowId: (row: (typeof sampleData)[number]) => row.id,
+    })
+    store.setRowSelection({ 1: true, 2: true })
+
+    store.setData(sampleData)
+    expect(store.getSnapshot().rowSelection).toEqual({ 1: true, 2: true })
+  })
+
+  it('setData prunes selection keys whose rows are gone', () => {
+    const store = createDataTableStore({
+      data: sampleData,
+      mode: 'client',
+      getRowId: (row: (typeof sampleData)[number]) => row.id,
+    })
+    store.setRowSelection({ 1: true, 2: true })
+
+    store.setData([sampleData[0]!])
+    expect(store.getSnapshot().rowSelection).toEqual({ 1: true })
+  })
+
+  it('setData clears selection entirely when no getRowId is supplied', () => {
+    const store = createDataTableStore({ data: sampleData, mode: 'client' })
+    store.setRowSelection({ 1: true })
+
+    store.setData(sampleData)
     expect(store.getSnapshot().rowSelection).toEqual({})
   })
 

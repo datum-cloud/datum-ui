@@ -1,4 +1,4 @@
-import type { RowData } from '@tanstack/react-table'
+import type { RowData, RowSelectionState } from '@tanstack/react-table'
 import type {
   CreateStoreOptions,
   DataTableStore,
@@ -7,6 +7,25 @@ import type {
 } from '../types'
 import { DEFAULT_PAGE_SIZE } from '../constants'
 import { applyFilters } from './filter-engine'
+
+/**
+ * Keep only the selection keys whose rows survive a data change.
+ * Dropping vanished keys stops a deleted row's selection from
+ * resurrecting if a row with the same id reappears later.
+ */
+function pruneSelection<TData extends RowData>(
+  selection: RowSelectionState,
+  rows: TData[],
+  getRowId: (row: TData) => string,
+): RowSelectionState {
+  const surviving = new Set(rows.map(getRowId))
+  const next: RowSelectionState = {}
+  for (const [key, isSelected] of Object.entries(selection)) {
+    if (isSelected && surviving.has(key))
+      next[key] = true
+  }
+  return next
+}
 
 export function createDataTableStore<TData extends RowData>(
   options: CreateStoreOptions<TData>,
@@ -69,8 +88,20 @@ export function createDataTableStore<TData extends RowData>(
     },
 
     setData: (data) => {
-      const next = { ...state, data, pageIndex: 0, rowSelection: {} }
-      setState({ ...next, filteredData: computeFilteredData(next) })
+      const next = { ...state, data }
+      const filteredData = computeFilteredData(next)
+
+      // Clamp rather than reset: a background update must not move the
+      // reader off their page. If the list shrank past their position,
+      // land on the new last page — as close as the data allows.
+      const pageCount = Math.max(1, Math.ceil(filteredData.length / state.pageSize))
+      const pageIndex = Math.min(state.pageIndex, pageCount - 1)
+
+      const rowSelection = options.getRowId
+        ? pruneSelection(state.rowSelection, filteredData, options.getRowId)
+        : {}
+
+      setState({ ...next, filteredData, pageIndex, rowSelection })
     },
 
     setServerData: (data) => {
