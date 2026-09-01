@@ -144,6 +144,7 @@ export function useDataTableClient<TData extends RowData>(options: UseDataTableC
       searchableColumns,
       searchFn,
       filterFns,
+      getRowId,
     } as CreateStoreOptions<TData>),
     // eslint-disable-next-line react/exhaustive-deps
     [], // intentionally empty — store created once

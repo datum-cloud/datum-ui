@@ -175,6 +175,16 @@ describe('store actions', () => {
     expect(store.getSnapshot().rowSelection).toEqual({ 1: true, 2: true })
   })
 
+  it('exposes getRowId to the store so providers can enable selection reconciliation', () => {
+    const getRowId = vi.fn((row: (typeof sampleData)[number]) => row.id)
+    const store = createDataTableStore({ data: sampleData, mode: 'client', getRowId })
+    store.setRowSelection({ 1: true })
+
+    store.setData(sampleData)
+    expect(getRowId).toHaveBeenCalled()
+    expect(store.getSnapshot().rowSelection).toEqual({ 1: true })
+  })
+
   it('setData prunes selection keys whose rows are gone', () => {
     const store = createDataTableStore({
       data: sampleData,
