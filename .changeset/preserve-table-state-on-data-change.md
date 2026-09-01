@@ -15,6 +15,16 @@ supplied. Without a custom `getRowId`, TanStack falls back to array-index
 ids, which are meaningless across a data change, so selection is still
 cleared in that case.
 
+The store's clamp alone was not enough: TanStack Table's client-mode
+pagination runs its own `autoResetPageIndex` on every row-model recompute
+and, left at its default, reset `pageIndex` back to 0 itself a tick after
+`setData` ran — undoing the clamp and, because that reset routes through
+`onPaginationChange` into the store's pagination handler, clearing
+`rowSelection` along with it. Client tables now pass
+`autoResetPageIndex: false` so the store's decision is the one that
+actually reaches the UI; TanStack's row-selection feature has no
+equivalent auto-reset of its own, so no second opt-out was needed there.
+
 Filter, search, and sort changes still reset the page — those are user
 actions, not background updates.
 
