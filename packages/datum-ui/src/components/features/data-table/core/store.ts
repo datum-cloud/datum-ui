@@ -18,10 +18,16 @@ function pruneSelection<TData extends RowData>(
   rows: TData[],
   getRowId: (row: TData) => string,
 ): RowSelectionState {
-  const surviving = new Set(rows.map(getRowId))
+  const keys = Object.keys(selection)
+  if (keys.length === 0)
+    return selection
+
+  const surviving = new Set<string>()
+  for (const row of rows) surviving.add(getRowId(row))
+
   const next: RowSelectionState = {}
-  for (const [key, isSelected] of Object.entries(selection)) {
-    if (isSelected && surviving.has(key))
+  for (const key of keys) {
+    if (selection[key] && surviving.has(key))
       next[key] = true
   }
   return next

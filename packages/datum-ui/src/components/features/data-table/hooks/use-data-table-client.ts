@@ -71,15 +71,10 @@ export function useClientTable<TData extends RowData>(
       const next = typeof updater === 'function' ? updater(prev) : updater
       store.setPagination(next.pageIndex, next.pageSize)
     },
-    // The store is the sole authority on when pageIndex resets — it already
-    // zeroes it explicitly for filter, search, and sort (see store.ts), and
-    // deliberately no longer does for setData. Left at its default, TanStack
-    // runs its own autoResetPageIndex on every core row model recompute
-    // (i.e. every data change) and resets pageIndex to 0 itself a tick after
-    // setData ran, which also clears rowSelection via onPaginationChange ->
-    // store.setPagination. Two independent resetters is the bug; disabling
-    // TanStack's here makes the store's clamp the one that actually reaches
-    // the UI.
+    // TanStack resets pageIndex on every row-model recompute (i.e. every
+    // data change), a tick after setData ran, and clears rowSelection with
+    // it via onPaginationChange -> store.setPagination. The store already
+    // resets pageIndex for filter and search; this leaves it sole authority.
     autoResetPageIndex: false,
     getRowId,
     enableRowSelection: !!enableRowSelection,

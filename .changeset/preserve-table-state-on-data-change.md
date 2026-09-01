@@ -25,7 +25,7 @@ and, left at its default, reset `pageIndex` back to 0 itself a tick after
 actually reaches the UI; TanStack's row-selection feature has no
 equivalent auto-reset of its own, so no second opt-out was needed there.
 
-Filter, search, and sort changes still reset the page — those are user
+Filter and search changes still reset the page — those are user
 actions, not background updates.
 
 Two notes for upgraders:

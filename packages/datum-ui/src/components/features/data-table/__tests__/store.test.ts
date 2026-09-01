@@ -197,6 +197,20 @@ describe('store actions', () => {
     expect(store.getSnapshot().rowSelection).toEqual({ 1: true })
   })
 
+  it('setData skips the prune walk entirely when nothing is selected', () => {
+    const getRowId = vi.fn((row: (typeof sampleData)[number]) => row.id)
+    const store = createDataTableStore({ data: sampleData, mode: 'client', getRowId })
+    const selectionBefore = store.getSnapshot().rowSelection
+
+    store.setData([sampleData[0]!, sampleData[1]!])
+
+    // Reference identity, not just equal contents: the early return in
+    // pruneSelection must hand back the same object rather than building a
+    // new one, since rowSelection flows straight into useTable's state.
+    expect(store.getSnapshot().rowSelection).toBe(selectionBefore)
+    expect(getRowId).not.toHaveBeenCalled()
+  })
+
   it('setData clears selection entirely when no getRowId is supplied', () => {
     const store = createDataTableStore({ data: sampleData, mode: 'client' })
     store.setRowSelection({ 1: true })
