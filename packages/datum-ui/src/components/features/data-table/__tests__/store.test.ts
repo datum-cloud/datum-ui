@@ -131,17 +131,91 @@ describe('store actions', () => {
     expect(state.rowSelection).toEqual({})
   })
 
-  it('setData updates data, recomputes filteredData, and resets pageIndex', () => {
-    const store = createDataTableStore({ data: sampleData, mode: 'client' })
+  it('setData updates data, recomputes filteredData, and preserves pageIndex', () => {
+    const store = createDataTableStore({ data: sampleData, mode: 'client', pageSize: 1 })
     store.registerFilter('department', 'checkbox')
-    store.setFilter('department', ['Design'])
-    store.setPageIndex(2)
-    expect(store.getSnapshot().filteredData).toHaveLength(1)
-
-    const newData = [...sampleData, { id: '4', name: 'Diana', department: 'Design', status: 'pending' }]
-    store.setData(newData)
+    store.setFilter('department', ['Engineering'])
+    store.setPageIndex(1)
     expect(store.getSnapshot().filteredData).toHaveLength(2)
+
+    const newData = [...sampleData, { id: '4', name: 'Diana', department: 'Engineering', status: 'pending' }]
+    store.setData(newData)
+    expect(store.getSnapshot().filteredData).toHaveLength(3)
+    expect(store.getSnapshot().pageIndex).toBe(1)
+  })
+
+  it('setData clamps pageIndex to the last page when data shrinks', () => {
+    const store = createDataTableStore({ data: sampleData, mode: 'client', pageSize: 1 })
+    store.setPageIndex(2)
+    expect(store.getSnapshot().pageIndex).toBe(2)
+
+    // 3 rows -> 2 rows at pageSize 1 means pages 0..1; page 2 no longer exists.
+    // Landing on 1 (not 0) is the whole point: stay as close as the data allows.
+    store.setData([sampleData[0]!, sampleData[1]!])
+    expect(store.getSnapshot().pageIndex).toBe(1)
+  })
+
+  it('setData clamps pageIndex to 0 when the filtered set empties', () => {
+    const store = createDataTableStore({ data: sampleData, mode: 'client', pageSize: 1 })
+    store.setPageIndex(2)
+
+    store.setData([])
     expect(store.getSnapshot().pageIndex).toBe(0)
+  })
+
+  it('setData preserves selection for surviving rows when getRowId is supplied', () => {
+    const store = createDataTableStore({
+      data: sampleData,
+      mode: 'client',
+      getRowId: (row: (typeof sampleData)[number]) => row.id,
+    })
+    store.setRowSelection({ 1: true, 2: true })
+
+    store.setData(sampleData)
+    expect(store.getSnapshot().rowSelection).toEqual({ 1: true, 2: true })
+  })
+
+  it('exposes getRowId to the store so providers can enable selection reconciliation', () => {
+    const getRowId = vi.fn((row: (typeof sampleData)[number]) => row.id)
+    const store = createDataTableStore({ data: sampleData, mode: 'client', getRowId })
+    store.setRowSelection({ 1: true })
+
+    store.setData(sampleData)
+    expect(getRowId).toHaveBeenCalled()
+    expect(store.getSnapshot().rowSelection).toEqual({ 1: true })
+  })
+
+  it('setData prunes selection keys whose rows are gone', () => {
+    const store = createDataTableStore({
+      data: sampleData,
+      mode: 'client',
+      getRowId: (row: (typeof sampleData)[number]) => row.id,
+    })
+    store.setRowSelection({ 1: true, 2: true })
+
+    store.setData([sampleData[0]!])
+    expect(store.getSnapshot().rowSelection).toEqual({ 1: true })
+  })
+
+  it('setData skips the prune walk entirely when nothing is selected', () => {
+    const getRowId = vi.fn((row: (typeof sampleData)[number]) => row.id)
+    const store = createDataTableStore({ data: sampleData, mode: 'client', getRowId })
+    const selectionBefore = store.getSnapshot().rowSelection
+
+    store.setData([sampleData[0]!, sampleData[1]!])
+
+    // Reference identity, not just equal contents: the early return in
+    // pruneSelection must hand back the same object rather than building a
+    // new one, since rowSelection flows straight into useTable's state.
+    expect(store.getSnapshot().rowSelection).toBe(selectionBefore)
+    expect(getRowId).not.toHaveBeenCalled()
+  })
+
+  it('setData clears selection entirely when no getRowId is supplied', () => {
+    const store = createDataTableStore({ data: sampleData, mode: 'client' })
+    store.setRowSelection({ 1: true })
+
+    store.setData(sampleData)
     expect(store.getSnapshot().rowSelection).toEqual({})
   })
 

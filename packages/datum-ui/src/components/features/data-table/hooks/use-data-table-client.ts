@@ -71,6 +71,11 @@ export function useClientTable<TData extends RowData>(
       const next = typeof updater === 'function' ? updater(prev) : updater
       store.setPagination(next.pageIndex, next.pageSize)
     },
+    // TanStack resets pageIndex on every row-model recompute (i.e. every
+    // data change), a tick after setData ran, and clears rowSelection with
+    // it via onPaginationChange -> store.setPagination. The store already
+    // resets pageIndex for filter and search; this leaves it sole authority.
+    autoResetPageIndex: false,
     getRowId,
     enableRowSelection: !!enableRowSelection,
   })
@@ -144,6 +149,7 @@ export function useDataTableClient<TData extends RowData>(options: UseDataTableC
       searchableColumns,
       searchFn,
       filterFns,
+      getRowId,
     } as CreateStoreOptions<TData>),
     // eslint-disable-next-line react/exhaustive-deps
     [], // intentionally empty — store created once

@@ -401,4 +401,10 @@ export interface CreateStoreOptions<TData extends RowData> {
   readonly filterFns?: FilterFnMap
   readonly isLoading?: boolean
   readonly columnCount?: number
+  /**
+   * Row identity, used to reconcile `rowSelection` across data changes.
+   * When omitted, TanStack falls back to array-index ids, which are
+   * meaningless across a data change — so selection is cleared instead.
+   */
+  readonly getRowId?: (row: TData) => string
 }

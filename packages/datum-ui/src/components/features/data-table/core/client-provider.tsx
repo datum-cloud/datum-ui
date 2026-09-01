@@ -72,6 +72,7 @@ export function ClientProvider<TData extends RowData>(props: DataTableClientProv
       searchableColumns,
       searchFn,
       filterFns,
+      getRowId,
     } as CreateStoreOptions<TData>),
     // eslint-disable-next-line react/exhaustive-deps
     [], // intentionally empty — store created once
