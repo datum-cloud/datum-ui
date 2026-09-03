@@ -36,3 +36,9 @@
 
 /* Theme overrides — always loaded after shadcn */
 @import './themes/alpha.css';
+
+/* Motion tokens + reduced-motion safety net.
+ * In its own file so Storybook (which imports pieces individually) and the
+ * shipped bundle share one source. Must load after tailwindcss for the
+ * `--ease-*` overrides to win. */
+@import './motion.css';

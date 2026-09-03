@@ -21,6 +21,10 @@
 @import '../../../packages/shadcn/styles/shadcn.css';
 @import '../../../packages/datum-ui/src/styles/themes/alpha.css';
 
+/* Motion tokens — datum-ui imports these via root.css; Storybook imports
+ * pieces individually, so pull them in explicitly to match shipped behaviour. */
+@import '../../../packages/datum-ui/src/styles/motion.css';
+
 /* Optional Canela title font — opt-in for datum-branded surfaces.
  * Without this import the font-title utility falls back to the system
  * sans stack declared in figma-tokens.css. Storybook imports it so

@@ -3,6 +3,7 @@ import { ChevronRight, ExternalLinkIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 import { memo } from 'react'
 import { cn } from '../../../../utils/cn'
+import { EASE } from '../../../../utils/motion'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../../base/collapsible'
 import {
   SidebarGroup,
@@ -35,7 +36,7 @@ const COLLAPSIBLE_CHILD_VARIANTS = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.2, ease: [0.32, 0.72, 0, 1] as const },
+    transition: { duration: 0.2, ease: EASE.drawer },
   },
 } as const
 
