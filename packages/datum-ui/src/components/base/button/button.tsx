@@ -6,7 +6,7 @@ import { SpinnerIcon } from '../../icons/spinner.icon'
 import { getIconOnlyClass } from './icon-only'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-[color,background-color,border-color,opacity,transform] duration-[var(--duration-fast)] ease-out focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 active:scale-[0.98] disabled:active:scale-100',
   {
     variants: {
       type: {

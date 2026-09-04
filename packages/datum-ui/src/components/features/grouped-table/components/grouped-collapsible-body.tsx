@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
+import { EASE } from '../../../../utils/motion'
 
-const OPEN_TRANSITION = { duration: 0.18, ease: [0.23, 1, 0.32, 1] as const }
+const OPEN_TRANSITION = { duration: 0.18, ease: EASE.out }
 const INSTANT = { duration: 0 }
 
 /**

@@ -1,1 +1,1 @@
-export * from '@repo/shadcn/ui/popover'
+export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from './popover'

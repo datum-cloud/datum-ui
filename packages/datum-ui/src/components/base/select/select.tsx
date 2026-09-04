@@ -47,7 +47,17 @@ function SelectTrigger({ ref, className, ...props }: React.ComponentProps<typeof
 SelectTrigger.displayName = 'SelectTrigger'
 
 function SelectContent({ ref, className, ...props }: React.ComponentProps<typeof ShadcnSelectContent> & { ref?: React.RefObject<React.ElementRef<typeof ShadcnSelectContent> | null> }) {
-  return <ShadcnSelectContent ref={ref} className={cn(className)} {...props} />
+  return (
+    <ShadcnSelectContent
+      ref={ref}
+      // Scale from the trigger (not centre) with the standard fast/ease-out timing.
+      className={cn(
+        'origin-(--radix-select-content-transform-origin) duration-[var(--duration-fast)] ease-out',
+        className,
+      )}
+      {...props}
+    />
+  )
 }
 
 SelectContent.displayName = 'SelectContent'

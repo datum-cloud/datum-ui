@@ -1,1 +1,1 @@
-export * from '@repo/shadcn/ui/hover-card'
+export { HoverCard, HoverCardContent, HoverCardTrigger } from './hover-card'

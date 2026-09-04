@@ -1,0 +1,61 @@
+/**
+ * Motion tokens (datum-ui layer).
+ *
+ * Single source of truth for easing + duration used by datum-ui components.
+ * Lives in its own file so every entry point that assembles the design
+ * system — the shipped `root.css` AND Storybook's piecemeal imports — pulls
+ * in the same tokens. Mirrored in TS at `utils/motion.ts` for Motion.
+ *
+ * NOTE: must be imported AFTER `@import 'tailwindcss'` so the `--ease-*`
+ * overrides win over Tailwind's defaults.
+ */
+
+/* Strong custom curves — the built-in CSS easings are too weak.
+ * `--ease-out` / `--ease-in-out` override the default Tailwind utilities
+ * app-wide; `--ease-drawer` is a named iOS-style curve. */
+@theme {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Durations — keep UI animations snappy (<300ms). */
+  --duration-fast: 150ms;
+  --duration-medium: 250ms;
+  --duration-drawer-in: 350ms;
+  --duration-drawer-out: 200ms;
+}
+
+/* ============================================================
+ * Reduced-motion safety net.
+ *
+ * Systemic fallback complementing the per-component `useReducedMotion`
+ * in Motion. Reduced motion means *fewer and gentler* animations, not
+ * zero: opacity/colour fades are kept (they aid comprehension), while
+ * movement (translate), scale and rotation are neutralised.
+ *
+ * tw-animate-css drives `animate-in`/`animate-out` from CSS variables,
+ * so zeroing the enter/exit translate/scale/rotate vars strips the
+ * movement from every Radix overlay while leaving the fade intact.
+ * ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    --tw-enter-translate-x: 0 !important;
+    --tw-enter-translate-y: 0 !important;
+    --tw-exit-translate-x: 0 !important;
+    --tw-exit-translate-y: 0 !important;
+    --tw-enter-scale: 1 !important;
+    --tw-exit-scale: 1 !important;
+    --tw-enter-rotate: 0 !important;
+    --tw-exit-rotate: 0 !important;
+  }
+
+  /* Height-based collapsibles carry no fade to preserve — make instant. */
+  .animate-collapsible-down,
+  .animate-collapsible-up {
+    animation-duration: 0.01ms !important;
+  }
+
+  /* Continuous spinners are essential loading feedback and are kept. */
+}

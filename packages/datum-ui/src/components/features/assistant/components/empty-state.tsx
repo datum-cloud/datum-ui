@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { motion } from 'motion/react'
+import { DURATION, EASE } from '../../../../utils/motion'
 import { useAssistantConfig } from '../context'
 import { BrainGlyph } from './brain-glyph'
 
@@ -22,7 +23,7 @@ export function EmptyState({ name, isReady, onSuggestion, children }: EmptyState
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.3, ease: EASE.out }}
         className="mb-8 flex flex-col items-center text-center"
       >
         <BrainGlyph className="mb-4 size-16" />
@@ -34,7 +35,7 @@ export function EmptyState({ name, isReady, onSuggestion, children }: EmptyState
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.05 }}
+        transition={{ duration: 0.3, delay: 0.05, ease: EASE.out }}
       >
         {children}
       </motion.div>
@@ -46,7 +47,7 @@ export function EmptyState({ name, isReady, onSuggestion, children }: EmptyState
             type="button"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, delay: 0.1 + 0.05 * i }}
+            transition={{ duration: DURATION.medium, delay: 0.1 + 0.05 * i, ease: EASE.out }}
             disabled={!isReady}
             onClick={() => onSuggestion(suggestion)}
             className="group bg-sidebar-accent text-foreground flex items-center justify-between rounded-xl px-4 py-3 text-left text-sm transition-[filter] hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
