@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
+    "local>datum-cloud/.github:renovate-config",
     ":enablePreCommit",
     ":maintainLockFilesWeekly",
     "group:monorepos"
@@ -9,17 +9,9 @@
   "rangeStrategy": "bump",
   "semanticCommits": "enabled",
   "commitMessagePrefix": "chore(deps):",
-  "labels": ["renovate"],
   "schedule": [
     "before 3am on Monday"
   ],
-  "ignoreDeps": [],
-  "vulnerabilityAlerts": {
-    "enabled": true,
-    "schedule": [
-      "at any time"
-    ]
-  },
   "packageRules": [
     {
       "description": "Group Turborepo updates",
@@ -80,6 +72,5 @@
     ]
   },
   "prConcurrentLimit": 10,
-  "prCreation": "immediate",
   "rebaseWhen": "behind-base-branch"
 }
