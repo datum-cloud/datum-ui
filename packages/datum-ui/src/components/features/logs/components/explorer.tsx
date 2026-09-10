@@ -6,9 +6,11 @@ import { useBreakpoint } from '../../../../hooks/use-breakpoint'
 import { cn } from '../../../../utils/cn'
 import { Button } from '../../../base/button'
 import { Sheet } from '../../../base/sheet'
+import { Icon } from '../../../icons/icon-wrapper'
 import { LogsDetail } from './detail'
 import { LogsFilters } from './filters'
 import { LogsTable } from './table'
+import { LogsTimeline } from './timeline'
 import { LogsToolbar } from './toolbar'
 
 export function LogsExplorer({ className }: { className?: string }) {
@@ -42,12 +44,13 @@ export function LogsExplorer({ className }: { className?: string }) {
               size="small"
               onClick={() => setFiltersOpen(true)}
             >
-              <SlidersHorizontal className="size-4" />
+              <Icon icon={SlidersHorizontal} />
               Filters
             </Button>
           )}
         </LogsToolbar>
-        <div className="flex min-h-0 flex-1">
+        <LogsTimeline />
+        <div className="relative flex min-h-0 min-w-0 flex-1">
           <LogsTable />
           {isDesktop && <LogsDetail />}
         </div>

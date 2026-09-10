@@ -5,15 +5,13 @@ import { Button } from '@datum-cloud/datum-ui/button'
 import {
   facetsFromEntries,
   filterEntries,
-  flattenLokiStreams,
   lastThirtyMinutes,
   Logs,
   useLogs,
 } from '@datum-cloud/datum-ui/logs'
-import { queryRangeFixture } from '@datum-cloud/datum-ui/logs/fixtures'
 import { useMemo, useState } from 'react'
+import { logEntries as allEntries } from '../helpers/logs-fixture'
 
-const allEntries = flattenLokiStreams(queryRangeFixture)
 const facets = facetsFromEntries(allEntries)
 
 const meta: Meta = {
@@ -90,10 +88,36 @@ export const CustomChrome: Story = {
           <Logs.Filters />
           <div className="flex min-w-0 flex-1 flex-col">
             <Logs.Toolbar />
-            <div className="flex min-h-0 flex-1">
+            <div className="relative flex min-h-0 flex-1">
               <Logs.Table />
               <Logs.Detail />
             </div>
+          </div>
+        </div>
+      </Playground>
+    </div>
+  ),
+}
+
+export const WithTimeline: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`Logs.Timeline` sits between the toolbar and the table. It reads `histogram` from Root, '
+          + 'falling back to client-side buckets of the loaded entries.',
+      },
+    },
+  },
+  render: () => (
+    <div className="h-screen">
+      <Playground>
+        <div className="flex h-full min-h-0 flex-col">
+          <Logs.Toolbar />
+          <Logs.Timeline />
+          <div className="relative flex min-h-0 flex-1">
+            <Logs.Table />
+            <Logs.Detail />
           </div>
         </div>
       </Playground>
@@ -119,7 +143,7 @@ export const TableWithDetail: Story = {
       >
         <div className="flex h-full min-h-0 flex-col">
           <Logs.Toolbar />
-          <div className="flex min-h-0 flex-1">
+          <div className="relative flex min-h-0 flex-1">
             <Logs.Table />
             <Logs.Detail />
           </div>
@@ -171,7 +195,7 @@ export const CustomFacets: Story = {
           <SeverityFilters />
           <div className="flex min-w-0 flex-1 flex-col">
             <Logs.Toolbar />
-            <div className="flex min-h-0 flex-1">
+            <div className="relative flex min-h-0 flex-1">
               <Logs.Table />
               <Logs.Detail />
             </div>
@@ -230,7 +254,7 @@ export const ToolbarPieces: Story = {
             </Button>
             <Logs.LiveToggle />
           </div>
-          <div className="flex min-h-0 flex-1">
+          <div className="relative flex min-h-0 flex-1">
             <Logs.Table />
             <Logs.Detail />
           </div>
@@ -245,14 +269,33 @@ export const Loading: Story = {
     layout: 'padded',
     docs: {
       description: {
-        story: 'Pass `isLoading` with no entries to show table skeletons.',
+        story:
+          'Pass `isLoading` with no entries to show one skeleton cell per column, matching real row shape.',
       },
     },
   },
   render: () => (
     <div className="h-[360px]">
-      <Logs.Root entries={[]} isLoading>
+      <Logs.Root entries={[]} isLoading columns={['time', 'status', 'host', 'path']}>
         <Logs.Table />
+      </Logs.Root>
+    </div>
+  ),
+}
+
+export const FiltersLoading: Story = {
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story: 'Filter sidebar skeleton while `isLoading` and facets have not arrived yet.',
+      },
+    },
+  },
+  render: () => (
+    <div className="h-[480px]">
+      <Logs.Root entries={[]} isLoading facets={[]}>
+        <Logs.Filters />
       </Logs.Root>
     </div>
   ),
@@ -263,13 +306,19 @@ export const ErrorState: Story = {
     layout: 'padded',
     docs: {
       description: {
-        story: 'Pass `error` for a failed query. The empty-range message is not shown.',
+        story:
+          'Pass `error` for a failed query. It renders inside the table with the raw message and a Retry '
+          + 'button when `onRefresh` is set. The empty-range message is not shown.',
       },
     },
   },
   render: () => (
-    <div className="h-[240px]">
-      <Logs.Root entries={[]} error="queryapi returned 400: aggregations are not supported">
+    <div className="h-[320px]">
+      <Logs.Root
+        entries={[]}
+        error="queryapi returned 400: aggregations are not supported"
+        onRefresh={() => {}}
+      >
         <Logs.Table />
       </Logs.Root>
     </div>
@@ -281,13 +330,15 @@ export const Empty: Story = {
     layout: 'padded',
     docs: {
       description: {
-        story: 'No entries and no error. Dense tables use a muted row, not `EmptyContent`.',
+        story:
+          'No entries and no error. Dense tables use an in-table state, not `EmptyContent`. '
+          + 'With active filters or a search term it offers a Clear filters action.',
       },
     },
   },
   render: () => (
-    <div className="h-[240px]">
-      <Logs.Root entries={[]}>
+    <div className="h-[320px]">
+      <Logs.Root entries={[]} defaultFilters={{ severity: ['ERROR'] }}>
         <Logs.Table />
       </Logs.Root>
     </div>

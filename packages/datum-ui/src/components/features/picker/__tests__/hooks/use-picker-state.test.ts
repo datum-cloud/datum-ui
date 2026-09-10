@@ -182,4 +182,17 @@ describe('usePickerState — sync from prop', () => {
     rerender({ value: next })
     expect(result.current.state.pendingValue).toEqual(next)
   })
+
+  it('highlights the preset carried on a hydrated range value', () => {
+    const onChange = vi.fn()
+    const withPreset = { from: '2026-01-15T00:00:00.000Z', to: '2026-01-15T00:30:00.000Z', preset: 'last-30m' }
+    const manual = { from: '2026-01-15T00:00:00.000Z', to: '2026-01-15T01:00:00.000Z' }
+    const { result, rerender } = renderHook(
+      ({ value }) => usePickerState({ mode: 'datetime-range', value, onChange, timezone: 'UTC' }),
+      { initialProps: { value: withPreset as typeof withPreset | typeof manual } },
+    )
+    expect(result.current.state.selectedPresetKey).toBe('last-30m')
+    rerender({ value: manual })
+    expect(result.current.state.selectedPresetKey).toBeUndefined()
+  })
 })

@@ -1,12 +1,19 @@
+export { resolveLogColumns } from './components/columns'
 export { useLogs } from './hooks/use-logs'
 export { Logs } from './logs'
 export type {
   BuildLogQLOptions,
+  LogColumn,
+  LogColumnCellContext,
   LogColumnId,
+  LogColumnSize,
+  LogColumnSkeletonContext,
+  LogColumnSpec,
   LogEntry,
   LogFacet,
   LogFacetOption,
   LogFilters,
+  LogHistogramBucket,
   LogsContextValue,
   LogsRootProps,
   LogTimeRange,
@@ -21,11 +28,18 @@ export {
   facetsFromEntries,
   filterEntries,
   flattenLokiStreams,
+  formatHttpLogLine,
+  histogramFromEntries,
   httpStatusBadgeType,
   httpStatusTextClass,
   lastThirtyMinutes,
+  LOG_TIME_PRESETS,
   logLineDisplay,
+  logRequestHost,
+  logTimeRangeLabel,
   nsToDate,
   parseLogLine,
+  resolveLogTimeRange,
   severityBadgeType,
+  splitPathQuery,
 } from './utils'

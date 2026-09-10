@@ -39,6 +39,20 @@ describe('facetsFromEntries', () => {
       },
     ], ['severity', 'trace_id'])
     expect(all.map(facet => facet.name)).toEqual(['severity', 'trace_id'])
+    expect(all.map(facet => facet.label)).toEqual(['Severity', 'Trace id'])
+  })
+
+  it('capitalizes the first letter of unmapped facet names', () => {
+    const facets = facetsFromEntries([
+      {
+        id: '1',
+        timestamp: new Date(),
+        timestampNs: '1',
+        line: '',
+        labels: { method: 'GET', response_code: '200' },
+      },
+    ], ['method', 'response_code'])
+    expect(facets.map(facet => facet.label)).toEqual(['Method', 'Response code'])
   })
 })
 
@@ -53,5 +67,18 @@ describe('filterEntries', () => {
     const searched = filterEntries(entries, {}, 'blocked request')
     expect(searched.length).toBeGreaterThan(0)
     expect(searched.every(entry => entry.line.includes('blocked request'))).toBe(true)
+  })
+
+  it('matches a search against stream labels when the line is empty', () => {
+    const otel = filterEntries([
+      {
+        id: '1',
+        timestamp: new Date(),
+        timestampNs: '1',
+        line: '',
+        labels: { path: '/projects/demo-app', method: 'GET' },
+      },
+    ], {}, 'demo-app')
+    expect(otel).toHaveLength(1)
   })
 })

@@ -2,7 +2,11 @@ import type { LogEntry, LogFacet, LogFilters } from '../types'
 import { CANONICAL_FACET_NAMES, FACET_LABELS, SEVERITY_ORDER } from './constants'
 
 function facetLabel(name: string): string {
-  return FACET_LABELS[name] ?? name.replaceAll('_', ' ')
+  const mapped = FACET_LABELS[name]
+  if (mapped)
+    return mapped
+  const raw = name.replaceAll('_', ' ')
+  return raw ? raw.charAt(0).toUpperCase() + raw.slice(1) : raw
 }
 
 function compareFacetValues(name: string, a: string, b: string): number {
@@ -75,8 +79,14 @@ export function filterEntries(
       if (!label || !values.includes(label))
         return false
     }
-    if (query && !entry.line.toLowerCase().includes(query))
+    if (query && !entryMatchesSearch(entry, query))
       return false
     return true
   })
+}
+
+function entryMatchesSearch(entry: LogEntry, query: string): boolean {
+  if (entry.line.toLowerCase().includes(query))
+    return true
+  return Object.values(entry.labels).some(value => value.toLowerCase().includes(query))
 }

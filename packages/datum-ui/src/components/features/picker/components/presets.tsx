@@ -30,7 +30,14 @@ export function PickerPresets({ className }: PickerPresetsProps) {
           >
             <span>{preset.label}</span>
             {preset.shortcut && (
-              <kbd className="bg-muted ml-auto hidden rounded border px-1.5 font-mono text-[10px] sm:inline-flex">
+              <kbd
+                className={cn(
+                  'ml-auto hidden rounded border px-1.5 font-mono text-[10px] sm:inline-flex',
+                  isSelected
+                    ? 'border-primary-foreground/30 bg-primary-foreground/15 text-primary-foreground'
+                    : 'bg-muted text-muted-foreground',
+                )}
+              >
                 {preset.shortcut}
               </kbd>
             )}

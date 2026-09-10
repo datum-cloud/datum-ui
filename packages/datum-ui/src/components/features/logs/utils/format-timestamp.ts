@@ -1,7 +1,15 @@
 import { format, formatDistance } from 'date-fns'
 
+export function formatLogTimestampParts(date: Date): { date: string, time: string } {
+  return {
+    date: format(date, 'MMM dd').toUpperCase(),
+    time: format(date, 'HH:mm:ss.SS'),
+  }
+}
+
 export function formatLogTimestamp(date: Date): string {
-  return format(date, 'MMM dd HH:mm:ss.SS').toUpperCase()
+  const { date: day, time } = formatLogTimestampParts(date)
+  return `${day} ${time}`
 }
 
 export function formatRelativeTimestamp(date: Date, now = new Date()): string {

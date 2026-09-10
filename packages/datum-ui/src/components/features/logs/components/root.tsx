@@ -7,11 +7,14 @@ import { useControllableState } from '../hooks/use-controllable-state'
 import { LogsContext } from '../hooks/use-logs'
 import { DEFAULT_LOG_COLUMNS } from '../utils/constants'
 import { facetsFromEntries } from '../utils/facets'
+import { histogramFromEntries } from '../utils/histogram'
 import { filtersAreActive, lastThirtyMinutes } from '../utils/time-range'
+import { resolveLogColumns } from './columns'
 
 export function LogsRoot({
   entries,
   facets,
+  histogram,
   timeRange,
   defaultTimeRange,
   filters,
@@ -65,6 +68,14 @@ export function LogsRoot({
     () => facets ?? facetsFromEntries(entries),
     [facets, entries],
   )
+  const resolvedHistogram = useMemo(
+    () => histogram ?? histogramFromEntries(entries, currentTimeRange),
+    [histogram, entries, currentTimeRange],
+  )
+  const resolvedColumns = useMemo(
+    () => resolveLogColumns(columns),
+    [columns],
+  )
 
   const selectedIndex = useMemo(
     () => entries.findIndex(entry => entry.id === currentSelectedId),
@@ -110,6 +121,7 @@ export function LogsRoot({
   const value = useMemo(() => ({
     entries,
     facets: resolvedFacets,
+    histogram: resolvedHistogram,
     timeRange: currentTimeRange,
     setTimeRange,
     filters: currentFilters,
@@ -128,13 +140,14 @@ export function LogsRoot({
     selectNext,
     isLoading,
     error,
-    columns,
+    columns: resolvedColumns,
     hasActiveFilters: filtersAreActive(currentFilters),
     onRefresh,
     onExport,
   }), [
     entries,
     resolvedFacets,
+    resolvedHistogram,
     currentTimeRange,
     setTimeRange,
     currentFilters,
@@ -153,7 +166,7 @@ export function LogsRoot({
     selectNext,
     isLoading,
     error,
-    columns,
+    resolvedColumns,
     onRefresh,
     onExport,
   ])

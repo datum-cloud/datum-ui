@@ -11,9 +11,25 @@ export { flattenLokiStreams, nsToDate } from './flatten-loki'
 export {
   formatLocalTimestamp,
   formatLogTimestamp,
+  formatLogTimestampParts,
   formatRelativeTimestamp,
   formatUtcTimestamp,
 } from './format-timestamp'
-export { logLineDisplay, parseLogLine } from './parse-log-line'
+export {
+  DEFAULT_HISTOGRAM_BUCKETS,
+  formatBucketSummary,
+  formatTimelineTick,
+  histogramBucketIndex,
+  histogramFromEntries,
+  histogramSpanMs,
+} from './histogram'
+export { logRequestHost } from './host'
+export { formatHttpLogLine, logLineDisplay, parseLogLine, splitPathQuery } from './parse-log-line'
 export { httpStatusBadgeType, httpStatusTextClass, severityBadgeType } from './severity'
-export { filtersAreActive, lastThirtyMinutes } from './time-range'
+export {
+  filtersAreActive,
+  lastThirtyMinutes,
+  LOG_TIME_PRESETS,
+  logTimeRangeLabel,
+  resolveLogTimeRange,
+} from './time-range'

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { queryRangeFixture } from '../fixtures'
+import { albQueryRangeFixture, queryRangeFixture } from '../fixtures'
 import { flattenLokiStreams, nsToDate } from '../utils/flatten-loki'
 
 describe('flattenLokiStreams', () => {
@@ -38,6 +38,16 @@ describe('flattenLokiStreams', () => {
       status: 'success',
       data: { resultType: 'vector', result: [] },
     })).toEqual([])
+  })
+
+  it('keeps empty Envoy OTEL bodies and copies HTTP fields onto labels', () => {
+    const entries = flattenLokiStreams(albQueryRangeFixture)
+    expect(entries).toHaveLength(18)
+    expect(entries.every(entry => entry.line === '')).toBe(true)
+    expect(entries[0]?.labels.method).toBe('GET')
+    expect(entries[0]?.labels.path).toBeTruthy()
+    expect(entries.some(entry => entry.labels.path === '/projects/demo-app')).toBe(true)
+    expect(entries.some(entry => entry.labels.response_code === '304')).toBe(true)
   })
 
   it('copies labels per row and keeps duplicate lines unique', () => {

@@ -112,6 +112,140 @@ describe('logs table and detail', () => {
     await user.click(screen.getByText('/api/v1/checkout'))
     expect(screen.getByRole('heading', { name: 'GET /api/v1/checkout' })).toBeInTheDocument()
     expect(screen.getByText('Labels')).toBeInTheDocument()
+    expect(screen.getByRole('complementary')).toHaveClass('absolute')
+  })
+
+  it('lets the user widen the detail panel but not shrink below 400px', async () => {
+    const user = userEvent.setup()
+    render(
+      <Wrapper selectedId="1">
+        <div className="relative" style={{ width: 1200 }}>
+          <Logs.Table />
+          <Logs.Detail />
+        </div>
+      </Wrapper>,
+    )
+
+    const panel = screen.getByRole('complementary')
+    const handle = screen.getByRole('separator', { name: 'Resize details' })
+    expect(panel).toHaveStyle({ width: '400px' })
+
+    handle.focus()
+    await user.keyboard('{ArrowRight}')
+    expect(panel).toHaveStyle({ width: '400px' })
+
+    await user.keyboard('{ArrowLeft}')
+    expect(panel).toHaveStyle({ width: '416px' })
+  })
+
+  it('renders a readable LOG badge when severity is missing', () => {
+    render(
+      <Logs.Root
+        entries={[
+          {
+            id: '3',
+            timestamp: new Date('2026-08-13T11:35:28.000Z'),
+            timestampNs: '1786225028000000000',
+            line: 'worker started',
+            labels: {},
+          },
+        ]}
+        defaultSelectedId="3"
+      >
+        <Logs.Detail />
+      </Logs.Root>,
+    )
+
+    expect(screen.getByText('LOG')).toBeInTheDocument()
+  })
+
+  it('shows the HTTP status inline with the title and an absolute timestamp', () => {
+    render(
+      <Wrapper selectedId="1">
+        <Logs.Detail />
+      </Wrapper>,
+    )
+
+    const heading = screen.getByRole('heading', { name: 'GET /api/v1/checkout' })
+    const chip = document.querySelector('[data-slot="logs-http-status"]')
+    expect(chip).toHaveTextContent('200')
+    expect(heading.parentElement).toContainElement(chip as HTMLElement)
+
+    const time = document.querySelector('[data-slot="logs-detail-time"]')
+    expect(time).toHaveTextContent(/AUG 13 \d{2}:\d{2}:\d{2}\.\d{2}/)
+    expect(time).not.toHaveTextContent('ago')
+  })
+
+  it('lists search params under the request block and strips them from the path', () => {
+    render(
+      <Logs.Root
+        entries={[
+          {
+            id: '4',
+            timestamp: new Date('2026-08-13T11:35:28.000Z'),
+            timestampNs: '1786225028000000000',
+            line: 'GET /api/v1/products?category=shoes&page=2 200 12ms',
+            labels: {},
+          },
+        ]}
+        defaultSelectedId="4"
+      >
+        <Logs.Detail />
+      </Logs.Root>,
+    )
+
+    expect(screen.getByRole('heading', { name: 'GET /api/v1/products' })).toBeInTheDocument()
+    const params = document.querySelector('[data-slot="logs-search-params"]')
+    expect(params).toHaveTextContent('category')
+    expect(params).toHaveTextContent('shoes')
+    expect(params).toHaveTextContent('page')
+    expect(params).toHaveTextContent('2')
+    expect(screen.getByRole('button', { name: 'Copy search params' })).toBeInTheDocument()
+  })
+
+  it('shows the status code before the method in the table', () => {
+    render(
+      <Wrapper>
+        <Logs.Table />
+      </Wrapper>,
+    )
+
+    const status = screen.getByText('200').parentElement
+    expect(status?.textContent).toBe('200GET')
+  })
+
+  it('renders Envoy OTEL access logs that have an empty Body', () => {
+    render(
+      <Logs.Root
+        entries={[
+          {
+            id: 'otel',
+            timestamp: new Date('2026-09-10T12:46:33.472Z'),
+            timestampNs: '1789044394384967739',
+            line: '',
+            labels: {
+              method: 'GET',
+              path: '/projects/demo-app?_rsc=1qiq5',
+              response_code: '304',
+              duration: '47',
+              requested_server_name: 'app.example.com',
+            },
+          },
+        ]}
+        columns={['time', 'status', 'host', 'path']}
+        defaultSelectedId="otel"
+      >
+        <Logs.Table />
+        <Logs.Detail />
+      </Logs.Root>,
+    )
+
+    expect(screen.getAllByText('304')[0]?.parentElement).toHaveTextContent('304GET')
+    expect(screen.getAllByText('/projects/demo-app?_rsc=1qiq5').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('app.example.com').length).toBeGreaterThan(0)
+    expect(screen.getByRole('heading', { name: 'GET /projects/demo-app' })).toBeInTheDocument()
+    expect(screen.getByText('GET /projects/demo-app?_rsc=1qiq5 304 47ms')).toBeInTheDocument()
+    expect(document.querySelector('[data-slot="logs-search-params"]')).toHaveTextContent('_rsc')
   })
 
   it('moves to the next row from the detail panel', async () => {
@@ -219,7 +353,7 @@ describe('logs toolbar and empty states', () => {
         <Logs.Table />
       </Logs.Root>,
     )
-    expect(document.querySelectorAll('[data-slot="table-row"]').length).toBeGreaterThan(1)
+    expect(document.querySelectorAll('[data-slot="logs-skeleton-row"]').length).toBeGreaterThan(1)
 
     rerender(
       <Logs.Root entries={[]} error="Query failed">
@@ -227,6 +361,204 @@ describe('logs toolbar and empty states', () => {
       </Logs.Root>,
     )
     expect(screen.getByRole('alert')).toHaveTextContent('Query failed')
+    expect(screen.getByRole('alert')).toHaveTextContent('Couldn\'t load logs')
     expect(screen.queryByText('No logs in this time range')).not.toBeInTheDocument()
+  })
+
+  it('offers Retry on error when the host can refresh', async () => {
+    const user = userEvent.setup()
+    const onRefresh = vi.fn()
+    render(
+      <Logs.Root entries={[]} error="boom" onRefresh={onRefresh}>
+        <Logs.Table />
+      </Logs.Root>,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Retry' }))
+    expect(onRefresh).toHaveBeenCalledTimes(1)
+  })
+
+  it('offers Clear filters on an empty result when filters are active', async () => {
+    const user = userEvent.setup()
+    const onFiltersChange = vi.fn()
+    render(
+      <Logs.Root entries={[]} defaultFilters={{ severity: ['ERROR'] }} onFiltersChange={onFiltersChange}>
+        <Logs.Table />
+      </Logs.Root>,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Clear filters' }))
+    expect(onFiltersChange).toHaveBeenCalledWith({})
+    expect(screen.queryByRole('button', { name: 'Clear filters' })).not.toBeInTheDocument()
+  })
+
+  it('renders a skeleton cell per column so loading matches row shape', () => {
+    render(
+      <Logs.Root entries={[]} isLoading columns={['time', 'status', 'path']}>
+        <Logs.Table />
+      </Logs.Root>,
+    )
+
+    const skeletonRows = document.querySelectorAll('[data-slot="logs-skeleton-row"]')
+    expect(skeletonRows.length).toBe(12)
+    expect(skeletonRows[0]?.querySelectorAll('[data-slot="table-cell"]')).toHaveLength(3)
+
+    const status = skeletonRows[0]?.querySelector('[data-slot="logs-skeleton-status"]')
+    expect(status?.querySelectorAll('[data-slot="logs-skeleton"]')).toHaveLength(2)
+
+    const pathWidths = [...skeletonRows].map((row) => {
+      const pathCell = row.querySelectorAll('[data-slot="table-cell"]')[2] as HTMLElement | undefined
+      const bar = pathCell?.querySelector('[data-slot="logs-skeleton"]') as HTMLElement | null
+      return bar?.style.width
+    })
+    expect(new Set(pathWidths).size).toBeGreaterThan(1)
+  })
+})
+
+describe('logs custom columns', () => {
+  it('renders the built-in Host column from host or resource_name', () => {
+    render(
+      <Logs.Root entries={entries} columns={['time', 'host', 'path']}>
+        <Logs.Table />
+      </Logs.Root>,
+    )
+
+    expect(screen.getByRole('columnheader', { name: 'Host' })).toBeInTheDocument()
+    expect(screen.getAllByText('gateway-eu-west').length).toBeGreaterThan(0)
+  })
+
+  it('renders a custom Host column beside built-in ids', () => {
+    render(
+      <Logs.Root
+        entries={entries}
+        columns={[
+          'time',
+          {
+            id: 'host',
+            header: 'Host',
+            size: 'fixed',
+            width: 160,
+            cell: ({ entry }) => entry.labels.resource_name ?? '—',
+          },
+          'path',
+        ]}
+      >
+        <Logs.Table />
+      </Logs.Root>,
+    )
+
+    expect(screen.getByRole('columnheader', { name: 'Host' })).toBeInTheDocument()
+    expect(screen.queryByRole('columnheader', { name: 'Severity' })).not.toBeInTheDocument()
+    expect(screen.getAllByText('gateway-eu-west').length).toBeGreaterThan(0)
+  })
+})
+
+describe('logs time range', () => {
+  it('labels the trigger with the active preset and switches presets', async () => {
+    const user = userEvent.setup()
+    const onTimeRangeChange = vi.fn()
+    render(
+      <Logs.Root entries={entries} onTimeRangeChange={onTimeRangeChange}>
+        <Logs.TimeRangeFilter />
+      </Logs.Root>,
+    )
+
+    const trigger = screen.getByRole('combobox')
+    expect(trigger).toHaveTextContent('Last 30 minutes')
+
+    await user.click(trigger)
+    await user.click(screen.getByRole('button', { name: /Last hour/ }))
+
+    expect(onTimeRangeChange).toHaveBeenCalledWith(expect.objectContaining({ preset: 'last-1h' }))
+    const { from, to } = onTimeRangeChange.mock.calls[0]![0]
+    expect(new Date(to).getTime() - new Date(from).getTime()).toBe(60 * 60 * 1000)
+    expect(trigger).toHaveTextContent('Last hour')
+  })
+
+  it('labels absolute ranges with a compact date range', () => {
+    render(
+      <Logs.Root
+        entries={entries}
+        timeRange={{ from: '2026-08-13T11:00:00.000Z', to: '2026-08-13T12:00:00.000Z' }}
+      >
+        <Logs.TimeRangeFilter />
+      </Logs.Root>,
+    )
+
+    expect(screen.getByRole('combobox')).toHaveTextContent(/Aug 13, \d{2}:\d{2} – \d{2}:\d{2}/)
+  })
+})
+
+describe('logs timeline', () => {
+  const range = { from: '2026-08-13T11:30:00.000Z', to: '2026-08-13T12:00:00.000Z' }
+
+  it('buckets entries across the time range and marks the selected bucket', () => {
+    render(
+      <Logs.Root entries={entries} timeRange={range} defaultSelectedId="1">
+        <Logs.Timeline />
+      </Logs.Root>,
+    )
+
+    const buckets = document.querySelectorAll('[data-slot="logs-timeline-bucket"]')
+    expect(buckets).toHaveLength(60)
+    expect(screen.getByRole('img', { name: /2 logs between/ })).toBeInTheDocument()
+    expect(document.querySelectorAll('[data-slot="logs-timeline-bucket"][data-selected]')).toHaveLength(1)
+  })
+
+  it('prefers host-supplied histogram buckets', () => {
+    render(
+      <Logs.Root
+        entries={entries}
+        timeRange={range}
+        histogram={[
+          { start: range.from, end: '2026-08-13T11:45:00.000Z', count: 7 },
+          { start: '2026-08-13T11:45:00.000Z', end: range.to, count: 3 },
+        ]}
+      >
+        <Logs.Timeline />
+      </Logs.Root>,
+    )
+
+    expect(document.querySelectorAll('[data-slot="logs-timeline-bucket"]')).toHaveLength(2)
+    expect(screen.getByRole('img', { name: /10 logs between/ })).toBeInTheDocument()
+  })
+
+  it('shows skeleton bars while loading without data', () => {
+    render(
+      <Logs.Root entries={[]} isLoading histogram={[]}>
+        <Logs.Timeline />
+      </Logs.Root>,
+    )
+
+    expect(document.querySelector('[data-slot="logs-timeline-skeleton"]')).toBeTruthy()
+  })
+})
+
+describe('logs filter loading', () => {
+  it('shows filter skeletons when loading with no facets', () => {
+    render(
+      <Logs.Root entries={[]} isLoading facets={[]}>
+        <Logs.Filters />
+      </Logs.Root>,
+    )
+
+    expect(document.querySelector('[data-slot="logs-filters-skeleton"]')).toBeTruthy()
+  })
+
+  it('keeps facet groups when they already exist while loading', () => {
+    render(
+      <Logs.Root
+        entries={entries}
+        isLoading
+        facets={[
+          { name: 'severity', label: 'Severity', options: [{ value: 'INFO', count: 1 }] },
+        ]}
+      >
+        <Logs.Filters />
+      </Logs.Root>,
+    )
+
+    expect(document.querySelector('[data-slot="logs-filters-skeleton"]')).toBeNull()
+    expect(screen.getByRole('checkbox', { name: 'INFO' })).toBeInTheDocument()
   })
 })
