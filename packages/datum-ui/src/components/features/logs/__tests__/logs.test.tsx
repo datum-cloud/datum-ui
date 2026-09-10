@@ -283,6 +283,43 @@ describe('logs table and detail', () => {
     expect(document.querySelector('[data-slot="logs-search-params"]')).toHaveTextContent('_rsc')
   })
 
+  it('summarises the client from the user_agent label', async () => {
+    const user = userEvent.setup()
+    const ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1'
+    render(
+      <Logs.Root
+        entries={[
+          {
+            id: 'ua',
+            timestamp: new Date('2026-09-10T12:46:33.472Z'),
+            timestampNs: '1789044394384967739',
+            line: '',
+            labels: { method: 'GET', path: '/', response_code: '200', user_agent: ua },
+          },
+        ]}
+        defaultSelectedId="ua"
+      >
+        <Logs.Detail />
+      </Logs.Root>,
+    )
+
+    const client = document.querySelector('[data-slot="logs-client"]')
+    expect(client).toHaveTextContent('Client')
+    expect(client?.querySelector('[data-slot="logs-client-summary"]')).toHaveTextContent('Safari 17 on iOS 17.5.1')
+    expect(client).toHaveTextContent('mobile')
+    expect(client).toHaveTextContent(ua)
+    await user.click(screen.getByRole('button', { name: 'Copy user agent' }))
+  })
+
+  it('omits the client row when there is no user agent', () => {
+    render(
+      <Wrapper selectedId="1">
+        <Logs.Detail />
+      </Wrapper>,
+    )
+    expect(document.querySelector('[data-slot="logs-client"]')).toBeNull()
+  })
+
   it('moves to the next row from the detail panel', async () => {
     const user = userEvent.setup()
     render(

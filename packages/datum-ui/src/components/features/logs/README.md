@@ -112,4 +112,8 @@ Mix built-in ids with custom columns. Custom columns default to `fixed` / 160px:
 </Logs.Root>
 ```
 
+## Detail panel
+
+For HTTP entries the Request section lists method, status, duration, path, search params, and, when the entry carries a User-Agent (`user_agent`, `http_user_agent`, `useragent`, `ua`, or `http.user_agent` label), a Client row. `parseUserAgent` turns the header into a short summary such as "Chrome 128 on macOS" or "Safari 17 on iOS 17.5.1" with a device icon (desktop, mobile, tablet, bot) and shows the raw string underneath with a copy button. The parser is intentionally small: mainstream browsers and their forks, iOS / Android / Windows / macOS / Linux / ChromeOS, common CLI and SDK clients (curl, python-requests, Go, okhttp, axios), and anything that names itself a bot or probe. Desktop OS versions are not shown because browsers freeze or blur them. `logUserAgent(labels)` and `parseUserAgent(raw)` are exported for hosts that want the same summary elsewhere.
+
 Assemble a custom chrome with `Logs.Filters`, `Logs.Toolbar`, `Logs.Timeline`, `Logs.Table`, and `Logs.Detail` instead of `Logs.Explorer`. On desktop, `Logs.Detail` overlays the table — wrap both in a `relative` container so the panel has a positioning ancestor.
