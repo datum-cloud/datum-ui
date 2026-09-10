@@ -33,3 +33,5 @@ export {
   logTimeRangeLabel,
   resolveLogTimeRange,
 } from './time-range'
+export { logUserAgent, parseUserAgent } from './user-agent'
+export type { ParsedUserAgent, UserAgentDevice } from './user-agent'

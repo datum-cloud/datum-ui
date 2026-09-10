@@ -1,7 +1,9 @@
 'use client'
 
+import type { LucideIcon } from 'lucide-react'
 import type { PointerEvent, ReactNode } from 'react'
-import { ChevronDown, ChevronUp, Copy, X } from 'lucide-react'
+import type { UserAgentDevice } from '../utils/user-agent'
+import { Bot, ChevronDown, ChevronUp, Copy, HelpCircle, Monitor, Smartphone, Tablet, X } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { memo, useCallback, useRef, useState } from 'react'
 import { useBreakpoint } from '../../../../hooks/use-breakpoint'
@@ -18,7 +20,16 @@ import { formatLogTimestamp } from '../utils/format-timestamp'
 import { logRequestHost } from '../utils/host'
 import { formatHttpLogLine, parseLogLine, splitPathQuery } from '../utils/parse-log-line'
 import { httpStatusTextClass } from '../utils/severity'
+import { logUserAgent, parseUserAgent } from '../utils/user-agent'
 import { LogsHttpStatusChip, LogsSeverityBadge } from './status-badge'
+
+const DEVICE_ICONS: Record<UserAgentDevice, LucideIcon> = {
+  desktop: Monitor,
+  mobile: Smartphone,
+  tablet: Tablet,
+  bot: Bot,
+  unknown: HelpCircle,
+}
 
 function MetaCell({
   label,
@@ -66,6 +77,8 @@ const DetailBody = memo(({ showClose = true }: { showClose?: boolean }) => {
     ? `${parsed.method} ${request.pathname}`
     : selectedEntry.labels.service_name ?? 'Log'
   const service = selectedEntry.labels.service_name ?? logRequestHost(selectedEntry.labels)
+  const userAgent = logUserAgent(selectedEntry.labels)
+  const client = userAgent ? parseUserAgent(userAgent) : null
 
   return (
     <>
@@ -171,6 +184,33 @@ const DetailBody = memo(({ showClose = true }: { showClose?: boolean }) => {
                 ms
               </MetaCell>
               <MetaCell label="Path" className="col-span-3">{request.pathname}</MetaCell>
+              {client && (
+                <div className="bg-background col-span-3 min-w-0 px-3 py-2.5" data-slot="logs-client">
+                  <div className="mb-1 flex items-center justify-between">
+                    <span className="text-muted-foreground text-[11px] font-medium">Client</span>
+                    <Button
+                      type="secondary"
+                      theme="borderless"
+                      size="icon"
+                      className="-my-1 size-6"
+                      aria-label="Copy user agent"
+                      onClick={() => copy(client.raw, { withToast: true })}
+                    >
+                      <Icon icon={Copy} size={14} />
+                    </Button>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs">
+                    <Icon icon={DEVICE_ICONS[client.device]} className="text-muted-foreground shrink-0" />
+                    <span className="min-w-0 truncate font-medium" data-slot="logs-client-summary">{client.summary}</span>
+                    <span className="text-muted-foreground shrink-0 text-[11px] capitalize">{client.device === 'unknown' ? '' : client.device}</span>
+                  </div>
+                  {client.summary !== client.raw && (
+                    <p className="text-muted-foreground mt-1 font-mono text-[11px] leading-4 break-all" title={client.raw}>
+                      {client.raw}
+                    </p>
+                  )}
+                </div>
+              )}
               {request.params.length > 0 && (
                 <div className="bg-background col-span-3 min-w-0 px-3 py-2.5" data-slot="logs-search-params">
                   <div className="mb-1.5 flex items-center justify-between">
