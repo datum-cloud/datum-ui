@@ -26,13 +26,12 @@ import {
 
 const SKELETON_ROWS = 12
 
-/** Centred message row shared by the empty and error states. */
+/** Centred message shared by the empty and error states. */
 function LogsTableState({
   icon,
   title,
   description,
   action,
-  colSpan,
   slot,
   role,
   tone = 'muted',
@@ -41,37 +40,36 @@ function LogsTableState({
   title: string
   description?: ReactNode
   action?: ReactNode
-  colSpan: number
   slot: string
   role?: 'alert'
   tone?: 'muted' | 'destructive'
 }) {
+  // Rendered after the table (not as a row) so it can take the remaining
+  // scroller height and sit in the middle of the log view.
   return (
-    <TableRow className="hover:bg-transparent">
-      <TableCell colSpan={colSpan} className="pt-20 pb-12 text-center">
-        <div
-          role={role}
-          data-slot={slot}
-          className="mx-auto flex max-w-md flex-col items-center gap-2 px-4"
-        >
-          <span
-            className={cn(
-              'flex size-9 items-center justify-center rounded-full border',
-              tone === 'destructive'
-                ? 'border-destructive/20 bg-destructive/10 text-destructive'
-                : 'border-border bg-muted text-muted-foreground',
-            )}
-          >
-            {icon}
-          </span>
-          <p className="text-foreground text-sm font-medium">{title}</p>
-          {description && (
-            <p className="text-muted-foreground text-xs">{description}</p>
+    <div className="flex min-h-48 flex-1 items-center justify-center px-4 py-8 text-center">
+      <div
+        role={role}
+        data-slot={slot}
+        className="flex max-w-md flex-col items-center gap-2"
+      >
+        <span
+          className={cn(
+            'flex size-9 items-center justify-center rounded-full border',
+            tone === 'destructive'
+              ? 'border-destructive/20 bg-destructive/10 text-destructive'
+              : 'border-border bg-muted text-muted-foreground',
           )}
-          {action && <div className="mt-1.5">{action}</div>}
-        </div>
-      </TableCell>
-    </TableRow>
+        >
+          {icon}
+        </span>
+        <p className="text-foreground text-sm font-medium">{title}</p>
+        {description && (
+          <p className="text-muted-foreground text-xs">{description}</p>
+        )}
+        {action && <div className="mt-1.5">{action}</div>}
+      </div>
+    </div>
   )
 }
 
@@ -143,7 +141,7 @@ export function LogsTable({ className }: { className?: string }) {
     <div
       ref={scrollerRef}
       data-slot="logs-table"
-      className={cn('min-h-0 flex-1 overflow-auto outline-none', className)}
+      className={cn('flex min-h-0 flex-1 flex-col overflow-auto outline-none', className)}
       tabIndex={0}
       aria-busy={isLoading || undefined}
       onKeyDown={onKeyDown}
@@ -165,7 +163,7 @@ export function LogsTable({ className }: { className?: string }) {
           <span className="ml-auto shrink-0">{retry}</span>
         </div>
       )}
-      <table className="w-full caption-bottom table-auto text-sm [&_th]:px-3 [&_th]:py-2 [&_td]:px-3 [&_td]:py-1.5">
+      <table className="w-full shrink-0 caption-bottom table-auto text-sm [&_th]:px-3 [&_th]:py-2 [&_td]:px-3 [&_td]:py-1.5">
         <TableHeader className="bg-background sticky top-0 z-10">
           <TableRow>
             {columns.map(column => (
@@ -190,46 +188,6 @@ export function LogsTable({ className }: { className?: string }) {
                 ))}
               </TableRow>
             ))
-          )}
-          {showError && (
-            <LogsTableState
-              role="alert"
-              slot="logs-error"
-              tone="destructive"
-              colSpan={columns.length}
-              icon={<Icon icon={TriangleAlert} />}
-              title="Couldn't load logs"
-              description={(
-                <code className="bg-muted text-foreground inline-block max-w-full rounded-md border px-2 py-1 text-left font-mono text-[11px] leading-4 break-all">
-                  {error}
-                </code>
-              )}
-              action={retry}
-            />
-          )}
-          {showEmpty && (
-            <LogsTableState
-              slot="logs-empty"
-              colSpan={columns.length}
-              icon={<Icon icon={Inbox} />}
-              title="No logs in this time range"
-              description={hasActiveFilters || search
-                ? 'Try widening the range or clearing the filters.'
-                : 'Try widening the range or check back in a moment.'}
-              action={(hasActiveFilters || search) && (
-                <Button
-                  type="secondary"
-                  theme="outline"
-                  size="small"
-                  onClick={() => {
-                    resetFilters()
-                    setSearch('')
-                  }}
-                >
-                  Clear filters
-                </Button>
-              )}
-            />
           )}
           {rows.map(({ entry, ctx }) => {
             const selected = entry.id === selectedId
@@ -259,6 +217,44 @@ export function LogsTable({ className }: { className?: string }) {
           })}
         </TableBody>
       </table>
+      {showError && (
+        <LogsTableState
+          role="alert"
+          slot="logs-error"
+          tone="destructive"
+          icon={<Icon icon={TriangleAlert} />}
+          title="Couldn't load logs"
+          description={(
+            <code className="bg-muted text-foreground inline-block max-w-full rounded-md border px-2 py-1 text-left font-mono text-[11px] leading-4 break-all">
+              {error}
+            </code>
+          )}
+          action={retry}
+        />
+      )}
+      {showEmpty && (
+        <LogsTableState
+          slot="logs-empty"
+          icon={<Icon icon={Inbox} />}
+          title="No logs in this time range"
+          description={hasActiveFilters || search
+            ? 'Try widening the range or clearing the filters.'
+            : 'Try widening the range or check back in a moment.'}
+          action={(hasActiveFilters || search) && (
+            <Button
+              type="secondary"
+              theme="outline"
+              size="small"
+              onClick={() => {
+                resetFilters()
+                setSearch('')
+              }}
+            >
+              Clear filters
+            </Button>
+          )}
+        />
+      )}
     </div>
   )
 }
