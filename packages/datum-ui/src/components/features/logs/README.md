@@ -37,6 +37,12 @@ The table renders every row it is given. There is no virtualization yet, so keep
 
 The host owns fetching. Facet checkboxes and search in Storybook filter client-side for the demo; in production, rebuild LogQL and refetch. `Live` is a pressed-state toggle (`onLiveChange`). Polling, tailing, and sliding the time window are host responsibilities.
 
+`filterEntries(entries, filters, search)` is the client-side helper behind those demos. Search matches the line, plus the fields the table shows for a label-only access log (method, path, status, host via `searchableLogText`). It does not look at other labels such as `request_id` or `user_agent`, so every hit is visible on screen.
+
+`columns` accepts built-in ids and column objects. Unknown ids are skipped with a console warning in development rather than throwing, so a typo or a stale URL-driven column list degrades to a narrower table.
+
+The table shows one state at a time. Skeleton rows appear only while loading with nothing to show; an error with no rows renders the in-table error state; an error while rows are already on screen (a failed refresh) keeps the rows and shows a slim `logs-error-banner` above them with the message and Retry.
+
 ## Time range
 
 The sidebar time control leads with relative presets (`LOG_TIME_PRESETS`: last 15 minutes through last 7 days) and keeps the absolute date/time picker beside them. Picking a preset stores its key on `LogTimeRange.preset`; hand-picked ranges have no `preset`. Before each refresh or poll, call `resolveLogTimeRange(range)` to re-anchor a preset window to "now" — absolute ranges pass through unchanged. `logTimeRangeLabel(range)` gives the same text the trigger shows.
@@ -73,7 +79,7 @@ On a single-resource page, query with that matcher already applied, pass only th
 </Logs.Root>
 ```
 
-HTTP access logs can swap Resource for Host. Built-in columns size themselves (`hug` Time/Status, `fixed` Host/Resource, `fill` Path/Message) so hosts do not need table CSS:
+HTTP access logs can swap Resource for Host. The Host cell uses `logRequestHost(labels)`: an explicit `host` label first, then the name the client asked for (`requested_server_name`, `x_forwarded_host`), then the upstream `authority`, then `resource_name`. Built-in columns size themselves (`hug` Time/Status, `fixed` Host/Resource, `fill` Path/Message) so hosts do not need table CSS:
 
 ```tsx
 <Logs.Root

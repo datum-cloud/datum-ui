@@ -41,7 +41,7 @@ function parseAccessLogText(line: string): ParsedHttpLogLine | null {
 function parseAccessLogFields(fields: Record<string, string>): ParsedHttpLogLine | null {
   const method = fields.method?.trim()
   const path = fields.path?.trim()
-  const status = fields.response_code?.trim() ?? fields.status?.trim()
+  const status = fields.response_code?.trim() || fields.status?.trim()
   if (!method || !path || !status || !/^\d{3}$/.test(status))
     return null
 

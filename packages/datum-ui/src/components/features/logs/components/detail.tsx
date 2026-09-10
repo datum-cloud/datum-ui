@@ -3,7 +3,7 @@
 import type { PointerEvent, ReactNode } from 'react'
 import { ChevronDown, ChevronUp, Copy, X } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { useCallback, useRef, useState } from 'react'
+import { memo, useCallback, useRef, useState } from 'react'
 import { useBreakpoint } from '../../../../hooks/use-breakpoint'
 import { useCopyToClipboard } from '../../../../hooks/use-copy-to-clipboard'
 import { cn } from '../../../../utils/cn'
@@ -48,7 +48,9 @@ function keyedParams(params: ReadonlyArray<[string, string]>): Array<{ id: strin
   })
 }
 
-function DetailBody({ showClose = true }: { showClose?: boolean }) {
+// Memoised so the resize drag (which re-renders the panel per frame) does not
+// reparse the line and rebuild the label list on every pointer move.
+const DetailBody = memo(({ showClose = true }: { showClose?: boolean }) => {
   const { selectedEntry, selectPrevious, selectNext, setSelectedId } = useLogs()
   const [, copy] = useCopyToClipboard()
 
@@ -218,7 +220,7 @@ function DetailBody({ showClose = true }: { showClose?: boolean }) {
       </div>
     </>
   )
-}
+})
 
 function LogsDetailResizeHandle({
   width,
@@ -229,22 +231,28 @@ function LogsDetailResizeHandle({
   onWidthChange: (width: number) => void
   panelRef: { current: HTMLElement | null }
 }) {
-  const dragRef = useRef<{ startX: number, startWidth: number } | null>(null)
+  // Measure the container once per gesture; reading layout on every
+  // pointermove forces a reflow per frame.
+  const dragRef = useRef<{ startX: number, startWidth: number, maxWidth: number } | null>(null)
+  const [maxWidth, setMaxWidth] = useState(() => logsDetailMaxWidth(null))
 
   const onPointerDown = useCallback((event: PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0)
       return
     event.preventDefault()
-    dragRef.current = { startX: event.clientX, startWidth: width }
+    const max = logsDetailMaxWidth(panelRef.current)
+    setMaxWidth(max)
+    dragRef.current = { startX: event.clientX, startWidth: width, maxWidth: max }
     event.currentTarget.setPointerCapture(event.pointerId)
-  }, [width])
+  }, [panelRef, width])
 
   const onPointerMove = useCallback((event: PointerEvent<HTMLDivElement>) => {
-    if (!dragRef.current)
+    const drag = dragRef.current
+    if (!drag)
       return
-    const next = dragRef.current.startWidth + (dragRef.current.startX - event.clientX)
-    onWidthChange(clampLogsDetailWidth(next, logsDetailMaxWidth(panelRef.current)))
-  }, [onWidthChange, panelRef])
+    const next = drag.startWidth + (drag.startX - event.clientX)
+    onWidthChange(clampLogsDetailWidth(next, drag.maxWidth))
+  }, [onWidthChange])
 
   const onPointerUp = useCallback((event: PointerEvent<HTMLDivElement>) => {
     dragRef.current = null
@@ -258,6 +266,7 @@ function LogsDetailResizeHandle({
       aria-orientation="vertical"
       aria-label="Resize details"
       aria-valuemin={LOGS_DETAIL_MIN_WIDTH}
+      aria-valuemax={maxWidth}
       aria-valuenow={width}
       data-slot="logs-detail-resize"
       tabIndex={0}
@@ -271,13 +280,12 @@ function LogsDetailResizeHandle({
       onPointerCancel={onPointerUp}
       onKeyDown={(event) => {
         const step = event.shiftKey ? 40 : 16
-        if (event.key === 'ArrowLeft') {
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
           event.preventDefault()
-          onWidthChange(clampLogsDetailWidth(width + step, logsDetailMaxWidth(panelRef.current)))
-        }
-        if (event.key === 'ArrowRight') {
-          event.preventDefault()
-          onWidthChange(clampLogsDetailWidth(width - step, logsDetailMaxWidth(panelRef.current)))
+          const max = logsDetailMaxWidth(panelRef.current)
+          setMaxWidth(max)
+          const delta = event.key === 'ArrowLeft' ? step : -step
+          onWidthChange(clampLogsDetailWidth(width + delta, max))
         }
         if (event.key === 'Home') {
           event.preventDefault()

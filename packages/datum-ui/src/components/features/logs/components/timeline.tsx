@@ -45,6 +45,11 @@ export function LogsTimeline({ className }: { className?: string }) {
     [histogram],
   )
   const selectedIndex = selectedEntry ? histogramBucketIndex(histogram, selectedEntry.timestamp) : -1
+  // Tooltip text only changes with the data, not with selection or hover.
+  const titles = useMemo(
+    () => histogram.map(bucket => formatBucketSummary(bucket, spanMs)),
+    [histogram, spanMs],
+  )
 
   const from = histogram[0] ? new Date(histogram[0].start) : new Date(timeRange.from)
   const to = histogram.length > 0 ? new Date(histogram[histogram.length - 1]!.end) : new Date(timeRange.to)
@@ -71,7 +76,7 @@ export function LogsTimeline({ className }: { className?: string }) {
                 return (
                   <div
                     key={bucket.start}
-                    title={formatBucketSummary(bucket, spanMs)}
+                    title={titles[index]}
                     data-slot="logs-timeline-bucket"
                     data-selected={selected || undefined}
                     className="relative flex h-full min-w-0 flex-1 items-end"

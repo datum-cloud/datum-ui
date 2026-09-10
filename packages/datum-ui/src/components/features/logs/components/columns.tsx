@@ -135,12 +135,35 @@ const BUILTIN_COLUMNS: Record<LogColumnId, LogColumn> = {
   },
 }
 
+// Local declaration so the library type-checks without `@types/node`;
+// bundlers substitute `process.env.NODE_ENV` at build time.
+declare const process: { env: { NODE_ENV?: string } }
+
+const warnedColumnIds = new Set<string>()
+
+/**
+ * Expand column specs into renderable columns. Unknown built-in ids are
+ * skipped (with a one-time dev warning) so a typo or a stale URL-driven
+ * column list degrades to a narrower table instead of a crash.
+ */
 export function resolveLogColumns(specs: readonly LogColumnSpec[]): LogColumn[] {
-  return specs.map((spec) => {
-    if (typeof spec !== 'string')
-      return { size: 'fixed', width: DEFAULT_FIXED_WIDTH, ...spec }
-    return BUILTIN_COLUMNS[spec]
-  })
+  const columns: LogColumn[] = []
+  for (const spec of specs) {
+    if (typeof spec !== 'string') {
+      columns.push({ size: 'fixed', width: DEFAULT_FIXED_WIDTH, ...spec })
+      continue
+    }
+    const builtin = Object.hasOwn(BUILTIN_COLUMNS, spec) ? BUILTIN_COLUMNS[spec] : undefined
+    if (builtin) {
+      columns.push(builtin)
+      continue
+    }
+    if (process.env.NODE_ENV !== 'production' && !warnedColumnIds.has(spec)) {
+      warnedColumnIds.add(spec)
+      console.warn(`[datum-ui/logs] Unknown column id "${spec}" was skipped. Built-in ids: ${Object.keys(BUILTIN_COLUMNS).join(', ')}.`)
+    }
+  }
+  return columns
 }
 
 export function columnSize(column: LogColumn): LogColumnSize {

@@ -3,7 +3,7 @@
 import type { KeyboardEvent, ReactNode } from 'react'
 import type { LogColumn } from '../types'
 import { Inbox, RefreshCw, TriangleAlert } from 'lucide-react'
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { cn } from '../../../../utils/cn'
 import { Button } from '../../../base/button'
 import {
@@ -103,6 +103,27 @@ export function LogsTable({ className }: { className?: string }) {
     setSearch,
   } = useLogs()
   const scrollerRef = useRef<HTMLDivElement>(null)
+  const rows = useMemo(
+    () => entries.map((entry) => {
+      const { parsed, path, message } = logLineDisplay(entry.line, entry.labels)
+      return { entry, ctx: { entry, parsed, path, message } }
+    }),
+    [entries],
+  )
+
+  // One state at a time: an error wins over skeletons; skeletons only while
+  // there is nothing to show; the empty row only for a settled, clean result.
+  const hasRows = entries.length > 0
+  const showError = Boolean(error) && !hasRows
+  const showErrorBanner = Boolean(error) && hasRows
+  const showSkeleton = isLoading && !hasRows && !error
+  const showEmpty = !isLoading && !hasRows && !error
+  const retry = onRefresh && (
+    <Button type="secondary" theme="outline" size="small" onClick={onRefresh}>
+      <Icon icon={RefreshCw} size={14} />
+      Retry
+    </Button>
+  )
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key === 'ArrowDown' || event.key === 'j') {
@@ -127,6 +148,23 @@ export function LogsTable({ className }: { className?: string }) {
       aria-busy={isLoading || undefined}
       onKeyDown={onKeyDown}
     >
+      {showErrorBanner && (
+        <div
+          role="alert"
+          data-slot="logs-error-banner"
+          className="border-destructive/30 bg-destructive/5 text-foreground sticky top-0 z-20 flex items-center gap-2 border-b px-3 py-1.5 text-xs"
+        >
+          <Icon icon={TriangleAlert} size={14} className="text-destructive shrink-0" />
+          <span className="min-w-0 truncate">
+            <span className="font-medium">Refresh failed.</span>
+            {' '}
+            <span className="text-muted-foreground">Showing the last successful result.</span>
+            {' '}
+            <code className="font-mono">{error}</code>
+          </span>
+          <span className="ml-auto shrink-0">{retry}</span>
+        </div>
+      )}
       <table className="w-full caption-bottom table-auto text-sm [&_th]:px-3 [&_th]:py-2 [&_td]:px-3 [&_td]:py-1.5">
         <TableHeader className="bg-background sticky top-0 z-10">
           <TableRow>
@@ -142,7 +180,7 @@ export function LogsTable({ className }: { className?: string }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isLoading && entries.length === 0 && (
+          {showSkeleton && (
             Array.from({ length: SKELETON_ROWS }, (_, index) => (
               <TableRow key={`skeleton-${index}`} data-slot="logs-skeleton-row">
                 {columns.map(column => (
@@ -153,7 +191,7 @@ export function LogsTable({ className }: { className?: string }) {
               </TableRow>
             ))
           )}
-          {error && (
+          {showError && (
             <LogsTableState
               role="alert"
               slot="logs-error"
@@ -166,15 +204,10 @@ export function LogsTable({ className }: { className?: string }) {
                   {error}
                 </code>
               )}
-              action={onRefresh && (
-                <Button type="secondary" theme="outline" size="small" onClick={onRefresh}>
-                  <Icon icon={RefreshCw} size={14} />
-                  Retry
-                </Button>
-              )}
+              action={retry}
             />
           )}
-          {!isLoading && entries.length === 0 && !error && (
+          {showEmpty && (
             <LogsTableState
               slot="logs-empty"
               colSpan={columns.length}
@@ -198,10 +231,8 @@ export function LogsTable({ className }: { className?: string }) {
               )}
             />
           )}
-          {entries.map((entry) => {
-            const { parsed, path, message } = logLineDisplay(entry.line, entry.labels)
+          {rows.map(({ entry, ctx }) => {
             const selected = entry.id === selectedId
-            const ctx = { entry, parsed, path, message }
 
             return (
               <TableRow

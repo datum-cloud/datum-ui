@@ -1,4 +1,9 @@
-/** Host shown for an HTTP access log, preferring the name the client used. */
+/**
+ * Host shown for an HTTP access log. An explicit `host` label (set by the
+ * host app) wins; otherwise prefer the name the client asked for
+ * (`requested_server_name`, `x_forwarded_host`) over the upstream
+ * `authority`, then fall back to `resource_name`.
+ */
 export function logRequestHost(labels: Record<string, string>): string | undefined {
   const host
     = labels.host?.trim()

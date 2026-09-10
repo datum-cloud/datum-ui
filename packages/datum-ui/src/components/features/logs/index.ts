@@ -40,6 +40,7 @@ export {
   nsToDate,
   parseLogLine,
   resolveLogTimeRange,
+  searchableLogText,
   severityBadgeType,
   splitPathQuery,
 } from './utils'

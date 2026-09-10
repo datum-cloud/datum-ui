@@ -1,7 +1,7 @@
 'use client'
 
 import type { LogsRootProps } from '../types'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import { cn } from '../../../../utils/cn'
 import { useControllableState } from '../hooks/use-controllable-state'
 import { LogsContext } from '../hooks/use-logs'
@@ -10,6 +10,17 @@ import { facetsFromEntries } from '../utils/facets'
 import { histogramFromEntries } from '../utils/histogram'
 import { filtersAreActive, lastThirtyMinutes } from '../utils/time-range'
 import { resolveLogColumns } from './columns'
+
+/** Return the previous array while its items are shallow-equal to the new one. */
+function useShallowArray<T>(next: readonly T[]): readonly T[] {
+  const ref = useRef(next)
+  const prev = ref.current
+  const same = prev === next
+    || (prev.length === next.length && prev.every((item, index) => item === next[index]))
+  if (!same)
+    ref.current = next
+  return same ? prev : next
+}
 
 export function LogsRoot({
   entries,
@@ -72,9 +83,12 @@ export function LogsRoot({
     () => histogram ?? histogramFromEntries(entries, currentTimeRange),
     [histogram, entries, currentTimeRange],
   )
+  // Hosts routinely pass an inline `columns` array, so key the memo on the
+  // items rather than the array identity.
+  const stableColumns = useShallowArray(columns)
   const resolvedColumns = useMemo(
-    () => resolveLogColumns(columns),
-    [columns],
+    () => resolveLogColumns(stableColumns),
+    [stableColumns],
   )
 
   const selectedIndex = useMemo(

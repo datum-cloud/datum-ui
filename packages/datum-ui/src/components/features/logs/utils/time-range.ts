@@ -22,15 +22,20 @@ function relativePreset(key: string, label: string, durationMs: number, shortcut
  * Relative "Last N" windows offered by `Logs.Filters`. Keys are persisted on
  * `LogTimeRange.preset` so hosts can slide the window forward with
  * `resolveLogTimeRange` on refresh or while live tailing.
+ *
+ * Shortcuts follow the `picker` datetime presets (`1` / `2` / `H` / `W`) that
+ * the logs picker is built on. Keys that mean something else in the pickers
+ * (`3` is "Last 30 minutes" in `time-range-picker`, `D` is "Today") are not
+ * reused, so muscle memory carries over between the two.
  */
 export const LOG_TIME_PRESETS: readonly PickerPreset[] = [
   relativePreset('last-15m', 'Last 15 minutes', 15 * MINUTE_MS, '1'),
   relativePreset('last-30m', 'Last 30 minutes', 30 * MINUTE_MS, '2'),
   relativePreset('last-1h', 'Last hour', HOUR_MS, 'H'),
-  relativePreset('last-3h', 'Last 3 hours', 3 * HOUR_MS, '3'),
+  relativePreset('last-3h', 'Last 3 hours', 3 * HOUR_MS),
   relativePreset('last-6h', 'Last 6 hours', 6 * HOUR_MS, '6'),
   relativePreset('last-12h', 'Last 12 hours', 12 * HOUR_MS),
-  relativePreset('last-24h', 'Last 24 hours', DAY_MS, 'D'),
+  relativePreset('last-24h', 'Last 24 hours', DAY_MS),
   relativePreset('last-7d', 'Last 7 days', 7 * DAY_MS, 'W'),
 ]
 

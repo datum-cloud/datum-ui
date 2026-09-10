@@ -81,4 +81,26 @@ describe('filterEntries', () => {
     ], {}, 'demo-app')
     expect(otel).toHaveLength(1)
   })
+
+  it('only searches fields that are shown on screen', () => {
+    const entry = {
+      id: '1',
+      timestamp: new Date(),
+      timestampNs: '1',
+      line: '',
+      labels: {
+        method: 'GET',
+        path: '/health',
+        response_code: '304',
+        requested_server_name: 'app.example.com',
+        request_id: 'c2e2f200-7e45-4d1a-9f4e-9a51d0b5c200',
+        user_agent: 'Mozilla/5.0',
+      },
+    }
+    expect(filterEntries([entry], {}, '304')).toHaveLength(1)
+    expect(filterEntries([entry], {}, 'app.example')).toHaveLength(1)
+    // `200` appears in request_id but nowhere visible, so it must not match.
+    expect(filterEntries([entry], {}, '200')).toHaveLength(0)
+    expect(filterEntries([entry], {}, 'mozilla')).toHaveLength(0)
+  })
 })

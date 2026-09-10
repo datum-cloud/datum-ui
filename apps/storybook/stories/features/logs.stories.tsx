@@ -83,18 +83,19 @@ export const Explorer: Story = {
   render: () => <ExplorerStory />,
 }
 
-const proxyEntries = albLogEntries
-const proxyFacets = facetsFromEntries(proxyEntries, ['method', 'response_code'])
+// One proxy's slice of the mixed fixture, as a host would pass after scoping
+// the LogQL query to a resource. Service is not a facet since it is implied.
+const proxyEntries = allEntries.filter(entry => entry.labels.resource_name === 'gateway-eu-west')
+const proxyFacets = facetsFromEntries(proxyEntries, ['severity'])
 
 export const SingleProxy: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          'Resource-scoped explorer for a single proxy. Driven by a sanitised staging '
-          + '`query_range` payload: Envoy OTEL access logs with an empty Body and HTTP fields '
-          + 'on stream labels. Facets are method / status; Service is hidden because the host '
-          + 'already scoped the query.',
+          'Resource-scoped explorer for a single proxy: mixed access and application lines '
+          + 'from one gateway, so the default Path / Message layout applies. Only severity is '
+          + 'offered as a facet because the host already scoped the query.',
       },
     },
   },
@@ -102,25 +103,27 @@ export const SingleProxy: Story = {
     <ExplorerStory
       source={proxyEntries}
       facets={proxyFacets}
-      columns={['time', 'status', 'host', 'path']}
+      columns={['time', 'severity', 'status', 'path', 'message']}
     />
   ),
 }
+
+const albFacets = facetsFromEntries(albLogEntries, ['method', 'response_code'])
 
 export const HttpAccess: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          'HTTP access-log layout from a real ALB `query_range`: hug Time/Status, fixed Host, Path fills. '
-          + 'The line body is empty; method, path, and status come from OTEL labels.',
+          'HTTP access-log layout from a sanitised staging ALB `query_range`: hug Time/Status, fixed Host, Path fills. '
+          + 'The line body is empty; method, path, and status come from Envoy OTEL stream labels.',
       },
     },
   },
   render: () => (
     <ExplorerStory
-      source={proxyEntries}
-      facets={proxyFacets}
+      source={albLogEntries}
+      facets={albFacets}
       columns={['time', 'status', 'host', 'path']}
     />
   ),

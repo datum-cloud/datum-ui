@@ -325,6 +325,31 @@ export const ErrorState: Story = {
   ),
 }
 
+export const RefreshFailed: Story = {
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story:
+          'When `error` arrives while rows are already on screen (a failed refresh or live poll), '
+          + 'the rows stay put and a slim banner above them carries the message and Retry. '
+          + 'Loading, error, and empty states never render together.',
+      },
+    },
+  },
+  render: () => (
+    <div className="h-[420px]">
+      <Logs.Root
+        entries={allEntries.slice(0, 8)}
+        error="queryapi returned 503: upstream unavailable"
+        onRefresh={() => {}}
+      >
+        <Logs.Table />
+      </Logs.Root>
+    </div>
+  ),
+}
+
 export const Empty: Story = {
   parameters: {
     layout: 'padded',

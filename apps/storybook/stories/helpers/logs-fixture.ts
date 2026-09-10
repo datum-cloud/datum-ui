@@ -31,7 +31,7 @@ function withRequestHost(entry: LogEntry): LogEntry {
   const host = logRequestHost(entry.labels)
   if (!host || entry.labels.host === host)
     return entry
-  return { ...entry, labels: { host, ...entry.labels } }
+  return { ...entry, labels: { ...entry.labels, host } }
 }
 
 export const logEntries = spreadOverLastMinutes(flattenLokiStreams(queryRangeFixture), 25)

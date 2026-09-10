@@ -1,7 +1,7 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import type { ReactNode } from 'react'
 import type { LogEntry } from '../types'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
@@ -136,6 +136,41 @@ describe('logs table and detail', () => {
 
     await user.keyboard('{ArrowLeft}')
     expect(panel).toHaveStyle({ width: '416px' })
+  })
+
+  it('resizes the detail panel by dragging the handle', () => {
+    render(
+      <Wrapper selectedId="1">
+        <div className="relative" style={{ width: 1200 }}>
+          <Logs.Table />
+          <Logs.Detail />
+        </div>
+      </Wrapper>,
+    )
+
+    const panel = screen.getByRole('complementary')
+    const handle = screen.getByRole('separator', { name: 'Resize details' })
+    // jsdom has no pointer capture; the handle guards both calls.
+    handle.setPointerCapture = vi.fn()
+    handle.hasPointerCapture = vi.fn(() => true)
+    handle.releasePointerCapture = vi.fn()
+
+    fireEvent.pointerDown(handle, { button: 0, clientX: 800, pointerId: 1 })
+    fireEvent.pointerMove(handle, { clientX: 600, pointerId: 1 })
+    expect(panel).toHaveStyle({ width: '600px' })
+    expect(handle).toHaveAttribute('aria-valuenow', '600')
+    expect(Number(handle.getAttribute('aria-valuemax'))).toBeGreaterThanOrEqual(600)
+
+    // Dragging past the right edge clamps at the minimum width.
+    fireEvent.pointerMove(handle, { clientX: 1100, pointerId: 1 })
+    expect(panel).toHaveStyle({ width: '400px' })
+
+    fireEvent.pointerUp(handle, { pointerId: 1 })
+    expect(handle.releasePointerCapture).toHaveBeenCalledWith(1)
+
+    // Movement after release is ignored.
+    fireEvent.pointerMove(handle, { clientX: 100, pointerId: 1 })
+    expect(panel).toHaveStyle({ width: '400px' })
   })
 
   it('renders a readable LOG badge when severity is missing', () => {
@@ -376,6 +411,56 @@ describe('logs toolbar and empty states', () => {
 
     await user.click(screen.getByRole('button', { name: 'Retry' }))
     expect(onRefresh).toHaveBeenCalledTimes(1)
+  })
+
+  it('shows one state at a time: error wins over loading and empty', () => {
+    render(
+      <Logs.Root entries={[]} isLoading error="boom">
+        <Logs.Table />
+      </Logs.Root>,
+    )
+
+    expect(document.querySelector('[data-slot="logs-error"]')).toBeInTheDocument()
+    expect(document.querySelectorAll('[data-slot="logs-skeleton-row"]')).toHaveLength(0)
+    expect(screen.queryByText('No logs in this time range')).not.toBeInTheDocument()
+  })
+
+  it('keeps the last result on screen and shows a banner when a refresh fails', () => {
+    const { rerender } = render(
+      <Logs.Root entries={entries} onRefresh={() => {}}>
+        <Logs.Table />
+      </Logs.Root>,
+    )
+    expect(document.querySelector('[data-slot="logs-error-banner"]')).toBeNull()
+
+    // Same rows, but the refresh failed.
+    rerender(
+      <Logs.Root entries={entries} error="upstream timeout" onRefresh={() => {}}>
+        <Logs.Table />
+      </Logs.Root>,
+    )
+
+    const banner = document.querySelector('[data-slot="logs-error-banner"]')
+    expect(banner).toHaveAttribute('role', 'alert')
+    expect(banner).toHaveTextContent('upstream timeout')
+    expect(document.querySelector('[data-slot="logs-error"]')).not.toBeInTheDocument()
+    expect(screen.getByText('/api/v1/checkout')).toBeInTheDocument()
+    // The banner sits above the table, not inside the row list.
+    expect(banner?.closest('tbody')).toBeNull()
+  })
+
+  it('skips unknown column ids instead of crashing', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    render(
+      // @ts-expect-error deliberately invalid id, as a URL-driven list might produce
+      <Logs.Root entries={entries} columns={['time', 'nope', 'path']}>
+        <Logs.Table />
+      </Logs.Root>,
+    )
+
+    expect(screen.getAllByRole('columnheader')).toHaveLength(2)
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown column id "nope"'))
+    warn.mockRestore()
   })
 
   it('offers Clear filters on an empty result when filters are active', async () => {

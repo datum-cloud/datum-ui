@@ -6,7 +6,7 @@ export {
   FACET_LABELS,
   SEVERITY_ORDER,
 } from './constants'
-export { facetsFromEntries, filterEntries } from './facets'
+export { facetsFromEntries, filterEntries, searchableLogText } from './facets'
 export { flattenLokiStreams, nsToDate } from './flatten-loki'
 export {
   formatLocalTimestamp,
