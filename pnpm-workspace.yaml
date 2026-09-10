@@ -53,7 +53,7 @@ overrides:
   # GHSA HIGH, dev tree only (storybook -> webpack -> schema-utils -> ajv).
   "fast-uri@>=3.0.0 <3.1.4": "3.1.6"
   # GHSA HIGH on all three lines; pulled in by @changesets/cli and the build.
-  "js-yaml@>=3.0.0 <3.15.0": "3.15.1"
+  "js-yaml@>=3.0.0 <3.15.0": "3.15.2"
   "js-yaml@>=4.0.0 <4.3.0": "4.3.1"
   "js-yaml@>=5.0.0 <5.2.2": "5.2.3"
   # GHSA HIGH, via storybook/vite/tailwind.
