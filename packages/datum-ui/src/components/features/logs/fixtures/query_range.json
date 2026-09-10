@@ -130,7 +130,7 @@
         "values": [
           [
             "1786225022500000000",
-            "GET /api/v1/checkout 301 393ms upstream=gateway-eu-west"
+            "GET /api/v1/checkout?session=9f2c1a&redirect=%2Fcart 301 393ms upstream=gateway-eu-west"
           ],
           [
             "1786225022000000000",
@@ -279,7 +279,7 @@
           ],
           [
             "1786224986500000000",
-            "GET /api/v1/products 200 913ms upstream=gateway-us-east"
+            "GET /api/v1/products?category=shoes&page=2&limit=50 200 913ms upstream=gateway-us-east"
           ],
           [
             "1786224985500000000",

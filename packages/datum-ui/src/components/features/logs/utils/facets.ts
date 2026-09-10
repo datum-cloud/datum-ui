@@ -1,8 +1,14 @@
 import type { LogEntry, LogFacet, LogFilters } from '../types'
 import { CANONICAL_FACET_NAMES, FACET_LABELS, SEVERITY_ORDER } from './constants'
+import { logRequestHost } from './host'
+import { formatHttpLogLine, logLineDisplay } from './parse-log-line'
 
 function facetLabel(name: string): string {
-  return FACET_LABELS[name] ?? name.replaceAll('_', ' ')
+  const mapped = FACET_LABELS[name]
+  if (mapped)
+    return mapped
+  const raw = name.replaceAll('_', ' ')
+  return raw ? raw.charAt(0).toUpperCase() + raw.slice(1) : raw
 }
 
 function compareFacetValues(name: string, a: string, b: string): number {
@@ -75,8 +81,29 @@ export function filterEntries(
       if (!label || !values.includes(label))
         return false
     }
-    if (query && !entry.line.toLowerCase().includes(query))
+    if (query && !entryMatchesSearch(entry, query))
       return false
     return true
   })
+}
+
+/**
+ * Text a search term is matched against: the line, plus the fields the table
+ * actually shows for a label-only access log (method, path, status, host).
+ * Other labels (request ids, user agents, pod names) are deliberately not
+ * searched so a hit is always visible on screen.
+ */
+export function searchableLogText(entry: LogEntry): string {
+  const { parsed, path } = logLineDisplay(entry.line, entry.labels)
+  const parts = [entry.line, path ?? '']
+  if (parsed.kind === 'http')
+    parts.push(formatHttpLogLine(parsed))
+  const host = logRequestHost(entry.labels)
+  if (host)
+    parts.push(host)
+  return parts.join('\n').toLowerCase()
+}
+
+function entryMatchesSearch(entry: LogEntry, query: string): boolean {
+  return searchableLogText(entry).includes(query)
 }

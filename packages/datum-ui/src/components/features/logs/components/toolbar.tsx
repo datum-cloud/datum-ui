@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import { cn } from '../../../../utils/cn'
 import { Button } from '../../../base/button'
 import { Input } from '../../../base/input'
+import { Icon } from '../../../icons/icon-wrapper'
 import { useLogs } from '../hooks/use-logs'
 
 export function LogsSearch({
@@ -41,7 +42,7 @@ export function LogsSearch({
 
   return (
     <div className={cn('relative min-w-0 flex-1', className)}>
-      <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+      <Icon icon={Search} className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2" />
       <Input
         value={value}
         onChange={event => setValue(event.target.value)}
@@ -103,7 +104,7 @@ export function LogsToolbar({
           aria-label="Refresh logs"
           onClick={onRefresh}
         >
-          <RefreshCw className="size-4" />
+          <Icon icon={RefreshCw} />
         </Button>
       )}
       {onExport && (
@@ -114,7 +115,7 @@ export function LogsToolbar({
           aria-label="Export logs"
           onClick={() => onExport(entries)}
         >
-          <Download className="size-4" />
+          <Icon icon={Download} />
         </Button>
       )}
     </div>

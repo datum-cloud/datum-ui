@@ -1,10 +1,11 @@
 'use client'
 
-import type { KeyboardEvent } from 'react'
-import type { LogColumnId, LogEntry, ParsedLogLine } from '../types'
-import { useRef } from 'react'
+import type { KeyboardEvent, ReactNode } from 'react'
+import type { LogColumn } from '../types'
+import { Inbox, RefreshCw, TriangleAlert } from 'lucide-react'
+import { useMemo, useRef } from 'react'
 import { cn } from '../../../../utils/cn'
-import { Skeleton } from '../../../base/skeleton'
+import { Button } from '../../../base/button'
 import {
   TableBody,
   TableCell,
@@ -12,94 +13,77 @@ import {
   TableHeader,
   TableRow,
 } from '../../../base/table'
+import { Icon } from '../../../icons/icon-wrapper'
 import { useLogs } from '../hooks/use-logs'
-import { formatLogTimestamp } from '../utils/format-timestamp'
 import { logLineDisplay } from '../utils/parse-log-line'
-import { LogsSeverityBadge, LogsStatusBadge } from './status-badge'
+import {
+  columnCellClass,
+  columnHeadClass,
+  columnHeader,
+  columnSkeleton,
+  columnWidthStyle,
+} from './columns'
 
-const COLUMN_LABEL: Record<LogColumnId, string> = {
-  time: 'Time',
-  severity: 'Severity',
-  status: 'Status',
-  service: 'Service',
-  resource: 'Resource',
-  path: 'Path',
-  message: 'Message',
-}
+const SKELETON_ROWS = 12
 
-const COLUMN_HEAD_CLASS: Record<LogColumnId, string> = {
-  time: 'w-[168px]',
-  severity: 'w-[88px]',
-  status: 'w-[110px]',
-  service: 'w-[160px]',
-  resource: 'w-[160px]',
-  path: 'w-[200px]',
-  message: '',
-}
-
-function LogCell({
-  column,
-  entry,
-  parsed,
-  path,
-  message,
+/** Centred message row shared by the empty and error states. */
+function LogsTableState({
+  icon,
+  title,
+  description,
+  action,
+  colSpan,
+  slot,
+  role,
+  tone = 'muted',
 }: {
-  column: LogColumnId
-  entry: LogEntry
-  parsed: ParsedLogLine
-  path: string | null
-  message: string
+  icon: ReactNode
+  title: string
+  description?: ReactNode
+  action?: ReactNode
+  colSpan: number
+  slot: string
+  role?: 'alert'
+  tone?: 'muted' | 'destructive'
 }) {
-  switch (column) {
-    case 'time':
-      return (
-        <TableCell>
-          <time
-            dateTime={entry.timestamp.toISOString()}
-            className="text-muted-foreground font-mono text-xs whitespace-nowrap"
-          >
-            {formatLogTimestamp(entry.timestamp)}
-          </time>
-        </TableCell>
-      )
-    case 'severity':
-      return (
-        <TableCell>
-          <LogsSeverityBadge severity={entry.labels.severity} />
-        </TableCell>
-      )
-    case 'status':
-      return (
-        <TableCell>
-          <LogsStatusBadge parsed={parsed} />
-        </TableCell>
-      )
-    case 'service':
-      return (
-        <TableCell className="text-muted-foreground truncate font-mono text-xs">
-          {entry.labels.service_name ?? '—'}
-        </TableCell>
-      )
-    case 'resource':
-      return (
-        <TableCell className="text-muted-foreground truncate font-mono text-xs">
-          {entry.labels.resource_name ?? '—'}
-        </TableCell>
-      )
-    case 'path':
-      return (
-        <TableCell
-          className={cn('truncate font-mono text-xs', !path && 'text-muted-foreground')}
-          title={path ?? undefined}
+  return (
+    <TableRow className="hover:bg-transparent">
+      <TableCell colSpan={colSpan} className="pt-20 pb-12 text-center">
+        <div
+          role={role}
+          data-slot={slot}
+          className="mx-auto flex max-w-md flex-col items-center gap-2 px-4"
         >
-          {path ?? '—'}
-        </TableCell>
-      )
-    case 'message':
-      return (
-        <TableCell className="truncate font-mono text-xs">{message}</TableCell>
-      )
-  }
+          <span
+            className={cn(
+              'flex size-9 items-center justify-center rounded-full border',
+              tone === 'destructive'
+                ? 'border-destructive/20 bg-destructive/10 text-destructive'
+                : 'border-border bg-muted text-muted-foreground',
+            )}
+          >
+            {icon}
+          </span>
+          <p className="text-foreground text-sm font-medium">{title}</p>
+          {description && (
+            <p className="text-muted-foreground text-xs">{description}</p>
+          )}
+          {action && <div className="mt-1.5">{action}</div>}
+        </div>
+      </TableCell>
+    </TableRow>
+  )
+}
+
+function LogCell({ column, children }: { column: LogColumn, children: ReactNode }) {
+  return (
+    <TableCell
+      className={cn(columnCellClass(column), column.className)}
+      style={columnWidthStyle(column)}
+    >
+      {children}
+    </TableCell>
+  )
 }
 
 export function LogsTable({ className }: { className?: string }) {
@@ -112,8 +96,34 @@ export function LogsTable({ className }: { className?: string }) {
     error,
     selectPrevious,
     selectNext,
+    onRefresh,
+    hasActiveFilters,
+    resetFilters,
+    search,
+    setSearch,
   } = useLogs()
   const scrollerRef = useRef<HTMLDivElement>(null)
+  const rows = useMemo(
+    () => entries.map((entry) => {
+      const { parsed, path, message } = logLineDisplay(entry.line, entry.labels)
+      return { entry, ctx: { entry, parsed, path, message } }
+    }),
+    [entries],
+  )
+
+  // One state at a time: an error wins over skeletons; skeletons only while
+  // there is nothing to show; the empty row only for a settled, clean result.
+  const hasRows = entries.length > 0
+  const showError = Boolean(error) && !hasRows
+  const showErrorBanner = Boolean(error) && hasRows
+  const showSkeleton = isLoading && !hasRows && !error
+  const showEmpty = !isLoading && !hasRows && !error
+  const retry = onRefresh && (
+    <Button type="secondary" theme="outline" size="small" onClick={onRefresh}>
+      <Icon icon={RefreshCw} size={14} />
+      Retry
+    </Button>
+  )
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key === 'ArrowDown' || event.key === 'j') {
@@ -138,40 +148,90 @@ export function LogsTable({ className }: { className?: string }) {
       aria-busy={isLoading || undefined}
       onKeyDown={onKeyDown}
     >
-      {error && (
-        <div role="alert" className="text-destructive px-4 py-3 text-sm">
-          {error}
+      {showErrorBanner && (
+        <div
+          role="alert"
+          data-slot="logs-error-banner"
+          className="border-destructive/30 bg-destructive/5 text-foreground sticky top-0 z-20 flex items-center gap-2 border-b px-3 py-1.5 text-xs"
+        >
+          <Icon icon={TriangleAlert} size={14} className="text-destructive shrink-0" />
+          <span className="min-w-0 truncate">
+            <span className="font-medium">Refresh failed.</span>
+            {' '}
+            <span className="text-muted-foreground">Showing the last successful result.</span>
+            {' '}
+            <code className="font-mono">{error}</code>
+          </span>
+          <span className="ml-auto shrink-0">{retry}</span>
         </div>
       )}
-      <table className="w-full caption-bottom table-fixed text-sm">
+      <table className="w-full caption-bottom table-auto text-sm [&_th]:px-3 [&_th]:py-2 [&_td]:px-3 [&_td]:py-1.5">
         <TableHeader className="bg-background sticky top-0 z-10">
           <TableRow>
             {columns.map(column => (
-              <TableHead key={column} className={COLUMN_HEAD_CLASS[column]}>
-                {COLUMN_LABEL[column]}
+              <TableHead
+                key={column.id}
+                className={cn(columnHeadClass(column), column.headerClassName)}
+                style={columnWidthStyle(column)}
+              >
+                {columnHeader(column)}
               </TableHead>
             ))}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isLoading && entries.length === 0 && (
-            Array.from({ length: 8 }, (_, index) => (
-              <TableRow key={`skeleton-${index}`}>
-                <TableCell colSpan={columns.length}>
-                  <Skeleton className="h-4 w-full" />
-                </TableCell>
+          {showSkeleton && (
+            Array.from({ length: SKELETON_ROWS }, (_, index) => (
+              <TableRow key={`skeleton-${index}`} data-slot="logs-skeleton-row">
+                {columns.map(column => (
+                  <LogCell key={column.id} column={column}>
+                    {columnSkeleton(column, index)}
+                  </LogCell>
+                ))}
               </TableRow>
             ))
           )}
-          {!isLoading && entries.length === 0 && !error && (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="text-muted-foreground py-10 text-center text-sm">
-                No logs in this time range
-              </TableCell>
-            </TableRow>
+          {showError && (
+            <LogsTableState
+              role="alert"
+              slot="logs-error"
+              tone="destructive"
+              colSpan={columns.length}
+              icon={<Icon icon={TriangleAlert} />}
+              title="Couldn't load logs"
+              description={(
+                <code className="bg-muted text-foreground inline-block max-w-full rounded-md border px-2 py-1 text-left font-mono text-[11px] leading-4 break-all">
+                  {error}
+                </code>
+              )}
+              action={retry}
+            />
           )}
-          {entries.map((entry) => {
-            const { parsed, path, message } = logLineDisplay(entry.line)
+          {showEmpty && (
+            <LogsTableState
+              slot="logs-empty"
+              colSpan={columns.length}
+              icon={<Icon icon={Inbox} />}
+              title="No logs in this time range"
+              description={hasActiveFilters || search
+                ? 'Try widening the range or clearing the filters.'
+                : 'Try widening the range or check back in a moment.'}
+              action={(hasActiveFilters || search) && (
+                <Button
+                  type="secondary"
+                  theme="outline"
+                  size="small"
+                  onClick={() => {
+                    resetFilters()
+                    setSearch('')
+                  }}
+                >
+                  Clear filters
+                </Button>
+              )}
+            />
+          )}
+          {rows.map(({ entry, ctx }) => {
             const selected = entry.id === selectedId
 
             return (
@@ -180,9 +240,9 @@ export function LogsTable({ className }: { className?: string }) {
                 data-state={selected ? 'selected' : undefined}
                 aria-selected={selected}
                 className={cn(
-                  'cursor-pointer hover:bg-foreground/[0.08]',
-                  'data-[state=selected]:bg-foreground/[0.14]',
-                  'data-[state=selected]:hover:bg-foreground/[0.14]',
+                  'cursor-pointer hover:bg-foreground/5',
+                  'data-[state=selected]:bg-foreground/10',
+                  'data-[state=selected]:hover:bg-foreground/10',
                 )}
                 onClick={() => {
                   setSelectedId(selected ? null : entry.id)
@@ -190,14 +250,9 @@ export function LogsTable({ className }: { className?: string }) {
                 }}
               >
                 {columns.map(column => (
-                  <LogCell
-                    key={column}
-                    column={column}
-                    entry={entry}
-                    parsed={parsed}
-                    path={path}
-                    message={message}
-                  />
+                  <LogCell key={column.id} column={column}>
+                    {column.cell(ctx)}
+                  </LogCell>
                 ))}
               </TableRow>
             )

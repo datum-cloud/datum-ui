@@ -37,11 +37,65 @@ export interface LogFacet {
 export interface LogTimeRange {
   from: string
   to: string
+  /**
+   * Key of the relative preset this range came from (e.g. `last-30m`).
+   * Absent for hand-picked absolute ranges. Pass through
+   * `resolveLogTimeRange` to slide a preset window forward to "now".
+   */
+  preset?: string
 }
 
 export type LogFilters = Record<string, string[]>
 
-export type LogColumnId = 'time' | 'severity' | 'status' | 'service' | 'resource' | 'path' | 'message'
+/** One bar of the timeline histogram. `start` is inclusive, `end` exclusive. */
+export interface LogHistogramBucket {
+  start: string
+  end: string
+  count: number
+}
+
+export type LogColumnId
+  = | 'time'
+    | 'severity'
+    | 'status'
+    | 'service'
+    | 'resource'
+    | 'host'
+    | 'path'
+    | 'message'
+
+/** How a column behaves in a full-width table. */
+export type LogColumnSize = 'hug' | 'fixed' | 'fill'
+
+export interface LogColumnCellContext {
+  entry: LogEntry
+  parsed: ParsedLogLine
+  path: string | null
+  message: string
+}
+
+/**
+ * A logs table column. Pass a built-in `LogColumnId` or a custom column
+ * so consumers can add Host / Request without CSS overrides.
+ */
+export interface LogColumnSkeletonContext {
+  row: number
+}
+
+export interface LogColumn {
+  id: string
+  header: ReactNode
+  size?: LogColumnSize
+  /** Pixel width when `size` is `fixed`. Defaults to 160. */
+  width?: number
+  className?: string
+  headerClassName?: string
+  cell: (ctx: LogColumnCellContext) => ReactNode
+  /** Placeholder that mirrors this cell's real content while logs load. */
+  skeleton?: (ctx: LogColumnSkeletonContext) => ReactNode
+}
+
+export type LogColumnSpec = LogColumnId | LogColumn
 
 export interface ParsedHttpLogLine {
   kind: 'http'
@@ -68,6 +122,13 @@ export type LogSeverity = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL' | (strin
 export interface LogsRootProps {
   entries: readonly LogEntry[]
   facets?: readonly LogFacet[]
+  /**
+   * Bucketed counts for `Logs.Timeline`. Supply server-side counts (e.g. a
+   * LogQL `count_over_time` range query) so the histogram reflects the whole
+   * window rather than the loaded page. Defaults to bucketing `entries`
+   * across `timeRange`.
+   */
+  histogram?: readonly LogHistogramBucket[]
   timeRange?: LogTimeRange
   defaultTimeRange?: LogTimeRange
   filters?: LogFilters
@@ -80,7 +141,7 @@ export interface LogsRootProps {
   defaultSelectedId?: string | null
   isLoading?: boolean
   error?: ReactNode
-  columns?: readonly LogColumnId[]
+  columns?: readonly LogColumnSpec[]
   onTimeRangeChange?: (range: LogTimeRange) => void
   onFiltersChange?: (filters: LogFilters) => void
   onSearchChange?: (search: string) => void
@@ -95,6 +156,7 @@ export interface LogsRootProps {
 export interface LogsContextValue {
   entries: readonly LogEntry[]
   facets: readonly LogFacet[]
+  histogram: readonly LogHistogramBucket[]
   timeRange: LogTimeRange
   setTimeRange: (range: LogTimeRange) => void
   filters: LogFilters
@@ -113,7 +175,7 @@ export interface LogsContextValue {
   selectNext: () => void
   isLoading: boolean
   error: ReactNode
-  columns: readonly LogColumnId[]
+  columns: readonly LogColumn[]
   hasActiveFilters: boolean
   onRefresh?: () => void
   onExport?: (entries: readonly LogEntry[]) => void

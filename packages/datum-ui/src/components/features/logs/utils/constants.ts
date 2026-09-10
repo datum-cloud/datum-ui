@@ -15,6 +15,7 @@ export const FACET_LABELS: Record<string, string> = {
   severity: 'Severity',
   service_name: 'Service',
   resource_name: 'Resource',
+  host: 'Host',
 }
 
 export const SEVERITY_ORDER = ['ERROR', 'FATAL', 'WARN', 'WARNING', 'INFO', 'DEBUG', 'TRACE'] as const

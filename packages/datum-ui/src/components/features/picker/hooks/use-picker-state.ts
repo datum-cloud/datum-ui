@@ -37,6 +37,17 @@ type Action
     | { type: 'RESET_TO', payload: unknown }
     | { type: 'CLEAR_PRESET' }
 
+/**
+ * Preset key carried on a range value (`{ from, to, preset }`), so a value
+ * hydrated from props / URL highlights its preset chip.
+ */
+function presetKeyOf(value: unknown): string | undefined {
+  if (typeof value !== 'object' || value === null)
+    return undefined
+  const preset = (value as { preset?: unknown }).preset
+  return typeof preset === 'string' ? preset : undefined
+}
+
 function reducer(state: PickerStateInternal, action: Action): PickerStateInternal {
   switch (action.type) {
     case 'SET_SINGLE_DATE':
@@ -63,7 +74,7 @@ function reducer(state: PickerStateInternal, action: Action): PickerStateInterna
     case 'CLOSE':
       return { ...state, open: false }
     case 'RESET_TO':
-      return { ...state, pendingValue: action.payload, selectedPresetKey: undefined }
+      return { ...state, pendingValue: action.payload, selectedPresetKey: presetKeyOf(action.payload) }
     case 'CLEAR_PRESET':
       return { ...state, selectedPresetKey: undefined }
     default:
@@ -190,7 +201,7 @@ export function usePickerState<M extends PickerMode>({
   const [state, dispatch] = useReducer(reducer, undefined, () => ({
     pendingValue: value as unknown,
     open: false,
-    selectedPresetKey: undefined,
+    selectedPresetKey: presetKeyOf(value),
     monthFrom: undefined,
     monthTo: undefined,
   }))
