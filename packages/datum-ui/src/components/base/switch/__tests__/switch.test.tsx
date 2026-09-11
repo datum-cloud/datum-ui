@@ -29,4 +29,21 @@ describe('switch', () => {
     const switchEl = screen.getByRole('switch')
     expect(switchEl).toHaveAttribute('data-state', 'checked')
   })
+
+  it('renders state glyphs inside the thumb so on/off is not carried by position alone', () => {
+    const { container } = render(<Switch checked={false} />)
+    const thumb = container.querySelector('[data-slot="switch-thumb"]')
+
+    expect(thumb).not.toBeNull()
+    expect(thumb?.querySelectorAll('svg')).toHaveLength(2)
+  })
+
+  it('keeps the glyphs decorative so assistive tech reads aria-checked instead', () => {
+    const { container } = render(<Switch checked />)
+
+    for (const icon of container.querySelectorAll('[data-slot="switch-thumb"] svg')) {
+      expect(icon).toHaveAttribute('aria-hidden')
+    }
+    expect(screen.getByRole('switch')).toHaveAttribute('aria-checked', 'true')
+  })
 })
