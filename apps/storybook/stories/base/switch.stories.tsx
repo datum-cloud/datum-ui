@@ -73,6 +73,31 @@ export const WithLabel: Story = {
   ),
 }
 
+export const States: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Off and on side by side. The thumb carries a cross when off and a check when on, so the state survives a glance '
+          + 'instead of resting on the thumb\'s position and the track\'s colour. The glyphs are decorative — assistive tech '
+          + 'reads state from `role="switch"` and `aria-checked`.',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex items-center gap-6">
+      <div className="flex items-center gap-2">
+        <Switch id="state-off" />
+        <Label htmlFor="state-off">Off</Label>
+      </div>
+      <div className="flex items-center gap-2">
+        <Switch id="state-on" defaultChecked />
+        <Label htmlFor="state-on">On</Label>
+      </div>
+    </div>
+  ),
+}
+
 export const Disabled: Story = {
   parameters: {
     docs: {
