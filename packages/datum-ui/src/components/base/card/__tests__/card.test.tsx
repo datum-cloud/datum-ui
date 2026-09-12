@@ -58,7 +58,7 @@ describe('cardHeader', () => {
 
   it('exposes density via size', () => {
     render(<CardHeader size="sm">Header</CardHeader>)
-    expect(screen.getByText('Header')).toHaveClass('gap-1')
+    expect(screen.getByText('Header')).toHaveClass('has-data-[slot=card-description]:gap-1')
   })
 
   it('places CardAction in the trailing column', () => {

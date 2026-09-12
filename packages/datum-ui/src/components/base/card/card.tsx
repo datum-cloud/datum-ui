@@ -88,10 +88,13 @@ const cardHeaderVariants = cva(
        * vertical inset). Stacked cards take their vertical spacing from the
        * root.
        */
+      // The title/description gap is only applied when a description exists;
+      // grid gaps otherwise still separate the empty second row and add
+      // phantom height under title-only headers.
       size: {
-        sm: 'gap-1 group-data-[layout=sectioned]/card:min-h-12 group-data-[layout=sectioned]/card:py-(--card-py)',
-        md: 'gap-3 group-data-[layout=sectioned]/card:min-h-14 group-data-[layout=sectioned]/card:py-(--card-py)',
-        lg: 'gap-3 group-data-[layout=sectioned]/card:min-h-16 group-data-[layout=sectioned]/card:py-[calc(var(--card-py)*1.25)]',
+        sm: 'has-data-[slot=card-description]:gap-1 group-data-[layout=sectioned]/card:min-h-12 group-data-[layout=sectioned]/card:py-(--card-py)',
+        md: 'has-data-[slot=card-description]:gap-3 group-data-[layout=sectioned]/card:min-h-14 group-data-[layout=sectioned]/card:py-(--card-py)',
+        lg: 'has-data-[slot=card-description]:gap-3 group-data-[layout=sectioned]/card:min-h-16 group-data-[layout=sectioned]/card:py-[calc(var(--card-py)*1.25)]',
       },
       /** Draw a divider under the header. Pairs with `sectioned` cards. */
       bordered: {
@@ -127,7 +130,9 @@ function CardAction({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="card-action"
-      className={cn('col-start-2 row-span-2 row-start-1 self-start justify-self-end', className)}
+      // Flex (not block) so inline children don't sit on a baseline line box
+      // taller than themselves and inflate the header.
+      className={cn('col-start-2 row-span-2 row-start-1 flex items-center gap-2 self-start justify-self-end', className)}
       {...props}
     />
   )
