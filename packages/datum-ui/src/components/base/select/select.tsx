@@ -33,6 +33,8 @@ function SelectTrigger({ ref, className, ...props }: React.ComponentProps<typeof
         'text-input-foreground',
         'border-input-border',
         'placeholder:text-input-placeholder',
+        // Flat at rest like Input; the shadcn base adds shadow-xs.
+        'shadow-none',
         'focus-visible:ring-0 focus-visible:ring-offset-0',
         'focus-visible:border-input-focus-border',
         'focus-visible:shadow-(--input-focus-shadow)',

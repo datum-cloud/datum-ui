@@ -13,6 +13,17 @@ describe('picker.Trigger', () => {
     expect(getByRole('combobox', { name: /pick a date/i })).toBeDefined()
   })
 
+  it('uses the same corner radius as Input and Select', () => {
+    const { getByRole } = render(
+      <Picker.Root mode="date" value={null} onChange={vi.fn()}>
+        <PickerTrigger placeholder="Pick a date" />
+      </Picker.Root>,
+    )
+    const btn = getByRole('combobox', { name: /pick a date/i })
+    expect(btn.className).toContain('rounded-lg')
+    expect(btn.className).not.toContain('rounded-md')
+  })
+
   it('opens the picker when clicked', () => {
     const onChange = vi.fn()
     const { getByRole } = render(
