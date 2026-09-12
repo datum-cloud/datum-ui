@@ -18,6 +18,9 @@ import { cn } from '../../../utils/cn'
  *   --card-px  horizontal inset shared by header, content, and footer
  *   --card-py  vertical inset used by header/footer/content in sectioned cards
  *
+ * Both are equal for a given `size` (1rem for `sm`, 1.5rem for `md`), so the
+ * card frame is uniform; `CardHeader size` only nudges the header's own inset.
+ *
  * Consumers building their own rows inside a flush `CardContent` can use
  * `px-(--card-px)` to line up with the card chrome regardless of `size`.
  *
@@ -37,8 +40,10 @@ const cardVariants = cva(
   {
     variants: {
       size: {
-        sm: '[--card-px:1rem] [--card-py:0.75rem]',
-        md: '[--card-px:1.5rem] [--card-py:1rem]',
+        // Insets are equal on both axes so slot padding reads as a uniform
+        // frame around the content rather than a letterboxed one.
+        sm: '[--card-px:1rem] [--card-py:1rem]',
+        md: '[--card-px:1.5rem] [--card-py:1.5rem]',
       },
       sectioned: {
         true: 'gap-0 py-0',
@@ -79,13 +84,14 @@ const cardHeaderVariants = cva(
     variants: {
       /**
        * Header density. Controls the gap between title and description and,
-       * in sectioned cards, the header's own vertical inset and minimum
-       * height. Stacked cards take their vertical spacing from the root.
+       * in sectioned cards, the header's minimum height (`lg` also grows the
+       * vertical inset). Stacked cards take their vertical spacing from the
+       * root.
        */
       size: {
-        sm: 'gap-1 group-data-[layout=sectioned]/card:min-h-12 group-data-[layout=sectioned]/card:py-3',
+        sm: 'gap-1 group-data-[layout=sectioned]/card:min-h-12 group-data-[layout=sectioned]/card:py-(--card-py)',
         md: 'gap-3 group-data-[layout=sectioned]/card:min-h-14 group-data-[layout=sectioned]/card:py-(--card-py)',
-        lg: 'gap-3 group-data-[layout=sectioned]/card:min-h-16 group-data-[layout=sectioned]/card:py-5',
+        lg: 'gap-3 group-data-[layout=sectioned]/card:min-h-16 group-data-[layout=sectioned]/card:py-[calc(var(--card-py)*1.25)]',
       },
       /** Draw a divider under the header. Pairs with `sectioned` cards. */
       bordered: {
