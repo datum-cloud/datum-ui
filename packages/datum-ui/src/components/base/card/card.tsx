@@ -33,7 +33,7 @@ import { cn } from '../../../utils/cn'
  */
 
 const cardVariants = cva(
-  'group/card bg-card text-card-foreground border-card-border flex flex-col rounded-xl border shadow',
+  'group/card bg-card text-card-foreground border-card-border flex flex-col rounded-xl border',
   {
     variants: {
       size: {
