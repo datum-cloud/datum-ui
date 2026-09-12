@@ -79,7 +79,11 @@ const cardHeaderVariants = cva(
   // Grid rather than flex so a trailing `CardAction` can sit in a second
   // column spanning title + description without wrapping the header in
   // a flex row at every call site.
-  '@container/card-header border-card-border grid auto-rows-min grid-rows-[auto_auto] items-start px-(--card-px) has-data-[slot=card-action]:grid-cols-[1fr_auto]',
+  //
+  // Alignment: a title-only header centres the title against the action
+  // (and within `min-h` in sectioned cards, hence `content-center`). Once a
+  // description is present the pair top-aligns with the action instead.
+  '@container/card-header group/card-header border-card-border grid auto-rows-min grid-rows-[auto_auto] content-center items-center px-(--card-px) has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:items-start',
   {
     variants: {
       /**
@@ -124,15 +128,24 @@ function CardHeader({ className, size, bordered, ...props }: CardHeaderProps) {
 
 /**
  * Trailing header action (button, link, badge). Renders in the header's
- * second grid column, spanning both the title and description rows.
+ * second grid column. With a description it spans both rows and top-aligns;
+ * title-only it shares the title's row and centres against it.
  */
 function CardAction({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="card-action"
       // Flex (not block) so inline children don't sit on a baseline line box
-      // taller than themselves and inflate the header.
-      className={cn('col-start-2 row-span-2 row-start-1 flex items-center gap-2 self-start justify-self-end', className)}
+      // taller than themselves and inflate the header. Spanning only the
+      // title row when there is no description keeps the grid from handing
+      // half the action's height to the empty second row. `row-end-3` rather
+      // than `row-span-2`: the span shorthand sets grid-row-start too and
+      // would clobber `row-start-1` when emitted under a variant.
+      className={cn(
+        'col-start-2 row-start-1 flex items-center gap-2 self-center justify-self-end',
+        'group-has-data-[slot=card-description]/card-header:row-end-3 group-has-data-[slot=card-description]/card-header:self-start',
+        className,
+      )}
       {...props}
     />
   )

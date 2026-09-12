@@ -72,6 +72,22 @@ describe('cardHeader', () => {
     expect(action).toHaveAttribute('data-slot', 'card-action')
     expect(action).toHaveClass('col-start-2', 'justify-self-end')
   })
+
+  it('centres a title-only header against its action, top-aligns with a description', () => {
+    render(
+      <CardHeader>
+        <CardTitle>Title</CardTitle>
+        <CardAction>Action</CardAction>
+      </CardHeader>,
+    )
+    const header = screen.getByText('Title').parentElement!
+    expect(header).toHaveClass('items-center', 'content-center', 'has-data-[slot=card-description]:items-start')
+    expect(screen.getByText('Action')).toHaveClass(
+      'self-center',
+      'group-has-data-[slot=card-description]/card-header:row-end-3',
+      'group-has-data-[slot=card-description]/card-header:self-start',
+    )
+  })
 })
 
 describe('cardContent', () => {
