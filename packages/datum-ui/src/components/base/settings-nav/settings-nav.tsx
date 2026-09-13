@@ -1,8 +1,8 @@
 import type { VariantProps } from 'class-variance-authority'
 import { Slot } from '@radix-ui/react-slot'
+import { cva } from 'class-variance-authority'
 import * as React from 'react'
 import { cn } from '../../../utils/cn'
-import { settingsNavItemVariants } from './settings-nav-variants'
 
 /**
  * Compact inset settings navigation for configuration pages.
@@ -12,6 +12,28 @@ import { settingsNavItemVariants } from './settings-nav-variants'
  * eyebrow, icon items with an active fill, optional error dots, Soon badges,
  * and a danger item for destructive sections.
  */
+
+const settingsNavItemVariants = cva(
+  // `aria-disabled` (not `disabled:`) — this renders as an `<a>`, which has
+  // no `:disabled` state. The click handler still calls preventDefault.
+  'group/settings-nav-item relative flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-xs font-normal transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring aria-disabled:pointer-events-none aria-disabled:opacity-50',
+  {
+    variants: {
+      variant: {
+        // Hover uses a primary tint (not `muted`, which is near-invisible on
+        // the light theme's background) so it reads as a lighter step of the
+        // active fill.
+        default:
+          'text-foreground hover:bg-primary/5 hover:text-primary data-[active=true]:bg-primary/10 data-[active=true]:text-primary',
+        danger:
+          'text-destructive hover:bg-destructive/10 data-[active=true]:bg-destructive/10 data-[active=true]:text-destructive',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  },
+)
 
 function SettingsNav({ className, ...props }: React.ComponentProps<'nav'>) {
   return (
@@ -67,8 +89,6 @@ function SettingsNavItem({
   onClick,
   ...props
 }: SettingsNavItemProps) {
-  const Comp: React.ElementType = asChild ? Slot : 'a'
-
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (disabled) {
       event.preventDefault()
@@ -77,36 +97,26 @@ function SettingsNavItem({
     onClick?.(event)
   }
 
-  return (
-    <Comp
-      data-slot="settings-nav-item"
-      data-active={active || undefined}
-      data-variant={variant ?? 'default'}
-      aria-current={active ? 'page' : undefined}
-      aria-disabled={disabled || undefined}
-      tabIndex={disabled ? -1 : undefined}
-      href={disabled ? undefined : href}
-      onClick={handleClick}
-      className={cn(settingsNavItemVariants({ variant }), className)}
-      {...props}
-    >
+  const label = (
+    asChild && React.isValidElement<{ children?: React.ReactNode }>(children)
+      ? children.props.children
+      : children
+  )
+
+  const content = (
+    <>
       {icon
         ? (
             <span
               data-slot="settings-nav-item-icon"
-              className={cn(
-                'flex size-4 shrink-0 items-center justify-center [&_svg]:size-4',
-                variant === 'danger'
-                  ? 'text-destructive'
-                  : 'text-muted-foreground transition-colors group-hover/settings-nav-item:text-primary group-data-[active=true]/settings-nav-item:text-primary',
-              )}
+              className="flex size-4 shrink-0 items-center justify-center text-muted-foreground transition-colors group-hover/settings-nav-item:text-primary group-data-[active=true]/settings-nav-item:text-primary group-data-[variant=danger]/settings-nav-item:!text-destructive [&_svg]:size-4"
               aria-hidden="true"
             >
               {icon}
             </span>
           )
         : null}
-      <span className="min-w-0 flex-1 truncate text-left">{children}</span>
+      <span className="min-w-0 flex-1 truncate text-left">{label}</span>
       {indicator
         ? (
             <span
@@ -126,7 +136,39 @@ function SettingsNavItem({
             </span>
           )
         : null}
-    </Comp>
+    </>
+  )
+
+  const itemClassName = cn(settingsNavItemVariants({ variant }), className)
+  const itemProps = {
+    'data-slot': 'settings-nav-item',
+    'data-active': active || undefined,
+    'data-variant': variant ?? 'default',
+    'aria-current': active ? ('page' as const) : undefined,
+    'aria-disabled': disabled || undefined,
+    'tabIndex': disabled ? -1 : undefined,
+    'onClick': handleClick,
+    'className': itemClassName,
+    ...props,
+  }
+
+  // With `asChild` Radix's Slot needs exactly one element, so icon / label /
+  // indicator / badge have to live inside the child (e.g. a router Link)
+  // rather than beside it.
+  if (asChild && React.isValidElement(children)) {
+    // eslint-disable-next-line react/no-clone-element -- appending into an opaque Link child
+    const slotted = React.cloneElement(children, undefined, content)
+    return (
+      <Slot {...itemProps}>
+        {slotted}
+      </Slot>
+    )
+  }
+
+  return (
+    <a href={disabled ? undefined : href} {...itemProps}>
+      {content}
+    </a>
   )
 }
 

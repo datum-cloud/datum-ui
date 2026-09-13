@@ -63,4 +63,33 @@ describe('settingsNavItem', () => {
     item?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
     expect(onClick).not.toHaveBeenCalled()
   })
+
+  it('slots onto a single child so a router Link can own the element', () => {
+    render(
+      <SettingsNavItem asChild icon={<span>ico</span>} indicator badge="Soon">
+        <a href="/general">General</a>
+      </SettingsNavItem>,
+    )
+
+    const link = screen.getByRole('link', { name: /General/ })
+    expect(link).toHaveAttribute('href', '/general')
+    expect(link).toHaveAttribute('data-slot', 'settings-nav-item')
+    expect(link.querySelector('[data-slot="settings-nav-item-icon"]')).not.toBeNull()
+    expect(link.querySelector('[data-slot="settings-nav-item-indicator"]')).not.toBeNull()
+    expect(screen.getByText('Soon')).toHaveAttribute('data-slot', 'settings-nav-item-badge')
+    expect(link.querySelectorAll('a')).toHaveLength(0)
+  })
+
+  it('colours the danger icon from data-variant, not a JS branch', () => {
+    render(
+      <SettingsNavItem href="#danger" variant="danger" icon={<span>ico</span>}>
+        Danger Zone
+      </SettingsNavItem>,
+    )
+    const item = screen.getByRole('link', { name: /Danger Zone/ })
+    expect(item).toHaveAttribute('data-variant', 'danger')
+    expect(item.querySelector('[data-slot="settings-nav-item-icon"]')).toHaveClass(
+      'group-data-[variant=danger]/settings-nav-item:!text-destructive',
+    )
+  })
 })

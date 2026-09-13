@@ -19,7 +19,9 @@ import { cn } from '../../../utils/cn'
  *   --card-py  vertical inset used by header/footer/content in sectioned cards
  *
  * Both are equal for a given `size` (1rem for `sm`, 1.5rem for `md`), so the
- * card frame is uniform; `CardHeader size` only nudges the header's own inset.
+ * card frame is uniform. `CardHeader size` is a separate density scale
+ * (`sm` | `md` | `lg`) for title/description gap and sectioned min-height —
+ * it does not change `--card-px` / `--card-py`.
  *
  * Consumers building their own rows inside a flush `CardContent` can use
  * `px-(--card-px)` to line up with the card chrome regardless of `size`.
@@ -87,10 +89,10 @@ const cardHeaderVariants = cva(
   {
     variants: {
       /**
-       * Header density. Controls the gap between title and description and,
-       * in sectioned cards, the header's minimum height (`lg` also grows the
-       * vertical inset). Stacked cards take their vertical spacing from the
-       * root.
+       * Header density (not the card's inset `size`). Controls the gap
+       * between title and description and, in sectioned cards, the header's
+       * minimum height (`lg` also grows the vertical inset). Stacked cards
+       * take their vertical spacing from the root.
        */
       // The title/description gap is only applied when a description exists;
       // grid gaps otherwise still separate the empty second row and add
@@ -151,19 +153,22 @@ function CardAction({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/**
+ * Shared by CardContent and CardFooter.
+ * - `default`: inset to match the card chrome.
+ * - `x-none`: no horizontal inset — rows, tables, and dividers run to the
+ *   card edge while the header stays inset.
+ * - `none`: no inset at all.
+ */
+const cardPadding = {
+  'default': 'px-(--card-px) group-data-[layout=sectioned]/card:py-(--card-py)',
+  'x-none': 'px-0 group-data-[layout=sectioned]/card:py-(--card-py)',
+  'none': 'p-0',
+} as const
+
 const cardContentVariants = cva('', {
   variants: {
-    /**
-     * - `default`: inset to match the card chrome.
-     * - `x-none`: no horizontal inset — rows, tables, and dividers run to
-     *   the card edge while the header stays inset.
-     * - `none`: no inset at all.
-     */
-    padding: {
-      'default': 'px-(--card-px) group-data-[layout=sectioned]/card:py-(--card-py)',
-      'x-none': 'px-0 group-data-[layout=sectioned]/card:py-(--card-py)',
-      'none': 'p-0',
-    },
+    padding: cardPadding,
   },
   defaultVariants: {
     padding: 'default',
@@ -185,11 +190,7 @@ function CardContent({ className, padding, ...props }: CardContentProps) {
 
 const cardFooterVariants = cva('border-card-border', {
   variants: {
-    padding: {
-      'default': 'px-(--card-px) group-data-[layout=sectioned]/card:py-(--card-py)',
-      'x-none': 'px-0 group-data-[layout=sectioned]/card:py-(--card-py)',
-      'none': 'p-0',
-    },
+    padding: cardPadding,
     /** Draw a divider above the footer. Pairs with `sectioned` cards. */
     bordered: {
       true: 'border-t',

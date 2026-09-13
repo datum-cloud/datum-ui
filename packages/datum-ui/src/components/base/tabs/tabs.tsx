@@ -38,10 +38,14 @@ function Tabs({
 
   const handleValueChange = React.useCallback(
     (next: string) => {
-      setUncontrolled(next)
+      // Don't mirror into local state when controlled — that extra setState
+      // re-renders once before the parent value arrives.
+      if (valueProp === undefined) {
+        setUncontrolled(next)
+      }
       onValueChange?.(next)
     },
-    [onValueChange],
+    [onValueChange, valueProp],
   )
 
   const ctx = React.useMemo<TabsContextValue>(() => ({ value, indicatorId }), [value, indicatorId])
@@ -123,6 +127,7 @@ function TabsTrigger({
           aria-hidden
           data-slot="tabs-indicator"
           layoutId={`tabs-indicator-${indicatorId}`}
+          data-layout-id={`tabs-indicator-${indicatorId}`}
           className="bg-primary absolute inset-x-0 bottom-0 h-0.5"
           transition={{ type: 'spring', stiffness: 380, damping: 30 }}
         />
