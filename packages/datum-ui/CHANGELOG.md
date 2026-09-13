@@ -1,5 +1,24 @@
 # @datum-cloud/datum-ui
 
+## 2.9.0
+
+### Minor Changes
+
+- bbde128: Card gains layout variants so dashboards and settings pages can be built without overriding its padding at every call site. `CardField`, `CardFieldLabel`, and `CardFieldValue` add a definition row for sectioned settings cards: two equal columns from the `sm` breakpoint (stacked below) so labels, values, and inline inputs share one midline down the card and across neighbouring cards. Rows inset themselves with margin rather than padding, so the divider between rows runs only as wide as the content while the header divider still spans the card.
+  
+  The root now publishes `--card-px` / `--card-py` (equal per size: 1rem for `sm`, 1.5rem for `md`) and takes `size` (`sm` | `md`) to scale the whole card's inset at once; rows rendered inside a card can use `px-(--card-px)` to line up with the header. A `sectioned` card drops the root padding and gap so each slot owns its own inset and slots are separated by dividers: `CardHeader` takes `size` (`sm` | `md` | `lg`) and `bordered`, `CardFooter` takes `bordered`, and both `CardContent` and `CardFooter` take `padding` (`default` | `x-none` | `none`) for flush lists and tables. `CardAction` places a trailing control in the header alongside the title and description; a title-only header centres the title against the action, while a header with a description top-aligns both. Card no longer renders a drop shadow by default; add `shadow` via `className` if a raised card is wanted. Other defaults are unchanged.
+  
+  `CardSaveBar` is the save/cancel footer for inline-editable settings cards. Pass `changeCount`, `errorCount`, and `saving` and it renders the live status line ("2 unsaved changes · 1 error must be fixed before saving"), a Cancel button, and a Save button that stays disabled until something has changed and nothing is invalid. Buttons use the `xs` size to match `CardAction` controls in a `size="sm"` card; labels and the status text can be overridden.
+  
+  Tabs gains `variant="line"` on `TabsList`: underline page tabs with a start-aligned list and a sliding active indicator. The indicator is driven by the Tabs root, so controlled and uncontrolled usage both animate, and it renders inside the link when combined with `TabsLinkTrigger`. Several line tab bars on one page never share an indicator.
+- bbde128: SettingsNav is a compact inset settings list for configuration pages: a SETTINGS eyebrow, icon items with an active fill, optional error indicators, Soon badges, and a danger item. It is separate from the app-chrome NavMenu / sidebar primitives. Items have a visible primary-tinted hover (text, icon and background) that steps up to the active fill.
+
+### Patch Changes
+
+- bbde128: Picker triggers (`DatePicker`, `TimeRangePicker`, etc.) now use `rounded-lg`, matching `Input`, `Select`, and `Autocomplete`. Previously they inherited the shadcn Button's `rounded-md`.
+- bbde128: `SelectTrigger` no longer renders a resting drop shadow, matching `Input`. The focus shadow is unchanged.
+- bbde128: `Textarea` no longer renders a resting drop shadow, matching `Input`. The focus shadow is unchanged.
+
 ## 2.8.0
 
 ### Minor Changes
