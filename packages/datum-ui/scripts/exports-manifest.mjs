@@ -66,6 +66,7 @@ export const manifest = [
   { subpath: './rich-text-editor', source: './src/components/features/rich-text-editor/index.ts' },
   { subpath: './select', source: './src/components/base/select/index.ts' },
   { subpath: './separator', source: './src/components/base/separator/index.ts' },
+  { subpath: './settings-nav', source: './src/components/base/settings-nav/index.ts' },
   { subpath: './sheet', source: './src/components/base/sheet/index.ts' },
   { subpath: './skeleton', source: './src/components/base/skeleton/index.ts' },
   { subpath: './spinner', source: './src/components/base/spinner/index.ts' },

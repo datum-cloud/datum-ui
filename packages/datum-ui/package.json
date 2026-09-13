@@ -174,6 +174,11 @@
       "types": "./dist/components/base/separator/index.d.ts",
       "default": "./dist/separator/index.mjs"
     },
+    "./settings-nav": {
+      "source": "./src/components/base/settings-nav/index.ts",
+      "types": "./dist/components/base/settings-nav/index.d.ts",
+      "default": "./dist/settings-nav/index.mjs"
+    },
     "./sheet": {
       "source": "./src/components/base/sheet/index.ts",
       "types": "./dist/components/base/sheet/index.d.ts",

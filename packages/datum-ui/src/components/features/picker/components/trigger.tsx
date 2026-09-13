@@ -59,7 +59,8 @@ export function PickerTrigger({
           actions.close()
         else actions.open()
       }}
-      className={cn('w-full justify-between gap-2 font-normal', triggerClassName, className)}
+      // rounded-lg matches Input/Select/Autocomplete; the shadcn base Button is rounded-md.
+      className={cn('w-full justify-between gap-2 rounded-lg font-normal', triggerClassName, className)}
       {...slotProps}
     >
       <span className="flex flex-1 items-center gap-2 truncate">
