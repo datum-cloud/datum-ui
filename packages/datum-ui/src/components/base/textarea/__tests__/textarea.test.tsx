@@ -29,4 +29,9 @@ describe('textarea', () => {
     render(<Textarea value="controlled value" readOnly />)
     expect(screen.getByRole('textbox')).toHaveValue('controlled value')
   })
+
+  it('is flat at rest', () => {
+    render(<Textarea />)
+    expect(screen.getByRole('textbox')).toHaveClass('shadow-none')
+  })
 })
