@@ -164,4 +164,30 @@ describe('tabs line variant', () => {
 
     expect(container.querySelector('[data-slot="tabs-indicator"]')).toBeNull()
   })
+
+  it('does not share an indicator across two line tab bars', () => {
+    const { container } = render(
+      <>
+        <Tabs defaultValue="a">
+          <TabsList variant="line">
+            <TabsTrigger value="a">Alpha</TabsTrigger>
+            <TabsTrigger value="a2">Alpha two</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <Tabs defaultValue="b">
+          <TabsList variant="line">
+            <TabsTrigger value="b">Beta</TabsTrigger>
+            <TabsTrigger value="b2">Beta two</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </>,
+    )
+
+    const indicators = [...container.querySelectorAll('[data-slot="tabs-indicator"]')]
+    expect(indicators).toHaveLength(2)
+    const ids = indicators.map(el => el.getAttribute('data-layout-id'))
+    expect(ids[0]).toBeTruthy()
+    expect(ids[1]).toBeTruthy()
+    expect(ids[0]).not.toBe(ids[1])
+  })
 })

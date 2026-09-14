@@ -1,5 +1,5 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { CardSaveBar } from '../card-save-bar'
@@ -41,6 +41,14 @@ describe('cardSaveBar', () => {
     expect(onSave).toHaveBeenCalledTimes(1)
   })
 
+  it('keeps Cancel and Save outside the live region', () => {
+    render(<CardSaveBar changeCount={1} onCancel={() => {}} onSave={() => {}} />)
+    const status = screen.getByRole('status')
+    expect(status.tagName).toBe('P')
+    expect(status).toHaveAttribute('aria-live', 'polite')
+    expect(within(status).queryByRole('button')).toBeNull()
+  })
+
   it('accepts custom labels and a custom status', () => {
     render(
       <CardSaveBar
@@ -59,9 +67,8 @@ describe('cardSaveBar', () => {
   })
 
   it('renders as a bordered card footer with xs buttons', () => {
-    render(<CardSaveBar changeCount={0} onCancel={() => {}} onSave={() => {}} />)
-    const bar = screen.getByRole('status')
-    expect(bar).toHaveAttribute('data-slot', 'card-save-bar')
+    const { container } = render(<CardSaveBar changeCount={0} onCancel={() => {}} onSave={() => {}} />)
+    const bar = container.querySelector('[data-slot="card-save-bar"]')
     expect(bar).toHaveClass('border-t')
     expect(screen.getByRole('button', { name: 'Cancel' })).toHaveClass('h-7')
   })

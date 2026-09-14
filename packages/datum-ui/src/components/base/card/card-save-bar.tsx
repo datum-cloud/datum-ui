@@ -54,15 +54,18 @@ function CardSaveBar({
     <CardFooter
       bordered
       data-slot="card-save-bar"
-      role="status"
-      aria-live="polite"
       className={cn(
         'flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between',
         className,
       )}
       {...props}
     >
-      <p className="text-muted-foreground flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm">
+      <p
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="text-muted-foreground flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm"
+      >
         <span className="text-foreground font-medium">{status}</span>
         {errorCount > 0
           ? (
