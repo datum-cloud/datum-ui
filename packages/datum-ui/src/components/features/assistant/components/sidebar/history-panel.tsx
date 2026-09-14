@@ -9,6 +9,7 @@ import { cn } from '../../../../../utils/cn'
 import { Button } from '../../../../base/button'
 import { Dialog } from '../../../../base/dialog'
 import { Tooltip } from '../../../../base/tooltip'
+import { Icon } from '../../../../icons/icon-wrapper'
 import { formatRelativeTime } from '../../utils'
 
 function downloadChat(chat: ChatSummary) {
@@ -122,7 +123,7 @@ export function HistoryPanel({
                   : 'text-muted-foreground hover:text-foreground hover:bg-accent',
               )}
             >
-              <Archive className="size-3.5" />
+              <Icon icon={Archive} className="size-3.5" />
             </button>
           </Tooltip>
         )}
@@ -161,7 +162,7 @@ export function HistoryPanel({
                           aria-label="Archive chat"
                           className={cn(ROW_ACTION_CLASS, 'hover:text-foreground')}
                         >
-                          <Archive className="size-3" />
+                          <Icon icon={Archive} className="size-3" />
                         </span>
                       </Tooltip>
                     )}
@@ -176,7 +177,7 @@ export function HistoryPanel({
                           aria-label="Unarchive chat"
                           className={cn(ROW_ACTION_CLASS, 'hover:text-foreground')}
                         >
-                          <ArchiveRestore className="size-3" />
+                          <Icon icon={ArchiveRestore} className="size-3" />
                         </span>
                       </Tooltip>
                     )}
@@ -186,7 +187,7 @@ export function HistoryPanel({
                       aria-label="Delete chat"
                       className={cn(ROW_ACTION_CLASS, 'hover:text-destructive')}
                     >
-                      <Trash2 className="size-3" />
+                      <Icon icon={Trash2} className="size-3" />
                     </span>
                   </span>
                   <span className="flex items-center gap-1">
@@ -203,7 +204,7 @@ export function HistoryPanel({
                         aria-label="Download chat as Markdown"
                         className={cn(ROW_ACTION_CLASS, 'hover:text-foreground')}
                       >
-                        <Download className="size-3" />
+                        <Icon icon={Download} className="size-3" />
                       </span>
                     </Tooltip>
                   </span>
