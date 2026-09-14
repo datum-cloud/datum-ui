@@ -53,6 +53,16 @@ export interface AssistantWorkspaceProps {
   onNewChat: () => void
   onLoadChat: (chat: ChatSummary) => void
   onDeleteChat: (e: ReactMouseEvent, chatId: string) => void
+  /**
+   * Opt-in archive support. When provided, `chatList` may mix archived and
+   * active chats; the history panel lists active chats by default and adds an
+   * "Archived" view toggle plus per-row archive actions.
+   */
+  onArchiveChat?: (e: ReactMouseEvent, chatId: string) => void
+  /** Restores an archived chat from the history panel's archived view. */
+  onUnarchiveChat?: (e: ReactMouseEvent, chatId: string) => void
+  /** Confirm (deletion can't be undone) before calling `onDeleteChat`. */
+  confirmDelete?: boolean
   onSuggestion: (text: string) => void
 
   modelId: string
@@ -91,6 +101,9 @@ export function AssistantWorkspace({
   onNewChat,
   onLoadChat,
   onDeleteChat,
+  onArchiveChat,
+  onUnarchiveChat,
+  confirmDelete,
   onSuggestion,
   modelId,
   effortId,
@@ -144,6 +157,9 @@ export function AssistantWorkspace({
                 header={sidebarHeader}
                 onLoadChat={onLoadChat}
                 onDeleteChat={onDeleteChat}
+                onArchiveChat={onArchiveChat}
+                onUnarchiveChat={onUnarchiveChat}
+                confirmDelete={confirmDelete}
               />
             </motion.div>
           )}

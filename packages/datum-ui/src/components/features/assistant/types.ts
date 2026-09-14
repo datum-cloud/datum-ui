@@ -71,4 +71,9 @@ export interface ChatSummary {
   title: string
   updatedAt: number
   messages: UIMessage[]
+  /**
+   * Archived (hidden but restorable). Only honoured when the host passes
+   * `onArchiveChat`; otherwise every chat is listed regardless of this flag.
+   */
+  archived?: boolean
 }
