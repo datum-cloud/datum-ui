@@ -1,5 +1,6 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import type { UIMessage } from 'ai'
+import type { HistoryPanelProps } from '../components/sidebar'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { getToolName } from 'ai'
 import { describe, expect, it, vi } from 'vitest'
@@ -123,6 +124,140 @@ describe('historyPanel header slot', () => {
       />,
     )
     expect(screen.queryByText('Project: acme-prod')).not.toBeInTheDocument()
+  })
+})
+
+describe('historyPanel archive support', () => {
+  const now = Date.now()
+  const chats = [
+    { id: 'a1', title: 'Active infra chat', updatedAt: now, messages: [] },
+    { id: 'a2', title: 'Active billing chat', updatedAt: now, messages: [] },
+    { id: 'x1', title: 'Archived infra chat', updatedAt: now, messages: [], archived: true },
+  ]
+
+  function renderPanel(props: Partial<HistoryPanelProps> = {}) {
+    const handlers = {
+      onLoadChat: vi.fn(),
+      onDeleteChat: vi.fn(),
+      onArchiveChat: vi.fn(),
+      onUnarchiveChat: vi.fn(),
+    }
+    render(
+      <HistoryPanel
+        chatList={chats}
+        currentChatId="a1"
+        {...handlers}
+        {...props}
+      />,
+    )
+    return handlers
+  }
+
+  it('is unchanged when the host passes no archive props', () => {
+    renderPanel({ onArchiveChat: undefined, onUnarchiveChat: undefined })
+    // archived-flagged items are not filtered
+    expect(screen.getByText('Archived infra chat')).toBeInTheDocument()
+    expect(screen.getByText('Active infra chat')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Archived' })).not.toBeInTheDocument()
+    expect(screen.queryAllByLabelText('Archive chat')).toHaveLength(0)
+    expect(screen.queryAllByLabelText('Unarchive chat')).toHaveLength(0)
+  })
+
+  it('lists only active chats by default when archive is enabled', () => {
+    renderPanel()
+    expect(screen.getByText('Active infra chat')).toBeInTheDocument()
+    expect(screen.queryByText('Archived infra chat')).not.toBeInTheDocument()
+    expect(screen.getAllByLabelText('Archive chat')).toHaveLength(2)
+    expect(screen.getByRole('button', { name: 'Archived' })).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('archives a row without loading it', () => {
+    const { onArchiveChat, onLoadChat } = renderPanel()
+    fireEvent.click(screen.getAllByLabelText('Archive chat')[0]!)
+    expect(onArchiveChat).toHaveBeenCalledWith(expect.anything(), 'a1')
+    expect(onLoadChat).not.toHaveBeenCalled()
+  })
+
+  it('switches to the archived view with unarchive and delete actions', () => {
+    const { onUnarchiveChat, onLoadChat, onDeleteChat } = renderPanel()
+    fireEvent.click(screen.getByRole('button', { name: 'Archived' }))
+
+    expect(screen.getByRole('button', { name: 'Archived' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByText('Archived infra chat')).toBeInTheDocument()
+    expect(screen.queryByText('Active infra chat')).not.toBeInTheDocument()
+    expect(screen.queryAllByLabelText('Archive chat')).toHaveLength(0)
+
+    fireEvent.click(screen.getByLabelText('Unarchive chat'))
+    expect(onUnarchiveChat).toHaveBeenCalledWith(expect.anything(), 'x1')
+
+    fireEvent.click(screen.getByLabelText('Delete chat'))
+    expect(onDeleteChat).toHaveBeenCalledWith(expect.anything(), 'x1')
+
+    fireEvent.click(screen.getByText('Archived infra chat'))
+    expect(onLoadChat).toHaveBeenCalledWith(chats[2])
+  })
+
+  it('applies search within the current view', () => {
+    renderPanel()
+    const search = screen.getByPlaceholderText('Search chats…')
+    fireEvent.change(search, { target: { value: 'infra' } })
+    expect(screen.getByText('Active infra chat')).toBeInTheDocument()
+    expect(screen.queryByText('Active billing chat')).not.toBeInTheDocument()
+    expect(screen.queryByText('Archived infra chat')).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Archived' }))
+    expect(screen.getByText('Archived infra chat')).toBeInTheDocument()
+    expect(screen.queryByText('Active infra chat')).not.toBeInTheDocument()
+
+    fireEvent.change(screen.getByPlaceholderText('Search archived chats…'), { target: { value: 'billing' } })
+    expect(screen.getByText('No matching archived chats')).toBeInTheDocument()
+  })
+
+  it('shows a per-view empty state', () => {
+    renderPanel({ chatList: [chats[0]!] })
+    fireEvent.click(screen.getByRole('button', { name: 'Archived' }))
+    expect(screen.getByText('No archived chats')).toBeInTheDocument()
+  })
+})
+
+describe('historyPanel confirmDelete', () => {
+  const chat = { id: 'c1', title: 'Saved chat', updatedAt: Date.now(), messages: [] }
+
+  it('deletes immediately by default', () => {
+    const onDeleteChat = vi.fn()
+    render(<HistoryPanel chatList={[chat]} currentChatId="" onLoadChat={vi.fn()} onDeleteChat={onDeleteChat} />)
+    fireEvent.click(screen.getByLabelText('Delete chat'))
+    expect(onDeleteChat).toHaveBeenCalledWith(expect.anything(), 'c1')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('asks for confirmation before deleting', async () => {
+    const onDeleteChat = vi.fn()
+    const onLoadChat = vi.fn()
+    render(
+      <HistoryPanel chatList={[chat]} currentChatId="" onLoadChat={onLoadChat} onDeleteChat={onDeleteChat} confirmDelete />,
+    )
+    fireEvent.click(screen.getByLabelText('Delete chat'))
+    expect(onDeleteChat).not.toHaveBeenCalled()
+    expect(onLoadChat).not.toHaveBeenCalled()
+
+    const dialog = await screen.findByRole('dialog')
+    expect(dialog).toHaveTextContent('can\'t be undone')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    expect(onDeleteChat).toHaveBeenCalledWith(expect.anything(), 'c1')
+    expect(onLoadChat).not.toHaveBeenCalled()
+  })
+
+  it('does not delete when the confirmation is cancelled', async () => {
+    const onDeleteChat = vi.fn()
+    render(
+      <HistoryPanel chatList={[chat]} currentChatId="" onLoadChat={vi.fn()} onDeleteChat={onDeleteChat} confirmDelete />,
+    )
+    fireEvent.click(screen.getByLabelText('Delete chat'))
+    await screen.findByRole('dialog')
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(onDeleteChat).not.toHaveBeenCalled()
   })
 })
 
