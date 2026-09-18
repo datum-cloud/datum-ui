@@ -55,6 +55,36 @@ describe('text', () => {
   })
 })
 
+// Colors come from theme tokens, never raw palette classes, so a theme can
+// retune them in one place.
+const TEXT_COLORS = [
+  ['default', 'text-foreground'],
+  ['muted', 'text-muted-foreground'],
+  ['primary', 'text-primary'],
+  ['secondary', 'text-secondary-foreground'],
+  ['destructive', 'text-destructive'],
+  ['success', 'text-success'],
+  ['warning', 'text-warning'],
+  ['info', 'text-info'],
+] as const
+
+describe('text color', () => {
+  it.each(TEXT_COLORS)('renders textColor="%s" as %s', (textColor, token) => {
+    render(<Text textColor={textColor}>tinted</Text>)
+    expect(screen.getByText('tinted')).toHaveClass(token)
+  })
+
+  it.each(TEXT_COLORS)('renders Title textColor="%s" as %s', (textColor, token) => {
+    render(<Title textColor={textColor}>tinted</Title>)
+    expect(screen.getByRole('heading')).toHaveClass(token)
+  })
+
+  it('uses no raw palette colors', () => {
+    render(<Text textColor="success">ok</Text>)
+    expect(screen.getByText('ok').className).not.toMatch(/\b(dark:)?text-(green|yellow|blue|red)-\d+/)
+  })
+})
+
 describe('paragraph', () => {
   it.each(PARAGRAPH_SIZES)('renders size="%s" as text-%s', (size) => {
     render(<Paragraph size={size}>sample</Paragraph>)
