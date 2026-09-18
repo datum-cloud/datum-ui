@@ -47,7 +47,8 @@ const titleVariants = cva('font-semibold leading-tight tracking-tight', {
   defaultVariants: {
     level: 4,
     weight: 'semibold',
-    textColor: 'default',
+    // No textColor default: headings inherit their parent's color, like a raw
+    // <h4>. `textColor="default"` forces the foreground color.
   },
 })
 
@@ -101,7 +102,8 @@ const textVariants = cva('leading-relaxed', {
     // Body text is 14px. `sm` is that step; `base` is the 16px reading size.
     size: 'sm',
     weight: 'normal',
-    textColor: 'default',
+    // No textColor default: text inherits its parent's color, like a raw
+    // <span>, so it works inside alerts, badges and muted containers.
     type: 'default',
   },
 })

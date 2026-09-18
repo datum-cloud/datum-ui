@@ -79,6 +79,18 @@ describe('text color', () => {
     expect(screen.getByRole('heading')).toHaveClass(token)
   })
 
+  it('inherits the parent color when no textColor is set', () => {
+    render(
+      <div className="text-destructive">
+        <Text>nested text</Text>
+        <Title>nested title</Title>
+      </div>,
+    )
+    const colorClass = /\btext-(foreground|muted-foreground|primary|secondary-foreground|destructive|success|warning|info)\b/
+    expect(screen.getByText('nested text').className).not.toMatch(colorClass)
+    expect(screen.getByRole('heading').className).not.toMatch(colorClass)
+  })
+
   it('uses no raw palette colors', () => {
     render(<Text textColor="success">ok</Text>)
     expect(screen.getByText('ok').className).not.toMatch(/\b(dark:)?text-(green|yellow|blue|red)-\d+/)
