@@ -79,6 +79,31 @@ Raw utilities and the component are interchangeable:
 | 5 | `text-lg` |
 | 6 | `text-base` |
 
+## Color
+
+Size and color are separate choices. `Text` and `Title` **inherit** their
+parent's color unless you set `textColor`, just like a raw `<span>` or `<h4>`.
+Top-level text still renders in the foreground color because `body` sets it,
+and text inside an alert, badge or muted container follows that container.
+
+When a color is needed, use a semantic token, never a raw palette color like
+`text-green-600`:
+
+| `textColor` | Class | Use for |
+|---|---|---|
+| `default` | `text-foreground` | Forcing the foreground color inside a colored parent |
+| `muted` | `text-muted-foreground` | Secondary text, metadata, hints |
+| `primary` | `text-primary` | Links and brand emphasis |
+| `secondary` | `text-secondary-foreground` | Text on secondary surfaces |
+| `destructive` | `text-destructive` | Errors |
+| `success` | `text-success` | Positive status |
+| `warning` | `text-warning` | Caution status |
+| `info` | `text-info` | Neutral status |
+
+`success`, `warning` and `info` are theme tokens (`--success`, `--warning`,
+`--info`) with separate light and dark values, so a raw `text-success` class
+works too.
+
 ## How it's defined
 
 The scale is `--text-*` theme variables in `alpha.css` (Tailwind v4 `@theme`).
@@ -115,6 +140,8 @@ because the scale is a plain `@theme`, not `@theme inline`: the utilities read
 | `text-[11px]` | `text-3xs` | none |
 | `<Text size="base">` / `<Paragraph size="base">` | `size="sm"`, or omit it | none; `base` is now 16px |
 | `Title` levels | unchanged | desktop sizes are the same; tablet and mobile follow the scale |
+| `<Text>` / `<Title>` with no `textColor` | unchanged, or `textColor="default"` | now inherits the parent's color instead of forcing foreground; add `textColor="default"` only where the old forced color was wanted |
+| `text-green-600 dark:text-green-400` (and yellow / blue) | `text-success` / `text-warning` / `text-info` | none |
 
 Rename `text-2xs` → `text-4xs` **before** `text-1xs` → `text-2xs`, or the
 second rename's output gets caught by the first.
