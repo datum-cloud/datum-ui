@@ -74,6 +74,13 @@ Light-mode tokens on :root, dark-mode tokens on .dark
   --destructive: var(--alert-red-light);
   --destructive-foreground: var(--glacier-mist-700);
 
+  /* Status text colors — for text on the page background, used by
+     text-success / text-warning / text-info and Typography's textColor.
+     Values match the palette colors they replace, for no visual change. */
+  --success: #16a34a; /* green-600 */
+  --warning: #ca8a04; /* yellow-600 */
+  --info: #2563eb; /* blue-600 */
+
   /* UI elements */
   --border: var(--glacier-mist-900);
   --input: var(--app-dark-utility-5);
@@ -269,6 +276,11 @@ Light-mode tokens on :root, dark-mode tokens on .dark
   /* Destructive colors */
   --destructive: var(--alert-red-light);
   --destructive-foreground: var(--glacier-mist-700);
+
+  /* Status text colors */
+  --success: #4ade80; /* green-400 */
+  --warning: #facc15; /* yellow-400 */
+  --info: #60a5fa; /* blue-400 */
 
   /* UI elements */
   --border: var(--app-dark-utility-2);
@@ -472,6 +484,11 @@ TAILWIND CUSTOM UTILITIES FOR THEME
   --color-icon-quaternary: var(--icon-quaternary);
   --color-icon-quinary: var(--icon-quinary);
   --color-icon-header: var(--icon-header);
+
+  /* Status text */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
 
   /* Toast */
   --color-toast-error-background: var(--toast-error-background);
