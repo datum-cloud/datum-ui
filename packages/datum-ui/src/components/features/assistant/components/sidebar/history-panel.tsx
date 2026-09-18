@@ -191,7 +191,7 @@ export function HistoryPanel({
                     </span>
                   </span>
                   <span className="flex items-center gap-1">
-                    <span className="text-muted-foreground/60 text-[10px]">
+                    <span className="text-muted-foreground/60 text-4xs">
                       {formatRelativeTime(chat.updatedAt)}
                     </span>
                     <Tooltip message="Download as Markdown" side="top">
@@ -212,7 +212,7 @@ export function HistoryPanel({
               ))
             )}
       </div>
-      <p className="text-muted-foreground mt-auto shrink-0 border-t px-3 py-2 text-[10px]">
+      <p className="text-muted-foreground mt-auto shrink-0 border-t px-3 py-2 text-4xs">
         Chats are saved to your browser&apos;s local storage.
       </p>
 

@@ -56,7 +56,7 @@ function NavBadge({ badge }: { badge: NavItemBadge }) {
     <div
       className={cn(
         'text-muted-foreground inline-flex shrink-0 items-center rounded-full border border-dashed px-1.5 py-px',
-        'text-[10px] leading-none font-medium tracking-wide',
+        'text-4xs leading-none font-medium tracking-wide',
         'border-border/80',
       )}
     >

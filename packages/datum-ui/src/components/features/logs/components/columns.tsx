@@ -68,7 +68,7 @@ const BUILTIN_COLUMNS: Record<LogColumnId, LogColumn> = {
     cell: ({ parsed }) => <LogsStatusBadge parsed={parsed} />,
     skeleton: ({ row }) => (
       <span
-        className="inline-flex h-4 items-center gap-1.5 font-mono text-[11px] leading-4"
+        className="inline-flex h-4 items-center gap-1.5 font-mono text-3xs leading-4"
         data-slot="logs-skeleton-status"
       >
         {lineSkeleton(3, 'h-[11px]')}

@@ -51,7 +51,7 @@ function SettingsNavLabel({ className, ...props }: React.ComponentProps<'div'>) 
     <div
       data-slot="settings-nav-label"
       className={cn(
-        'text-muted-foreground px-2.5 pt-1 pb-2 text-[11px] font-semibold tracking-wide uppercase',
+        'text-muted-foreground px-2.5 pt-1 pb-2 text-3xs font-semibold tracking-wide uppercase',
         className,
       )}
       {...props}
@@ -130,7 +130,7 @@ function SettingsNavItem({
         ? (
             <span
               data-slot="settings-nav-item-badge"
-              className="bg-muted text-muted-foreground rounded-md px-1.5 py-0.5 text-[10px] font-semibold tracking-wide uppercase"
+              className="bg-muted text-muted-foreground rounded-md px-1.5 py-0.5 text-4xs font-semibold tracking-wide uppercase"
             >
               {badge}
             </span>

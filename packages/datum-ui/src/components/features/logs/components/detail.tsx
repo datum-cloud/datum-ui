@@ -42,7 +42,7 @@ function MetaCell({
 }) {
   return (
     <div className={cn('bg-background min-w-0 px-3 py-2.5', className)}>
-      <div className="text-muted-foreground mb-1 text-[11px] font-medium">{label}</div>
+      <div className="text-muted-foreground mb-1 text-3xs font-medium">{label}</div>
       <div className="font-mono text-xs break-all">{children}</div>
     </div>
   )
@@ -187,7 +187,7 @@ const DetailBody = memo(({ showClose = true }: { showClose?: boolean }) => {
               {client && (
                 <div className="bg-background col-span-3 min-w-0 px-3 py-2.5" data-slot="logs-client">
                   <div className="mb-1 flex items-center justify-between">
-                    <span className="text-muted-foreground text-[11px] font-medium">Client</span>
+                    <span className="text-muted-foreground text-3xs font-medium">Client</span>
                     <Button
                       type="secondary"
                       theme="borderless"
@@ -202,10 +202,10 @@ const DetailBody = memo(({ showClose = true }: { showClose?: boolean }) => {
                   <div className="flex items-center gap-2 text-xs">
                     <Icon icon={DEVICE_ICONS[client.device]} className="text-muted-foreground shrink-0" />
                     <span className="min-w-0 truncate font-medium" data-slot="logs-client-summary">{client.summary}</span>
-                    <span className="text-muted-foreground shrink-0 text-[11px] capitalize">{client.device === 'unknown' ? '' : client.device}</span>
+                    <span className="text-muted-foreground shrink-0 text-3xs capitalize">{client.device === 'unknown' ? '' : client.device}</span>
                   </div>
                   {client.summary !== client.raw && (
-                    <p className="text-muted-foreground mt-1 font-mono text-[11px] leading-4 break-all" title={client.raw}>
+                    <p className="text-muted-foreground mt-1 font-mono text-3xs leading-4 break-all" title={client.raw}>
                       {client.raw}
                     </p>
                   )}
@@ -214,7 +214,7 @@ const DetailBody = memo(({ showClose = true }: { showClose?: boolean }) => {
               {request.params.length > 0 && (
                 <div className="bg-background col-span-3 min-w-0 px-3 py-2.5" data-slot="logs-search-params">
                   <div className="mb-1.5 flex items-center justify-between">
-                    <span className="text-muted-foreground text-[11px] font-medium">Search params</span>
+                    <span className="text-muted-foreground text-3xs font-medium">Search params</span>
                     <Button
                       type="secondary"
                       theme="borderless"
@@ -251,7 +251,7 @@ const DetailBody = memo(({ showClose = true }: { showClose?: boolean }) => {
                 key={key}
                 className="grid grid-cols-[minmax(0,8.5rem)_minmax(0,1fr)] gap-x-3 border-b px-3 py-2 last:border-b-0"
               >
-                <dt className="text-muted-foreground truncate font-mono text-[11px]">{key}</dt>
+                <dt className="text-muted-foreground truncate font-mono text-3xs">{key}</dt>
                 <dd className="min-w-0 font-mono text-xs break-all">{value}</dd>
               </div>
             ))}

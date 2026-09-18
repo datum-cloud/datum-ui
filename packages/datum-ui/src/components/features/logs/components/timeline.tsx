@@ -94,7 +94,7 @@ export function LogsTimeline({ className }: { className?: string }) {
               })}
             </div>
           )}
-      <div className="text-muted-foreground mt-1 flex justify-between font-mono text-[10px] tabular-nums">
+      <div className="text-muted-foreground mt-1 flex justify-between font-mono text-4xs tabular-nums">
         <span>{formatTimelineTick(from, axisSpan)}</span>
         <span>{formatTimelineTick(mid, axisSpan)}</span>
         <span>{formatTimelineTick(to, axisSpan)}</span>
