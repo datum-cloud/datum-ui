@@ -60,7 +60,7 @@ const preview: Preview = {
       storySort: {
         order: [
           'Docs',
-          ['Introduction', 'Installation', 'Theming', 'Providers'],
+          ['Introduction', 'Installation', 'Theming', 'Type Scale', 'Providers'],
           'Base',
           'Features',
           'Hooks',

@@ -1,0 +1,120 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Docs/Type Scale" />
+
+# Type Scale
+
+The rules for sizing text in Datum UI. One named scale is shared by raw Tailwind
+classes and the `Typography` components, so `text-sm` and `<Text size="sm">`
+always render the same size.
+
+## Rules
+
+1. **Named steps only.** Use `text-sm`, `text-xs`, `text-2xs`, … — never an
+   arbitrary size like `text-[11px]`. A size only exists if it's a step in the
+   scale. Changing a size is a one-line edit to a theme token, not a find-and-replace.
+2. **One scale for classes and components.** `Text`, `Paragraph`, and `Title`
+   render these same steps. A raw utility class and the component always agree.
+3. **Body sizes are fixed; display sizes step down.** `4xs`–`lg` are the same on
+   every screen (dense UI text must not shrink on phones). `xl` and larger step
+   down one notch per breakpoint — using existing steps, so no new values appear.
+
+## Naming
+
+Steps below `xs` mirror the `2xl` / `3xl` convention **downward**:
+
+`4xs` · `3xs` · `2xs` · `xs` · `sm` · `base` · `lg` · `xl` · `2xl` … `8xl`
+
+There is no `1xs` — just as there is no `1xl`. The step directly below `xs` is
+`2xs`, then `3xs`, then `4xs`. Smaller number closer to `xs`; larger number =
+smaller text.
+
+## The scale
+
+Desktop values, in px (`font-size` / `line-height`).
+
+### Body — fixed on every screen
+
+| Class / `size` | px | Use for |
+|---|---|---|
+| `4xs` | 10 / 14 | Smallest chips, overlines, counters |
+| `3xs` | 11 / 16 | Micro labels, dense badges |
+| `2xs` | 12 / 16 | Captions, timestamps, helper text |
+| `xs` | 13 / 18 | App body: tables, cards, forms |
+| `sm` | 14 / 20 | Emphasized body, card titles, labels (default `Text`) |
+| `base` | 16 / 24 | Long-form reading, section intros |
+| `lg` | 18 / 28 | Sub-section headings |
+
+### Display — steps down on tablet / mobile
+
+| Class / `size` | Desktop | Tablet | Mobile |
+|---|---|---|---|
+| `xl` | 20 | 20 | 18 |
+| `2xl` | 24 | 24 | 20 |
+| `3xl` | 30 | 24 | 24 |
+| `4xl` | 36 | 30 | 24 |
+| `5xl`–`8xl` | 48–96 | one step down | two steps down |
+
+## Using it
+
+Raw utilities and the component are interchangeable:
+
+```tsx
+// Raw Tailwind utility
+<span className="text-2xs text-muted-foreground">Updated 2m ago</span>
+
+// Typography component — same step, same rendered size
+<Text size="2xs" textColor="muted">Updated 2m ago</Text>
+```
+
+`Title` levels map to display steps and handle their own responsiveness — do
+**not** add `md:` / `lg:` size classes on top, or headings shrink twice.
+
+| `Title` level | Step |
+|---|---|
+| 1 | `text-4xl` |
+| 2 | `text-3xl` |
+| 3 | `text-2xl` |
+| 4 (default) | `text-xl` |
+| 5 | `text-lg` |
+| 6 | `text-base` |
+
+## How it's defined
+
+The scale is `--text-*` theme variables in `alpha.css` (Tailwind v4 `@theme`).
+Consumers import that stylesheet and get the utilities for free.
+
+```css
+@theme {
+  --text-4xs: 10px;  --text-4xs--line-height: 14px;
+  --text-3xs: 11px;  --text-3xs--line-height: 16px;
+  --text-2xs: 12px;  --text-2xs--line-height: 16px;
+  --text-xs:  13px;  --text-xs--line-height:  18px;
+  --text-sm:  14px;  --text-sm--line-height:  20px;
+  /* base … 8xl: desktop values */
+}
+```
+
+Tailwind generates a `text-<name>` utility for every `--text-*` variable — no
+plugin, no config. Each utility applies its paired `--text-<name>--line-height`
+by default, and a `leading-*` class still overrides it, exactly like the
+built-in sizes.
+
+The display steps shrink by redefining the same variables in media queries
+(`width < 64rem` for tablet, `width < 48rem` for mobile). That only works
+because the scale is a plain `@theme`, not `@theme inline`: the utilities read
+`var(--text-*)` at runtime instead of baking in the desktop value.
+
+## Migrating from 2.x
+
+| Before | After | Change |
+|---|---|---|
+| `text-1xs` (12px) | `text-2xs` | none; `1xs` no longer exists |
+| `text-2xs` (9px) | `text-4xs` | 9 → 10px; `2xs` is now 12px |
+| `text-[10px]` | `text-4xs` | none |
+| `text-[11px]` | `text-3xs` | none |
+| `<Text size="base">` / `<Paragraph size="base">` | `size="sm"`, or omit it | none; `base` is now 16px |
+| `Title` levels | unchanged | desktop sizes are the same; tablet and mobile follow the scale |
+
+Rename `text-2xs` → `text-4xs` **before** `text-1xs` → `text-2xs`, or the
+second rename's output gets caught by the first.
