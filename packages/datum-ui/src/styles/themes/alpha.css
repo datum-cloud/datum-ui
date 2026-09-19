@@ -118,6 +118,9 @@ Light-mode tokens on :root, dark-mode tokens on .dark
   --table-accent: var(--glacier-mist-800);
   --table-cell: hsl(0 0% 100%);
   --table-cell-hover: var(--glacier-mist-700);
+  /* Sticky "mist" list-table header (DataTable.Content density="compact" / DataTable.ListPanel) */
+  --table-header-background: var(--glacier-mist-700);
+  --table-header-foreground: color-mix(in oklch, var(--midnight-fjord) 60%, transparent);
 
   /* Badge */
   --badge-primary: var(--primary);
@@ -320,6 +323,8 @@ Light-mode tokens on :root, dark-mode tokens on .dark
   --table-accent: var(--app-dark-utility-1);
   --table-cell: var(--midnight-fjord);
   --table-cell-hover: var(--app-dark-utility-1);
+  --table-header-background: var(--muted);
+  --table-header-foreground: var(--muted-foreground);
 
   /* Badge */
   --badge-primary: var(--primary);
@@ -454,6 +459,8 @@ TAILWIND CUSTOM UTILITIES FOR THEME
   --color-table-accent: var(--table-accent);
   --color-table-cell: var(--table-cell);
   --color-table-cell-hover: var(--table-cell-hover);
+  --color-table-header-background: var(--table-header-background);
+  --color-table-header-foreground: var(--table-header-foreground);
 
   --color-dialog-overlay: var(--dialog-overlay);
   --color-dialog-border: var(--dialog-border);

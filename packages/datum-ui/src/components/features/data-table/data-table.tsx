@@ -5,6 +5,8 @@ import { DataTableBulkActions } from './components/bulk-actions'
 import { DataTableColumnHeader } from './components/column-header'
 import { DataTableContent } from './components/content'
 import { DataTableInlineContent } from './components/inline-content'
+import { DataTableListPagination } from './components/list-pagination'
+import { DataTableListPanel } from './components/list-panel'
 import { DataTableLoading } from './components/loading'
 import { DataTablePagination } from './components/pagination'
 import { DataTableRowActions } from './components/row-actions'
@@ -23,6 +25,8 @@ export const DataTable = {
   InlineContent: DataTableInlineContent,
   ColumnHeader: DataTableColumnHeader,
   Pagination: DataTablePagination,
+  ListPanel: DataTableListPanel,
+  ListPagination: DataTableListPagination,
   Search: DataTableSearch,
   RowActions: DataTableRowActions,
   BulkActions: DataTableBulkActions,
