@@ -425,6 +425,15 @@ TAILWIND CUSTOM UTILITIES FOR THEME
   /* Custom base shadow */
   --shadow: 0 2px 4px 2px rgba(12, 29, 49, 0.03);
   --shadow-tooltip: 0 4px 16px 0 rgba(0, 0, 0, 0.05), 1px 8px 8px 0 rgba(0, 0, 0, 0.02);
+  /**
+   * Section-card shadow (Figma org-overview cards). Aliases the base `--shadow`
+   * rather than a standalone value — applies identically in light and dark since
+   * `--shadow` itself isn't theme-split. Consumers reference it directly via
+   * `shadow-(--section-card-shadow)` (e.g. staff-portal's `SECTION_CARD_CHROME`),
+   * which previously pointed at an undefined custom property and rendered no
+   * shadow at all.
+   */
+  --section-card-shadow: var(--shadow);
 
   --color-tertiary: var(--tertiary);
   --color-tertiary-foreground: var(--tertiary-foreground);
