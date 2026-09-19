@@ -3,7 +3,8 @@ import type { ColumnDef } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
 import type { DataTableFeatures } from '../core/features'
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { describe, expect, it, vi } from 'vitest'
 import { DataTableContent } from '../components/content'
 import { ClientProvider } from '../core/client-provider'
 import { DataTableRenderKeyContext, DataTableStoreContext, TableInstanceContext } from '../core/data-table-context'
@@ -93,6 +94,92 @@ describe('dataTableContent', () => {
     )
 
     expect(container.querySelector('[data-slot="dt-empty"]')).toBeInTheDocument()
+  })
+})
+
+describe('dataTableContent density', () => {
+  it('renders identically to omitting density when density="default"', () => {
+    const withDensity = render(
+      <TestWrapper data={testData} columns={testColumns}>
+        <DataTableContent density="default" />
+      </TestWrapper>,
+    )
+    const withoutDensity = render(
+      <TestWrapper data={testData} columns={testColumns}>
+        <DataTableContent />
+      </TestWrapper>,
+    )
+
+    expect(withDensity.container.innerHTML).toBe(withoutDensity.container.innerHTML)
+  })
+
+  it('applies the sticky compact header classes when density="compact"', () => {
+    const { container } = render(
+      <TestWrapper data={testData} columns={testColumns}>
+        <DataTableContent density="compact" />
+      </TestWrapper>,
+    )
+
+    const headerCell = container.querySelector('[data-slot="dt-header-cell"]')
+    expect(headerCell).toHaveClass('sticky', 'bg-table-header-background', 'uppercase')
+  })
+
+  it('lets a caller-supplied cellClassName win over the compact preset on conflicting utilities', () => {
+    const { container } = render(
+      <TestWrapper data={testData} columns={testColumns}>
+        <DataTableContent density="compact" cellClassName="px-8" />
+      </TestWrapper>,
+    )
+
+    const cell = container.querySelector('[data-slot="dt-cell"]')
+    expect(cell).toHaveClass('px-8')
+    expect(cell).not.toHaveClass('px-4')
+  })
+})
+
+describe('dataTableContent onRowClick', () => {
+  it('fires with the row original when a row is clicked', async () => {
+    const user = userEvent.setup()
+    const onRowClick = vi.fn()
+
+    render(
+      <TestWrapper data={testData} columns={testColumns}>
+        <DataTableContent onRowClick={onRowClick} />
+      </TestWrapper>,
+    )
+
+    await user.click(screen.getByText('Pod A'))
+
+    expect(onRowClick).toHaveBeenCalledWith(testData[0])
+  })
+
+  it('does not attach a click handler when onRowClick is not passed', () => {
+    const { container } = render(
+      <TestWrapper data={testData} columns={testColumns}>
+        <DataTableContent />
+      </TestWrapper>,
+    )
+
+    const row = container.querySelector('[data-slot="dt-row"]')
+    expect(row).not.toHaveClass('cursor-pointer')
+  })
+
+  it('skips rows whose click target is an interactive element', async () => {
+    const user = userEvent.setup()
+    const onRowClick = vi.fn()
+    const linkColumns: ColumnDef<DataTableFeatures, TestRow, any>[] = [
+      { accessorKey: 'name', header: 'Name', cell: () => <a href="/detail">Open</a> },
+    ]
+
+    render(
+      <TestWrapper data={testData} columns={linkColumns}>
+        <DataTableContent onRowClick={onRowClick} />
+      </TestWrapper>,
+    )
+
+    await user.click(screen.getAllByText('Open')[0] as HTMLElement)
+
+    expect(onRowClick).not.toHaveBeenCalled()
   })
 })
 

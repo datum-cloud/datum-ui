@@ -285,6 +285,8 @@ export interface ColumnHeaderProps<TData extends RowData, TValue> {
   readonly column: Column<DataTableFeatures, TData, TValue>
   readonly title: string
   readonly className?: string
+  /** `'compact'` swaps in the dense uppercase header label + dual-caret sort icon used by list pages. Default `'default'` renders unchanged. */
+  readonly density?: 'default' | 'compact'
 }
 
 export interface RowActionsProps<TData extends RowData> {
@@ -311,6 +313,10 @@ export interface ContentProps<TData extends RowData = Record<string, any>> {
   readonly bodyClassName?: string
   readonly rowClassName?: string | ((row: Row<DataTableFeatures, TData>) => string)
   readonly cellClassName?: string | ((cell: Cell<DataTableFeatures, TData, unknown>) => string)
+  /** `'compact'` applies the sticky mist header, dense rows, and borderless dividers used by list pages. Default `'default'` renders unchanged. */
+  readonly density?: 'default' | 'compact'
+  /** Fires on row click. Skipped when the click lands on a link, button, checkbox, form control, or the row-actions menu, so nested interactive elements keep working. */
+  readonly onRowClick?: (row: TData) => void
 }
 
 export interface PaginationProps {
@@ -342,6 +348,52 @@ export interface ActiveFiltersProps {
 export interface LoadingProps {
   readonly rows?: number
   readonly columns?: number
+  readonly className?: string
+}
+
+/** Search-row config for {@link ListPanelProps}. */
+export interface ListPanelSearchConfig {
+  readonly placeholder?: string
+  /**
+   * Set together with `onChange` to drive the search input externally (server-side
+   * search). When set, the built-in store search is not read — the panel renders
+   * whatever rows the caller already scoped.
+   */
+  readonly value?: string
+  readonly onChange?: (value: string) => void
+}
+
+export interface ListPanelProps<TData extends RowData = Record<string, any>> {
+  /** `false` hides the search row entirely. Defaults to the built-in (client-filtered) search. */
+  readonly search?: false | ListPanelSearchConfig
+  /** Rendered to the right of the search input, inside the search row (e.g. a mobile filter trigger). */
+  readonly searchSlot?: ReactNode
+  /** Rendered between the search row and the table (e.g. active-filter chips). */
+  readonly toolbar?: ReactNode
+  readonly emptyMessage?: ReactNode
+  /** Renders a skeleton in place of the table body. */
+  readonly loading?: boolean
+  /** See {@link ContentProps.onRowClick}. */
+  readonly onRowClick?: (row: TData) => void
+  /** Class on the panel's outer element. */
+  readonly className?: string
+  /** Class on the card container (border/rounding/background) — merges with, and can override, the default chrome. */
+  readonly panelClassName?: string
+}
+
+export interface ListPaginationProps {
+  readonly pageSizes?: readonly number[]
+  /** Appended to the row-count summary, e.g. `"1-20 of 42 organizations"`. */
+  readonly resourceLabel?: string
+  /** Hides the whole control when there's one page or fewer. */
+  readonly hideWhenSinglePage?: boolean
+  /** English defaults; pass translated strings to localize. */
+  readonly labels?: {
+    readonly rowsPerPage?: string
+    readonly of?: string
+    readonly previousPage?: string
+    readonly nextPage?: string
+  }
   readonly className?: string
 }
 

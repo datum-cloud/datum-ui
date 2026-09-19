@@ -118,6 +118,9 @@ Light-mode tokens on :root, dark-mode tokens on .dark
   --table-accent: var(--glacier-mist-800);
   --table-cell: hsl(0 0% 100%);
   --table-cell-hover: var(--glacier-mist-700);
+  /* Sticky "mist" list-table header (DataTable.Content density="compact" / DataTable.ListPanel) */
+  --table-header-background: var(--glacier-mist-700);
+  --table-header-foreground: color-mix(in oklch, var(--midnight-fjord) 60%, transparent);
 
   /* Badge */
   --badge-primary: var(--primary);
@@ -320,6 +323,8 @@ Light-mode tokens on :root, dark-mode tokens on .dark
   --table-accent: var(--app-dark-utility-1);
   --table-cell: var(--midnight-fjord);
   --table-cell-hover: var(--app-dark-utility-1);
+  --table-header-background: var(--muted);
+  --table-header-foreground: var(--muted-foreground);
 
   /* Badge */
   --badge-primary: var(--primary);
@@ -425,6 +430,15 @@ TAILWIND CUSTOM UTILITIES FOR THEME
   /* Custom base shadow */
   --shadow: 0 2px 4px 2px rgba(12, 29, 49, 0.03);
   --shadow-tooltip: 0 4px 16px 0 rgba(0, 0, 0, 0.05), 1px 8px 8px 0 rgba(0, 0, 0, 0.02);
+  /**
+   * Section-card shadow (Figma org-overview cards). Aliases the base `--shadow`
+   * rather than a standalone value — applies identically in light and dark since
+   * `--shadow` itself isn't theme-split. Consumers reference it directly via
+   * `shadow-(--section-card-shadow)` (e.g. staff-portal's `SECTION_CARD_CHROME`),
+   * which previously pointed at an undefined custom property and rendered no
+   * shadow at all.
+   */
+  --section-card-shadow: var(--shadow);
 
   --color-tertiary: var(--tertiary);
   --color-tertiary-foreground: var(--tertiary-foreground);
@@ -445,6 +459,8 @@ TAILWIND CUSTOM UTILITIES FOR THEME
   --color-table-accent: var(--table-accent);
   --color-table-cell: var(--table-cell);
   --color-table-cell-hover: var(--table-cell-hover);
+  --color-table-header-background: var(--table-header-background);
+  --color-table-header-foreground: var(--table-header-foreground);
 
   --color-dialog-overlay: var(--dialog-overlay);
   --color-dialog-border: var(--dialog-border);

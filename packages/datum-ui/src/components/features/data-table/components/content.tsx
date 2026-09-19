@@ -18,6 +18,39 @@ import {
 import { DEFAULT_LOADING_ROWS } from '../constants'
 import { useDataTableInlineContents, useDataTableLoading, useDataTablePagination, useDataTableRows } from '../hooks/use-selectors'
 
+/**
+ * Per-slot class presets keyed by `density`. `'default'` is intentionally empty
+ * so omitting `density` (or passing `'default'`) renders identically to before
+ * this prop existed. Every preset only ever *adds* to what a caller passes via
+ * the matching `*ClassName` prop — `cn(preset, callerClassName)` below lets the
+ * caller's own classes win on conflict.
+ */
+const DENSITY_PRESETS: Record<'default' | 'compact', {
+  readonly className?: string
+  readonly headerClassName?: string
+  readonly headerRowClassName?: string
+  readonly headerCellClassName?: string
+  readonly bodyClassName?: string
+  readonly rowClassName?: string
+  readonly cellClassName?: string
+}> = {
+  default: {},
+  compact: {
+    // Neutralizes the inner `Table` container's own `overflow-x-auto` wrapper so
+    // this element resolves as the sticky header's scrolling ancestor instead.
+    className: 'overflow-auto [&>div]:overflow-visible',
+    headerClassName: '[&_tr]:border-0',
+    headerRowClassName: 'border-0 hover:bg-transparent',
+    headerCellClassName: cn(
+      'sticky top-0 z-10 h-9 border-b border-border bg-table-header-background px-4',
+      'text-xs leading-4 font-normal tracking-normal text-table-header-foreground uppercase',
+    ),
+    bodyClassName: '[&_tr:last-child]:border-b-0',
+    rowClassName: 'border-0 hover:bg-muted/30',
+    cellClassName: 'border-b border-border px-4 py-0.5 text-sm',
+  },
+}
+
 function resolveClassName<T>(
   value: string | ((item: T) => string) | undefined,
   item: T,
@@ -25,6 +58,12 @@ function resolveClassName<T>(
   if (typeof value === 'function')
     return value(item)
   return value
+}
+
+/** Clicks inside these should drive their own control, not the row's `onRowClick`. */
+function isInteractiveTarget(target: EventTarget | null): boolean {
+  return target instanceof HTMLElement
+    && target.closest('a, button, [role="checkbox"], input, textarea, select, [data-slot="dt-row-actions"]') != null
 }
 
 function renderInlineContentRow<TData extends RowData>(
@@ -51,7 +90,7 @@ function renderInlineContentRow<TData extends RowData>(
   )
 }
 
-export function DataTableContent({
+export function DataTableContent<TData extends RowData = Record<string, any>>({
   emptyMessage,
   className,
   tableClassName,
@@ -61,23 +100,26 @@ export function DataTableContent({
   bodyClassName,
   rowClassName,
   cellClassName,
-}: ContentProps) {
-  const { rows, headerGroups, totalColumns } = useDataTableRows()
+  density = 'default',
+  onRowClick,
+}: ContentProps<TData>) {
+  const { rows, headerGroups, totalColumns } = useDataTableRows<TData>()
   const { isLoading, columnCount } = useDataTableLoading()
   const { pageSize } = useDataTablePagination()
-  const { inlineContents } = useDataTableInlineContents()
+  const { inlineContents } = useDataTableInlineContents<TData>()
   const openInlineContents = useMemo(() => inlineContents.filter(e => e.open), [inlineContents])
   const colSpan = totalColumns
   const skeletonColumns = totalColumns || columnCount || DEFAULT_LOADING_ROWS
+  const preset = DENSITY_PRESETS[density]
 
   return (
-    <div className={cn('datum-ui-data-table', className)} data-slot="dt" style={{ overflowX: 'auto' }}>
+    <div className={cn('datum-ui-data-table', preset.className, className)} data-slot="dt" style={{ overflowX: 'auto' }}>
       <Table className={cn(tableClassName)} data-slot="dt-table">
-        <TableHeader className={cn(headerClassName)} data-slot="dt-header">
+        <TableHeader className={cn(preset.headerClassName, headerClassName)} data-slot="dt-header">
           {headerGroups.map(headerGroup => (
-            <TableRow key={headerGroup.id} className={cn(headerRowClassName)} data-slot="dt-header-row">
+            <TableRow key={headerGroup.id} className={cn(preset.headerRowClassName, headerRowClassName)} data-slot="dt-header-row">
               {headerGroup.headers.map(header => (
-                <TableHead key={header.id} className={cn(headerCellClassName)} data-slot="dt-header-cell">
+                <TableHead key={header.id} className={cn(preset.headerCellClassName, headerCellClassName)} data-slot="dt-header-cell">
                   {header.isPlaceholder
                     ? null
                     : flexRender(header.column.columnDef.header, header.getContext())}
@@ -86,7 +128,7 @@ export function DataTableContent({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className={cn(bodyClassName)} data-slot="dt-body">
+        <TableBody className={cn(preset.bodyClassName, bodyClassName)} data-slot="dt-body">
           {openInlineContents
             .filter(e => e.position === 'top')
             .map(entry => renderInlineContentRow(entry, colSpan, rows))}
@@ -102,15 +144,25 @@ export function DataTableContent({
                   return (
                     <TableRow
                       key={row.id}
-                      className={cn(resolveClassName(rowClassName, row as Row<DataTableFeatures, RowData>))}
+                      className={cn(
+                        preset.rowClassName,
+                        resolveClassName(rowClassName, row as Row<DataTableFeatures, TData>),
+                        onRowClick && 'cursor-pointer',
+                      )}
                       style={{ transitionProperty: 'none' }}
                       data-slot="dt-row"
                       data-state={row.getIsSelected() ? 'selected' : undefined}
+                      onClick={onRowClick
+                        ? (e) => {
+                            if (!isInteractiveTarget(e.target))
+                              onRowClick(row.original)
+                          }
+                        : undefined}
                     >
                       {row.getVisibleCells().map(cell => (
                         <TableCell
                           key={cell.id}
-                          className={cn(resolveClassName(cellClassName, cell as Cell<DataTableFeatures, RowData, unknown>))}
+                          className={cn(preset.cellClassName, resolveClassName(cellClassName, cell as Cell<DataTableFeatures, TData, unknown>))}
                           data-slot="dt-cell"
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}

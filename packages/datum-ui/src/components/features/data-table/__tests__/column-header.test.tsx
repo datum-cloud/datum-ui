@@ -89,4 +89,36 @@ describe('dataTableColumnHeader', () => {
 
     expect(container.querySelector('[data-slot="dt-column-header"]')).toBeInTheDocument()
   })
+
+  describe('density="compact"', () => {
+    it('renders the same title and data-slot as default for a non-sortable column', () => {
+      const column = createMockColumn({ canSort: false })
+
+      const { container } = render(
+        <DataTableColumnHeader column={column} title="Name" density="compact" />,
+      )
+
+      expect(screen.getByText('Name')).toBeInTheDocument()
+      expect(container.querySelector('[data-slot="dt-column-header"]')).toBeInTheDocument()
+    })
+
+    it('still toggles sorting when clicked', async () => {
+      const user = userEvent.setup()
+      const column = createMockColumn({ canSort: true, isSorted: false })
+
+      render(<DataTableColumnHeader column={column} title="Name" density="compact" />)
+
+      await user.click(screen.getByRole('button'))
+
+      expect(column._toggleSortingHandler).toHaveBeenCalled()
+    })
+
+    it('renders an accessible sort label reflecting current direction', () => {
+      const column = createMockColumn({ canSort: true, isSorted: 'asc' })
+
+      render(<DataTableColumnHeader column={column} title="Name" density="compact" />)
+
+      expect(screen.getByRole('button', { name: 'Sort by Name, sorted ascending' })).toBeInTheDocument()
+    })
+  })
 })
