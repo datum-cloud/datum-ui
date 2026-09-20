@@ -61,6 +61,13 @@ export function DataTableListPanel<TData extends RowData = Record<string, any>>(
   onRowClick,
   className,
   panelClassName,
+  tableClassName,
+  headerClassName,
+  headerRowClassName,
+  headerCellClassName,
+  bodyClassName,
+  rowClassName,
+  cellClassName,
 }: ListPanelProps<TData>) {
   const { totalColumns } = useDataTableRows<TData>()
   const showSearch = search !== false
@@ -104,6 +111,13 @@ export function DataTableListPanel<TData extends RowData = Record<string, any>>(
               emptyMessage={emptyMessage}
               onRowClick={onRowClick}
               className="min-h-0 flex-1"
+              tableClassName={tableClassName}
+              headerClassName={headerClassName}
+              headerRowClassName={headerRowClassName}
+              headerCellClassName={headerCellClassName}
+              bodyClassName={bodyClassName}
+              rowClassName={rowClassName}
+              cellClassName={cellClassName}
             />
           )}
     </div>

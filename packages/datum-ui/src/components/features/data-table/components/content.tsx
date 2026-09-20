@@ -47,7 +47,9 @@ const DENSITY_PRESETS: Record<'default' | 'compact', {
     ),
     bodyClassName: '[&_tr:last-child]:border-b-0',
     rowClassName: 'border-0 hover:bg-muted/30',
-    cellClassName: 'border-b border-border px-4 py-0.5 text-sm',
+    // py-2 (~36-40px rows): py-0.5 read cramped for multi-value cells (chips,
+    // status pills) — still denser than the default table's h-10/p-2 rows.
+    cellClassName: 'border-b border-border px-4 py-2 text-sm',
   },
 }
 

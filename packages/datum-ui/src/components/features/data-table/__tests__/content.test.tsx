@@ -124,6 +124,17 @@ describe('dataTableContent density', () => {
     expect(headerCell).toHaveClass('sticky', 'bg-table-header-background', 'uppercase')
   })
 
+  it('applies dense (py-2) cell padding when density="compact"', () => {
+    const { container } = render(
+      <TestWrapper data={testData} columns={testColumns}>
+        <DataTableContent density="compact" />
+      </TestWrapper>,
+    )
+
+    const cell = container.querySelector('[data-slot="dt-cell"]')
+    expect(cell).toHaveClass('py-2')
+  })
+
   it('lets a caller-supplied cellClassName win over the compact preset on conflicting utilities', () => {
     const { container } = render(
       <TestWrapper data={testData} columns={testColumns}>
