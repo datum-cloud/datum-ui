@@ -163,6 +163,34 @@ describe('dataTableListPanel', () => {
     expect(onRowClick).toHaveBeenCalledWith(testData[0])
   })
 
+  it('forwards cellClassName to the underlying content, overriding the compact preset', () => {
+    const { container } = render(
+      <TestWrapper data={testData} columns={testColumns}>
+        <DataTableListPanel cellClassName="px-8 [&_[data-slot=dt-row-actions]]:!size-7" />
+      </TestWrapper>,
+    )
+
+    const cell = container.querySelector('[data-slot="dt-cell"]')
+    expect(cell).toHaveClass('px-8', '[&_[data-slot=dt-row-actions]]:!size-7')
+    expect(cell).not.toHaveClass('px-4')
+  })
+
+  it('forwards headerCellClassName, rowClassName, and bodyClassName to the underlying content', () => {
+    const { container } = render(
+      <TestWrapper data={testData} columns={testColumns}>
+        <DataTableListPanel
+          headerCellClassName="app-header"
+          rowClassName="app-row"
+          bodyClassName="app-body"
+        />
+      </TestWrapper>,
+    )
+
+    expect(container.querySelector('[data-slot="dt-header-cell"]')).toHaveClass('app-header')
+    expect(container.querySelector('[data-slot="dt-row"]')).toHaveClass('app-row')
+    expect(container.querySelector('[data-slot="dt-body"]')).toHaveClass('app-body')
+  })
+
   it('renders emptyMessage when there is no data', () => {
     render(
       <TestWrapper data={[]} columns={testColumns}>

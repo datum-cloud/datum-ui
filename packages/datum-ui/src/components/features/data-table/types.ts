@@ -379,6 +379,19 @@ export interface ListPanelProps<TData extends RowData = Record<string, any>> {
   readonly className?: string
   /** Class on the card container (border/rounding/background) — merges with, and can override, the default chrome. */
   readonly panelClassName?: string
+  /**
+   * Forwarded to the underlying `DataTable.Content` (`density="compact"` already
+   * applied) — merges with, and can override, the compact preset. Use this for
+   * app-specific cell integrations (e.g. sizing a row-actions menu or a
+   * copy-button rendered inside a cell) that don't belong in the shared preset.
+   */
+  readonly tableClassName?: string
+  readonly headerClassName?: string
+  readonly headerRowClassName?: string
+  readonly headerCellClassName?: string
+  readonly bodyClassName?: string
+  readonly rowClassName?: string | ((row: Row<DataTableFeatures, TData>) => string)
+  readonly cellClassName?: string | ((cell: Cell<DataTableFeatures, TData, unknown>) => string)
 }
 
 export interface ListPaginationProps {
