@@ -49,6 +49,16 @@ describe('text', () => {
     expect(screen.getByText('plain').className).not.toMatch(/\bleading-/)
   })
 
+  it('renders a heading element for sub-16px headings', () => {
+    render(
+      <Text as="h4" weight="medium">
+        Section
+      </Text>,
+    )
+    const el = screen.getByRole('heading', { level: 4 })
+    expect(el).toHaveClass('text-sm', 'font-medium')
+  })
+
   it('lets a className size override the size prop', () => {
     render(
       <Text size="sm" className="text-2xs">

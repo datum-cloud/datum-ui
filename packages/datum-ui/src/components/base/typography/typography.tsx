@@ -167,7 +167,13 @@ function Title({ className, level, weight, textColor, as, children, ...props }: 
 interface TextProps
   extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'color'>,
   VariantProps<typeof textVariants> {
-  as?: 'span' | 'p' | 'div'
+  /**
+   * Headings are allowed because the scale's display steps start at 16px
+   * (`Title` level 6), so a smaller heading — a card or section label at 13
+   * or 14px — has no `Title` level. Render it as `<Text as="h4">` rather than
+   * dropping to a raw size class.
+   */
+  as?: 'span' | 'p' | 'div' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
   copyable?: boolean
   ellipsis?: boolean
   mark?: boolean

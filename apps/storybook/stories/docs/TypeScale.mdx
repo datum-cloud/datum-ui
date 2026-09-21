@@ -79,6 +79,10 @@ Raw utilities and the component are interchangeable:
 `Title` levels map to display steps and handle their own responsiveness — do
 **not** add `md:` / `lg:` size classes on top, or headings shrink twice.
 
+A heading smaller than 16px has no `Title` level, since the display steps start
+there. Render it as `<Text as="h4">` — the element stays a heading, and the size
+still comes from the scale.
+
 | `Title` level | Step |
 |---|---|
 | 1 | `text-4xl` |
