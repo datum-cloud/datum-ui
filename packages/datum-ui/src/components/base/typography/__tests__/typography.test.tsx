@@ -142,6 +142,22 @@ describe('title', () => {
     expect(el.className).not.toMatch(/\b(md|lg):text-/)
   })
 
+  it('renders level 7 at the 14px floor, as an h6 since there is no h7', () => {
+    render(<Title level={7}>floor</Title>)
+    const el = screen.getByRole('heading', { level: 6 })
+    expect(el).toHaveClass('text-sm')
+  })
+
+  it('keeps the element when as overrides a level', () => {
+    render(
+      <Title as="h2" level={7}>
+        outline
+      </Title>,
+    )
+    const el = screen.getByRole('heading', { level: 2 })
+    expect(el).toHaveClass('text-sm')
+  })
+
   it('defaults to level 4 (text-xl, h4)', () => {
     render(<Title>default</Title>)
     const el = screen.getByRole('heading', { level: 4 })

@@ -79,18 +79,22 @@ Raw utilities and the component are interchangeable:
 `Title` levels map to display steps and handle their own responsiveness — do
 **not** add `md:` / `lg:` size classes on top, or headings shrink twice.
 
-A heading smaller than 16px has no `Title` level, since the display steps start
-there. Render it as `<Text as="h4">` — the element stays a heading, and the size
-still comes from the scale.
+A heading below 14px is not a heading — use `<Text as="h4">` for a micro label
+that must stay in the outline.
 
-| `Title` level | Step |
-|---|---|
-| 1 | `text-4xl` |
-| 2 | `text-3xl` |
-| 3 | `text-2xl` |
-| 4 (default) | `text-xl` |
-| 5 | `text-lg` |
-| 6 | `text-base` |
+| `Title` level | Step | Element |
+|---|---|---|
+| 1 | `text-4xl` | `h1` |
+| 2 | `text-3xl` | `h2` |
+| 3 | `text-2xl` | `h3` |
+| 4 (default) | `text-xl` | `h4` |
+| 5 | `text-lg` | `h5` |
+| 6 | `text-base` | `h6` |
+| 7 | `text-sm` | `h6` — the 14px floor; there is no `h7` |
+
+`level` picks the size and the element together. Where the document outline and
+the visual size disagree, `as` decouples them: `<Title as="h2" level={5}>` is an
+`h2` rendered at 18px.
 
 ## Color
 
