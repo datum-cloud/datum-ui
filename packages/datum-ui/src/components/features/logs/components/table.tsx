@@ -225,7 +225,7 @@ export function LogsTable({ className }: { className?: string }) {
           icon={<Icon icon={TriangleAlert} />}
           title="Couldn't load logs"
           description={(
-            <code className="bg-muted text-foreground inline-block max-w-full rounded-md border px-2 py-1 text-left font-mono text-[11px] leading-4 break-all">
+            <code className="bg-muted text-foreground inline-block max-w-full rounded-md border px-2 py-1 text-left font-mono text-3xs leading-4 break-all">
               {error}
             </code>
           )}

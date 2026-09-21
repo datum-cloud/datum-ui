@@ -38,7 +38,7 @@ export function QuickRangesPanel({
               <span>{preset.label}</span>
               <kbd
                 className={cn(
-                  'bg-muted pointer-events-none hidden h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium select-none sm:flex',
+                  'bg-muted pointer-events-none hidden h-5 items-center gap-1 rounded border px-1.5 font-mono text-4xs font-medium select-none sm:flex',
                   isSelected ? 'border-primary' : 'bg-muted/50 border-transparent',
                 )}
               >

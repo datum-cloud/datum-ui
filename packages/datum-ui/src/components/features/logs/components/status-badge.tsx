@@ -12,7 +12,7 @@ export function LogsSeverityBadge({ severity }: { severity?: string }) {
       type={severityBadgeType(severity)}
       theme={unlabeled ? 'solid' : 'light'}
       className={cn(
-        'h-4 px-1.5 py-0 font-mono text-[10px] leading-4 font-medium',
+        'h-4 px-1.5 py-0 font-mono text-4xs leading-4 font-medium',
         unlabeled && 'border-border bg-muted text-foreground',
       )}
     >
@@ -28,7 +28,7 @@ export function LogsHttpStatusChip({ status, className }: { status: number, clas
       type={httpStatusBadgeType(status)}
       theme="light"
       data-slot="logs-http-status"
-      className={cn('h-5 shrink-0 px-1.5 py-0 font-mono text-[11px] leading-5 font-medium tabular-nums', className)}
+      className={cn('h-5 shrink-0 px-1.5 py-0 font-mono text-3xs leading-5 font-medium tabular-nums', className)}
     >
       {status}
     </Badge>
@@ -42,7 +42,7 @@ export function LogsStatusBadge({ parsed }: { parsed: ParsedLogLine }) {
 
   return (
     // Status first: three digits give a straight left edge, method widths trail.
-    <span className="inline-flex h-4 items-center gap-1.5 font-mono text-[11px] leading-4 font-medium">
+    <span className="inline-flex h-4 items-center gap-1.5 font-mono text-3xs leading-4 font-medium">
       <span className={cn('tabular-nums', httpStatusTextClass(parsed.status))}>{parsed.status}</span>
       <span className="text-muted-foreground">{parsed.method}</span>
     </span>

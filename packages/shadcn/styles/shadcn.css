@@ -221,7 +221,7 @@ body {
     @apply hidden;
   }
   .leaflet-control-attribution {
-    @apply !bg-muted rounded-md !px-[4px] !py-[2px] text-[10px] !leading-none !text-inherit;
+    @apply !bg-muted rounded-md !px-[4px] !py-[2px] text-4xs !leading-none !text-inherit;
   }
   .leaflet-draw-guide-dash {
     @apply rounded-full;

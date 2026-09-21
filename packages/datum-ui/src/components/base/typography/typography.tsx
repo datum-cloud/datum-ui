@@ -6,17 +6,25 @@ import { cn } from '../../../utils/cn'
 
 // ---------------------------------------------------------------------------
 // Variants
+//
+// Every `size` maps to the `text-*` utility of the same name, so
+// `<Text size="sm">` and `className="text-sm"` always render the same size.
+// The scale itself lives in `styles/themes/alpha.css` (see Storybook
+// "Docs/Type Scale").
 // ---------------------------------------------------------------------------
 
+// Title levels use a single step each. Display steps (`xl` and up) already
+// shrink per breakpoint in the theme, so adding `md:` / `lg:` classes here
+// would scale headings twice.
 const titleVariants = cva('font-semibold leading-tight tracking-tight', {
   variants: {
     level: {
-      1: 'text-2xl md:text-3xl lg:text-4xl',
-      2: 'text-xl md:text-2xl lg:text-3xl',
-      3: 'text-lg md:text-xl lg:text-2xl',
-      4: 'text-base md:text-lg lg:text-xl',
-      5: 'text-sm md:text-base lg:text-lg',
-      6: 'text-xs md:text-sm lg:text-base',
+      1: 'text-4xl',
+      2: 'text-3xl',
+      3: 'text-2xl',
+      4: 'text-xl',
+      5: 'text-lg',
+      6: 'text-base',
     },
     weight: {
       normal: 'font-normal',
@@ -31,29 +39,41 @@ const titleVariants = cva('font-semibold leading-tight tracking-tight', {
       primary: 'text-primary',
       secondary: 'text-secondary-foreground',
       destructive: 'text-destructive',
-      success: 'text-green-600 dark:text-green-400',
-      warning: 'text-yellow-600 dark:text-yellow-400',
-      info: 'text-blue-600 dark:text-blue-400',
+      success: 'text-success',
+      warning: 'text-warning',
+      info: 'text-info',
     },
   },
   defaultVariants: {
     level: 4,
     weight: 'semibold',
-    textColor: 'default',
+    // No textColor default: headings inherit their parent's color, like a raw
+    // <h4>. `textColor="default"` forces the foreground color.
   },
 })
 
-const textVariants = cva('leading-relaxed', {
+// No base line height: each step in the scale carries its own, so Text renders
+// exactly what the matching `text-*` class renders. A caller that wants a
+// different rhythm passes a `leading-*` class.
+const textVariants = cva('', {
   variants: {
     size: {
+      '5xs': 'text-5xs',
+      '4xs': 'text-4xs',
+      '3xs': 'text-3xs',
+      '2xs': 'text-2xs',
       'xs': 'text-xs',
       'sm': 'text-sm',
-      'base': 'text-sm',
+      'base': 'text-base',
       'lg': 'text-lg',
       'xl': 'text-xl',
       '2xl': 'text-2xl',
       '3xl': 'text-3xl',
       '4xl': 'text-4xl',
+      '5xl': 'text-5xl',
+      '6xl': 'text-6xl',
+      '7xl': 'text-7xl',
+      '8xl': 'text-8xl',
     },
     weight: {
       normal: 'font-normal',
@@ -68,9 +88,9 @@ const textVariants = cva('leading-relaxed', {
       primary: 'text-primary',
       secondary: 'text-secondary-foreground',
       destructive: 'text-destructive',
-      success: 'text-green-600 dark:text-green-400',
-      warning: 'text-yellow-600 dark:text-yellow-400',
-      info: 'text-blue-600 dark:text-blue-400',
+      success: 'text-success',
+      warning: 'text-warning',
+      info: 'text-info',
     },
     type: {
       default: '',
@@ -83,9 +103,11 @@ const textVariants = cva('leading-relaxed', {
     },
   },
   defaultVariants: {
-    size: 'base',
+    // Body text is 14px. `sm` is that step; `base` is the 16px reading size.
+    size: 'sm',
     weight: 'normal',
-    textColor: 'default',
+    // No textColor default: text inherits its parent's color, like a raw
+    // <span>, so it works inside alerts, badges and muted containers.
     type: 'default',
   },
 })
@@ -93,11 +115,15 @@ const textVariants = cva('leading-relaxed', {
 const paragraphVariants = cva('leading-relaxed', {
   variants: {
     size: {
-      xs: 'text-xs',
-      sm: 'text-sm',
-      base: 'text-sm',
-      lg: 'text-lg',
-      xl: 'text-xl',
+      '5xs': 'text-5xs',
+      '4xs': 'text-4xs',
+      '3xs': 'text-3xs',
+      '2xs': 'text-2xs',
+      'xs': 'text-xs',
+      'sm': 'text-sm',
+      'base': 'text-base',
+      'lg': 'text-lg',
+      'xl': 'text-xl',
     },
     spacing: {
       tight: 'leading-tight',
@@ -106,7 +132,7 @@ const paragraphVariants = cva('leading-relaxed', {
     },
   },
   defaultVariants: {
-    size: 'base',
+    size: 'sm',
     spacing: 'normal',
   },
 })

@@ -74,6 +74,13 @@ Light-mode tokens on :root, dark-mode tokens on .dark
   --destructive: var(--alert-red-light);
   --destructive-foreground: var(--glacier-mist-700);
 
+  /* Status text colors — for text on the page background, used by
+     text-success / text-warning / text-info and Typography's textColor.
+     Values match the palette colors they replace, for no visual change. */
+  --success: #16a34a; /* green-600 */
+  --warning: #ca8a04; /* yellow-600 */
+  --info: #2563eb; /* blue-600 */
+
   /* UI elements */
   --border: var(--glacier-mist-900);
   --input: var(--app-dark-utility-5);
@@ -269,6 +276,11 @@ Light-mode tokens on :root, dark-mode tokens on .dark
   /* Destructive colors */
   --destructive: var(--alert-red-light);
   --destructive-foreground: var(--glacier-mist-700);
+
+  /* Status text colors */
+  --success: #4ade80; /* green-400 */
+  --warning: #facc15; /* yellow-400 */
+  --info: #60a5fa; /* blue-400 */
 
   /* UI elements */
   --border: var(--app-dark-utility-2);
@@ -473,6 +485,11 @@ TAILWIND CUSTOM UTILITIES FOR THEME
   --color-icon-quinary: var(--icon-quinary);
   --color-icon-header: var(--icon-header);
 
+  /* Status text */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+
   /* Toast */
   --color-toast-error-background: var(--toast-error-background);
   --color-toast-error-foreground: var(--toast-error-foreground);
@@ -480,12 +497,6 @@ TAILWIND CUSTOM UTILITIES FOR THEME
   --color-toast-success-background: var(--toast-success-background);
   --color-toast-success-foreground: var(--toast-success-foreground);
   --color-toast-success-icon: var(--toast-success-icon);
-
-  /* Font Sizes */
-  --text-sm: 14px;
-  --text-xs: 13px;
-  --text-1xs: 12px;
-  --text-2xs: 9px;
 
   /* Badge */
   --color-badge-primary: var(--badge-primary);
@@ -573,6 +584,97 @@ TAILWIND CUSTOM UTILITIES FOR THEME
 
   --color-stepper-line: var(--stepper-line);
   --color-stepper-label: var(--stepper-label);
+}
+
+/* ========================================
+TYPE SCALE
+One named scale shared by raw `text-*` utilities and the Typography
+components. See Storybook "Docs/Type Scale" for the rules.
+
+Deliberately a plain `@theme`, not `@theme inline`: utilities must read
+`var(--text-*)` at runtime so the display steps below can shrink per
+breakpoint. An inline theme would bake the desktop values into every
+utility and the media queries would have nothing to override.
+======================================== */
+@theme {
+  /* Body — fixed on every screen */
+  /* 5xs is the floor, kept for dense numerics that already sit at 9px
+     (badge counters, table micro-labels). Prefer 4xs for anything a
+     reader has to parse rather than glance at. */
+  --text-5xs: 9px;
+  --text-5xs--line-height: 12px;
+  --text-4xs: 10px;
+  --text-4xs--line-height: 14px;
+  --text-3xs: 11px;
+  --text-3xs--line-height: 16px;
+  --text-2xs: 12px;
+  --text-2xs--line-height: 16px;
+  --text-xs: 13px;
+  --text-xs--line-height: 18px;
+  --text-sm: 14px;
+  --text-sm--line-height: 20px;
+  --text-base: 16px;
+  --text-base--line-height: 24px;
+  --text-lg: 18px;
+  --text-lg--line-height: 28px;
+
+  /* Display — desktop values; stepped down below */
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 32px;
+  --text-3xl: 30px;
+  --text-3xl--line-height: 36px;
+  --text-4xl: 36px;
+  --text-4xl--line-height: 40px;
+  --text-5xl: 48px;
+  --text-5xl--line-height: 48px;
+  --text-6xl: 60px;
+  --text-6xl--line-height: 60px;
+  --text-7xl: 72px;
+  --text-7xl--line-height: 72px;
+  --text-8xl: 96px;
+  --text-8xl--line-height: 96px;
+}
+
+/* Tablet (< lg). Every value is an existing step, so no new sizes appear. */
+@media (width < 64rem) {
+  :root {
+    --text-3xl: 24px;
+    --text-3xl--line-height: 32px;
+    --text-4xl: 30px;
+    --text-4xl--line-height: 36px;
+    --text-5xl: 36px;
+    --text-5xl--line-height: 40px;
+    --text-6xl: 48px;
+    --text-6xl--line-height: 48px;
+    --text-7xl: 60px;
+    --text-7xl--line-height: 60px;
+    --text-8xl: 72px;
+    --text-8xl--line-height: 72px;
+  }
+}
+
+/* Mobile (< md). */
+@media (width < 48rem) {
+  :root {
+    --text-xl: 18px;
+    --text-xl--line-height: 28px;
+    --text-2xl: 20px;
+    --text-2xl--line-height: 28px;
+    --text-3xl: 24px;
+    --text-3xl--line-height: 32px;
+    --text-4xl: 24px;
+    --text-4xl--line-height: 32px;
+    --text-5xl: 30px;
+    --text-5xl--line-height: 36px;
+    --text-6xl: 36px;
+    --text-6xl--line-height: 40px;
+    --text-7xl: 48px;
+    --text-7xl--line-height: 48px;
+    --text-8xl: 60px;
+    --text-8xl--line-height: 60px;
+  }
 }
 
 /* ========================================

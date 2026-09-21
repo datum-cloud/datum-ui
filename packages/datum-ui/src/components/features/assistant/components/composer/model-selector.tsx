@@ -55,7 +55,7 @@ export function ModelSelector({
         collisionPadding={16}
         className="flex w-56 max-h-[min(24rem,var(--radix-dropdown-menu-content-available-height))] flex-col overflow-hidden"
       >
-        <DropdownMenuLabel className="text-muted-foreground shrink-0 text-[10px] tracking-wide uppercase">
+        <DropdownMenuLabel className="text-muted-foreground shrink-0 text-4xs tracking-wide uppercase">
           Model
         </DropdownMenuLabel>
         <div className="min-h-0 flex-1 overflow-y-auto">
@@ -68,7 +68,7 @@ export function ModelSelector({
           </DropdownMenuRadioGroup>
         </div>
         <DropdownMenuSeparator className="shrink-0" />
-        <DropdownMenuLabel className="text-muted-foreground shrink-0 text-[10px] tracking-wide uppercase">
+        <DropdownMenuLabel className="text-muted-foreground shrink-0 text-4xs tracking-wide uppercase">
           Effort
         </DropdownMenuLabel>
         <DropdownMenuRadioGroup

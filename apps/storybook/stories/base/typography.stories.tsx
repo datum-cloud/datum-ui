@@ -17,7 +17,7 @@ const meta: Meta<typeof Title> = {
     docs: {
       description: {
         component:
-          'Semantic typography components with responsive sizing, weight, and color variants.\n\n'
+          'Semantic typography components with size, weight, and color variants on the shared type scale (see Docs/Type Scale).\n\n'
           + 'The Typography module provides `Title`, `Text`, `Paragraph`, `Link`, `List`, `ListItem`, '
           + '`Blockquote`, and `Code`. All components use CVA variants for consistent sizing, weight, and color. '
           + '`Title` renders responsive heading elements (h1–h6), `Text` supports inline formatting shortcuts '
@@ -48,6 +48,8 @@ const meta: Meta<typeof Title> = {
 }
 
 export default meta
+
+const TEXT_SIZES = ['5xs', '4xs', '3xs', '2xs', 'xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl'] as const
 
 type Story = StoryObj<typeof Title>
 
@@ -94,7 +96,7 @@ export const TitleLevels: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The `level` prop controls both the rendered heading element (h1–h6) and its responsive sizing.',
+        story: 'The `level` prop picks the heading element (h1–h6) and one display step (`4xl` down to `base`). The steps shrink on tablet and mobile through the theme, so resize the viewport to see it.',
       },
     },
   },
@@ -156,17 +158,18 @@ export const TextSizes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The `size` prop controls font size across a scale from `xs` to `xl`.',
+        story: 'Every `size` renders the `text-*` utility of the same name, so `<Text size="sm">` and `className="text-sm"` always match. `sm` (14px) is the default body size. See Docs/Type Scale for the rules.',
       },
     },
   },
   render: () => (
     <div className="space-y-2">
-      <div><Text size="xs">Extra small</Text></div>
-      <div><Text size="sm">Small</Text></div>
-      <div><Text size="base">Base</Text></div>
-      <div><Text size="lg">Large</Text></div>
-      <div><Text size="xl">Extra large</Text></div>
+      {TEXT_SIZES.map(size => (
+        <div key={size} className="flex items-baseline gap-4">
+          <code className="text-muted-foreground text-2xs w-12 shrink-0 font-mono">{size}</code>
+          <Text size={size}>The quick brown fox</Text>
+        </div>
+      ))}
     </div>
   ),
 }
