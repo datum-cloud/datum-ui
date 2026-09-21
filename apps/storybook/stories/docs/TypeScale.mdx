@@ -57,6 +57,11 @@ Desktop values, in px (`font-size` / `line-height`).
 
 ## Using it
 
+`Text` adds no line height of its own — each step carries the one paired with
+it in the theme — so the component and the utility render identically. Pass a
+`leading-*` class for a different rhythm. `Paragraph` is the exception: its
+`spacing` prop defaults to `leading-relaxed` for prose blocks.
+
 Raw utilities and the component are interchangeable:
 
 ```tsx

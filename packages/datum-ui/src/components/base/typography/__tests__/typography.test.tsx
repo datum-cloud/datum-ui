@@ -43,6 +43,11 @@ describe('text', () => {
     expect(el).not.toHaveClass('text-sm')
   })
 
+  it('adds no line height of its own, so it matches the raw class', () => {
+    render(<Text>plain</Text>)
+    expect(screen.getByText('plain').className).not.toMatch(/\bleading-/)
+  })
+
   it('lets a className size override the size prop', () => {
     render(
       <Text size="sm" className="text-2xs">

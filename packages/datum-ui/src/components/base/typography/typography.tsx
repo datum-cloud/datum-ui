@@ -52,7 +52,10 @@ const titleVariants = cva('font-semibold leading-tight tracking-tight', {
   },
 })
 
-const textVariants = cva('leading-relaxed', {
+// No base line height: each step in the scale carries its own, so Text renders
+// exactly what the matching `text-*` class renders. A caller that wants a
+// different rhythm passes a `leading-*` class.
+const textVariants = cva('', {
   variants: {
     size: {
       '4xs': 'text-4xs',

@@ -13,4 +13,6 @@ One type scale, `4xs` through `8xl`, now backs both the raw `text-*` utilities a
 - `Text` and `Title` inherit their parent's color when `textColor` is unset, instead of forcing `text-foreground`. Top-level text is unchanged because `body` sets the foreground color; text inside a colored parent (alert, badge, muted container) now follows it. `textColor="default"` still forces foreground.
 - New theme tokens `--success`, `--warning` and `--info` give `text-success`, `text-warning` and `text-info` utilities. `textColor` `success` / `warning` / `info` use them instead of raw green / yellow / blue palette classes. Values match the old palette colors, so nothing changes visually.
 
+- `Text` no longer applies `leading-relaxed`. Each step carries its own line height, so `<Text size="sm">` and `text-sm` now render identically; pass a `leading-*` class for a different rhythm. `Paragraph` keeps its `spacing` prop, whose `normal` default is still `leading-relaxed`.
+
 Migrating: rename `text-2xs` → `text-4xs` first, then `text-1xs` → `text-2xs`, then change `size="base"` to `size="sm"` on `Text` / `Paragraph` (or drop the prop). Check `Text` / `Title` without a `textColor` that sit inside a colored parent; add `textColor="default"` only where the old forced foreground was intended.
