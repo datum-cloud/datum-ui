@@ -184,7 +184,7 @@ export const SectionedList: Story = {
         <ul className="divide-border divide-y">
           {hostnames.map(item => (
             <li key={item.host} className="flex flex-col gap-1.5 px-(--card-px) py-3">
-              <span className="text-muted-foreground text-4xs font-medium tracking-wide uppercase">
+              <span className="text-muted-foreground text-5xs font-medium tracking-wide uppercase">
                 {item.kind}
               </span>
               <span className="font-mono text-sm">{item.host}</span>

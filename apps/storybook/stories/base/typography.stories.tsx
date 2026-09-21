@@ -49,7 +49,7 @@ const meta: Meta<typeof Title> = {
 
 export default meta
 
-const TEXT_SIZES = ['4xs', '3xs', '2xs', 'xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl'] as const
+const TEXT_SIZES = ['5xs', '4xs', '3xs', '2xs', 'xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', '8xl'] as const
 
 type Story = StoryObj<typeof Title>
 

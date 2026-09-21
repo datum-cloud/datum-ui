@@ -39,7 +39,7 @@ function groupTitle(label: string, count: number): ReactNode {
       <span className="text-xs font-medium">{label}</span>
       <Badge
         type="secondary"
-        className="text-4xs flex cursor-default items-center gap-1.5 px-1 py-0.5 font-bold"
+        className="text-5xs flex cursor-default items-center gap-1.5 px-1 py-0.5 font-bold"
       >
         {count}
       </Badge>

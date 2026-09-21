@@ -15,7 +15,7 @@ always render the same size.
    scale. Changing a size is a one-line edit to a theme token, not a find-and-replace.
 2. **One scale for classes and components.** `Text`, `Paragraph`, and `Title`
    render these same steps. A raw utility class and the component always agree.
-3. **Body sizes are fixed; display sizes step down.** `4xs`–`lg` are the same on
+3. **Body sizes are fixed; display sizes step down.** `5xs`–`lg` are the same on
    every screen (dense UI text must not shrink on phones). `xl` and larger step
    down one notch per breakpoint — using existing steps, so no new values appear.
 
@@ -23,10 +23,10 @@ always render the same size.
 
 Steps below `xs` mirror the `2xl` / `3xl` convention **downward**:
 
-`4xs` · `3xs` · `2xs` · `xs` · `sm` · `base` · `lg` · `xl` · `2xl` … `8xl`
+`5xs` · `4xs` · `3xs` · `2xs` · `xs` · `sm` · `base` · `lg` · `xl` · `2xl` … `8xl`
 
 There is no `1xs` — just as there is no `1xl`. The step directly below `xs` is
-`2xs`, then `3xs`, then `4xs`. Smaller number closer to `xs`; larger number =
+`2xs`, then `3xs`, then `4xs`, then `5xs`. Smaller number closer to `xs`; larger number =
 smaller text.
 
 ## The scale
@@ -35,8 +35,12 @@ Desktop values, in px (`font-size` / `line-height`).
 
 ### Body — fixed on every screen
 
+Reach for `5xs` only where 9px already earns its place; `4xs` is the smallest
+size meant for text a reader parses rather than glances at.
+
 | Class / `size` | px | Use for |
 |---|---|---|
+| `5xs` | 9 / 12 | The floor: dense numerics — badge counters, table micro-labels |
 | `4xs` | 10 / 14 | Smallest chips, overlines, counters |
 | `3xs` | 11 / 16 | Micro labels, dense badges |
 | `2xs` | 12 / 16 | Captions, timestamps, helper text |
@@ -116,6 +120,7 @@ Consumers import that stylesheet and get the utilities for free.
 
 ```css
 @theme {
+  --text-5xs:  9px;  --text-5xs--line-height: 12px;
   --text-4xs: 10px;  --text-4xs--line-height: 14px;
   --text-3xs: 11px;  --text-3xs--line-height: 16px;
   --text-2xs: 12px;  --text-2xs--line-height: 16px;
@@ -140,7 +145,7 @@ because the scale is a plain `@theme`, not `@theme inline`: the utilities read
 | Before | After | Change |
 |---|---|---|
 | `text-1xs` (12px) | `text-2xs` | none; `1xs` no longer exists |
-| `text-2xs` (9px) | `text-4xs` | 9 → 10px; `2xs` is now 12px |
+| `text-2xs` (9px) | `text-5xs` | none; `2xs` is now 12px |
 | `text-[10px]` | `text-4xs` | none |
 | `text-[11px]` | `text-3xs` | none |
 | `<Text size="base">` / `<Paragraph size="base">` | `size="sm"`, or omit it | none; `base` is now 16px |
@@ -148,5 +153,5 @@ because the scale is a plain `@theme`, not `@theme inline`: the utilities read
 | `<Text>` / `<Title>` with no `textColor` | unchanged, or `textColor="default"` | now inherits the parent's color instead of forcing foreground; add `textColor="default"` only where the old forced color was wanted |
 | `text-green-600 dark:text-green-400` (and yellow / blue) | `text-success` / `text-warning` / `text-info` | none |
 
-Rename `text-2xs` → `text-4xs` **before** `text-1xs` → `text-2xs`, or the
+Rename `text-2xs` → `text-5xs` **before** `text-1xs` → `text-2xs`, or the
 second rename's output gets caught by the first.

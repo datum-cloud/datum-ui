@@ -598,6 +598,11 @@ utility and the media queries would have nothing to override.
 ======================================== */
 @theme {
   /* Body — fixed on every screen */
+  /* 5xs is the floor, kept for dense numerics that already sit at 9px
+     (badge counters, table micro-labels). Prefer 4xs for anything a
+     reader has to parse rather than glance at. */
+  --text-5xs: 9px;
+  --text-5xs--line-height: 12px;
   --text-4xs: 10px;
   --text-4xs--line-height: 14px;
   --text-3xs: 11px;

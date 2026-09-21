@@ -58,6 +58,7 @@ const titleVariants = cva('font-semibold leading-tight tracking-tight', {
 const textVariants = cva('', {
   variants: {
     size: {
+      '5xs': 'text-5xs',
       '4xs': 'text-4xs',
       '3xs': 'text-3xs',
       '2xs': 'text-2xs',
@@ -114,6 +115,7 @@ const textVariants = cva('', {
 const paragraphVariants = cva('leading-relaxed', {
   variants: {
     size: {
+      '5xs': 'text-5xs',
       '4xs': 'text-4xs',
       '3xs': 'text-3xs',
       '2xs': 'text-2xs',

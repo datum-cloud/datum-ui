@@ -6,6 +6,7 @@ import { Paragraph, Text, Title } from '../typography'
 // The type scale's contract: every `size` renders the `text-*` utility of the
 // same name, so the component and a raw class can never disagree.
 const TEXT_SIZES = [
+  '5xs',
   '4xs',
   '3xs',
   '2xs',
@@ -23,7 +24,7 @@ const TEXT_SIZES = [
   '8xl',
 ] as const
 
-const PARAGRAPH_SIZES = ['4xs', '3xs', '2xs', 'xs', 'sm', 'base', 'lg', 'xl'] as const
+const PARAGRAPH_SIZES = ['5xs', '4xs', '3xs', '2xs', 'xs', 'sm', 'base', 'lg', 'xl'] as const
 
 describe('text', () => {
   it.each(TEXT_SIZES)('renders size="%s" as text-%s', (size) => {
