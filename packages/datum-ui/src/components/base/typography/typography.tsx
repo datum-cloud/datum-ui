@@ -25,6 +25,7 @@ const titleVariants = cva('font-semibold leading-tight tracking-tight', {
       4: 'text-xl',
       5: 'text-lg',
       6: 'text-base',
+      7: 'text-sm',
     },
     weight: {
       normal: 'font-normal',
@@ -148,7 +149,11 @@ interface TitleProps
 }
 
 function Title({ className, level, weight, textColor, as, children, ...props }: TitleProps) {
-  const Component = as ?? (`h${level ?? 4}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6')
+  // Level 7 is the 14px floor of the scale and has no element of its own —
+  // there is no <h7> — so it renders an <h6> unless `as` says otherwise.
+  const resolvedLevel = level ?? 4
+  const Component
+    = as ?? (`h${Math.min(resolvedLevel, 6)}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6')
 
   return React.createElement(
     Component,
@@ -167,7 +172,13 @@ function Title({ className, level, weight, textColor, as, children, ...props }: 
 interface TextProps
   extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'color'>,
   VariantProps<typeof textVariants> {
-  as?: 'span' | 'p' | 'div'
+  /**
+   * Headings are allowed because the scale's display steps start at 16px
+   * (`Title` level 6), so a smaller heading — a card or section label at 13
+   * or 14px — has no `Title` level. Render it as `<Text as="h4">` rather than
+   * dropping to a raw size class.
+   */
+  as?: 'span' | 'p' | 'div' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
   copyable?: boolean
   ellipsis?: boolean
   mark?: boolean

@@ -49,6 +49,16 @@ describe('text', () => {
     expect(screen.getByText('plain').className).not.toMatch(/\bleading-/)
   })
 
+  it('renders a heading element for sub-16px headings', () => {
+    render(
+      <Text as="h4" weight="medium">
+        Section
+      </Text>,
+    )
+    const el = screen.getByRole('heading', { level: 4 })
+    expect(el).toHaveClass('text-sm', 'font-medium')
+  })
+
   it('lets a className size override the size prop', () => {
     render(
       <Text size="sm" className="text-2xs">
@@ -130,6 +140,22 @@ describe('title', () => {
     // Breakpoint scaling lives in the theme; per-level md:/lg: sizes would
     // shrink headings twice.
     expect(el.className).not.toMatch(/\b(md|lg):text-/)
+  })
+
+  it('renders level 7 at the 14px floor, as an h6 since there is no h7', () => {
+    render(<Title level={7}>floor</Title>)
+    const el = screen.getByRole('heading', { level: 6 })
+    expect(el).toHaveClass('text-sm')
+  })
+
+  it('keeps the element when as overrides a level', () => {
+    render(
+      <Title as="h2" level={7}>
+        outline
+      </Title>,
+    )
+    const el = screen.getByRole('heading', { level: 2 })
+    expect(el).toHaveClass('text-sm')
   })
 
   it('defaults to level 4 (text-xl, h4)', () => {
