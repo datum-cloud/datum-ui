@@ -14,7 +14,7 @@ import {
 import { cn } from '../../../../utils/cn'
 import { useSidebar } from '../../../base/sidebar'
 import { hasActiveDescendant } from './active-path'
-import { getNavItemKey, NavMenuProvider } from './nav-menu-context'
+import { childLevel, getNavItemKey, NavMenuProvider } from './nav-menu-context'
 import { itemKeyOf, NavMenuItem } from './nav-menu-item'
 
 export type { NavItem } from './types'
@@ -77,7 +77,7 @@ export function NavMenu({ ref, className, items, currentPath, linkComponent: Lin
               newOpenItems[key] = true
             }
             if (navItem.children) {
-              keepActive(navItem.children, level + 1)
+              keepActive(navItem.children, childLevel(navItem, level))
             }
           })
         }

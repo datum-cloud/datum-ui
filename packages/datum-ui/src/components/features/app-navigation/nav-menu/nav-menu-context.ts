@@ -59,6 +59,14 @@ export function useNavMenuContext(): NavMenuContextValue {
  * Uses type + title + href + level (not href alone) so that collapsible groups
  * with href:null can still be toggled and duplicate hrefs never collide.
  */
+/**
+ * Depth at which an item's children render. A `group` is only a section label,
+ * so its children render at the group's own depth and look like top-level rows.
+ */
+export function childLevel(item: { type: string }, level: number): number {
+  return item.type === 'group' ? level : level + 1
+}
+
 export function getNavItemKey(item: { type: string, title: string, href: string | null }, level: number): string {
   return `${item.type}:${item.title}:${item.href ?? ''}:${level}`
 }

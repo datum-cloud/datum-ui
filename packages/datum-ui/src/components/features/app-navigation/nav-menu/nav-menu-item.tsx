@@ -15,8 +15,8 @@ import {
 } from '../../../base/sidebar'
 import { Icon } from '../../../icons/icon-wrapper'
 import { hasActiveDescendant, isNavItemActive } from './active-path'
-import { getNavItemKey, useNavMenuContext } from './nav-menu-context'
-import { NavSidebarMenuButton } from './parts'
+import { childLevel, getNavItemKey, useNavMenuContext } from './nav-menu-context'
+import { NAV_STYLES, NavSidebarMenuButton } from './parts'
 
 interface NavItemProps {
   item: NavItem
@@ -39,6 +39,14 @@ const COLLAPSIBLE_CHILD_VARIANTS = {
     transition: { duration: 0.2, ease: EASE.drawer },
   },
 } as const
+
+/**
+ * Nested rows already sit inside their parent's inset; adding another would push
+ * their labels past the parent's label instead of lining up under it.
+ */
+function rowInsetFor(level: number): string {
+  return level >= 1 ? 'px-0' : NAV_STYLES.rowInset
+}
 
 /** Stable React key for a rendered nav item at a given depth. */
 function itemKeyOf(item: NavItem, level: number): string {
@@ -71,7 +79,8 @@ function NavBadge({ badge }: { badge: NavItemBadge }) {
  * Memoized so unchanged subtrees skip re-rendering when their props are stable.
  *
  * Items with children use {@link NavCollapsibleItem}. Section headers use
- * {@link NavGroup} (always open, no dropdown).
+ * {@link NavGroup} (always open, no dropdown); their children render at the
+ * header's own level, so they look like top-level rows.
  */
 export const NavMenuItem = memo(({ item, level = 0 }: { item: NavItem, level?: number }) => {
   if (item.hidden) {
@@ -93,43 +102,25 @@ export const NavMenuItem = memo(({ item, level = 0 }: { item: NavItem, level?: n
 
 NavMenuItem.displayName = 'NavMenuItem'
 
-/** A labelled group of nav items (always open — Vercel-style section headers). */
+/**
+ * A labelled group of nav items (always open — Vercel-style section headers).
+ * The same tree renders in the icon rail with the header hidden, so the rail
+ * shows every item's icon and collapsing the sidebar never remounts the items.
+ */
 function NavGroup({ item, level }: NavItemProps) {
   const ctx = useNavMenuContext()
-  const { pathname, isIconRail, isMobile } = ctx
+  const { pathname } = ctx
   const hasActiveChild
     = (item.children?.some(child => hasActiveDescendant(child, pathname)) ?? false)
-  const sidebarCollapsed = isIconRail && !isMobile
-
-  // Icon rail: one button per section (avoids flooding the rail with every leaf).
-  if (sidebarCollapsed) {
-    return (
-      <>
-        {item.showSeparatorAbove && <SidebarSeparator className="my-1" />}
-        <SidebarMenu className="px-2">
-          <NavSidebarMenuButton
-            item={item}
-            isActive={hasActiveChild}
-            disableTooltip={ctx.disableTooltip}
-            className={cn(
-              ctx.itemClassName,
-              hasActiveChild && '[&>svg:first-of-type]:text-primary',
-            )}
-            activeClassName={ctx.activeItemClassName}
-            onClick={() => ctx.setOpen(true)}
-          />
-        </SidebarMenu>
-        {item.showSeparatorBelow && <SidebarSeparator className="my-2" />}
-      </>
-    )
-  }
 
   return (
     <>
       {item.showSeparatorAbove && <SidebarSeparator className="my-2" />}
-      <SidebarGroup className="mb-1 p-0! px-2">
+      {/* Space above a header that no separator already sets apart. */}
+      <SidebarGroup className={cn('mb-1 p-0!', !item.showSeparatorAbove && 'mt-3')}>
         {item.title && (
-          <SidebarMenu className="w-full">
+          // Same inset as the rows below, so the header lines up with their icons.
+          <SidebarMenu className={cn('w-full group-data-[collapsible=icon]:hidden', NAV_STYLES.rowInset)}>
             <NavSidebarMenuButton
               item={item}
               isActive={hasActiveChild}
@@ -148,7 +139,11 @@ function NavGroup({ item, level }: NavItemProps) {
         )}
         <SidebarGroupContent className="flex flex-col gap-0.5">
           {(item.children || []).map(child => (
-            <NavMenuItem key={itemKeyOf(child, level + 1)} item={child} level={level + 1} />
+            <NavMenuItem
+              key={itemKeyOf(child, childLevel(item, level))}
+              item={child}
+              level={childLevel(item, level)}
+            />
           ))}
         </SidebarGroupContent>
       </SidebarGroup>
@@ -188,7 +183,7 @@ function NavCollapsibleItem({ item, level }: NavItemProps) {
   return (
     <>
       {item.showSeparatorAbove && <SidebarSeparator className="my-2" />}
-      <SidebarMenu className="px-2">
+      <SidebarMenu className={rowInsetFor(level)}>
         <Collapsible
           key={`collapsed-item-drop-down-item-${item.title}-${level}`}
           asChild
@@ -286,7 +281,7 @@ function NavLeafItem({ item, level }: NavItemProps) {
   return (
     <>
       {item.showSeparatorAbove && <SidebarSeparator className="my-2" />}
-      <SidebarMenu className={cn(`level_${level} px-2`)}>
+      <SidebarMenu className={cn(`level_${level}`, rowInsetFor(level))}>
         <SidebarMenuItem className="[&>*:first-child]:w-full">
           <NavSidebarMenuButton
             asChild
