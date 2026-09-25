@@ -15,13 +15,14 @@ import {
   useSidebar,
 } from '../../base/sidebar'
 import { NavMenu } from './nav-menu'
+import { NAV_STYLES } from './nav-menu/parts'
 
 /** Skeleton that mirrors the project nav layout: Home, separator, 6 items, separator, Project Settings */
 function NavSkeleton() {
   return (
     <ul className="flex h-full w-full min-w-0 flex-col gap-0.5 py-2" data-sidebar="menu">
       {/* Home - first item, mimics active state with subtle background */}
-      <SidebarMenu className="px-2">
+      <SidebarMenu className={NAV_STYLES.rowInset}>
         <SidebarMenuItem className="[&>*:first-child]:w-full">
           <SidebarMenuSkeleton
             showIcon
@@ -34,7 +35,7 @@ function NavSkeleton() {
 
       {/* AI Edge, Connectors, DNS, Domains, Metrics, Secrets */}
       {[1, 2, 3, 4, 5, 6].map(i => (
-        <SidebarMenu key={i} className="px-2">
+        <SidebarMenu key={i} className={NAV_STYLES.rowInset}>
           <SidebarMenuItem className="[&>*:first-child]:w-full">
             <SidebarMenuSkeleton showIcon className="h-8 rounded-xl" />
           </SidebarMenuItem>
@@ -44,7 +45,7 @@ function NavSkeleton() {
       <SidebarSeparator className="my-2" />
 
       {/* Project Settings */}
-      <SidebarMenu className="px-2">
+      <SidebarMenu className={NAV_STYLES.rowInset}>
         <SidebarMenuItem className="[&>*:first-child]:w-full">
           <SidebarMenuSkeleton
             showIcon
