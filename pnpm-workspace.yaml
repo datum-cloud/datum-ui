@@ -30,7 +30,7 @@ allowBuilds:
 overrides:
   # jsdom (via isomorphic-dompurify) pulls undici. Previously a blanket
   # `undici: ^7.28.0`, which would have capped jsdom 30 -- it requires undici ^8.
-  "undici@>=7.0.0 <7.29.0": "7.29.0"
+  "undici@>=7.0.0 <7.29.0": "8.10.2"
   # GHSA HIGH on two separate lines: <1.1.17 and >=4.0.0 <5.0.8. The previous
   # entry pinned exactly 5.0.7, which is itself inside the vulnerable range,
   # and left the 1.x copy uncovered entirely.
