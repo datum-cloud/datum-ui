@@ -464,7 +464,7 @@
     "ai": ">=7 <8",
     "date-fns": ">=4.1.0 <5",
     "date-fns-tz": ">=3 <4",
-    "js-yaml": ">=5.2.2 <6",
+    "js-yaml": ">=5.4.1 <6",
     "leaflet": ">=1.9 <2",
     "leaflet-draw": ">=1 <2",
     "leaflet.fullscreen": ">=5 <6",
