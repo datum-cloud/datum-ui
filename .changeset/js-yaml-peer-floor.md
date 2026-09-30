@@ -1,5 +1,5 @@
 ---
-"@datum-cloud/datum-ui": patch
+"@datum-cloud/datum-ui": minor
 ---
 
 Raise the `js-yaml` peer floor to `>=5.4.1`.
