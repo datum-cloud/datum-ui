@@ -1,5 +1,18 @@
 # @datum-cloud/datum-ui
 
+## 3.3.0
+
+### Minor Changes
+
+- fd3a51d: Raise the `js-yaml` peer floor to `>=5.4.1`.
+  
+  js-yaml 5.4.0 and earlier are affected by GHSA-r3ph-w7gj-g6xm: `maxTotalMergeKeys` does not count empty mappings, so a document can merge a long sequence of them repeatedly and burn CPU without ever reaching the configured limit. The fix landed in 5.4.1, so the peer range starts there. The old floor was `>=5.2.2`, which let a consumer install an affected version.
+- 774c4bf: Raise the `@tiptap/*` peer floors to `>=3.30.5`.
+  
+  `@tiptap/core` 3.7.0 through 3.30.4 carries a HIGH quadratic ReDoS in block and inline Markdown attribute parsing, and every version below 3.30.4 also lets `mergeAttributes()` turn an own `__proto__` key into an inherited executable DOM attribute. The old floor of `>=3.27.1` let a consumer install an affected version.
+  
+  Each `@tiptap` package pins `@tiptap/core` to its own exact version, so raising the floor on the six packages this library declares is enough to guarantee a patched core. If you are pinned below 3.30.5, move the `@tiptap` family together, since each package declares an exact-version peer on the others.
+
 ## 3.2.0
 
 ### Minor Changes
