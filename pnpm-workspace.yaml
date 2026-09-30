@@ -28,14 +28,22 @@ allowBuilds:
 # Keep entries scoped (`pkg@range: version`), never blanket (`pkg: range`): a
 # blanket pin silently caps future majors that legitimately need a newer line.
 overrides:
-  # jsdom (via isomorphic-dompurify) pulls undici. Previously a blanket
-  # `undici: ^7.28.0`, which would have capped jsdom 30 -- it requires undici ^8.
-  "undici@>=7.0.0 <7.29.0": "7.29.0"
+  # Two undici copies, two separate advisory lines, both needing an entry.
+  #   7.x <- ai-sdk (@ai-sdk/provider-utils -> ai), dev tree only.
+  #   8.x <- jsdom 30, which is reached BOTH by the jsdom devDependency and by
+  #          `isomorphic-dompurify`, a runtime dependency -- so the 8.x line is
+  #          consumer-exposed (see the SCOPE note above: an override here fixes
+  #          this workspace only, not what consumers resolve).
+  # The 7.x selector does not match the 8.x copy, so bumping it alone leaves the
+  # consumer-facing line vulnerable. Patched floors are 7.29.1 and 8.10.2; both
+  # entries take the latest of their own major, never crossing it.
+  "undici@>=7.0.0 <7.29.0": "7.30.0"
+  "undici@>=8.0.0 <8.10.2": "8.11.2"
   # GHSA HIGH on two separate lines: <1.1.17 and >=4.0.0 <5.0.8. The previous
   # entry pinned exactly 5.0.7, which is itself inside the vulnerable range,
   # and left the 1.x copy uncovered entirely.
-  "brace-expansion@>=1.0.0 <1.1.17": "1.1.18"
-  "brace-expansion@>=5.0.0 <5.0.8": "5.0.9"
+  "brace-expansion@>=1.0.0 <1.1.17": "1.1.21"
+  "brace-expansion@>=5.0.0 <5.0.8": "5.0.12"
   # Not a CVE. Two React copies cause "Invalid hook call" at test time: the
   # Radix packages resolve their peer through @repo/shadcn (>=19.2.7 <20) and
   # bound to 19.2.7, while datum-ui and apps/storybook declare ^19.2.8. Hooks
@@ -51,13 +59,26 @@ overrides:
   # Keep it deduped to a single version.
   "@types/leaflet@>=1.9.0 <1.9.22": "1.9.22"
   # GHSA HIGH, dev tree only (storybook -> webpack -> schema-utils -> ajv).
-  "fast-uri@>=3.0.0 <3.1.4": "3.1.6"
-  # GHSA HIGH on all three lines; pulled in by @changesets/cli and the build.
-  "js-yaml@>=3.0.0 <3.15.0": "3.15.2"
-  "js-yaml@>=4.0.0 <4.3.0": "4.3.2"
-  "js-yaml@>=5.0.0 <5.2.2": "5.2.3"
+  "fast-uri@>=3.0.0 <3.1.4": "3.1.8"
   # GHSA HIGH, via storybook/vite/tailwind.
   "postcss@>=8.0.0 <8.5.18": "8.5.26"
+  # dompurify has two copies and both are under the advisory floor (>=3.4.13):
+  #   3.4.8  <- monaco-editor (dev)
+  #   3.4.12 <- isomorphic-dompurify (runtime) and mermaid -> streamdown (dev)
+  # One selector spanning the 3.x line covers both without crossing the major.
+  "dompurify@>=3.0.0 <3.4.13": "3.4.16"
+  # GHSA MODERATE x5 (prototype pollution, CSS injection, two DoS); mermaid
+  # arrives via streamdown, dev tree only.
+  "mermaid@>=11.0.0 <11.16.1": "11.17.2"
+  # GHSA MODERATE x2 (array-limit bypass, DoS via attacker-controlled isBuffer).
+  # Dev tree only: storybook-builder-rsbuild -> url -> qs.
+  "qs@>=6.0.0 <6.16.0": "6.16.0"
+  # GHSA MODERATE path traversal. The vulnerable copy is 3.2.7, bundled by
+  # storybook-builder-rsbuild; the advisory has no 3.x patch (fixed only in
+  # 4.1.11), so this is the one entry that must cross a major. Dev tree only,
+  # and the storybook build is verified against it -- if a future storybook
+  # bumps its own mocker, drop this entry rather than widening it.
+  "@vitest/mocker@>=2.1.0 <4.1.11": "4.1.11"
 
   # next, sharp and react-router are here only because `nuqs` (a devDependency,
   # used for one data-table adapter) declares five framework adapters as
