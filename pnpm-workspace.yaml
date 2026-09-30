@@ -35,7 +35,7 @@ overrides:
   # entry pinned exactly 5.0.7, which is itself inside the vulnerable range,
   # and left the 1.x copy uncovered entirely.
   "brace-expansion@>=1.0.0 <1.1.17": "1.1.18"
-  "brace-expansion@>=5.0.0 <5.0.8": "5.0.9"
+  "brace-expansion@>=5.0.0 <5.0.8": "5.0.12"
   # Not a CVE. Two React copies cause "Invalid hook call" at test time: the
   # Radix packages resolve their peer through @repo/shadcn (>=19.2.7 <20) and
   # bound to 19.2.7, while datum-ui and apps/storybook declare ^19.2.8. Hooks
