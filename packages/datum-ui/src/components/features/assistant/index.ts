@@ -1,7 +1,11 @@
 // Props-driven assistant workspace + its composable pieces. The host owns state
 // and transport (its own chat hook) and feeds them in; staff and cloud reuse
 // the same presentational layer.
-export { AssistantWorkspace, type AssistantWorkspaceProps } from './components/assistant-workspace'
+export {
+  AssistantWorkspace,
+  type AssistantWorkspaceOrientation,
+  type AssistantWorkspaceProps,
+} from './components/assistant-workspace'
 export { BrainGlyph } from './components/brain-glyph'
 
 export * from './components/composer'

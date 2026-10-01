@@ -8,6 +8,7 @@
 import { Brain, ChevronDown } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { cn } from '../../../../../utils/cn'
+import { Icon } from '../../../../icons/icon-wrapper'
 
 export function ThinkingBlock({
   text,
@@ -46,10 +47,11 @@ export function ThinkingBlock({
           isStreaming && 'cursor-default',
         )}
       >
-        <Brain className={cn('size-3.5 shrink-0', isStreaming && 'animate-pulse')} />
+        <Icon icon={Brain} className={cn('size-3.5 shrink-0', isStreaming && 'animate-pulse')} />
         <span>{label}</span>
         {!isStreaming && (
-          <ChevronDown
+          <Icon
+            icon={ChevronDown}
             className={cn('size-3.5 shrink-0 transition-transform', open && 'rotate-180')}
           />
         )}

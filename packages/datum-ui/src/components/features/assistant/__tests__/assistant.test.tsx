@@ -1,9 +1,11 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import type { UIMessage } from 'ai'
+import type { AssistantWorkspaceProps } from '../components/assistant-workspace'
 import type { HistoryPanelProps } from '../components/sidebar'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { getToolName } from 'ai'
 import { describe, expect, it, vi } from 'vitest'
+import { AssistantWorkspace } from '../components/assistant-workspace'
 import { EmptyState } from '../components/empty-state'
 import { AssistantMessage } from '../components/message'
 import { HistoryPanel } from '../components/sidebar'
@@ -304,5 +306,88 @@ describe('renderToolOutput config hook', () => {
       </AssistantConfigProvider>,
     )
     expect(screen.queryByText('should not render')).not.toBeInTheDocument()
+  })
+})
+
+describe('assistantWorkspace layout', () => {
+  const chat = { id: 'c1', title: 'Infra health check', updatedAt: Date.now(), messages: [] }
+  const conversation = [
+    { id: 'u1', role: 'user', parts: [{ type: 'text', text: 'Hi' }] },
+  ] as UIMessage[]
+
+  const renderWorkspace = (props: Partial<AssistantWorkspaceProps> = {}) => {
+    const all: AssistantWorkspaceProps = {
+      title: 'New chat',
+      messages: [],
+      status: 'ready',
+      isReady: true,
+      chatList: [chat],
+      currentChatId: '',
+      editor: null,
+      htmlByUserMsgIndex: { current: [] },
+      bottomRef: { current: null },
+      containerRef: vi.fn(),
+      userScrolledUpRef: { current: false },
+      onSend: vi.fn(),
+      onStop: vi.fn(),
+      onRetry: vi.fn(),
+      onNewChat: vi.fn(),
+      onLoadChat: vi.fn(),
+      onDeleteChat: vi.fn(),
+      onSuggestion: vi.fn(),
+      modelId: 'm',
+      effortId: 'high',
+      onModelChange: vi.fn(),
+      onEffortChange: vi.fn(),
+      historyOpen: false,
+      onToggleHistory: vi.fn(),
+      ...props,
+    }
+    render(<AssistantWorkspace {...all} />)
+    return all
+  }
+
+  it('defaults to the horizontal rail layout with no header on the empty state', () => {
+    renderWorkspace()
+    expect(screen.getByRole('button', { name: 'Chats' })).toBeInTheDocument()
+    expect(screen.queryByRole('banner')).not.toBeInTheDocument()
+  })
+
+  it('swaps the rail for a top bar in the vertical orientation', () => {
+    renderWorkspace({ orientation: 'vertical' })
+    expect(screen.queryByRole('button', { name: 'Chats' })).not.toBeInTheDocument()
+    expect(screen.getByRole('banner')).toHaveTextContent('New chat')
+    expect(screen.getByRole('button', { name: 'Toggle sidebar' })).toBeInTheDocument()
+  })
+
+  it('closes the vertical history drawer once a chat is picked', () => {
+    const props = renderWorkspace({ orientation: 'vertical', historyOpen: true })
+    fireEvent.click(screen.getByText('Infra health check'))
+    expect(props.onLoadChat).toHaveBeenCalledWith(chat)
+    expect(props.onToggleHistory).toHaveBeenCalledOnce()
+  })
+
+  it('keeps the horizontal history panel open when a chat is picked', () => {
+    const props = renderWorkspace({ historyOpen: true })
+    fireEvent.click(screen.getByText('Infra health check'))
+    expect(props.onLoadChat).toHaveBeenCalledWith(chat)
+    expect(props.onToggleHistory).not.toHaveBeenCalled()
+  })
+
+  it('renders no close button unless the host passes onClose', () => {
+    renderWorkspace({ messages: conversation })
+    expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
+  })
+
+  it.each([
+    ['horizontal', conversation],
+    ['horizontal', []],
+    ['vertical', conversation],
+    ['vertical', []],
+  ] as const)('renders onClose in the %s layout (%#)', (orientation, messages) => {
+    const onClose = vi.fn()
+    renderWorkspace({ orientation, messages: [...messages], onClose })
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(onClose).toHaveBeenCalledOnce()
   })
 })

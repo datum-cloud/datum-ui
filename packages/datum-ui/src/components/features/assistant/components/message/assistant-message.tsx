@@ -9,6 +9,7 @@ import { Fragment, useState } from 'react'
 import { Streamdown } from 'streamdown'
 import { cn } from '../../../../../utils/cn'
 import { Tooltip } from '../../../../base/tooltip'
+import { Icon } from '../../../../icons/icon-wrapper'
 import { useAssistantConfig } from '../../context'
 import { LoadingDots } from './loading-dots'
 import { ThinkingBlock } from './thinking-block'
@@ -154,7 +155,7 @@ function MessageActions({ msg }: { msg: UIMessage }) {
           aria-label="Copy message"
           className="hover:text-foreground rounded p-1 transition-colors"
         >
-          {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
+          {copied ? <Icon icon={Check} className="size-3.5" /> : <Icon icon={Copy} className="size-3.5" />}
         </button>
       </Tooltip>
       <Tooltip message="Download as Markdown" side="top">
@@ -164,7 +165,7 @@ function MessageActions({ msg }: { msg: UIMessage }) {
           aria-label="Download message"
           className="hover:text-foreground rounded p-1 transition-colors"
         >
-          <Download className="size-3.5" />
+          <Icon icon={Download} className="size-3.5" />
         </button>
       </Tooltip>
     </div>

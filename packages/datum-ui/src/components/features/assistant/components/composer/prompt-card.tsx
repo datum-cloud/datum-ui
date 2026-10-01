@@ -7,6 +7,7 @@ import { ArrowUp, Mic, MicOff, RotateCw, Square } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { cn } from '../../../../../utils/cn'
 import { Tooltip } from '../../../../base/tooltip'
+import { Icon } from '../../../../icons/icon-wrapper'
 import { useAssistantConfig } from '../../context'
 import { Equalizer } from './equalizer'
 import { ModelSelector } from './model-selector'
@@ -88,11 +89,11 @@ export function PromptCard({
                             <Equalizer frequencyData={frequencyData} />
                           )
                         : (
-                            <MicOff className="size-4" />
+                            <Icon icon={MicOff} className="size-4" />
                           )
                     )
                   : (
-                      <Mic className="size-4" />
+                      <Icon icon={Mic} className="size-4" />
                     )}
               </button>
             </Tooltip>
@@ -114,7 +115,7 @@ export function PromptCard({
                     aria-label="Retry last message"
                     className="text-muted-foreground hover:text-foreground hover:bg-accent shrink-0 rounded-full p-1.5 transition-colors"
                   >
-                    <RotateCw className="size-4" />
+                    <Icon icon={RotateCw} className="size-4" />
                   </button>
                 </Tooltip>
               </motion.div>
@@ -130,7 +131,7 @@ export function PromptCard({
                     aria-label="Send message"
                     className="bg-primary text-primary-foreground hover:bg-primary/90 shrink-0 rounded-full p-1.5 transition-colors"
                   >
-                    <ArrowUp className="size-4" />
+                    <Icon icon={ArrowUp} className="size-4" />
                   </button>
                 </Tooltip>
               )
@@ -142,7 +143,7 @@ export function PromptCard({
                     aria-label="Stop generating"
                     className="bg-primary text-primary-foreground hover:bg-primary/90 shrink-0 rounded-full p-1.5 transition-colors"
                   >
-                    <Square className="size-4 fill-current" />
+                    <Icon icon={Square} className="size-4 fill-current" />
                   </button>
                 </Tooltip>
               )}

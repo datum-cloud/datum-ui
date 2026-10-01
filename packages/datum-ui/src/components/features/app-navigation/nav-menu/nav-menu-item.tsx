@@ -104,12 +104,15 @@ NavMenuItem.displayName = 'NavMenuItem'
 
 /**
  * A labelled group of nav items (always open — Vercel-style section headers).
- * The same tree renders in the icon rail with the header hidden, so the rail
- * shows every item's icon and collapsing the sidebar never remounts the items.
+ * The same tree renders in the icon rail, so the rail shows every item's icon
+ * and collapsing the sidebar never remounts the items.
+ *
+ * In the rail the header keeps its row height and shows a short rule instead of
+ * its label, so every item sits at the same height collapsed and expanded and
+ * hover-expanding never shifts a row out from under the pointer.
  */
 function NavGroup({ item, level }: NavItemProps) {
-  const ctx = useNavMenuContext()
-  const { pathname } = ctx
+  const { pathname } = useNavMenuContext()
   const hasActiveChild
     = (item.children?.some(child => hasActiveDescendant(child, pathname)) ?? false)
 
@@ -119,23 +122,24 @@ function NavGroup({ item, level }: NavItemProps) {
       {/* Space above a header that no separator already sets apart. */}
       <SidebarGroup className={cn('mb-1 p-0!', !item.showSeparatorAbove && 'mt-3')}>
         {item.title && (
-          // Same inset as the rows below, so the header lines up with their icons.
-          <SidebarMenu className={cn('w-full group-data-[collapsible=icon]:hidden', NAV_STYLES.rowInset)}>
-            <NavSidebarMenuButton
-              item={item}
-              isActive={hasActiveChild}
-              disableTooltip
+          // Same inset as the rows below, so the label lines up with their icons.
+          <div className={cn('relative flex h-7 shrink-0 items-center', NAV_STYLES.rowInset)}>
+            <span
               className={cn(
-                ctx.itemClassName,
-                hasActiveChild && '[&>svg:first-of-type]:text-primary',
-                'pointer-events-none h-7 text-xs font-medium text-muted-foreground hover:bg-transparent',
+                'text-muted-foreground min-w-0 truncate px-2 text-xs font-medium',
+                NAV_STYLES.railFade,
                 hasActiveChild && 'text-primary',
               )}
-              activeClassName={ctx.activeItemClassName}
             >
-              <span className="min-w-0 truncate">{item.title}</span>
-            </NavSidebarMenuButton>
-          </SidebarMenu>
+              {item.title}
+            </span>
+            {/* Sits under the row icons (16px in, 16px wide) so it never moves as the
+                width animates, and waits for the label to fade so the two never overlap. */}
+            <span
+              aria-hidden
+              className="bg-sidebar-border absolute left-4 h-px w-4 opacity-0 transition-opacity duration-150 group-data-[collapsible=icon]:opacity-100 group-data-[collapsible=icon]:delay-150"
+            />
+          </div>
         )}
         <SidebarGroupContent className="flex flex-col gap-0.5">
           {(item.children || []).map(child => (
@@ -199,7 +203,7 @@ function NavCollapsibleItem({ item, level }: NavItemProps) {
           }}
           className="group/collapsible"
         >
-          <SidebarMenuItem className="[&>*:first-child]:w-full">
+          <SidebarMenuItem className={NAV_STYLES.menuItem}>
             <CollapsibleTrigger asChild className="w-full">
               <NavSidebarMenuButton
                 item={item}
@@ -212,17 +216,17 @@ function NavCollapsibleItem({ item, level }: NavItemProps) {
                 )}
                 activeClassName={ctx.activeItemClassName}
               >
-                <span className="min-w-0 truncate group-data-[collapsible=icon]:hidden">
+                <span className={cn('min-w-0 truncate', NAV_STYLES.railFade)}>
                   {item.title}
                 </span>
                 {item.badge && (
-                  <span className="group-data-[collapsible=icon]:hidden">
+                  <span className={NAV_STYLES.railFade}>
                     <NavBadge badge={item.badge} />
                   </span>
                 )}
                 <Icon
                   icon={ChevronRight}
-                  className="ml-auto shrink-0 transition-transform duration-200 group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-90"
+                  className="ml-auto shrink-0 transition-[transform,opacity] duration-200 group-data-[collapsible=icon]:opacity-0 group-data-[state=open]/collapsible:rotate-90"
                 />
               </NavSidebarMenuButton>
             </CollapsibleTrigger>
@@ -282,7 +286,7 @@ function NavLeafItem({ item, level }: NavItemProps) {
     <>
       {item.showSeparatorAbove && <SidebarSeparator className="my-2" />}
       <SidebarMenu className={cn(`level_${level}`, rowInsetFor(level))}>
-        <SidebarMenuItem className="[&>*:first-child]:w-full">
+        <SidebarMenuItem className={NAV_STYLES.menuItem}>
           <NavSidebarMenuButton
             asChild
             item={item}
@@ -307,17 +311,17 @@ function NavLeafItem({ item, level }: NavItemProps) {
                     {item?.icon && (
                       <Icon icon={item.icon} className="size-4 shrink-0 transition-all duration-300" />
                     )}
-                    <span className="min-w-0 truncate group-data-[collapsible=icon]:hidden">{item.title}</span>
+                    <span className={cn('min-w-0 truncate', NAV_STYLES.railFade)}>{item.title}</span>
                     {item.badge
                       ? (
-                          <span className="group-data-[collapsible=icon]:hidden">
+                          <span className={NAV_STYLES.railFade}>
                             <NavBadge badge={item.badge} />
                           </span>
                         )
                       : (
                           <Icon
                             icon={ExternalLinkIcon}
-                            className="ml-auto size-4 shrink-0 group-data-[collapsible=icon]:hidden"
+                            className={cn('ml-auto size-4 shrink-0', NAV_STYLES.railFade)}
                           />
                         )}
                   </a>
@@ -335,9 +339,9 @@ function NavLeafItem({ item, level }: NavItemProps) {
                         className="text-sidebar-primary shrink-0 transition-all duration-300"
                       />
                     )}
-                    <span className="min-w-0 truncate group-data-[collapsible=icon]:hidden">{item.title}</span>
+                    <span className={cn('min-w-0 truncate', NAV_STYLES.railFade)}>{item.title}</span>
                     {item.badge && (
-                      <span className="group-data-[collapsible=icon]:hidden">
+                      <span className={NAV_STYLES.railFade}>
                         <NavBadge badge={item.badge} />
                       </span>
                     )}

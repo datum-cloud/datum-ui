@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@repo/shadcn/ui/dropdown-menu'
 import { ChevronDown } from 'lucide-react'
+import { Icon } from '../../../../icons/icon-wrapper'
 import { useAssistantConfig } from '../../context'
 
 interface ModelSelectorProps {
@@ -47,7 +48,7 @@ export function ModelSelector({
         >
           <span className="text-foreground font-medium">{model.label}</span>
           <span>{effort.label}</span>
-          <ChevronDown className="size-3.5 shrink-0" />
+          <Icon icon={ChevronDown} className="size-3.5 shrink-0" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

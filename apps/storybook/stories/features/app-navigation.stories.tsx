@@ -7,15 +7,30 @@ import {
   SidebarProvider,
 } from '@datum-cloud/datum-ui/app-navigation'
 import {
+  Activity,
+  AppWindow,
   Boxes,
+  Cable,
+  ChartLine,
   ChartSpline,
+  Earth,
   FileText,
+  Gauge,
   Globe,
+  HardDrive,
   Home,
+  KeyRound,
   LayoutDashboard,
+  Lock,
   Network,
+  Plug,
+  Server,
   Settings,
+  Settings2,
+  Signpost,
+  Split,
   Users,
+  Waypoints,
 } from 'lucide-react'
 
 const comingSoon = { label: 'Coming Soon' }
@@ -134,7 +149,7 @@ const meta: Meta<typeof AppNavigation> = {
   },
   args: {
     navItems,
-    title: 'My App',
+    title: '',
     currentPath: '/dashboard',
     collapsible: 'icon',
     loading: false,
@@ -234,11 +249,12 @@ const projectServiceSections: Array<{
     icon: Globe,
     showSeparatorAbove: true,
     children: [
-      { title: 'Domains', href: '/project/demo/domains', type: 'link' },
-      { title: 'DNS', href: '/project/demo/dns-zones', type: 'link' },
-      { title: 'ALB', href: '/project/demo/alb', type: 'link' },
+      { title: 'Domains', href: '/project/demo/domains', type: 'link', icon: Globe },
+      { title: 'DNS', href: '/project/demo/dns-zones', type: 'link', icon: Signpost },
+      { title: 'ALB', href: '/project/demo/alb', type: 'link', icon: Split },
       {
         title: 'GSLB',
+        icon: Earth,
         href: 'https://github.com/datum-cloud/enhancements/issues/849',
         type: 'externalLink',
         muted: true,
@@ -252,6 +268,7 @@ const projectServiceSections: Array<{
     children: [
       {
         title: 'Compute',
+        icon: Server,
         href: 'https://github.com/datum-cloud/enhancements/issues/849',
         type: 'externalLink',
         muted: true,
@@ -259,6 +276,7 @@ const projectServiceSections: Array<{
       },
       {
         title: 'Object Storage',
+        icon: HardDrive,
         href: 'https://github.com/datum-cloud/enhancements/issues/849',
         type: 'externalLink',
         muted: true,
@@ -266,6 +284,7 @@ const projectServiceSections: Array<{
       },
       {
         title: 'Edge Apps',
+        icon: AppWindow,
         href: 'https://github.com/datum-cloud/enhancements/issues/849',
         type: 'externalLink',
         muted: true,
@@ -279,14 +298,16 @@ const projectServiceSections: Array<{
     children: [
       {
         title: 'Galactic VPC',
+        icon: Waypoints,
         href: 'https://github.com/datum-cloud/enhancements/issues/849',
         type: 'externalLink',
         muted: true,
         badge: comingSoon,
       },
-      { title: 'Connectors', href: '/project/demo/connectors', type: 'link' },
+      { title: 'Connectors', href: '/project/demo/connectors', type: 'link', icon: Plug },
       {
         title: 'Interconnects',
+        icon: Cable,
         href: 'https://github.com/datum-cloud/enhancements/issues/849',
         type: 'externalLink',
         muted: true,
@@ -298,10 +319,11 @@ const projectServiceSections: Array<{
     title: 'Observe',
     icon: ChartSpline,
     children: [
-      { title: 'Activity', href: '/project/demo/activity', type: 'link' },
-      { title: 'Metrics Export', href: '/project/demo/metrics', type: 'link' },
+      { title: 'Activity', href: '/project/demo/activity', type: 'link', icon: Activity },
+      { title: 'Metrics Export', href: '/project/demo/metrics', type: 'link', icon: ChartLine },
       {
         title: 'Usage',
+        icon: Gauge,
         href: 'https://github.com/datum-cloud/enhancements/issues/849',
         type: 'externalLink',
         muted: true,
@@ -314,9 +336,9 @@ const projectServiceSections: Array<{
     icon: Settings,
     showSeparatorAbove: true,
     children: [
-      { title: 'General', href: '/project/demo/settings', type: 'link' },
-      { title: 'Service Accounts', href: '/project/demo/service-accounts', type: 'link' },
-      { title: 'Secrets', href: '/project/demo/secrets', type: 'link' },
+      { title: 'General', href: '/project/demo/settings', type: 'link', icon: Settings2 },
+      { title: 'Service Accounts', href: '/project/demo/service-accounts', type: 'link', icon: KeyRound },
+      { title: 'Secrets', href: '/project/demo/secrets', type: 'link', icon: Lock },
     ],
   },
 ]
