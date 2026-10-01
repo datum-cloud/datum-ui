@@ -1,5 +1,19 @@
 # @datum-cloud/datum-ui
 
+## 3.4.0
+
+### Minor Changes
+
+- 1593e7c: Add `orientation` and `onClose` to `AssistantWorkspace`. `orientation="vertical"` suits a tall, narrow container such as a side dock: the left rail folds into a top bar (history toggle, title, new chat), history opens as a drawer over the content instead of narrowing it, and the empty state tightens up. `horizontal` stays the default. `onClose` renders a close button inside the workspace's own header, so a host panel no longer has to overlay one on top of the header's controls.
+  
+  Every assistant icon now renders through `Icon`, so they share the library's 1px stroke instead of lucide's heavier default.
+
+### Patch Changes
+
+- 008d607: Keep `AppNavigation` rows at the same height whether the sidebar is collapsed or expanded, so hover-expanding no longer shifts the hovered item out from under the pointer. Group headers keep their row in the icon rail (shown as a short rule), and rail rows lose the extra baseline space under their tooltip wrapper. Group headers also no longer take an active background when a child route is selected.
+  
+  Collapsing and expanding is now one smooth motion: icons stay at the same position in both states, rows shrink with the sidebar instead of snapping to the rail shape first, and labels, badges and chevrons fade out as the edge passes them. Rail tooltips open only for a hover that starts while the sidebar is collapsed, so leaving a hover-expanded sidebar no longer flashes the last row's tooltip.
+
 ## 3.3.0
 
 ### Minor Changes
