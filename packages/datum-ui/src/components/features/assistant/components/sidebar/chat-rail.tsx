@@ -27,7 +27,7 @@ export function ChatRail({ historyOpen, onNewChat, onToggleHistory }: ChatRailPr
           className={cn(iconClass, 'group')}
         >
           <span className="bg-foreground text-background group-hover:bg-primary flex size-4 items-center justify-center rounded-full transition-colors">
-            <Plus className="size-3" strokeWidth={2.5} />
+            <Icon icon={Plus} size={12} strokeWidth={1.25} />
           </span>
         </button>
       </Tooltip>

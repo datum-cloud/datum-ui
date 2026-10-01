@@ -57,6 +57,9 @@ interface HarnessProps {
   /** Wire onArchiveChat / onUnarchiveChat against local state. */
   archive?: boolean
   confirmDelete?: boolean
+  orientation?: AssistantWorkspaceProps['orientation']
+  /** Render a close button, as a dismissible host panel would. */
+  closable?: boolean
 }
 
 /**
@@ -65,13 +68,14 @@ interface HarnessProps {
  * `EditorContent` renders an empty composer without a live tiptap instance.
  * Chat list mutations (archive, unarchive, delete) are applied to local state.
  */
-function WorkspaceHarness({ messages, initialChats = CHAT_LIST, archive = false, confirmDelete }: HarnessProps) {
+function WorkspaceHarness({ messages, initialChats = CHAT_LIST, archive = false, confirmDelete, orientation, closable = false }: HarnessProps) {
   const htmlByUserMsgIndexRef = useRef<string[]>([])
   const bottomRef = useRef<HTMLDivElement | null>(null)
   const userScrolledUpRef = useRef(false)
   const [modelId, setModelId] = useState('claude-sonnet-4-6')
   const [effortId, setEffortId] = useState<EffortId>('high')
-  const [historyOpen, setHistoryOpen] = useState(messages.length > 0)
+  // The vertical drawer covers the chat, so it starts closed there.
+  const [historyOpen, setHistoryOpen] = useState(messages.length > 0 && orientation !== 'vertical')
   const [chats, setChats] = useState(initialChats)
   const noop = () => {}
 
@@ -86,8 +90,16 @@ function WorkspaceHarness({ messages, initialChats = CHAT_LIST, archive = false,
     : {}
 
   return (
-    <div className="border-border h-[640px] w-full overflow-hidden rounded-lg border">
+    <div
+      className={
+        orientation === 'vertical'
+          ? 'border-border ml-auto h-[720px] w-[420px] overflow-hidden rounded-lg border'
+          : 'border-border h-[640px] w-full overflow-hidden rounded-lg border'
+      }
+    >
       <AssistantWorkspace
+        orientation={orientation}
+        onClose={closable ? noop : undefined}
         config={STORY_CONFIG}
         userName="Jacob"
         title="Infra health check"
@@ -165,4 +177,24 @@ export const ConfirmDelete: Story = {
   render: () => (
     <WorkspaceHarness messages={CONVERSATION} initialChats={MIXED_CHAT_LIST} archive confirmDelete />
   ),
+}
+
+/** `orientation="vertical"`: a narrow side dock with a top bar and a history drawer. */
+export const VerticalEmpty: Story = {
+  name: 'Vertical: empty state',
+  render: () => <WorkspaceHarness messages={[]} orientation="vertical" closable />,
+}
+
+export const VerticalConversation: Story = {
+  name: 'Vertical: active conversation',
+  render: () => <WorkspaceHarness messages={CONVERSATION} orientation="vertical" closable />,
+}
+
+/** The history drawer slides over the content instead of narrowing it. */
+export const VerticalHistory: Story = {
+  name: 'Vertical: history drawer',
+  render: () => <WorkspaceHarness messages={CONVERSATION} orientation="vertical" closable />,
+  play: async ({ canvasElement }) => {
+    await userEvent.click(await within(canvasElement).findByRole('button', { name: 'Toggle sidebar' }))
+  },
 }

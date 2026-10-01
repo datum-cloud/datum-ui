@@ -3,7 +3,9 @@
 import type { ReactNode } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { motion } from 'motion/react'
+import { cn } from '../../../../utils/cn'
 import { DURATION, EASE } from '../../../../utils/motion'
+import { Icon } from '../../../icons/icon-wrapper'
 import { useAssistantConfig } from '../context'
 import { BrainGlyph } from './brain-glyph'
 
@@ -11,23 +13,36 @@ interface EmptyStateProps {
   name?: string
   isReady: boolean
   onSuggestion: (text: string) => void
+  /** Tighter spacing for a narrow container (the workspace's vertical orientation). */
+  compact?: boolean
   /** The shared prompt card. */
   children: ReactNode
 }
 
-export function EmptyState({ name, isReady, onSuggestion, children }: EmptyStateProps) {
+export function EmptyState({ name, isReady, onSuggestion, compact = false, children }: EmptyStateProps) {
   const { greeting, suggestions } = useAssistantConfig()
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-4 py-8">
+    <div
+      className={cn(
+        'mx-auto flex w-full max-w-2xl flex-1 flex-col px-4',
+        // Compact scrolls instead of clipping its top when the panel is shorter than the content.
+        compact ? 'min-h-0 justify-center-safe overflow-y-auto py-6' : 'justify-center py-8',
+      )}
+    >
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: EASE.out }}
-        className="mb-8 flex flex-col items-center text-center"
+        className={cn('mb-8 flex flex-col items-center text-center', compact && 'mb-6')}
       >
-        <BrainGlyph className="mb-4 size-16" />
-        <h1 className="text-foreground font-title text-3xl leading-[34px] font-normal tracking-[-1.2px]">
+        <BrainGlyph className={cn('mb-4 size-16', compact && 'mb-3 size-12')} />
+        <h1
+          className={cn(
+            'text-foreground font-title text-3xl leading-[34px] font-normal tracking-[-1.2px]',
+            compact && 'text-2xl leading-8 tracking-[-0.8px]',
+          )}
+        >
           {greeting(name)}
         </h1>
       </motion.div>
@@ -50,10 +65,13 @@ export function EmptyState({ name, isReady, onSuggestion, children }: EmptyState
             transition={{ duration: DURATION.medium, delay: 0.1 + 0.05 * i, ease: EASE.out }}
             disabled={!isReady}
             onClick={() => onSuggestion(suggestion)}
-            className="group bg-sidebar-accent text-foreground flex items-center justify-between rounded-xl px-4 py-3 text-left text-sm transition-[filter] hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
+            className={cn(
+              'group bg-sidebar-accent text-foreground flex items-center justify-between gap-3 rounded-xl px-4 py-3 text-left text-sm transition-[filter] hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50',
+              compact && 'px-3 py-2.5',
+            )}
           >
             <span>{suggestion}</span>
-            <ArrowRight className="text-muted-foreground group-hover:text-foreground size-4 shrink-0 transition-colors" />
+            <Icon icon={ArrowRight} className="text-muted-foreground group-hover:text-foreground size-4 shrink-0 transition-colors" />
           </motion.button>
         ))}
       </div>
