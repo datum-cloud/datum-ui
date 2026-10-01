@@ -73,6 +73,20 @@ function SidebarMenuButton({
 } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const Comp = asChild ? Slot : 'button'
   const { isMobile, state } = useSidebar()
+  // Only a hover that starts in the icon rail may open the tooltip, and any
+  // expand or collapse closes it. Radix keeps a tooltip open while the pointer
+  // heads towards its content, so one left open (hidden) on an expanded row would
+  // otherwise flash when the sidebar collapses as the pointer leaves it.
+  const [tooltipOpen, setTooltipOpen] = React.useState(false)
+  const [tooltipState, setTooltipState] = React.useState(state)
+  if (tooltipState !== state) {
+    setTooltipState(state)
+    setTooltipOpen(false)
+  }
+  const handleTooltipOpenChange = React.useCallback(
+    (open: boolean) => setTooltipOpen(open && state === 'collapsed' && !isMobile),
+    [state, isMobile],
+  )
 
   const button = (
     <Comp
@@ -110,6 +124,8 @@ function SidebarMenuButton({
       side="right"
       align="center"
       hidden={state !== 'collapsed' || isMobile}
+      open={tooltipOpen && state === 'collapsed'}
+      onOpenChange={handleTooltipOpenChange}
       {...tooltipProps}
     >
       {button}

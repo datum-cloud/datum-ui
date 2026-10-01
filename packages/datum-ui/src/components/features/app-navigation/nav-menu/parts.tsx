@@ -7,10 +7,28 @@ import { Icon } from '../../../icons/icon-wrapper'
 
 // Centralized style constants for nav menu buttons
 export const NAV_STYLES = {
-  /** Side inset of every row. Drops back to px-2 so a 32px button fits the 48px icon rail. */
-  rowInset: 'px-3 group-data-[collapsible=icon]:px-2',
+  /**
+   * Side inset of every row. With the button's own px-2 it puts each icon 16px
+   * from the edge, which centres it in the 48px icon rail, so icons hold still
+   * while the sidebar collapses and expands.
+   */
+  rowInset: 'px-2',
+  /**
+   * Labels, badges and chevrons fade out in the icon rail instead of dropping
+   * out of the layout, so collapsing reads as the sidebar narrowing over them
+   * rather than the row snapping to its rail shape before the width moves.
+   * They also stop shrinking, so a label clips at the edge with its badge
+   * instead of truncating to "Co…" beside a full-width badge.
+   */
+  railFade: 'transition-opacity duration-150 group-data-[collapsible=icon]:shrink-0 group-data-[collapsible=icon]:opacity-0',
+  /**
+   * Row wrapper. A flex column, so the tooltip's inline wrapper never sits on a
+   * text baseline: in the icon rail the label is hidden, and the descender space
+   * under that baseline would make each rail row taller than its expanded twin.
+   */
+  menuItem: 'flex flex-col [&>*:first-child]:w-full',
   menuButton:
-    'rounded-xl h-8 font-normal text-xs transition-all px-3 py-1 data-[active=true]:bg-sidebar data-[active=true]:text-foreground data-[active=true]:text-sidebar-primary data-[active=true]:[&>svg]:text-primary hover:bg-sidebar hover:text-sidebar-primary hover:[&>svg]:text-sidebar-primary hover:bg-sidebar-accent data-[active=true]:bg-sidebar-accent hover:font-semibold data-[active=true]:hover:[&>svg]:text-sidebar-primary transition-colors duration-300 gap-2.5 text-foreground [&>svg]:text-icon-primary',
+    'rounded-xl h-8 font-normal text-xs transition-all px-2 py-1 group-data-[collapsible=icon]:w-full! data-[active=true]:bg-sidebar data-[active=true]:text-foreground data-[active=true]:text-sidebar-primary data-[active=true]:[&>svg]:text-primary hover:bg-sidebar hover:text-sidebar-primary hover:[&>svg]:text-sidebar-primary hover:bg-sidebar-accent data-[active=true]:bg-sidebar-accent hover:font-semibold data-[active=true]:hover:[&>svg]:text-sidebar-primary transition-colors duration-300 gap-2.5 text-foreground [&>svg]:text-icon-primary',
   disabled: 'pointer-events-none opacity-50',
   icon: 'duration-300 transition-all',
   iconSmall: 'size-4 duration-300 transition-all',
