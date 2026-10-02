@@ -28,7 +28,7 @@ const badgeVariants = cva(
       theme: {
         solid: '',
         outline: 'border',
-        light: 'border',
+        light: 'border-transparent',
       },
     },
     compoundVariants: [
@@ -49,7 +49,7 @@ const badgeVariants = cva(
         type: 'primary',
         theme: 'light',
         className:
-          'border-[var(--color-badge-primary)]/30 text-[var(--color-badge-primary)] bg-[var(--color-badge-primary)]/10 dark:border-[var(--color-badge-primary)] dark:text-[var(--color-badge-primary)] dark:bg-[var(--color-badge-primary)]/20',
+          'text-[var(--color-badge-primary)] bg-[var(--color-badge-primary)]/10 dark:text-[var(--color-badge-primary)] dark:bg-[var(--color-badge-primary)]/20',
       },
 
       // Secondary badge variants
@@ -69,7 +69,7 @@ const badgeVariants = cva(
         type: 'secondary',
         theme: 'light',
         className:
-          'border-[var(--color-badge-secondary)] text-[var(--color-badge-secondary)] bg-[var(--color-badge-secondary)]/20 dark:border-[var(--color-badge-secondary)] dark:text-[var(--color-badge-secondary)] dark:bg-[var(--color-badge-secondary)]/20',
+          'text-[var(--color-badge-secondary)] bg-[var(--color-badge-secondary)]/20 dark:text-[var(--color-badge-secondary)] dark:bg-[var(--color-badge-secondary)]/20',
       },
 
       // Tertiary badge variants
@@ -89,7 +89,7 @@ const badgeVariants = cva(
         type: 'tertiary',
         theme: 'light',
         className:
-          'border-[var(--color-badge-tertiary)] text-[var(--color-badge-tertiary)] bg-[var(--color-badge-tertiary)]/20 dark:border-[var(--color-badge-tertiary)] dark:text-[var(--color-badge-tertiary)] dark:bg-[var(--color-badge-tertiary)]/20',
+          'text-[var(--color-badge-tertiary)] bg-[var(--color-badge-tertiary)]/20 dark:text-[var(--color-badge-tertiary)] dark:bg-[var(--color-badge-tertiary)]/20',
       },
 
       // Quaternary badge variants
@@ -109,7 +109,7 @@ const badgeVariants = cva(
         type: 'quaternary',
         theme: 'light',
         className:
-          'border-[var(--color-badge-quaternary)] text-[var(--color-badge-quaternary-foreground)] bg-[var(--color-badge-quaternary)]/20 dark:border-[var(--color-badge-quaternary)] dark:text-[var(--color-badge-quaternary-foreground)] dark:bg-[var(--color-badge-quaternary)]/20',
+          'text-[var(--color-badge-quaternary-foreground)] bg-[var(--color-badge-quaternary)]/20 dark:text-[var(--color-badge-quaternary-foreground)] dark:bg-[var(--color-badge-quaternary)]/20',
       },
 
       // Info badge variants
@@ -129,7 +129,7 @@ const badgeVariants = cva(
         type: 'info',
         theme: 'light',
         className:
-          'border-[var(--color-badge-info)] text-[var(--color-badge-info)] bg-[var(--color-badge-info)]/20 dark:border-[var(--color-badge-info)] dark:text-[var(--color-badge-info)] dark:bg-[var(--color-badge-info)]/20',
+          'text-[var(--color-badge-info)] bg-[var(--color-badge-info)]/20 dark:text-[var(--color-badge-info)] dark:bg-[var(--color-badge-info)]/20',
       },
 
       // Warning badge variants
@@ -149,7 +149,7 @@ const badgeVariants = cva(
         type: 'warning',
         theme: 'light',
         className:
-          'border-[var(--color-badge-warning)] text-[var(--color-badge-warning)] bg-[var(--color-badge-warning)]/20 dark:border-[var(--color-badge-warning)] dark:text-[var(--color-badge-warning)] dark:bg-[var(--color-badge-warning)]/20',
+          'text-[var(--color-badge-warning)] bg-[var(--color-badge-warning)]/20 dark:text-[var(--color-badge-warning)] dark:bg-[var(--color-badge-warning)]/20',
       },
 
       // Danger badge variants
@@ -169,7 +169,7 @@ const badgeVariants = cva(
         type: 'danger',
         theme: 'light',
         className:
-          'border-[var(--color-badge-danger)] text-[var(--color-badge-danger)] bg-[var(--color-badge-danger)]/20 dark:border-[var(--color-badge-danger)] dark:text-[var(--color-badge-danger)] dark:bg-[var(--color-badge-danger)]/20',
+          'text-[var(--color-badge-danger)] bg-[var(--color-badge-danger)]/20 dark:text-[var(--color-badge-danger)] dark:bg-[var(--color-badge-danger)]/20',
       },
 
       // Success badge variants
@@ -189,7 +189,7 @@ const badgeVariants = cva(
         type: 'success',
         theme: 'light',
         className:
-          'border-[var(--color-badge-success)] text-[var(--color-badge-success)] bg-[var(--color-badge-success)]/20 dark:border-[var(--color-badge-success)] dark:text-[var(--color-badge-success)] dark:bg-[var(--color-badge-success)]/20',
+          'text-[var(--color-badge-success)] bg-[var(--color-badge-success)]/20 dark:text-[var(--color-badge-success)] dark:bg-[var(--color-badge-success)]/20',
       },
 
       // Muted badge variants
@@ -209,7 +209,7 @@ const badgeVariants = cva(
         type: 'muted',
         theme: 'light',
         className:
-          'border-[var(--color-badge-muted)] text-[var(--color-badge-muted)] bg-[var(--color-badge-muted)]/20 dark:border-[var(--color-badge-muted)] dark:text-[var(--color-badge-muted)] dark:bg-[var(--color-badge-muted)]/20',
+          'text-[var(--muted-foreground)] bg-[var(--muted-foreground)]/15 dark:text-[var(--color-badge-muted)] dark:bg-[var(--color-badge-muted)]/20',
       },
     ],
     defaultVariants: {
