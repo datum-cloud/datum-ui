@@ -1,5 +1,11 @@
 # @datum-cloud/datum-ui
 
+## 3.4.1
+
+### Patch Changes
+
+- e4e4db8: Remove the border from light badges, and use a readable gray for the muted light badge in light mode.
+
 ## 3.4.0
 
 ### Minor Changes
