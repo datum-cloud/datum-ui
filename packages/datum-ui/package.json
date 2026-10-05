@@ -24,6 +24,7 @@
       "style": "./dist/styles/canela.css",
       "default": "./dist/styles/canela.css"
     },
+    "./fonts/*": "./dist/styles/fonts/*",
     "./theme": {
       "source": "./src/components/themes/index.ts",
       "types": "./dist/components/themes/index.d.ts",
