@@ -164,6 +164,11 @@
       "types": "./dist/components/features/rich-text-editor/index.d.ts",
       "default": "./dist/rich-text-editor/index.mjs"
     },
+    "./rich-text-content": {
+      "source": "./src/components/features/rich-text-editor/content.ts",
+      "types": "./dist/components/features/rich-text-editor/content.d.ts",
+      "default": "./dist/rich-text-content/index.mjs"
+    },
     "./select": {
       "source": "./src/components/base/select/index.ts",
       "types": "./dist/components/base/select/index.d.ts",
