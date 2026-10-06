@@ -9,7 +9,12 @@ export interface StyleEntry {
   css: string
 }
 
-export type ManifestEntry = ModuleEntry | StyleEntry
+export interface FileEntry {
+  subpath: string
+  file: string
+}
+
+export type ManifestEntry = ModuleEntry | StyleEntry | FileEntry
 
 export declare const manifest: ManifestEntry[]
 

@@ -21,6 +21,9 @@
  *       side-effect emitted alongside the bundle.
  *   - Style-only entry: `{ subpath, css }`
  *       A pure stylesheet export with no JS bundle (e.g. `./styles`).
+ *   - File entry: `{ subpath, file }`
+ *       Static files passed through as-is (e.g. `./fonts/*`), so apps can
+ *       import the same file a stylesheet references.
  *
  * Everything else (the `types` path, the flat `default` bundle path, and the
  * tsdown output key) is derived from `subpath` + `source` by the rules encoded
@@ -29,13 +32,15 @@
 
 /** @typedef {{ subpath: string, source: string, style?: string }} ModuleEntry */
 /** @typedef {{ subpath: string, css: string }} StyleEntry */
-/** @typedef {ModuleEntry | StyleEntry} ManifestEntry */
+/** @typedef {{ subpath: string, file: string }} FileEntry */
+/** @typedef {ModuleEntry | StyleEntry | FileEntry} ManifestEntry */
 
 /** @type {ManifestEntry[]} */
 export const manifest = [
   { subpath: '.', source: './src/index.ts' },
   { subpath: './styles', css: './dist/styles/root.css' },
   { subpath: './styles/canela', css: './dist/styles/canela.css' },
+  { subpath: './fonts/*', file: './dist/styles/fonts/*' },
   { subpath: './theme', source: './src/components/themes/index.ts' },
   { subpath: './hooks', source: './src/hooks/index.ts' },
   { subpath: './icons', source: './src/components/icons/index.ts' },
@@ -123,6 +128,11 @@ function isStyleEntry(entry) {
   return 'css' in entry
 }
 
+/** @param {ManifestEntry} entry */
+function isFileEntry(entry) {
+  return 'file' in entry
+}
+
 /**
  * Flat tsdown output key for a subpath.
  * `.` -> `index`; `./form/adapters/rhf` -> `form/adapters/rhf/index`.
@@ -160,6 +170,10 @@ export function buildPackageExports() {
       exportsMap[entry.subpath] = { style: entry.css, default: entry.css }
       continue
     }
+    if (isFileEntry(entry)) {
+      exportsMap[entry.subpath] = { default: entry.file }
+      continue
+    }
     /** @type {Record<string, string>} */
     const conditions = { source: entry.source, types: typesFor(entry.source) }
     if (entry.style) {
@@ -179,7 +193,7 @@ export function buildTsdownEntry() {
   /** @type {Record<string, string>} */
   const entryMap = {}
   for (const entry of manifest) {
-    if (isStyleEntry(entry)) {
+    if (isStyleEntry(entry) || isFileEntry(entry)) {
       continue
     }
     entryMap[entryKeyFor(entry.subpath)] = entry.source.replace(/^\.\//, '')

@@ -21,7 +21,7 @@ describe('export map single source of truth', () => {
   it('every module entry point resolves to a tsdown output bundle', () => {
     const tsdownEntry = buildTsdownEntry()
     for (const [subpath, conditions] of Object.entries(committedExports)) {
-      // Style-only entries (e.g. `./styles`) intentionally have no JS bundle.
+      // Style-only and file entries (e.g. `./styles`, `./fonts/*`) have no JS bundle.
       if (!('source' in conditions)) {
         continue
       }
