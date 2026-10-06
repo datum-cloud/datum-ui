@@ -1,5 +1,12 @@
 # @datum-cloud/datum-ui
 
+## 3.5.0
+
+### Minor Changes
+
+- f515b27: Export the bundled font files at `@datum-cloud/datum-ui/fonts/*`, so apps can preload the same file the stylesheets load.
+- 22be738: Add a `@datum-cloud/datum-ui/rich-text-content` entry that exports `RichTextContent` without the editor, so apps that only display rich text don't download tiptap and prosemirror.
+
 ## 3.4.1
 
 ### Patch Changes
