@@ -69,6 +69,7 @@ export const manifest = [
   { subpath: './responsive-dropdown', source: './src/components/base/responsive-dropdown/index.ts' },
   { subpath: './responsive-popover', source: './src/components/base/responsive-popover/index.ts' },
   { subpath: './rich-text-editor', source: './src/components/features/rich-text-editor/index.ts' },
+  { subpath: './rich-text-content', source: './src/components/features/rich-text-editor/content.ts' },
   { subpath: './select', source: './src/components/base/select/index.ts' },
   { subpath: './separator', source: './src/components/base/separator/index.ts' },
   { subpath: './settings-nav', source: './src/components/base/settings-nav/index.ts' },
