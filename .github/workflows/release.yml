@@ -67,6 +67,16 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      # @datum-cloud/datum-ui-tokens and @datum-cloud/datum-ui-native, from the
+      # same validated CI run (see the native-packages-dist upload in ci.yml).
+      - name: Download validated native/tokens build artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: native-packages-dist
+          path: packages/
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Generate PR description
         id: pr-body
         run: |
