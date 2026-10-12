@@ -1,0 +1,53 @@
+{
+  "name": "@datum-cloud/datum-ui-tokens",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Datum design tokens (colours, spacing, radius, type, motion) as plain TypeScript, generated from the datum-ui CSS.",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/datum-cloud/datum-ui",
+    "directory": "packages/tokens"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "react-native": "./src/index.ts",
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsdown --config-loader native",
+    "dev": "tsdown --config-loader native --watch",
+    "gen:tokens": "node scripts/gen-tokens.mjs",
+    "check:tokens": "node scripts/gen-tokens.mjs --check",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "clean": "rm -rf dist .turbo node_modules"
+  },
+  "devDependencies": {
+    "@repo/config": "workspace:*",
+    "@types/culori": "^4.0.1",
+    "@types/node": "^24.10.1",
+    "culori": "^4.0.2",
+    "eslint": "^10.8.1",
+    "tsdown": "^0.22.14",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

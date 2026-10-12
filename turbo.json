@@ -24,6 +24,9 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
+    "check:tokens": {
+      "cache": false
+    },
     "clean": {
       "cache": false
     }
