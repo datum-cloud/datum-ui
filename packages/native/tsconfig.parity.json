@@ -1,0 +1,12 @@
+{
+  "extends": "@repo/config/tsconfig/base",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    // The web package's declarations reference DOM types.
+    "lib": ["ES2022", "DOM"],
+    "types": [],
+    "noEmit": true,
+    "isolatedDeclarations": false
+  },
+  "include": ["test/type-parity.ts", "src/globals.d.ts"]
+}
