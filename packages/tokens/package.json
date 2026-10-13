@@ -1,7 +1,7 @@
 {
   "name": "@datum-cloud/datum-ui-tokens",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Datum design tokens (colours, spacing, radius, type, motion) as plain TypeScript, generated from the datum-ui CSS.",
   "license": "MIT",
   "repository": {

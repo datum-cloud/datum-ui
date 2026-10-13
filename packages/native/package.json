@@ -1,6 +1,6 @@
 {
   "name": "@datum-cloud/datum-ui-native",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "React Native components for the Datum design system.",
   "license": "MIT",
   "repository": {
