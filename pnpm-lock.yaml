@@ -221,6 +221,9 @@ importers:
 
   packages/datum-ui:
     dependencies:
+      '@datum-cloud/datum-ui-assistant-core':
+        specifier: workspace:^
+        version: link:../assistant-core
       '@radix-ui/react-avatar':
         specifier: ^1.2.6
         version: 1.2.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

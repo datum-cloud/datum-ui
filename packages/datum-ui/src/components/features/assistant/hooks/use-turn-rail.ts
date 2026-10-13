@@ -1,7 +1,7 @@
 import type { UIMessage } from 'ai'
 import type { RefObject } from 'react'
 import type { Turn } from '../types'
-import { isTextUIPart } from 'ai'
+import { deriveTurns } from '@datum-cloud/datum-ui-assistant-core'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
 /**
@@ -21,13 +21,7 @@ export function useTurnRail(
   // auto-scroll observer can't yank the view back to the bottom mid-jump.
   const programmaticUntilRef = useRef(0)
 
-  const turns = useMemo<Turn[]>(
-    () =>
-      messages
-        .filter(m => m.role === 'user')
-        .map(m => ({ id: m.id, text: m.parts.find(isTextUIPart)?.text ?? '' })),
-    [messages],
-  )
+  const turns = useMemo<Turn[]>(() => deriveTurns(messages), [messages])
 
   // Default to the newest turn; a scroll refines it to whatever's in view.
   const activeTurnId = activeTurn ?? turns.at(-1)?.id ?? null

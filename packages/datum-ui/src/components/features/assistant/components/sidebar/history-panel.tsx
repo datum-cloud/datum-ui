@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react'
 import type { ChatSummary } from '../../types'
-import { isTextUIPart } from 'ai'
+import { chatFileName, chatToMarkdown } from '@datum-cloud/datum-ui-assistant-core'
 import { Archive, ArchiveRestore, Download, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { cn } from '../../../../../utils/cn'
@@ -13,20 +13,11 @@ import { Icon } from '../../../../icons/icon-wrapper'
 import { formatRelativeTime } from '../../utils'
 
 function downloadChat(chat: ChatSummary) {
-  const lines = chat.messages.map((msg) => {
-    const role = msg.role === 'user' ? 'You' : 'Assistant'
-    const text = msg.parts
-      .filter(isTextUIPart)
-      .map(p => p.text)
-      .join('\n')
-    return `## ${role}\n\n${text}`
-  })
-  const markdown = `# ${chat.title}\n\n${lines.join('\n\n---\n\n')}\n`
-  const blob = new Blob([markdown], { type: 'text/markdown' })
+  const blob = new Blob([chatToMarkdown(chat)], { type: 'text/markdown' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = `${chat.title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.md`
+  a.download = chatFileName(chat.title)
   a.click()
   URL.revokeObjectURL(url)
 }

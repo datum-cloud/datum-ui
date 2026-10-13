@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react'
 import type { AssistantConfig, LinkRenderProps } from '../types'
+import { DEFAULT_ASSISTANT_CONFIG as CORE_DEFAULT_ASSISTANT_CONFIG } from '@datum-cloud/datum-ui-assistant-core'
 import { createContext, useContext } from 'react'
 
 /**
@@ -30,11 +31,7 @@ export function defaultRenderLink({ href, children }: LinkRenderProps): ReactNod
  * config. Host apps override via `<AssistantConfigProvider config={…}>`.
  */
 export const DEFAULT_ASSISTANT_CONFIG: AssistantConfig = {
-  greeting: name => `Hey there${name ? `, ${name}` : ''}`,
-  suggestions: [],
-  showReasoning: true,
-  modelSelector: false,
-  toolLabels: {},
+  ...CORE_DEFAULT_ASSISTANT_CONFIG,
   renderLink: defaultRenderLink,
 }
 

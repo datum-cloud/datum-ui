@@ -5,6 +5,7 @@
  * Date.now() during render is acceptable here because the component re-renders
  * driven by the parent's `isStreaming` prop, not by Date itself.
  */
+import { thinkingLabel } from '@datum-cloud/datum-ui-assistant-core'
 import { Brain, ChevronDown } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { cn } from '../../../../../utils/cn'
@@ -28,13 +29,7 @@ export function ThinkingBlock({
     duration.current = Math.round((Date.now() - startedAt.current) / 1000)
   }
 
-  const label = isStreaming
-    ? 'Thinking…'
-    : duration.current !== null
-      ? duration.current < 1
-        ? 'Thought for less than 1 second'
-        : `Thought for ${duration.current}s`
-      : 'Thought'
+  const label = thinkingLabel(isStreaming, duration.current)
 
   return (
     <div className="mb-3">
