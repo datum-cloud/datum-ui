@@ -1,6 +1,7 @@
 // Components
 export { Alert } from './components/alert'
 export type { AlertProps, AlertType } from './components/alert'
+export * from './components/assistant'
 export { Avatar, initials } from './components/avatar'
 export type { AvatarProps, AvatarSize } from './components/avatar'
 export { Badge, getBadgeColors } from './components/badge'
@@ -40,6 +41,8 @@ export {
   BUTTON_THEMES,
   BUTTON_TYPES,
 } from './variants'
+// Assistant core (types and helpers the assistant components are built on)
+export type { ChatSummary, Mention, UIMessage } from '@datum-cloud/datum-ui-assistant-core'
 // Theme
 export { tokens, withAlpha } from '@datum-cloud/datum-ui-tokens'
 export type { ColorScheme, SemanticColors } from '@datum-cloud/datum-ui-tokens'

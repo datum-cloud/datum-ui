@@ -82,6 +82,25 @@ Without a provider, `useDatumTheme()` follows the OS appearance.
 | `LogoIcon`, `LogoFlat`, `LogoStacked`, `LogoText`                                              | `tone` (`brand` \| `mono-light` \| `mono-dark` \| `white`; default `brand` in light, `mono-light` in dark), `size` (icon) or `height` / `width`, `decorative`                                                                                                                                                                                                                                                                               |
 | `EmptyContent`                                                                                 | `title`, `description`, `image`, `action`, `variant` (`default` \| `dashed` \| `minimal`), `decorations`                                                                                                                                                                                                                                                                                                                                    |
 
+## Assistant
+
+Native pieces of Datum's assistant ("Patch"), built on [`@datum-cloud/datum-ui-assistant-core`](../assistant-core/README.md) and matching the web assistant's look: user prompts in a `bg-border` bubble, answers as full-width markdown, suggestion rows in `bg-sidebar-accent`. The host owns state and transport (see the core's `createAssistantTransport`) and passes messages in.
+
+| Component                                     | What it does                                                                                                                                                                                                                                                     |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AssistantConfigProvider`                     | Host config: `greeting`, `suggestions`, `toolLabels`, `showReasoning`, `onLinkPress` (route a link in an answer; defaults to `Linking.openURL`), optional `messageActions` / `renderToolOutput`                                                                  |
+| `AssistantThread`                             | FlatList of the conversation. Follows the newest text while it streams, stops following when the user scrolls up, and shows a scroll-to-bottom button. `formatUserMessage` customises a prompt bubble; `footer` sits after the last message; `ref.scrollToEnd()` |
+| `AssistantMessage`                            | An answer: markdown, the "working" line with the running tool's label, the reasoning block, and copy/share buttons once settled (`onCopy` / `onShare`; omit one to hide it). Memoized                                                                            |
+| `AssistantUserMessage`                        | The prompt bubble, with an optional `accessory` (e.g. mention chips)                                                                                                                                                                                             |
+| `AssistantMarkdown`                           | Themed `react-native-marked` (pure JS): mono code blocks and tables that scroll sideways, links through `onLinkPress`. While `streaming`, unterminated constructs are closed first and renders are throttled (`throttleMs`, default 80)                          |
+| `AssistantComposer`                           | Multiline prompt card; send turns into Stop while `busy`, optional retry, haptics, `accessory` slot. Put it inside a `KeyboardAvoidingView`                                                                                                                      |
+| `AssistantSuggestions`, `AssistantEmptyState` | Starter prompt rows; the new-chat screen (BrainGlyph, Canela greeting, suggestions)                                                                                                                                                                              |
+| `ThinkingBlock`, `LoadingDots`                | Collapsible reasoning with its measured duration; three staggered Reanimated dots (still under Reduce Motion)                                                                                                                                                    |
+| `ConversationRow`                             | A history row: title and relative time                                                                                                                                                                                                                           |
+| `BrainGlyph`, `AssistantIcon`                 | The web glyph's path, and the few line icons the assistant uses, in react-native-svg                                                                                                                                                                             |
+
+`react-native-marked` and its dependencies are JS only; nothing here needs a native rebuild.
+
 Also exported: `tokens`, `withAlpha`, `datumFonts`, `datumFontFiles`, `platformFonts`, `resolveFontFamily`, `datumThemes`, `getButtonColors`, `getBadgeColors`, `STATUS_BADGE_TYPE`, `LOGO_TONES`, `impactHaptic`, the variant arrays (`BUTTON_TYPES`, `BUTTON_THEMES`, `BUTTON_SIZES`, `BADGE_TYPES`, `BADGE_THEMES`, `ALERT_TYPES`), and the prop and token types.
 
 ## Development
@@ -92,4 +111,4 @@ pnpm --filter @datum-cloud/datum-ui-native typecheck
 pnpm --filter @repo/native-catalog start              # component catalog (Expo)
 ```
 
-`test/type-parity.ts` fails the typecheck if the Button, Badge or Alert variant unions drift from the web components. The logo test fails if the SVG paths drift from `datum-ui`'s `features/logo`.
+`test/type-parity.ts` fails the typecheck if the Button, Badge or Alert variant unions drift from the web components. The logo test fails if the SVG paths drift from `datum-ui`'s `features/logo`, and the assistant test does the same for the BrainGlyph.

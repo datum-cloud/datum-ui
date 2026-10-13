@@ -6,6 +6,6 @@ module.exports = {
   // pnpm keeps packages under node_modules/.pnpm, so allow-list by package name
   // anywhere in the path.
   transformIgnorePatterns: [
-    'node_modules/(?!(?:\\.pnpm/[^/]+/node_modules/)?(?:(?:jest-)?react-native|@react-native(?:-community)?|expo(?:nent)?|@expo(?:nent)?/.*|react-native-svg|react-native-reanimated|react-native-worklets))',
+    'node_modules/(?!(?:\\.pnpm/[^/]+/node_modules/)?(?:(?:jest-)?react-native|@react-native(?:-community)?|expo(?:nent)?|@expo(?:nent)?/.*|react-native-svg|react-native-reanimated|react-native-worklets|react-native-marked|react-native-reanimated-table|marked|@jsamr/.*|github-slugger|html-entities|svg-parser|@datum-cloud/.*))',
   ],
 }
