@@ -1,7 +1,7 @@
 {
   "name": "@datum-cloud/datum-ui-assistant-core",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Platform-free core of the Datum assistant (Patch): types, message reducers, SSE and A2A stream parsing, and the chat transport shared by the web and React Native UIs.",
   "license": "MIT",
   "repository": {
