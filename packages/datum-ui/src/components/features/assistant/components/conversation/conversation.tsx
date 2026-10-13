@@ -2,7 +2,7 @@
 
 import type { UIMessage } from 'ai'
 import type { RefObject } from 'react'
-import { isTextUIPart } from 'ai'
+import { assistantErrorMessage, isTextUIPart } from '@datum-cloud/datum-ui-assistant-core'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { useTurnRail } from '../../hooks'
@@ -90,11 +90,7 @@ export function Conversation({
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 className="text-destructive bg-destructive/10 w-fit rounded-lg px-3 py-2 text-sm"
               >
-                {error.message.includes('429') || error.message.includes('Too Many')
-                  ? 'Easy there, speed racer! You\'ve hit the rate limit. Give it a minute and try again.'
-                  : error.message.includes('503') || error.message.includes('not configured')
-                    ? 'AI assistant is not configured.'
-                    : `Something went wrong — ${error.message}`}
+                {assistantErrorMessage(error)}
               </motion.div>
             )}
           </AnimatePresence>

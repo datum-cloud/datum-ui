@@ -45,16 +45,21 @@ Datum UI is Datum Cloud's design system and React component library. It provides
 ```
 packages/
   datum-ui/        # Component library (@datum-cloud/datum-ui)
+  tokens/          # Design tokens as TypeScript, generated from the CSS (@datum-cloud/datum-ui-tokens)
+  native/          # React Native components (@datum-cloud/datum-ui-native)
   shadcn/          # shadcn/ui primitives (@repo/shadcn)
   config/          # Shared config (TypeScript, Tailwind, ESLint)
 apps/
   docs/            # Fumadocs documentation site
   storybook/       # Storybook component explorer
+  native-catalog/  # Expo app showing every native component in light and dark
 ```
 
 | Package | Description | npm |
 |---|---|---|
 | `@datum-cloud/datum-ui` | Published component library | [![npm](https://img.shields.io/npm/v/@datum-cloud/datum-ui)](https://www.npmjs.com/package/@datum-cloud/datum-ui) |
+| `@datum-cloud/datum-ui-tokens` | Colour, spacing, radius, type and motion tokens as plain TS ([README](packages/tokens/README.md)) | [![npm](https://img.shields.io/npm/v/@datum-cloud/datum-ui-tokens)](https://www.npmjs.com/package/@datum-cloud/datum-ui-tokens) |
+| `@datum-cloud/datum-ui-native` | React Native components ([README](packages/native/README.md)) | [![npm](https://img.shields.io/npm/v/@datum-cloud/datum-ui-native)](https://www.npmjs.com/package/@datum-cloud/datum-ui-native) |
 | `@repo/shadcn` | Internal shadcn/ui primitives | — |
 | `@repo/config` | Shared TypeScript, Tailwind, and ESLint config | — |
 

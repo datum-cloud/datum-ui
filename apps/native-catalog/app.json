@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Datum UI Catalog",
+    "slug": "datum-ui-native-catalog",
+    "version": "0.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "net.datum.ui.catalog",
+      "supportsTablet": true
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "../../packages/native/fonts/AllianceNo1-Regular.ttf",
+            "../../packages/native/fonts/AllianceNo1-Medium.ttf",
+            "../../packages/native/fonts/AllianceNo1-SemiBold.ttf",
+            "../../packages/native/fonts/CanelaText-Regular.ttf"
+          ]
+        }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,66 @@
+id: 2e662899-bb67-4a50-a9e3-010692737e0a
+data: {"jsonrpc":"2.0","id":1,"result":{"task":{"id":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249","contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","history":[{"messageId":"af004461-4490-423f-9c5a-832b992e6ac7","contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","metadata":{"projectName":"demo-project"},"parts":[{"text":"What resources do I have in this project?"}],"role":"ROLE_USER"}],"metadata":{"projectName":"demo-project"},"status":{"state":"TASK_STATE_SUBMITTED"}}}}
+
+id: cb0b2337-104b-44f3-a5f0-dc21ccf06e3e
+data: {"jsonrpc":"2.0","id":1,"result":{"statusUpdate":{"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","status":{"state":"TASK_STATE_WORKING","timestamp":"2026-10-13T00:54:47.950029461Z"},"taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: 8e15e97b-91e7-4f09-9586-600b34feca7f
+data: {"jsonrpc":"2.0","id":1,"result":{"statusUpdate":{"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","status":{"message":{"messageId":"01a132c1-4cf2-76d3-a0b4-e4b8e643f394","contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","parts":[{"data":{"kind":"tool_call","phase":"started","id":"toolu_01FYoQVEV9Ueu1XUMFEQb8WR","name":"dns__dns_zones_list","ok":false,"elapsedMs":0}}],"role":"ROLE_AGENT","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"},"state":"TASK_STATE_WORKING","timestamp":"2026-10-13T00:54:51.378449131Z"},"taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: d819c893-338b-4618-9553-e9505a3d997f
+data: {"jsonrpc":"2.0","id":1,"result":{"statusUpdate":{"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","status":{"message":{"messageId":"01a132c1-4cf2-76f2-81fc-1defc28bef31","contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","parts":[{"data":{"kind":"tool_call","phase":"started","id":"toolu_01B3rUg2A4faAkmC7rJMfcpQ","name":"compute__compute_workloads_list","ok":false,"elapsedMs":0}}],"role":"ROLE_AGENT","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"},"state":"TASK_STATE_WORKING","timestamp":"2026-10-13T00:54:51.378455681Z"},"taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: b4cd2146-aa92-4553-a18f-98661f8ead97
+data: {"jsonrpc":"2.0","id":1,"result":{"statusUpdate":{"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","status":{"message":{"messageId":"01a132c1-4cf2-7709-89e7-28f667974d59","contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","parts":[{"data":{"kind":"tool_call","phase":"started","id":"toolu_01RjVmPYTJeaLGDRWfePPsYE","name":"alb__alb_list","ok":false,"elapsedMs":0}}],"role":"ROLE_AGENT","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"},"state":"TASK_STATE_WORKING","timestamp":"2026-10-13T00:54:51.378461561Z"},"taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: d51abc57-3175-42dd-aae0-245b2c6a2e05
+data: {"jsonrpc":"2.0","id":1,"result":{"statusUpdate":{"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","status":{"message":{"messageId":"01a132c1-4d4a-777e-bc2f-df80558692ec","contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","parts":[{"data":{"kind":"tool_call","phase":"finished","id":"toolu_01FYoQVEV9Ueu1XUMFEQb8WR","name":"dns__dns_zones_list","ok":true,"elapsedMs":88}}],"role":"ROLE_AGENT","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"},"state":"TASK_STATE_WORKING","timestamp":"2026-10-13T00:54:51.466493079Z"},"taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: 4abaa926-df22-4843-8f8a-d19369b0723e
+data: {"jsonrpc":"2.0","id":1,"result":{"statusUpdate":{"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","status":{"message":{"messageId":"01a132c1-4e86-76cf-8e66-0add7a428972","contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","parts":[{"data":{"kind":"tool_call","phase":"finished","id":"toolu_01B3rUg2A4faAkmC7rJMfcpQ","name":"compute__compute_workloads_list","ok":true,"elapsedMs":403}}],"role":"ROLE_AGENT","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"},"state":"TASK_STATE_WORKING","timestamp":"2026-10-13T00:54:51.782448085Z"},"taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: 0704ef48-9f55-4103-8e2a-ca0924f76281
+data: {"jsonrpc":"2.0","id":1,"result":{"statusUpdate":{"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","status":{"message":{"messageId":"01a132c1-50b1-7e03-99f4-9dd361e58598","contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","parts":[{"data":{"kind":"tool_call","phase":"finished","id":"toolu_01RjVmPYTJeaLGDRWfePPsYE","name":"alb__alb_list","ok":true,"elapsedMs":959}}],"role":"ROLE_AGENT","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"},"state":"TASK_STATE_WORKING","timestamp":"2026-10-13T00:54:52.337920587Z"},"taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: eab3b499-b5a8-41d5-889d-9687587c6827
+data: {"jsonrpc":"2.0","id":1,"result":{"artifactUpdate":{"artifact":{"artifactId":"response","name":"response","parts":[{"text":"Here's the rundown across"}]},"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: f8b1bdae-6918-4900-abcf-210eb485645b
+data: {"jsonrpc":"2.0","id":1,"result":{"artifactUpdate":{"append":true,"artifact":{"artifactId":"response","parts":[{"text":" your three services:\n\n**"}]},"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: fd88563f-ba2d-49ff-a1bd-0955c45d3411
+data: {"jsonrpc":"2.0","id":1,"result":{"artifactUpdate":{"append":true,"artifact":{"artifactId":"response","parts":[{"text":"DNS** — 1 zone\n- `example"}]},"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: bd7f3d1a-5f92-4a5a-82bc-5c0d899b4078
+data: {"jsonrpc":"2.0","id":1,"result":{"artifactUpdate":{"append":true,"artifact":{"artifactId":"response","parts":[{"text":".com` — OK, delegation co"}]},"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: 2d8a01e7-4837-4697-8432-fed0d53cd40d
+data: {"jsonrpc":"2.0","id":1,"result":{"artifactUpdate":{"append":true,"artifact":{"artifactId":"response","parts":[{"text":"mplete, 6 records\n\n**Comp"}]},"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: 5762cf1d-928c-4e58-98c2-5d7c12a17b6f
+data: {"jsonrpc":"2.0","id":1,"result":{"artifactUpdate":{"append":true,"artifact":{"artifactId":"response","parts":[{"text":"ute** — 2 workloads, all "}]},"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: 3c81ecf0-1a18-4cf7-aa14-a8470a4a0b46
+data: {"jsonrpc":"2.0","id":1,"result":{"artifactUpdate":{"append":true,"artifact":{"artifactId":"response","parts":[{"text":"available\n\n| Workload | R"}]},"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: c68d2621-06ec-40ce-a6f4-8e1b32854f37
+data: {"jsonrpc":"2.0","id":1,"result":{"artifactUpdate":{"append":true,"artifact":{"artifactId":"response","parts":[{"text":"eady |\n| --- | --- |\n| we"}]},"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: 6ca2f377-7100-4302-85e4-397123c7fa72
+data: {"jsonrpc":"2.0","id":1,"result":{"artifactUpdate":{"append":true,"artifact":{"artifactId":"response","parts":[{"text":"b | 2/2 |\n| api | 1/1 |\n\n"}]},"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: 720a51c5-fed6-489f-a401-7b161784e820
+data: {"jsonrpc":"2.0","id":1,"result":{"artifactUpdate":{"append":true,"artifact":{"artifactId":"response","parts":[{"text":"**Load balancers** — 1 AL"}]},"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: 3c6ef6e2-570f-4a0e-821e-ea532d91b9ab
+data: {"jsonrpc":"2.0","id":1,"result":{"artifactUpdate":{"append":true,"artifact":{"artifactId":"response","parts":[{"text":"B\n- `web-alb` — Programme"}]},"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: 64ff3dd5-5100-47e0-bad9-d902f8869e0f
+data: {"jsonrpc":"2.0","id":1,"result":{"artifactUpdate":{"append":true,"artifact":{"artifactId":"response","parts":[{"text":"d, WAF in Enforce mode\n\nE"}]},"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: 3b0cdd79-8a27-4138-a28b-ac7cd880a6da
+data: {"jsonrpc":"2.0","id":1,"result":{"artifactUpdate":{"append":true,"artifact":{"artifactId":"response","parts":[{"text":"verything looks healthy."}]},"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+
+id: cc708d98-6281-4472-b024-a9d8ed4ffcc8
+data: {"jsonrpc":"2.0","id":1,"result":{"statusUpdate":{"contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","status":{"message":{"messageId":"01a132c1-6544-76cc-a8dc-31ca123a1b58","contextId":"b2abb5d3-bafd-42d0-9257-02fcc2355200","parts":[{"text":"Here's the rundown across your three services:\n\n**DNS** — 1 zone\n- `example.com` — OK, delegation complete, 6 records\n\n**Compute** — 2 workloads, all available\n\n| Workload | Ready |\n| --- | --- |\n| web | 2/2 |\n| api | 1/1 |\n\n**Load balancers** — 1 ALB\n- `web-alb` — Programmed, WAF in Enforce mode\n\nEverything looks healthy."}],"role":"ROLE_AGENT","taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"},"state":"TASK_STATE_COMPLETED","timestamp":"2026-10-13T00:54:57.60447642Z"},"taskId":"01a132c1-3f8d-7e66-ad83-c5c62d8ec249"}}}
+

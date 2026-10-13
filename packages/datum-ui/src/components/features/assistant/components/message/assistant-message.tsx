@@ -2,8 +2,19 @@
 
 import type { UIMessage } from 'ai'
 import type { ExtraProps } from 'streamdown'
+import {
+  activeToolPart as findActiveToolPart,
+  isReasoningUIPart,
+  isStreamingMessage,
+  isTextUIPart,
+  isToolUIPart,
+  hasText as messageHasText,
+  messageText,
+  showInitialLoading as shouldShowInitialLoading,
+  showToolIndicator as shouldShowToolIndicator,
+  toolLabel,
+} from '@datum-cloud/datum-ui-assistant-core'
 import { code } from '@streamdown/code'
-import { getToolName, isReasoningUIPart, isTextUIPart, isToolUIPart } from 'ai'
 import { Check, Copy, Download } from 'lucide-react'
 import { Fragment, useState } from 'react'
 import { Streamdown } from 'streamdown'
@@ -21,23 +32,14 @@ interface AssistantMessageProps {
   status: string
 }
 
-function messageText(msg: UIMessage): string {
-  return msg.parts
-    .filter(isTextUIPart)
-    .map(p => p.text)
-    .join('\n\n')
-}
-
 export function AssistantMessage({ msg, isLastMessage, status }: AssistantMessageProps) {
   const { toolLabels, showReasoning, messageActions, renderLink, renderToolOutput }
     = useAssistantConfig()
-  const isStreaming = isLastMessage && status === 'streaming'
-  const hasText = msg.parts.some(p => isTextUIPart(p) && p.text)
-  const activeToolPart = msg.parts.find(
-    p => isToolUIPart(p) && (p.state === 'input-streaming' || p.state === 'input-available'),
-  )
-  const showInitialLoading = isStreaming && !hasText && !activeToolPart
-  const showToolIndicator = isLastMessage && activeToolPart != null
+  const isStreaming = isStreamingMessage({ isLastMessage, status })
+  const hasText = messageHasText(msg)
+  const activeToolPart = findActiveToolPart(msg)
+  const showInitialLoading = shouldShowInitialLoading({ msg, isLastMessage, status })
+  const showToolIndicator = shouldShowToolIndicator({ msg, isLastMessage })
 
   return (
     <div className="text-foreground w-full text-sm">
@@ -106,12 +108,12 @@ export function AssistantMessage({ msg, isLastMessage, status }: AssistantMessag
         </div>
       )}
 
-      {showToolIndicator && (
+      {showToolIndicator && activeToolPart && (
         <div className="text-muted-foreground flex items-center gap-1.5 py-1 text-xs">
           <span className="bg-muted-foreground/50 h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.3s]" />
           <span className="bg-muted-foreground/50 h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.15s]" />
           <span className="bg-muted-foreground/50 h-1.5 w-1.5 animate-bounce rounded-full" />
-          <span>{toolLabels[getToolName(activeToolPart)] ?? 'Working…'}</span>
+          <span>{toolLabel(activeToolPart, toolLabels)}</span>
         </div>
       )}
 
