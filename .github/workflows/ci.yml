@@ -107,14 +107,16 @@ jobs:
           path: packages/datum-ui/dist/
           retention-days: 1
 
-      # Tokens + native builds, published by the release workflow alongside
-      # datum-ui. Common ancestor is packages/, so the artifact holds
-      # tokens/dist, native/dist, native/fonts and native/assets.
+      # Tokens, assistant-core and native builds, published by the release
+      # workflow alongside datum-ui. Common ancestor is packages/, so the
+      # artifact holds tokens/dist, assistant-core/dist, native/dist,
+      # native/fonts and native/assets.
       - uses: actions/upload-artifact@v7
         with:
           name: native-packages-dist
           path: |
             packages/tokens/dist/
+            packages/assistant-core/dist/
             packages/native/dist/
             packages/native/fonts/
             packages/native/assets/
