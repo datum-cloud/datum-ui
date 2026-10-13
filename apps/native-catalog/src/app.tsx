@@ -37,6 +37,7 @@ import { StatusBar } from 'expo-status-bar'
 import { useState } from 'react'
 import { ScrollView, useColorScheme, View } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
+import { Assistant } from './assistant'
 
 type Mode = ColorScheme | 'split'
 
@@ -252,6 +253,7 @@ function Catalog() {
       <Feedback />
       <Logos />
       <Empty />
+      <Assistant Section={Section} />
     </View>
   )
 }
