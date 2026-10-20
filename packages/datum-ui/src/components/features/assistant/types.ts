@@ -24,3 +24,11 @@ export type LinkRenderProps = CoreLinkRenderProps<ReactNode>
  * the presentational pieces stay generic and shell-agnostic.
  */
 export type AssistantConfig = CoreAssistantConfig<ReactNode>
+
+/**
+ * How tightly a conversation is laid out. `default` is the full assistant
+ * workspace; `compact` suits a conversation embedded in another page: an
+ * avatar beside each assistant turn, a narrower column, one-step-smaller body
+ * text and tighter markdown spacing.
+ */
+export type ConversationDensity = 'default' | 'compact'

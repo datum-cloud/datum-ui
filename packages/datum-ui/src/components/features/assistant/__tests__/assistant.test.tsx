@@ -6,8 +6,9 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { getToolName } from 'ai'
 import { describe, expect, it, vi } from 'vitest'
 import { AssistantWorkspace } from '../components/assistant-workspace'
+import { Conversation } from '../components/conversation'
 import { EmptyState } from '../components/empty-state'
-import { AssistantMessage } from '../components/message'
+import { AssistantMessage, UserMessage } from '../components/message'
 import { HistoryPanel } from '../components/sidebar'
 import { AssistantConfigProvider, defaultRenderLink } from '../context'
 import { formatRelativeTime, sanitizeUserHtml } from '../utils'
@@ -389,5 +390,89 @@ describe('assistantWorkspace layout', () => {
     renderWorkspace({ orientation, messages: [...messages], onClose })
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(onClose).toHaveBeenCalledOnce()
+  })
+})
+
+describe('conversation density', () => {
+  const messages = [
+    { id: 'u1', role: 'user', parts: [{ type: 'text', text: 'How is the network?' }] },
+    {
+      id: 'a1',
+      role: 'assistant',
+      parts: [{ type: 'text', text: '## Status\n\nAll **green**.\n\n- one\n- two' }],
+    },
+  ] as UIMessage[]
+
+  const renderConversation = (props: Partial<React.ComponentProps<typeof Conversation>> = {}) =>
+    render(
+      <Conversation
+        messages={messages}
+        status="ready"
+        htmlByUserMsgIndex={{ current: ['<p>How is the network?</p>'] }}
+        containerRef={vi.fn()}
+        bottomRef={{ current: null }}
+        userScrolledUpRef={{ current: false }}
+        footer={<div data-testid="footer" />}
+        {...props}
+      />,
+    )
+
+  const avatars = (container: HTMLElement) =>
+    container.querySelectorAll('[data-slot="assistant-avatar"]')
+
+  it('renders the default layout with no avatar and the wide column', () => {
+    const { container } = renderConversation()
+    expect(avatars(container)).toHaveLength(0)
+    expect(container.querySelector('.max-w-3xl.gap-6')).not.toBeNull()
+    expect(container.querySelector('.max-w-2xl')).toBeNull()
+    expect(screen.getByTestId('footer').parentElement).toHaveClass('max-w-3xl')
+    // The assistant turn keeps its original wrapper.
+    expect(screen.getByText('green').closest('.text-foreground.w-full')).toHaveClass('text-sm')
+  })
+
+  it('puts an avatar beside each assistant turn in compact', () => {
+    const { container } = renderConversation({ density: 'compact' })
+    const found = avatars(container)
+    expect(found).toHaveLength(1)
+    expect(found[0]).toHaveAttribute('aria-hidden', 'true')
+    // The avatar sits in the assistant turn, not the user's.
+    expect(found[0]?.parentElement).toHaveTextContent('All green.')
+    expect(found[0]?.parentElement).not.toHaveTextContent('How is the network?')
+  })
+
+  it('narrows the column and footer and steps the body text down in compact', () => {
+    const { container } = renderConversation({ density: 'compact' })
+    expect(container.querySelector('.max-w-2xl.gap-4')).not.toBeNull()
+    expect(container.querySelector('.max-w-3xl')).toBeNull()
+    expect(screen.getByTestId('footer').parentElement).toHaveClass('max-w-2xl')
+    expect(container.querySelector('[data-density="compact"]')).toHaveClass('text-xs')
+  })
+
+  it('tightens markdown and renders headings at body size in compact', () => {
+    renderConversation({ density: 'compact' })
+    const heading = screen.getByRole('heading', { name: 'Status' })
+    const markdownRoot = heading.parentElement as HTMLElement
+    expect(markdownRoot).toHaveClass('space-y-2')
+    expect(markdownRoot).not.toHaveClass('space-y-4')
+    expect(markdownRoot.className).toContain('[&_:is(h1,h2,h3,h4,h5,h6)]:text-xs')
+    expect(markdownRoot.className).not.toContain('[&_h2]:text-xl')
+  })
+
+  it('keeps user turns as right-aligned bubbles in compact', () => {
+    renderConversation({ density: 'compact' })
+    const bubble = screen.getByText('How is the network?').closest('.rounded-2xl') as HTMLElement
+    expect(bubble).toHaveClass('text-xs')
+    expect(bubble.parentElement).toHaveClass('justify-end')
+  })
+
+  it('keeps the error and the turn rail in compact', () => {
+    renderConversation({ density: 'compact', error: new Error('boom') })
+    expect(screen.getByText(/boom|went wrong/i)).toHaveClass('ml-9')
+    expect(document.querySelector('[data-turn-id="u1"]')).not.toBeNull()
+  })
+
+  it('leaves UserMessage unchanged by default', () => {
+    render(<UserMessage html="<p>hi</p>" />)
+    expect(screen.getByText('hi').closest('.rounded-2xl')).toHaveClass('px-4', 'py-2.5', 'text-sm')
   })
 })

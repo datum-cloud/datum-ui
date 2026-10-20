@@ -2,6 +2,7 @@
 
 import type { UIMessage } from 'ai'
 import type { ExtraProps } from 'streamdown'
+import type { ConversationDensity } from '../../types'
 import {
   activeToolPart as findActiveToolPart,
   isReasoningUIPart,
@@ -22,6 +23,7 @@ import { cn } from '../../../../../utils/cn'
 import { Tooltip } from '../../../../base/tooltip'
 import { Icon } from '../../../../icons/icon-wrapper'
 import { useAssistantConfig } from '../../context'
+import { BrainGlyph } from '../brain-glyph'
 import { LoadingDots } from './loading-dots'
 import { ThinkingBlock } from './thinking-block'
 import 'streamdown/styles.css'
@@ -30,9 +32,31 @@ interface AssistantMessageProps {
   msg: UIMessage
   isLastMessage: boolean
   status: string
+  /**
+   * `compact` puts the assistant avatar beside the turn, drops the body text
+   * one step and tightens markdown spacing (headings render at body size).
+   */
+  density?: ConversationDensity
 }
 
-export function AssistantMessage({ msg, isLastMessage, status }: AssistantMessageProps) {
+/** Streamdown overrides shared by both densities (code surfaces). */
+const STREAMDOWN_BASE_CLASSES
+  = '**:data-[streamdown=\'code-block-body\']:bg-card **:data-[streamdown=\'inline-code\']:bg-card dark:**:data-[streamdown=\'inline-code\']:bg-accent **:data-[streamdown=\'inline-code\']:border'
+
+/** Markdown overrides for `compact`: tighter blocks, headings at body size. */
+const COMPACT_MARKDOWN_CLASSES = cn(
+  'space-y-2',
+  '[&_li]:py-0.5',
+  '[&_:is(h1,h2,h3,h4,h5,h6)]:mt-3 [&_:is(h1,h2,h3,h4,h5,h6)]:mb-1',
+  '[&_:is(h1,h2,h3,h4,h5,h6)]:text-xs [&_:is(h1,h2,h3,h4,h5,h6)]:font-semibold',
+)
+
+export function AssistantMessage({
+  msg,
+  isLastMessage,
+  status,
+  density = 'default',
+}: AssistantMessageProps) {
   const { toolLabels, showReasoning, messageActions, renderLink, renderToolOutput }
     = useAssistantConfig()
   const isStreaming = isStreamingMessage({ isLastMessage, status })
@@ -40,9 +64,10 @@ export function AssistantMessage({ msg, isLastMessage, status }: AssistantMessag
   const activeToolPart = findActiveToolPart(msg)
   const showInitialLoading = shouldShowInitialLoading({ msg, isLastMessage, status })
   const showToolIndicator = shouldShowToolIndicator({ msg, isLastMessage })
+  const compact = density === 'compact'
 
-  return (
-    <div className="text-foreground w-full text-sm">
+  const body = (
+    <>
       {msg.parts.map((part, i) => {
         if (isReasoningUIPart(part)) {
           if (!showReasoning)
@@ -56,7 +81,9 @@ export function AssistantMessage({ msg, isLastMessage, status }: AssistantMessag
             <Streamdown
               key={i}
               className={cn(
-                '**:data-[streamdown=\'code-block-body\']:bg-card **:data-[streamdown=\'inline-code\']:bg-card dark:**:data-[streamdown=\'inline-code\']:bg-accent **:data-[streamdown=\'inline-code\']:border [&_h2]:text-xl [&_h3]:text-lg',
+                compact
+                  ? `${STREAMDOWN_BASE_CLASSES} ${COMPACT_MARKDOWN_CLASSES}`
+                  : `${STREAMDOWN_BASE_CLASSES} [&_h2]:text-xl [&_h3]:text-lg`,
                 isStreaming
                 && '**:data-[streamdown=\'inline-code\']:animate-[sd-blurIn_300ms_ease-out_both]',
               )}
@@ -120,7 +147,30 @@ export function AssistantMessage({ msg, isLastMessage, status }: AssistantMessag
       {!isStreaming
         && hasText
         && (messageActions ? messageActions(msg) : <MessageActions msg={msg} />)}
+    </>
+  )
+
+  if (!compact)
+    return <div className="text-foreground w-full text-sm">{body}</div>
+
+  return (
+    <div className="text-foreground flex w-full gap-3 text-xs" data-density="compact">
+      <AssistantAvatar />
+      <div className="min-w-0 flex-1">{body}</div>
     </div>
+  )
+}
+
+/** The assistant's mark beside each compact turn. Decorative: the turn itself carries the content. */
+function AssistantAvatar() {
+  return (
+    <span
+      aria-hidden="true"
+      data-slot="assistant-avatar"
+      className="bg-muted flex size-6 shrink-0 items-center justify-center rounded-full"
+    >
+      <BrainGlyph className="size-4" />
+    </span>
   )
 }
 
