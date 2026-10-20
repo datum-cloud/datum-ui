@@ -2,9 +2,11 @@
 
 import type { UIMessage } from 'ai'
 import type { RefObject } from 'react'
+import type { ConversationDensity } from '../../types'
 import { assistantErrorMessage, isTextUIPart } from '@datum-cloud/datum-ui-assistant-core'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
+import { cn } from '../../../../../utils/cn'
 import { useTurnRail } from '../../hooks'
 import { sanitizeUserHtml } from '../../utils'
 import { AssistantMessage, LoadingDots, UserMessage } from '../message'
@@ -21,6 +23,13 @@ interface ConversationProps {
   userScrolledUpRef: RefObject<boolean>
   /** The docked prompt card, pinned to the bottom. */
   footer: React.ReactNode
+  /**
+   * `default` is the full workspace layout. `compact` is for a conversation
+   * embedded in another page: an avatar beside each assistant turn, a
+   * narrower column (42rem, footer included), one-step-smaller body text and
+   * tighter markdown spacing.
+   */
+  density?: ConversationDensity
 }
 
 export function Conversation({
@@ -32,7 +41,9 @@ export function Conversation({
   bottomRef,
   userScrolledUpRef,
   footer,
+  density = 'default',
 }: ConversationProps) {
+  const compact = density === 'compact'
   const [showScrollButton, setShowScrollButton] = useState(false)
   const { turns, activeTurnId, setScrollEl, handleScroll, scrollToTurn } = useTurnRail(
     messages,
@@ -48,7 +59,13 @@ export function Conversation({
         onScroll={e => setShowScrollButton(handleScroll(e.currentTarget))}
         className="flex-1 overflow-y-auto scroll-smooth"
       >
-        <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-6">
+        <div
+          className={
+            compact
+              ? 'mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-4'
+              : 'mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-6'
+          }
+        >
           {messages.map((msg, msgIdx) => {
             const isLastMessage = msgIdx === messages.length - 1
 
@@ -63,7 +80,7 @@ export function Conversation({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 >
-                  <UserMessage html={html ?? sanitizeUserHtml(fallbackText)} />
+                  <UserMessage html={html ?? sanitizeUserHtml(fallbackText)} density={density} />
                 </motion.div>
               )
             }
@@ -75,7 +92,12 @@ export function Conversation({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               >
-                <AssistantMessage msg={msg} isLastMessage={isLastMessage} status={status} />
+                <AssistantMessage
+                  msg={msg}
+                  isLastMessage={isLastMessage}
+                  status={status}
+                  density={density}
+                />
               </motion.div>
             )
           })}
@@ -88,7 +110,11 @@ export function Conversation({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                className="text-destructive bg-destructive/10 w-fit rounded-lg px-3 py-2 text-sm"
+                // Compact indents past the avatar to sit in the text column.
+                className={cn(
+                  'text-destructive bg-destructive/10 w-fit rounded-lg px-3 py-2',
+                  compact ? 'ml-9 text-xs' : 'text-sm',
+                )}
               >
                 {assistantErrorMessage(error)}
               </motion.div>
@@ -103,7 +129,7 @@ export function Conversation({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                className="flex justify-start"
+                className={cn('flex justify-start', compact && 'pl-9')}
               >
                 <LoadingDots />
               </motion.div>
@@ -125,7 +151,10 @@ export function Conversation({
             bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
           }}
         />
-        <div className="mx-auto w-full max-w-3xl">{footer}</div>
+        {/* Same width as the transcript column, so the two line up. */}
+        <div className={compact ? 'mx-auto w-full max-w-2xl' : 'mx-auto w-full max-w-3xl'}>
+          {footer}
+        </div>
       </div>
     </div>
   )

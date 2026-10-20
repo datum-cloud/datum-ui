@@ -1,6 +1,11 @@
-import type { AssistantConfig, AssistantWorkspaceProps, ChatSummary, EffortId } from '@datum-cloud/datum-ui/assistant'
+import type { AssistantConfig, AssistantWorkspaceProps, ChatSummary, ConversationDensity, EffortId } from '@datum-cloud/datum-ui/assistant'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
-import { AssistantWorkspace } from '@datum-cloud/datum-ui/assistant'
+import {
+  AssistantConfigProvider,
+  AssistantWorkspace,
+  Conversation as ConversationView,
+  PromptCard,
+} from '@datum-cloud/datum-ui/assistant'
 import { useRef, useState } from 'react'
 import { userEvent, within } from 'storybook/test'
 
@@ -50,6 +55,86 @@ const CONVERSATION = [
     parts: [{ type: 'text', text: 'Everything is **green** — all clusters healthy and no active alerts.' }],
   },
 ] as ChatSummary['messages']
+
+/** A longer exchange with markdown, code and an in-flight tool call, for density comparisons. */
+const RICH_CONVERSATION = [
+  { id: 'u1', role: 'user', parts: [{ type: 'text', text: 'Set up a network for this project' }] },
+  {
+    id: 'a1',
+    role: 'assistant',
+    parts: [
+      {
+        type: 'text',
+        text: [
+          '## Network plan',
+          '',
+          'I can create a **default** network with one subnet per region. Here is what that looks like:',
+          '',
+          '- `us-east-1`: 10.0.0.0/20',
+          '- `eu-west-1`: 10.0.16.0/20',
+          '',
+          '### Next step',
+          '',
+          'Apply it with:',
+          '',
+          '```bash',
+          'datumctl apply -f network.yaml',
+          '```',
+        ].join('\n'),
+      },
+    ],
+  },
+  { id: 'u2', role: 'user', parts: [{ type: 'text', text: 'Go ahead' }] },
+  {
+    id: 'a2',
+    role: 'assistant',
+    parts: [
+      { type: 'text', text: 'Creating the network now.' },
+      { type: 'dynamic-tool', toolName: 'createNetwork', toolCallId: 't1', state: 'input-available', input: {} },
+    ],
+  },
+] as ChatSummary['messages']
+
+/**
+ * `Conversation` on its own, as a host embeds it in a page: just the transcript
+ * and a pinned composer, no workspace shell.
+ */
+function ConversationHarness({ density }: { density?: ConversationDensity }) {
+  const htmlByUserMsgIndexRef = useRef<string[]>([])
+  const bottomRef = useRef<HTMLDivElement | null>(null)
+  const userScrolledUpRef = useRef(false)
+  const noop = () => {}
+
+  return (
+    <div className="border-border flex h-[640px] w-full flex-col overflow-hidden rounded-lg border">
+      <AssistantConfigProvider config={{ ...STORY_CONFIG, modelSelector: false }}>
+        <ConversationView
+          density={density}
+          messages={RICH_CONVERSATION}
+          status="streaming"
+          htmlByUserMsgIndex={htmlByUserMsgIndexRef}
+          containerRef={noop}
+          bottomRef={bottomRef}
+          userScrolledUpRef={userScrolledUpRef}
+          footer={(
+            <PromptCard
+              editor={null}
+              isReady={false}
+              canRetry={false}
+              onSend={noop}
+              onStop={noop}
+              onRetry={noop}
+              modelId=""
+              effortId="high"
+              onModelChange={noop}
+              onEffortChange={noop}
+            />
+          )}
+        />
+      </AssistantConfigProvider>
+    </div>
+  )
+}
 
 interface HarnessProps {
   messages: ChatSummary['messages']
@@ -197,4 +282,19 @@ export const VerticalHistory: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.click(await within(canvasElement).findByRole('button', { name: 'Toggle sidebar' }))
   },
+}
+
+/** `Conversation` embedded on its own at the default density, for comparison. */
+export const EmbeddedDefault: Story = {
+  name: 'Embedded: default density',
+  render: () => <ConversationHarness />,
+}
+
+/**
+ * `density="compact"`: assistant avatar beside each turn, a 42rem column,
+ * one-step-smaller text and tighter markdown (headings at body size).
+ */
+export const EmbeddedCompact: Story = {
+  name: 'Embedded: compact density',
+  render: () => <ConversationHarness density="compact" />,
 }

@@ -24,6 +24,7 @@ export { useTurnRail } from './hooks'
 export type {
   AssistantConfig,
   ChatSummary,
+  ConversationDensity,
   EffortId,
   EffortOption,
   LinkRenderProps,
