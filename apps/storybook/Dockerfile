@@ -24,6 +24,9 @@ COPY --from=builder /app/apps/storybook/storybook-static /public
 COPY apps/storybook/sws.toml /etc/sws/config.toml
 ENV SERVER_CONFIG_FILE=/etc/sws/config.toml
 
+USER root
+RUN apk upgrade --no-cache ca-certificates-bundle ca-certificates
+
 # Run as non-root user (sws default user)
 USER 1000
 EXPOSE 8080
