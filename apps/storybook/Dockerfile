@@ -25,7 +25,7 @@ COPY apps/storybook/sws.toml /etc/sws/config.toml
 ENV SERVER_CONFIG_FILE=/etc/sws/config.toml
 
 USER root
-RUN apk upgrade --no-cache ca-certificates-bundle ca-certificates
+RUN set -e; f=/etc/ssl/certs/ca-certificates.crt; m=MIICTjCCAdOgAwIBAgIKPPYHqWhwDtqLhDAKBggqhkjOPQQDAzBrMQswCQYDVQQG; n=$(grep -c 'BEGIN CERTIFICATE' "$f"); awk -v m="$m" '/-----BEGIN CERTIFICATE-----/{b=""; c=1} c{b=b $0 "\n"} !c{print} /-----END CERTIFICATE-----/{if (index(b, m)==0) printf "%s", b; c=0}' "$f" > "$f.new"; test "$(grep -c 'BEGIN CERTIFICATE' "$f.new")" -eq "$((n-1))"; mv "$f.new" "$f"; rm -f /usr/share/ca-certificates/mozilla/emSign_ECC_Root_CA_-_G3.crt
 
 # Run as non-root user (sws default user)
 USER 1000
