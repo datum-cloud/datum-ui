@@ -144,3 +144,18 @@ jobs:
           path: packages/datum-ui/dist/
 
       - run: pnpm --filter @repo/storybook build
+
+  storybook-image:
+    name: Build Storybook image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: docker/build-push-action@v7.1.0
+        with:
+          context: .
+          file: apps/storybook/Dockerfile
+          push: false
+          cache-from: type=gha
