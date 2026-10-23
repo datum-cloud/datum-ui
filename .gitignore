@@ -17,5 +17,7 @@ CLAUDE.MD
 /specs/
 *.backup
 
+apps/native-catalog/.rnstorybook/storybook.requires.*
+
 .opencode/
 .superpowers

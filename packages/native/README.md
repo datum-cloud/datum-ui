@@ -108,7 +108,8 @@ Also exported: `tokens`, `withAlpha`, `datumFonts`, `datumFontFiles`, `platformF
 ```sh
 pnpm --filter @datum-cloud/datum-ui-native test       # jest-expo + type-parity check
 pnpm --filter @datum-cloud/datum-ui-native typecheck
-pnpm --filter @repo/native-catalog start              # component catalog (Expo)
+pnpm --filter @repo/native-catalog storybook          # on-device Storybook (Expo)
+pnpm --filter @repo/native-catalog start              # fallback app without Storybook
 ```
 
 `test/type-parity.ts` fails the typecheck if the Button, Badge or Alert variant unions drift from the web components. The logo test fails if the SVG paths drift from `datum-ui`'s `features/logo`, and the assistant test does the same for the BrainGlyph.
