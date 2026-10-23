@@ -6,7 +6,7 @@ The CSS in `@datum-cloud/datum-ui` is the source of truth. `src/tokens.gen.ts` i
 
 ## Storybook
 
-[Design Tokens](https://storybook.prod.env.datum.net/?path=/docs/docs-design-tokens--docs) — the token reference with a live playground.
+[Design Tokens](https://storybook.prod.env.datum.net/?path=/docs/foundations-design-tokens--docs) — the token reference with a live playground.
 
 ## Install
 

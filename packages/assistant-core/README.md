@@ -4,7 +4,7 @@ The platform-free core of Datum's assistant ("Patch"), shared by the web assista
 
 ## Storybook
 
-[Assistant Core](https://storybook.prod.env.datum.net/?path=/docs/docs-assistant-core--docs) — the architecture and usage docs.
+[Assistant Core](https://storybook.prod.env.datum.net/?path=/docs/packages-assistant-core--docs) — the architecture and usage docs.
 
 ## Install
 

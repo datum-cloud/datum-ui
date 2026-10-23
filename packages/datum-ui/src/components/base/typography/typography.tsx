@@ -10,7 +10,7 @@ import { cn } from '../../../utils/cn'
 // Every `size` maps to the `text-*` utility of the same name, so
 // `<Text size="sm">` and `className="text-sm"` always render the same size.
 // The scale itself lives in `styles/themes/alpha.css` (see Storybook
-// "Docs/Type Scale").
+// "Foundations/Type Scale").
 // ---------------------------------------------------------------------------
 
 // Title levels use a single step each. Display steps (`xl` and up) already

@@ -1,8 +1,11 @@
 import { Meta } from '@storybook/addon-docs/blocks'
+import { DocsTable } from './docs-table'
 
-<Meta title="Docs/Providers" />
+<Meta title="Get Started/App Providers" />
 
-# Providers
+# App Providers
+
+Web-only theme provider setup. For the token model, see `Foundations/Theming & Dark Mode`.
 
 Configure ThemeProvider for light/dark/system theme switching.
 
@@ -35,15 +38,60 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `defaultTheme` | `'light' \| 'dark' \| 'system'` | `'system'` | Initial theme |
-| `storageKey` | `string` | `'theme'` | localStorage key for persistence |
-| `enableSystem` | `boolean` | `false` | Enable system preference detection |
-| `forcedTheme` | `Theme` | — | Force a specific theme |
-| `disableTransitionOnChange` | `boolean` | `false` | Disable CSS transitions during switches |
-| `attribute` | `'class' \| 'data-*'` | `'data-theme'` | HTML attribute for theme |
-| `nonce` | `string` | — | CSP nonce for inline script |
+<DocsTable>
+  <thead>
+    <tr>
+      <th>Prop</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>defaultTheme</code></td>
+      <td><code>{`'light' | 'dark' | 'system'`}</code></td>
+      <td><code>'system'</code></td>
+      <td>Initial theme</td>
+    </tr>
+    <tr>
+      <td><code>storageKey</code></td>
+      <td><code>string</code></td>
+      <td><code>'theme'</code></td>
+      <td>localStorage key for persistence</td>
+    </tr>
+    <tr>
+      <td><code>enableSystem</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Enable system preference detection</td>
+    </tr>
+    <tr>
+      <td><code>forcedTheme</code></td>
+      <td><code>Theme</code></td>
+      <td>—</td>
+      <td>Force a specific theme</td>
+    </tr>
+    <tr>
+      <td><code>disableTransitionOnChange</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Disable CSS transitions during switches</td>
+    </tr>
+    <tr>
+      <td><code>attribute</code></td>
+      <td><code>{`'class' | 'data-*'`}</code></td>
+      <td><code>'data-theme'</code></td>
+      <td>HTML attribute for theme</td>
+    </tr>
+    <tr>
+      <td><code>nonce</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>CSP nonce for inline script</td>
+    </tr>
+  </tbody>
+</DocsTable>
 
 ## Theme Hook
 

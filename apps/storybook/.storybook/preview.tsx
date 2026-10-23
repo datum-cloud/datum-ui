@@ -59,8 +59,12 @@ const preview: Preview = {
     options: {
       storySort: {
         order: [
-          'Docs',
-          ['Introduction', 'Installation', 'Theming', 'Design Tokens', 'Type Scale', 'Assistant Core', 'Native', 'Providers'],
+          'Get Started',
+          ['Overview', 'Web Installation', 'App Providers'],
+          'Foundations',
+          ['Overview', 'Design Tokens', 'Theming & Dark Mode', 'Type Scale'],
+          'Packages',
+          ['Overview', 'Native', 'Assistant Core'],
           'Base',
           'Features',
           'Hooks',
