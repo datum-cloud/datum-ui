@@ -32,6 +32,18 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # npm trusted publishing cannot create a package through OIDC, so Release
+      # would 404 on a new package. Fail the PR once a changeset would publish
+      # one that is not on npm yet; warn (not fail) before bootstrap.
+      - name: Public packages publishable from CI
+        run: node .github/scripts/check-npm-packages.mjs
+
+      # Glob rather than the bare directory: Node 24 treats a directory argument
+      # as an entry module instead of searching it, so `node --test .github/scripts`
+      # fails with MODULE_NOT_FOUND.
+      - name: Release script tests
+        run: node --test '.github/scripts/**/*.test.mjs'
+
       - run: pnpm lint
 
       # The published `exports` map is generated from scripts/exports-manifest.mjs.
@@ -105,22 +117,22 @@ jobs:
         with:
           name: datum-ui-dist
           path: packages/datum-ui/dist/
-          retention-days: 1
+          retention-days: 7
 
-      # Tokens, assistant-core and native builds, published by the release
-      # workflow alongside datum-ui. Common ancestor is packages/, so the
-      # artifact holds tokens/dist, assistant-core/dist, native/dist,
-      # native/fonts and native/assets.
+      # Release consumes this artifact, so it must cover every public package
+      # rather than a hand-maintained list: a new package would otherwise be
+      # missing from the pack step. The common ancestor is packages/, so
+      # downloading it to packages/ restores the package directories; the
+      # glob picks up each package's dist/ while native also ships its
+      # non-dist assets.
       - uses: actions/upload-artifact@v7
         with:
-          name: native-packages-dist
+          name: public-packages-dist
           path: |
-            packages/tokens/dist/
-            packages/assistant-core/dist/
-            packages/native/dist/
+            packages/*/dist/
             packages/native/fonts/
             packages/native/assets/
-          retention-days: 1
+          retention-days: 7
 
   storybook:
     name: Build Storybook
