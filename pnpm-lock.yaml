@@ -119,6 +119,9 @@ importers:
       '@datum-cloud/datum-ui':
         specifier: workspace:*
         version: link:../../packages/datum-ui
+      '@datum-cloud/datum-ui-tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0

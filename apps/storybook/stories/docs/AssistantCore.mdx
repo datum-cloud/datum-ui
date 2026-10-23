@@ -1,0 +1,108 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks'
+import * as AssistantStories from '../features/assistant.stories'
+
+<Meta title="Docs/Assistant Core" />
+
+# Assistant Core
+
+`@datum-cloud/datum-ui-assistant-core` is the platform-free core shared by the
+web assistant and the React Native components. It has no React, DOM, or React
+Native dependency: `fetch`, the base URL, and the token source are injected.
+Its only dependency is `ai` (a peer, for the `UIMessage` types).
+
+## What is in it
+
+<style>{`
+  .assistant-exports {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.875rem;
+  }
+  .assistant-exports th,
+  .assistant-exports td {
+    border: 1px solid rgba(128, 128, 128, 0.35);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .assistant-exports th {
+    font-weight: 600;
+  }
+`}</style>
+
+<table className="assistant-exports">
+  <thead>
+    <tr>
+      <th>Area</th>
+      <th>Exports</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Types</td>
+      <td><code>AssistantConfig</code>, <code>AssistantConfigData</code>, <code>ChatSummary</code>, <code>Turn</code>, <code>Mention</code>, <code>LinkRenderProps</code></td>
+    </tr>
+    <tr>
+      <td>Config</td>
+      <td><code>DEFAULT_ASSISTANT_CONFIG</code></td>
+    </tr>
+    <tr>
+      <td>Message derivations</td>
+      <td><code>messageText</code>, <code>firstText</code>, <code>activeToolPart</code>, <code>toolLabel</code>, part guards</td>
+    </tr>
+    <tr>
+      <td>Formatting</td>
+      <td><code>formatRelativeTime</code>, <code>thinkingLabel</code>, <code>assistantErrorMessage</code>, <code>deriveTurns</code>, <code>chatToMarkdown</code></td>
+    </tr>
+    <tr>
+      <td>Streaming</td>
+      <td><code>AssistantStreamEvent</code>, <code>applyAssistantEvent</code>, <code>turnOutcome</code></td>
+    </tr>
+    <tr>
+      <td>SSE</td>
+      <td><code>parseSSE</code>, <code>parseAssistantEventStream</code></td>
+    </tr>
+    <tr>
+      <td>A2A</td>
+      <td><code>A2AStreamAdapter</code>, <code>buildSendParams</code></td>
+    </tr>
+    <tr>
+      <td>Transport</td>
+      <td><code>createAssistantTransport</code> → <code>sendStreaming</code>, <code>cancel</code>, <code>getTask</code>, <code>rename</code></td>
+    </tr>
+    <tr>
+      <td>History</td>
+      <td><code>listConversations</code>, <code>getConversationMessages</code>, <code>toChatSummary</code>, <code>toUIMessages</code></td>
+    </tr>
+  </tbody>
+</table>
+
+## Transport example
+
+```ts
+import { applyAssistantEvent, createAssistantTransport } from '@datum-cloud/datum-ui-assistant-core'
+
+const transport = createAssistantTransport({
+  baseUrl: 'https://patch.staging.env.datum.net',
+  fetch,
+  getToken: () => session.getAccessToken(),
+  refreshToken: rejected => session.handleUnauthorized(rejected),
+})
+
+for await (const event of transport.sendStreaming({ text, contextId, projectName, signal })) {
+  messages = applyAssistantEvent(messages, event)
+}
+```
+
+## Playground
+
+The workspace stories are the interactive surface for the core's UI consumers.
+
+<Canvas of={AssistantStories.Playground} />
+
+The other stories cover empty state, archive, delete confirmation, vertical
+layout, and compact density under `Features/Assistant`.
+
+The dependency direction is `datum-ui` / `datum-ui-native` → assistant-core,
+not the reverse. The package README remains the source of truth.

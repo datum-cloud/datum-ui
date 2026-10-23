@@ -1,6 +1,6 @@
 # Datum Storybook
 
-Interactive component documentation for the [Datum design system](https://www.npmjs.com/package/@datum-cloud/datum-ui). Browse, test, and explore all UI components with live examples and controls.
+Interactive component documentation for the [Datum design system](https://www.npmjs.com/package/@datum-cloud/datum-ui). Browse, test, and explore the web UI components with live examples and controls.
 
 ## Getting Started
 
@@ -13,6 +13,16 @@ pnpm --filter @repo/storybook dev
 ```
 
 Open [http://localhost:6006](http://localhost:6006) to view the Storybook.
+
+## Native Storybook
+
+The React Native components have their own on-device Storybook in [`apps/native-catalog`](../native-catalog). Start it with:
+
+```bash
+pnpm --filter @repo/native-catalog storybook
+```
+
+It runs on an iOS simulator or a physical device over the Expo dev server; there is no web URL. See [`apps/native-catalog/README.md`](../native-catalog/README.md) for the full script list.
 
 ## Scripts
 

@@ -47,12 +47,12 @@ packages/
   datum-ui/        # Component library (@datum-cloud/datum-ui)
   tokens/          # Design tokens as TypeScript, generated from the CSS (@datum-cloud/datum-ui-tokens)
   native/          # React Native components (@datum-cloud/datum-ui-native)
+  assistant-core/  # Platform-free assistant core (@datum-cloud/datum-ui-assistant-core)
   shadcn/          # shadcn/ui primitives (@repo/shadcn)
   config/          # Shared config (TypeScript, Tailwind, ESLint)
 apps/
-  docs/            # Fumadocs documentation site
   storybook/       # Storybook component explorer
-  native-catalog/  # Expo app showing every native component in light and dark
+  native-catalog/  # Expo app + on-device Storybook for every native component
 ```
 
 | Package | Description | npm |
@@ -60,6 +60,7 @@ apps/
 | `@datum-cloud/datum-ui` | Published component library | [![npm](https://img.shields.io/npm/v/@datum-cloud/datum-ui)](https://www.npmjs.com/package/@datum-cloud/datum-ui) |
 | `@datum-cloud/datum-ui-tokens` | Colour, spacing, radius, type and motion tokens as plain TS ([README](packages/tokens/README.md)) | [![npm](https://img.shields.io/npm/v/@datum-cloud/datum-ui-tokens)](https://www.npmjs.com/package/@datum-cloud/datum-ui-tokens) |
 | `@datum-cloud/datum-ui-native` | React Native components ([README](packages/native/README.md)) | [![npm](https://img.shields.io/npm/v/@datum-cloud/datum-ui-native)](https://www.npmjs.com/package/@datum-cloud/datum-ui-native) |
+| `@datum-cloud/datum-ui-assistant-core` | Assistant core shared by web and native ([README](packages/assistant-core/README.md)) | [![npm](https://img.shields.io/npm/v/@datum-cloud/datum-ui-assistant-core)](https://www.npmjs.com/package/@datum-cloud/datum-ui-assistant-core) |
 | `@repo/shadcn` | Internal shadcn/ui primitives | — |
 | `@repo/config` | Shared TypeScript, Tailwind, and ESLint config | — |
 
@@ -80,6 +81,9 @@ pnpm install
 
 # Start Storybook (component explorer + docs)
 pnpm --filter @repo/storybook dev
+
+# Start the native Storybook (on-device)
+pnpm --filter @repo/native-catalog storybook
 
 # Build the component library
 pnpm --filter @datum-cloud/datum-ui build
