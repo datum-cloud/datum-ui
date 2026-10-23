@@ -6,11 +6,13 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { getToolName } from 'ai'
 import { describe, expect, it, vi } from 'vitest'
 import { AssistantWorkspace } from '../components/assistant-workspace'
+import { PromptCard } from '../components/composer'
 import { Conversation } from '../components/conversation'
 import { EmptyState } from '../components/empty-state'
-import { AssistantMessage, UserMessage } from '../components/message'
+import { AssistantChoiceChips, AssistantMessage, AssistantPlanCard, UserMessage } from '../components/message'
 import { HistoryPanel } from '../components/sidebar'
 import { AssistantConfigProvider, defaultRenderLink } from '../context'
+import { CHOICES_PART_TYPE, PLAN_PART_TYPE } from '../types'
 import { formatRelativeTime, sanitizeUserHtml } from '../utils'
 
 describe('sanitizeUserHtml', () => {
@@ -440,12 +442,27 @@ describe('conversation density', () => {
     expect(found[0]?.parentElement).not.toHaveTextContent('How is the network?')
   })
 
-  it('narrows the column and footer and steps the body text down in compact', () => {
+  it('fills the host width with matching transcript and footer padding in compact', () => {
     const { container } = renderConversation({ density: 'compact' })
-    expect(container.querySelector('.max-w-2xl.gap-4')).not.toBeNull()
+    expect(container.querySelector('.px-7.gap-5')).not.toBeNull()
     expect(container.querySelector('.max-w-3xl')).toBeNull()
-    expect(screen.getByTestId('footer').parentElement).toHaveClass('max-w-2xl')
-    expect(container.querySelector('[data-density="compact"]')).toHaveClass('text-xs')
+    expect(container.querySelector('.max-w-2xl')).toBeNull()
+    expect(screen.getByTestId('footer').parentElement).toHaveClass('w-full')
+    expect(screen.getByTestId('footer').parentElement?.parentElement).toHaveClass('px-7')
+    expect(container.querySelector('[data-density="compact"]')).toHaveClass('text-sm')
+  })
+
+  it('uses a filled brand avatar in compact', () => {
+    const { container } = renderConversation({ density: 'compact' })
+    expect(avatars(container)[0]).toHaveClass('size-7', 'bg-btn-primary')
+  })
+
+  it('sets inline code as plain mono text in compact', () => {
+    renderConversation({ density: 'compact' })
+    const markdownRoot = screen.getByRole('heading', { name: 'Status' }).parentElement as HTMLElement
+    expect(markdownRoot.className).toContain('**:data-[streamdown=\'inline-code\']:bg-transparent')
+    expect(markdownRoot.className).toContain('**:data-[streamdown=\'inline-code\']:p-0')
+    expect(markdownRoot.className).not.toContain('**:data-[streamdown=\'inline-code\']:border')
   })
 
   it('tightens markdown and renders headings at body size in compact', () => {
@@ -454,25 +471,264 @@ describe('conversation density', () => {
     const markdownRoot = heading.parentElement as HTMLElement
     expect(markdownRoot).toHaveClass('space-y-2')
     expect(markdownRoot).not.toHaveClass('space-y-4')
-    expect(markdownRoot.className).toContain('[&_:is(h1,h2,h3,h4,h5,h6)]:text-xs')
+    expect(markdownRoot.className).toContain('[&_:is(h1,h2,h3,h4,h5,h6)]:text-sm')
     expect(markdownRoot.className).not.toContain('[&_h2]:text-xl')
   })
 
   it('keeps user turns as right-aligned bubbles in compact', () => {
     renderConversation({ density: 'compact' })
     const bubble = screen.getByText('How is the network?').closest('.rounded-2xl') as HTMLElement
-    expect(bubble).toHaveClass('text-xs')
+    expect(bubble).toHaveClass('bg-muted', 'text-sm')
+    expect(bubble).not.toHaveClass('rounded-br-sm')
     expect(bubble.parentElement).toHaveClass('justify-end')
   })
 
   it('keeps the error and the turn rail in compact', () => {
     renderConversation({ density: 'compact', error: new Error('boom') })
-    expect(screen.getByText(/boom|went wrong/i)).toHaveClass('ml-9')
+    expect(screen.getByText(/boom|went wrong/i)).toHaveClass('ml-10')
     expect(document.querySelector('[data-turn-id="u1"]')).not.toBeNull()
   })
 
   it('leaves UserMessage unchanged by default', () => {
     render(<UserMessage html="<p>hi</p>" />)
-    expect(screen.getByText('hi').closest('.rounded-2xl')).toHaveClass('px-4', 'py-2.5', 'text-sm')
+    expect(screen.getByText('hi').closest('.rounded-2xl')).toHaveClass('px-4', 'py-2.5', 'text-sm', 'bg-border', 'rounded-br-sm')
+  })
+
+  it('leaves out the message actions in compact', () => {
+    renderConversation({ density: 'compact' })
+    expect(document.querySelector('[data-slot="message-actions"]')).toBeNull()
+  })
+
+  it('keeps the message actions by default', () => {
+    renderConversation()
+    expect(document.querySelector('[data-slot="message-actions"]')).not.toBeNull()
+  })
+})
+
+describe('promptCard density', () => {
+  const renderCard = (props: Partial<React.ComponentProps<typeof PromptCard>> = {}) =>
+    render(
+      <PromptCard
+        editor={null}
+        isReady
+        canRetry={false}
+        onSend={vi.fn()}
+        onStop={vi.fn()}
+        onRetry={vi.fn()}
+        modelId="m"
+        effortId="medium"
+        onModelChange={vi.fn()}
+        onEffortChange={vi.fn()}
+        {...props}
+      />,
+    )
+
+  it('renders the stacked card with a filled send button by default', () => {
+    const { container } = renderCard()
+    expect(container.firstElementChild).toHaveClass('rounded-2xl', 'shadow-sm', 'p-3')
+    expect(screen.getByLabelText('Send message')).toHaveClass('bg-primary')
+  })
+
+  it('renders one row with an outline send button in compact', () => {
+    const { container } = renderCard({ density: 'compact' })
+    expect(container.firstElementChild).toHaveClass('flex', 'rounded-lg', 'border-input')
+    expect(container.firstElementChild).not.toHaveClass('shadow-sm')
+    expect(screen.getByLabelText('Send message')).not.toHaveClass('bg-primary')
+  })
+})
+
+describe('choice chips', () => {
+  const data = {
+    question: 'What do you want to deploy?',
+    options: [
+      { id: '1', label: 'My own image', icon: 'container' },
+      { id: '2', label: 'Try the nginx demo' },
+    ],
+  }
+
+  it('calls onChoose with the picked option', () => {
+    const onChoose = vi.fn()
+    render(<AssistantChoiceChips data={data} onChoose={onChoose} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Try the nginx demo' }))
+    expect(onChoose).toHaveBeenCalledWith(data.options[1])
+  })
+
+  it('marks the picked option and locks the rest once answered', () => {
+    const onChoose = vi.fn()
+    render(<AssistantChoiceChips data={{ ...data, selectedId: '1' }} onChoose={onChoose} />)
+    const picked = screen.getByRole('button', { name: 'My own image' })
+    const other = screen.getByRole('button', { name: 'Try the nginx demo' })
+    expect(picked).toHaveAttribute('aria-pressed', 'true')
+    expect(picked).toHaveClass('border-btn-primary')
+    expect(other).toHaveAttribute('aria-pressed', 'false')
+    expect(other).toBeDisabled()
+    fireEvent.click(other)
+    expect(onChoose).not.toHaveBeenCalled()
+  })
+
+  it('cannot be answered when disabled', () => {
+    render(<AssistantChoiceChips data={data} onChoose={vi.fn()} disabled />)
+    for (const b of screen.getAllByRole('button'))
+      expect(b).toBeDisabled()
+  })
+
+  const choiceMessages = [
+    {
+      id: 'a1',
+      role: 'assistant',
+      parts: [{ type: CHOICES_PART_TYPE, id: 'call-1', data }],
+    },
+  ] as unknown as UIMessage[]
+
+  const renderWithChoices = (props: Partial<React.ComponentProps<typeof Conversation>>) =>
+    render(
+      <Conversation
+        messages={choiceMessages}
+        status="ready"
+        htmlByUserMsgIndex={{ current: [] }}
+        containerRef={vi.fn()}
+        bottomRef={{ current: null }}
+        userScrolledUpRef={{ current: false }}
+        footer={<div />}
+        {...props}
+      />,
+    )
+
+  it('renders a choices part in a conversation and reports the message it belongs to', () => {
+    const onChoose = vi.fn()
+    renderWithChoices({ onChoose })
+    expect(screen.getByText('What do you want to deploy?')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'My own image' }))
+    expect(onChoose).toHaveBeenCalledWith('a1', data.options[0])
+  })
+
+  it('keeps the latest question locked while it is still streaming', () => {
+    renderWithChoices({ onChoose: vi.fn(), status: 'streaming' })
+    expect(screen.getByRole('button', { name: 'My own image' })).toBeDisabled()
+  })
+
+  it('locks a question that is no longer the latest turn', () => {
+    const later = [
+      ...choiceMessages,
+      { id: 'u2', role: 'user', parts: [{ type: 'text', text: 'something else' }] },
+      { id: 'a2', role: 'assistant', parts: [{ type: 'text', text: 'ok' }] },
+    ] as unknown as UIMessage[]
+    renderWithChoices({ onChoose: vi.fn(), messages: later, htmlByUserMsgIndex: { current: ['<p>something else</p>'] } })
+    expect(screen.getByRole('button', { name: 'My own image' })).toBeDisabled()
+  })
+})
+
+describe('plan card', () => {
+  const NOW = Date.parse('2026-10-23T12:00:00Z')
+  const plan = {
+    token: 'tok-1',
+    expiresAt: '2026-10-23T12:15:00Z',
+    status: 'pending' as const,
+    resources: [
+      { kind: 'Workload', name: 'orders-api', action: 'create', summary: 'Runs your container in us-central-1.', manifest: 'kind: Workload\n' },
+      { kind: 'NetworkService', name: 'orders-api', action: 'create', manifest: 'kind: NetworkService\n' },
+      { kind: 'HTTPProxy', name: 'orders-api', action: 'create', manifest: 'kind: HTTPProxy\n' },
+    ],
+  }
+
+  it('shows each resource with what it does, and nothing created yet', () => {
+    render(<AssistantPlanCard data={plan} canApprove now={NOW} />)
+    expect(screen.getByText(/3 resources to create/)).toBeInTheDocument()
+    expect(screen.getByText('Nothing created yet')).toBeInTheDocument()
+    expect(screen.getByText('Network service')).toBeInTheDocument()
+    expect(screen.getByText('Load balancer')).toBeInTheDocument()
+    expect(screen.getByText('Runs your container in us-central-1.')).toBeInTheDocument()
+    expect(screen.getAllByText('Create')).toHaveLength(3)
+  })
+
+  it('approves and asks to change through its callbacks', () => {
+    const onApprove = vi.fn()
+    const onChange = vi.fn()
+    render(<AssistantPlanCard data={plan} canApprove onApprove={onApprove} onChange={onChange} now={NOW} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Approve and create' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Change something' }))
+    expect(onApprove).toHaveBeenCalledOnce()
+    expect(onChange).toHaveBeenCalledOnce()
+  })
+
+  it('shows the YAML on request', () => {
+    render(<AssistantPlanCard data={plan} now={NOW} />)
+    expect(screen.queryByText(/kind: HTTPProxy/)).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'View YAML and diff' }))
+    expect(screen.getByText(/kind: HTTPProxy/)).toBeInTheDocument()
+  })
+
+  it('cannot be approved while the conversation is busy', () => {
+    render(<AssistantPlanCard data={plan} canApprove={false} onApprove={vi.fn()} now={NOW} />)
+    expect(screen.getByRole('button', { name: 'Approve and create' })).toBeDisabled()
+  })
+
+  it('reads as expired once its token has run out', () => {
+    render(<AssistantPlanCard data={plan} canApprove now={Date.parse('2026-10-23T12:16:00Z')} />)
+    expect(screen.getByText('Expired')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Approve and create' })).toBeNull()
+  })
+
+  it('reads as replaced when a newer plan exists', () => {
+    render(<AssistantPlanCard data={plan} latest={false} canApprove now={NOW} />)
+    expect(screen.getByText('Replaced')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Approve and create' })).toBeNull()
+  })
+
+  it('shows what was created and when it was approved', () => {
+    render(
+      <AssistantPlanCard
+        data={{ ...plan, status: 'applied', approvedAt: '2026-10-23T12:01:00Z', applied: plan.resources.map(r => ({ action: 'create', kind: r.kind, name: r.name })) }}
+        now={NOW}
+      />,
+    )
+    expect(screen.getByText('Applied')).toBeInTheDocument()
+    expect(screen.getAllByText('Created')).toHaveLength(3)
+    expect(screen.getByText(/Approved by you at/)).toBeInTheDocument()
+  })
+
+  it('shows why a plan was not applied', () => {
+    render(<AssistantPlanCard data={{ ...plan, status: 'failed', error: 'nothing was changed: the token did not match' }} now={NOW} />)
+    expect(screen.getByText('Not applied')).toBeInTheDocument()
+    expect(screen.getByRole('alert')).toHaveTextContent('the token did not match')
+  })
+
+  it('offers update wording and shows the diff for a change', () => {
+    render(
+      <AssistantPlanCard
+        data={{ ...plan, resources: [{ kind: 'HTTPProxy', name: 'orders-api', action: 'update', diff: ['+ hostnames: api.acme.com'], manifest: 'kind: HTTPProxy\n' }] }}
+        canApprove
+        now={NOW}
+      />,
+    )
+    expect(screen.getByText(/1 resource to change/)).toBeInTheDocument()
+    expect(screen.getByText('+ hostnames: api.acme.com')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Approve and update' })).toBeInTheDocument()
+  })
+
+  it('lets only the newest plan in a conversation be approved', () => {
+    const onApprovePlan = vi.fn()
+    const messages = [
+      { id: 'a1', role: 'assistant', parts: [{ type: PLAN_PART_TYPE, id: 'plan-old', data: plan }] },
+      { id: 'u2', role: 'user', parts: [{ type: 'text', text: 'use port 9090' }] },
+      { id: 'a2', role: 'assistant', parts: [{ type: PLAN_PART_TYPE, id: 'plan-new', data: { ...plan, expiresAt: '2999-01-01T00:00:00Z' } }] },
+    ] as unknown as UIMessage[]
+    render(
+      <Conversation
+        messages={messages}
+        status="ready"
+        htmlByUserMsgIndex={{ current: ['<p>use port 9090</p>'] }}
+        containerRef={vi.fn()}
+        bottomRef={{ current: null }}
+        userScrolledUpRef={{ current: false }}
+        footer={<div />}
+        onApprovePlan={onApprovePlan}
+      />,
+    )
+    expect(screen.getByText('Replaced')).toBeInTheDocument()
+    const buttons = screen.getAllByRole('button', { name: 'Approve and create' })
+    expect(buttons).toHaveLength(1)
+    fireEvent.click(buttons[0]!)
+    expect(onApprovePlan).toHaveBeenCalledWith('a2', 'plan-new')
   })
 })

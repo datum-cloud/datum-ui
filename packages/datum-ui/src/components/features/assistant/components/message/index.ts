@@ -1,4 +1,6 @@
 export * from './assistant-message'
+export * from './choice-chips'
 export * from './loading-dots'
+export * from './plan-card'
 export * from './thinking-block'
 export * from './user-message'

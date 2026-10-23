@@ -2,12 +2,13 @@
 
 import type { UIMessage } from 'ai'
 import type { RefObject } from 'react'
-import type { ConversationDensity } from '../../types'
+import type { AssistantChoiceOption, ConversationDensity } from '../../types'
 import { assistantErrorMessage, isTextUIPart } from '@datum-cloud/datum-ui-assistant-core'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { cn } from '../../../../../utils/cn'
 import { useTurnRail } from '../../hooks'
+import { PLAN_PART_TYPE } from '../../types'
 import { sanitizeUserHtml } from '../../utils'
 import { AssistantMessage, LoadingDots, UserMessage } from '../message'
 import { ScrollToBottomButton } from './scroll-to-bottom-button'
@@ -25,11 +26,25 @@ interface ConversationProps {
   footer: React.ReactNode
   /**
    * `default` is the full workspace layout. `compact` is for a conversation
-   * embedded in another page: an avatar beside each assistant turn, a
-   * narrower column (42rem, footer included), one-step-smaller body text and
-   * tighter markdown spacing.
+   * embedded in another page: it fills the host's width with 1.75rem side
+   * padding, puts an avatar beside each assistant turn and tightens markdown
+   * spacing.
    */
   density?: ConversationDensity
+  /**
+   * Called when the person picks an option of a question the assistant asked
+   * as buttons, with the message it belongs to. Only the latest turn's
+   * question can be answered, and only once it has finished streaming.
+   */
+  onChoose?: (messageId: string, option: AssistantChoiceOption) => void
+  /**
+   * Called when the person approves a plan card, with the message it is in
+   * and the plan's id. Only the newest plan can be approved, and only while
+   * the conversation is idle.
+   */
+  onApprovePlan?: (messageId: string, planId: string) => void
+  /** Called when the person clicks "Change something" on a plan card. */
+  onChangePlan?: (messageId: string, planId: string) => void
 }
 
 export function Conversation({
@@ -42,6 +57,9 @@ export function Conversation({
   userScrolledUpRef,
   footer,
   density = 'default',
+  onChoose,
+  onApprovePlan,
+  onChangePlan,
 }: ConversationProps) {
   const compact = density === 'compact'
   const [showScrollButton, setShowScrollButton] = useState(false)
@@ -51,6 +69,7 @@ export function Conversation({
     userScrolledUpRef,
   )
   let userMsgIdx = 0
+  const latestPlanId = newestPlanId(messages)
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
@@ -62,7 +81,7 @@ export function Conversation({
         <div
           className={
             compact
-              ? 'mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-4'
+              ? 'flex w-full flex-col gap-5 px-7 py-4'
               : 'mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-6'
           }
         >
@@ -97,6 +116,12 @@ export function Conversation({
                   isLastMessage={isLastMessage}
                   status={status}
                   density={density}
+                  onChoose={onChoose && (option => onChoose(msg.id, option))}
+                  canChoose={isLastMessage && status === 'ready'}
+                  onApprovePlan={onApprovePlan && (planId => onApprovePlan(msg.id, planId))}
+                  onChangePlan={onChangePlan && (planId => onChangePlan(msg.id, planId))}
+                  latestPlanId={latestPlanId}
+                  canApprovePlan={status === 'ready'}
                 />
               </motion.div>
             )
@@ -112,8 +137,8 @@ export function Conversation({
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 // Compact indents past the avatar to sit in the text column.
                 className={cn(
-                  'text-destructive bg-destructive/10 w-fit rounded-lg px-3 py-2',
-                  compact ? 'ml-9 text-xs' : 'text-sm',
+                  'text-destructive bg-destructive/10 w-fit rounded-lg px-3 py-2 text-sm',
+                  compact && 'ml-10',
                 )}
               >
                 {assistantErrorMessage(error)}
@@ -129,7 +154,7 @@ export function Conversation({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                className={cn('flex justify-start', compact && 'pl-9')}
+                className={cn('flex justify-start', compact && 'pl-10')}
               >
                 <LoadingDots />
               </motion.div>
@@ -142,7 +167,7 @@ export function Conversation({
 
       <TurnRail turns={turns} activeId={activeTurnId} onJump={scrollToTurn} />
 
-      <div className="relative shrink-0 px-4 pb-4">
+      <div className={cn('relative shrink-0', compact ? 'px-7 pb-6' : 'px-4 pb-4')}>
         <ScrollToBottomButton
           show={showScrollButton && messages.length > 0}
           onClick={() => {
@@ -152,10 +177,23 @@ export function Conversation({
           }}
         />
         {/* Same width as the transcript column, so the two line up. */}
-        <div className={compact ? 'mx-auto w-full max-w-2xl' : 'mx-auto w-full max-w-3xl'}>
+        <div className={compact ? 'w-full' : 'mx-auto w-full max-w-3xl'}>
           {footer}
         </div>
       </div>
     </div>
   )
+}
+
+/** The id of the newest plan part in the conversation, if any. */
+function newestPlanId(messages: UIMessage[]): string | undefined {
+  for (let m = messages.length - 1; m >= 0; m--) {
+    const parts = messages[m]?.parts ?? []
+    for (let p = parts.length - 1; p >= 0; p--) {
+      const part = parts[p] as { type: string, id?: string }
+      if (part.type === PLAN_PART_TYPE && part.id)
+        return part.id
+    }
+  }
+  return undefined
 }

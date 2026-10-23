@@ -3,7 +3,7 @@
 import type { Editor } from '@tiptap/react'
 import type { UIMessage } from 'ai'
 import type { MouseEvent as ReactMouseEvent, ReactNode, RefObject } from 'react'
-import type { AssistantConfig, ChatSummary, EffortId } from '../types'
+import type { AssistantChoiceOption, AssistantConfig, ChatSummary, EffortId } from '../types'
 import { PanelLeft, SquarePen, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Tooltip } from '../../../base/tooltip'
@@ -83,6 +83,12 @@ export interface AssistantWorkspaceProps {
   /** Confirm (deletion can't be undone) before calling `onDeleteChat`. */
   confirmDelete?: boolean
   onSuggestion: (text: string) => void
+  /** Called when the person picks an option of a question asked as buttons (see `Conversation`). */
+  onChoose?: (messageId: string, option: AssistantChoiceOption) => void
+  /** Called when the person approves a plan card (see `Conversation`). */
+  onApprovePlan?: (messageId: string, planId: string) => void
+  /** Called when the person clicks "Change something" on a plan card. */
+  onChangePlan?: (messageId: string, planId: string) => void
 
   modelId: string
   effortId: EffortId
@@ -131,6 +137,9 @@ export function AssistantWorkspace({
   onUnarchiveChat,
   confirmDelete,
   onSuggestion,
+  onChoose,
+  onApprovePlan,
+  onChangePlan,
   modelId,
   effortId,
   onModelChange,
@@ -215,6 +224,9 @@ export function AssistantWorkspace({
           bottomRef={bottomRef}
           userScrolledUpRef={userScrolledUpRef}
           footer={promptCard}
+          onChoose={onChoose}
+          onApprovePlan={onApprovePlan}
+          onChangePlan={onChangePlan}
         />
       )
     : (

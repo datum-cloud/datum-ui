@@ -1,9 +1,9 @@
 'use client'
 
 import type { Editor } from '@tiptap/react'
-import type { EffortId } from '../../types'
+import type { ConversationDensity, EffortId } from '../../types'
 import { EditorContent } from '@tiptap/react'
-import { ArrowUp, Mic, MicOff, RotateCw, Square } from 'lucide-react'
+import { ArrowUp, Mic, MicOff, RotateCw, Send, Square } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { cn } from '../../../../../utils/cn'
 import { Tooltip } from '../../../../base/tooltip'
@@ -27,6 +27,11 @@ interface PromptCardProps {
   isListening?: boolean
   frequencyData?: number[]
   onMicToggle?: () => void
+  /**
+   * `compact` is one row: the input and its buttons side by side in a plain
+   * bordered field, with an outline send button. For a chat embedded in a page.
+   */
+  density?: ConversationDensity
   className?: string
 }
 
@@ -45,20 +50,35 @@ export function PromptCard({
   isListening,
   frequencyData,
   onMicToggle,
+  density = 'default',
   className,
 }: PromptCardProps) {
   const { modelSelector } = useAssistantConfig()
+  const compact = density === 'compact'
+  const sendClasses = compact
+    ? 'text-muted-foreground hover:text-foreground hover:bg-accent shrink-0 rounded-full p-1.5 transition-colors'
+    : 'bg-primary text-primary-foreground hover:bg-primary/90 shrink-0 rounded-full p-1.5 transition-colors'
 
   return (
     <div
       className={cn(
-        'bg-card border-primary/30 rounded-2xl border p-3 shadow-sm transition-shadow',
+        compact
+          ? 'bg-card border-input flex items-end gap-2 rounded-lg border py-1 pr-1.5 pl-3'
+          : 'bg-card border-primary/30 rounded-2xl border p-3 shadow-sm transition-shadow',
         className,
       )}
     >
-      <EditorContent editor={editor} className="max-h-52 min-h-9 overflow-y-auto px-1 py-1" />
+      <EditorContent
+        editor={editor}
+        className={cn(
+          'max-h-52 overflow-y-auto',
+          // The editor brings its own vertical padding; compact trims it so
+          // the field is one 40px row.
+          compact ? 'min-w-0 flex-1 [&_.ProseMirror]:py-0.5' : 'min-h-9 px-1 py-1',
+        )}
+      />
 
-      <div className="mt-1 flex items-center justify-end gap-2">
+      <div className={cn('flex items-center justify-end gap-2', compact ? 'pb-0.5' : 'mt-1')}>
         <div className="flex items-center gap-1">
           {modelSelector && (
             <ModelSelector
@@ -129,9 +149,9 @@ export function PromptCard({
                     type="button"
                     onClick={onSend}
                     aria-label="Send message"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 shrink-0 rounded-full p-1.5 transition-colors"
+                    className={sendClasses}
                   >
-                    <Icon icon={ArrowUp} className="size-4" />
+                    <Icon icon={compact ? Send : ArrowUp} className="size-4" />
                   </button>
                 </Tooltip>
               )
@@ -141,7 +161,7 @@ export function PromptCard({
                     type="button"
                     onClick={onStop}
                     aria-label="Stop generating"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 shrink-0 rounded-full p-1.5 transition-colors"
+                    className={sendClasses}
                   >
                     <Icon icon={Square} className="size-4 fill-current" />
                   </button>
