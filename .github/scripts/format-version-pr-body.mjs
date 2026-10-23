@@ -5,12 +5,18 @@
  * shaped as `{ changesets: [{ summary, releases: [{ name, type }] }],
  *              releases: [{ name, type, oldVersion, newVersion }] }`.
  *
- * We only surface the public package (`@datum-cloud/datum-ui`). If it has no
- * release we print "No changesets found." and exit 0. (STRUCT-076)
+ * The repo publishes several packages from one Version PR, so the body
+ * describes every releasing package and the title suffix follows the highest
+ * bump across all of them. (STRUCT-076)
  */
 import fs from 'node:fs'
+import { fileURLToPath } from 'node:url'
 
-const PKG = '@datum-cloud/datum-ui'
+// Kept first in the body: it is the package most readers look for.
+const PRIMARY_PKG = '@datum-cloud/datum-ui'
+
+// Highest first; `releaseType` returns the first bump it finds.
+const BUMPS = ['major', 'minor', 'patch']
 
 const BUMP_DESCRIPTIONS = {
   major:
@@ -20,12 +26,6 @@ const BUMP_DESCRIPTIONS = {
   patch:
     'This release contains bug fixes and minor improvements. Safe to merge.',
 }
-
-const SECTIONS = [
-  ['major', '### Breaking Changes'],
-  ['minor', '### Features'],
-  ['patch', '### Fixes'],
-]
 
 function readPlan(jsonPath) {
   if (!jsonPath) return { changesets: [], releases: [] }
@@ -40,30 +40,58 @@ function readPlan(jsonPath) {
   }
 }
 
-function main() {
-  const { changesets, releases } = readPlan(process.argv[2])
+function releaseType(releases) {
+  for (const bump of BUMPS) {
+    if (releases.some((release) => release?.type === bump)) return bump
+  }
+  return null
+}
 
-  const pkgRelease = releases.find((release) => release.name === PKG)
-  if (!pkgRelease || pkgRelease.type === 'none') {
-    process.stdout.write('No changesets found.\n')
-    return
+function collapse(text) {
+  return String(text ?? '').replace(/\s+/g, ' ').trim()
+}
+
+/** Releasing packages: `@datum-cloud/datum-ui` first, then the rest A-Z. */
+function orderedPackages(releases) {
+  const types = new Map()
+  for (const release of releases) {
+    if (!release?.name || !BUMPS.includes(release.type) || types.has(release.name)) continue
+    types.set(release.name, release.type)
   }
 
-  const bumpType = pkgRelease.type
-  const bumpDesc = BUMP_DESCRIPTIONS[bumpType] ?? 'Version bump detected.'
+  const names = [...types.keys()]
+  const primary = names.filter((name) => name === PRIMARY_PKG)
+  const others = names
+    .filter((name) => name !== PRIMARY_PKG)
+    .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
 
-  const buckets = { major: [], minor: [], patch: [] }
+  return [...primary, ...others].map((name) => ({ name, type: types.get(name) }))
+}
+
+/** Changeset summaries for one package, deduplicated and whitespace-collapsed. */
+function summariesFor(packageName, changesets) {
+  const summaries = []
   for (const changeset of changesets) {
-    const release = (changeset.releases ?? []).find((r) => r.name === PKG)
-    if (!release || !(release.type in buckets)) continue
-    const summary = String(changeset.summary ?? '').trim()
-    if (summary) buckets[release.type].push(summary.replace(/\s*\n+\s*/g, ' '))
+    const targets = (changeset?.releases ?? []).some((release) => release?.name === packageName)
+    if (!targets) continue
+    const summary = collapse(changeset.summary)
+    if (summary && !summaries.includes(summary)) summaries.push(summary)
   }
+  return summaries
+}
+
+export function buildBody(plan) {
+  const changesets = Array.isArray(plan?.changesets) ? plan.changesets : []
+  const releases = Array.isArray(plan?.releases) ? plan.releases : []
+
+  const packages = orderedPackages(releases)
+  const bumpType = releaseType(packages)
+  if (!bumpType) return 'No changesets found.\n'
 
   const lines = [
     `## Release Type: \`${bumpType}\``,
     '',
-    bumpDesc,
+    BUMP_DESCRIPTIONS[bumpType] ?? 'Version bump detected.',
     '',
     '---',
     '',
@@ -71,10 +99,14 @@ function main() {
     '',
   ]
 
-  for (const [type, heading] of SECTIONS) {
-    if (buckets[type].length === 0) continue
-    lines.push(heading, '')
-    for (const summary of buckets[type]) lines.push(`- ${summary}`)
+  for (const pkg of packages) {
+    lines.push(`### \`${pkg.name}\` (${pkg.type})`, '')
+    const summaries = summariesFor(pkg.name, changesets)
+    if (summaries.length === 0) {
+      lines.push('- _No summary provided._')
+    } else {
+      for (const summary of summaries) lines.push(`- ${summary}`)
+    }
     lines.push('')
   }
 
@@ -83,20 +115,34 @@ function main() {
     '',
     '## Release Process',
     '',
-    'This PR updates package versions and changelogs based on merged changesets.',
+    'This PR updates package versions and changelogs based on the merged changesets.',
     '',
     '**When you merge this PR:**',
     '',
-    '- Package will be published to npm',
-    '- GitHub Release will be created automatically',
-    '- Release notes will be generated from the changes above',
+    '- Every package listed above is published to npm immediately',
+    '- Each package gets its own git tag and its own GitHub Release',
+    '- Release notes are generated from the changes above',
     '',
     '---',
     '',
     '_This PR was automatically generated by [changesets](https://github.com/changesets/changesets)._',
   )
 
-  process.stdout.write(`${lines.join('\n')}\n`)
+  return `${lines.join('\n')}\n`
 }
 
-main()
+function main() {
+  process.stdout.write(buildBody(readPlan(process.argv[2])))
+}
+
+/** True when this file is the script Node was asked to run, not an import. */
+function invokedDirectly() {
+  if (typeof process.argv[1] !== 'string') return false
+  try {
+    return fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url))
+  } catch {
+    return false
+  }
+}
+
+if (invokedDirectly()) main()

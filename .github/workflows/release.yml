@@ -3,43 +3,54 @@ name: Release
 # Release runs only after the CI workflow has completed successfully on a push
 # to `main`. This gates npm publish behind green lint/typecheck/test/build
 # (STRUCT-073) and lets us publish the exact artifact CI validated (STRUCT-081).
+#
+# The workflow is split so only the final publish job can mint an OIDC token:
+#   select-mode -> version  (there are changesets: open the Version PR)
+#   select-mode -> pack -> publish  (the Version PR merged: publish the plan)
+# `pack` takes no publish credentials, so a compromised pack step cannot
+# publish, and `version` cannot mint an OIDC token.
 on:
   workflow_run:
     workflows: [CI]
     types: [completed]
     branches: [main]
 
+# Default to no token scope anywhere; each job opts in to exactly what it needs.
+permissions: {}
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
-  cancel-in-progress: true
+  # A half-cancelled release can leave a version published without its tag or
+  # GitHub Release. Queue instead of cancelling; a newer CI run will pick up
+  # whatever remains.
+  cancel-in-progress: false
 
 jobs:
-  release:
-    name: Release
+  select-mode:
+    name: Select release mode
     runs-on: ubuntu-latest
-    # Only release for a successful CI run triggered by a push to main.
+    # Only release for a successful CI run triggered by a push to main. Kept on
+    # this job alone: everything else is gated by its mode output.
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'push' &&
       github.event.workflow_run.head_branch == 'main'
     permissions:
-      contents: write
-      pull-requests: write
-      id-token: write
-      # Cross-run artifact download (actions/download-artifact with run-id +
-      # github-token) needs actions:read. Once a permissions block is declared,
-      # every unlisted scope defaults to none, so this must be explicit or the
-      # "Download validated build artifact" step 403s. (CR-001 / STRUCT-081)
-      actions: read
+      contents: read
+    outputs:
+      mode: ${{ steps.select.outputs.mode }}
+      plan-id: ${{ steps.select.outputs.publish-plan-artifact-id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
-          # Full history (all branches) so `pnpm changeset status` can diff
-          # against the `main` baseBranch when generating the PR body; a shallow
-          # detached checkout errors and silently degrades the body. (CR-007 / STRUCT-076)
+          # Full history so `changeset status` can diff against the `main`
+          # baseBranch when deciding the mode; a shallow detached checkout
+          # errors instead. (CR-007 / STRUCT-076)
           fetch-depth: 0
+          # Nothing here pushes; keep the token out of .git/config.
+          persist-credentials: false
 
       # Deliberately held at v4. This repo relies on action-setup inferring the
       # pnpm version from the root packageManager field (no version input), and
@@ -52,35 +63,54 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          cache: pnpm
-          registry-url: https://registry.npmjs.org
+          # No npm registry auth is configured on purpose: publish uses OIDC
+          # trusted publishing, so a cache restore of ~/.npmrc must not happen.
+          package-manager-cache: false
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Publish the exact build CI produced and validated instead of rebuilding.
-      - name: Download validated build artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: datum-ui-dist
-          path: packages/datum-ui/dist/
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Select release mode
+        id: select
+        uses: changesets/action/select-mode@v2
 
-      # @datum-cloud/datum-ui-tokens, -assistant-core and -native, from the
-      # same validated CI run (see the native-packages-dist upload in ci.yml).
-      - name: Download validated native/tokens build artifact
-        uses: actions/download-artifact@v8
+  version:
+    name: Version packages
+    runs-on: ubuntu-latest
+    needs: select-mode
+    if: needs.select-mode.outputs.mode == 'version'
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
         with:
-          name: native-packages-dist
-          path: packages/
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.event.workflow_run.head_sha }}
+          # The PR body compares against `main`, which needs the full history.
+          fetch-depth: 0
+          # The version action commits through the GitHub API, not git push.
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Generate PR description
         id: pr-body
         run: |
           BODY=$(.github/scripts/generate-version-pr-body.sh)
+          # Only the generated release-type line decides the suffix. Changeset
+          # summaries below it are contributor-authored, so grepping the whole
+          # body would let a summary containing "Release Type: `major`" spoof
+          # the title.
+          FIRST_LINE=$(printf '%s\n' "$BODY" | head -n 1)
           {
             echo "body<<EOF"
             echo "$BODY"
@@ -88,42 +118,130 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
           # Determine title suffix based on bump type
-          if grep -q "Release Type: \`major\`" <<< "$BODY"; then
+          if grep -q "Release Type: \`major\`" <<< "$FIRST_LINE"; then
             echo "title-suffix=(major)" >> "$GITHUB_OUTPUT"
-          elif grep -q "Release Type: \`minor\`" <<< "$BODY"; then
+          elif grep -q "Release Type: \`minor\`" <<< "$FIRST_LINE"; then
             echo "title-suffix=(minor)" >> "$GITHUB_OUTPUT"
-          elif grep -q "Release Type: \`patch\`" <<< "$BODY"; then
+          elif grep -q "Release Type: \`patch\`" <<< "$FIRST_LINE"; then
             echo "title-suffix=(patch)" >> "$GITHUB_OUTPUT"
           else
             echo "title-suffix=" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Create Release Pull Request or Publish
-        id: changesets
-        uses: changesets/action@v2
+      # One combined Version PR: every pending changeset lands in a single pull
+      # request instead of one per package.
+      - name: Create version pull request
+        id: version
+        uses: changesets/action/version@v2
         with:
-          # v2 renamed every input from v1: version -> version-script,
-          # publish -> publish-script, commit -> commit-message,
-          # title -> pr-title, createGithubReleases -> create-github-releases.
-          # Unknown inputs are silently ignored by Actions, so a partial rename
-          # would quietly fall back to defaults instead of failing loudly.
-          version-script: pnpm changeset version
-          publish-script: pnpm changeset publish
+          script: pnpm changeset version
           commit-message: "chore: version packages"
           pr-title: "chore: version packages ${{ steps.pr-body.outputs.title-suffix }}"
-          create-github-releases: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # Pass the body through the environment (never interpolated into the shell
       # command) so backticks/quotes in the changelog can't be executed. (BUG-107)
       - name: Update PR description
-        if: steps.changesets.outputs.pr-number != ''
+        if: steps.version.outputs.pr-number != ''
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_BODY: ${{ steps.pr-body.outputs.body }}
-          PR_NUMBER: ${{ steps.changesets.outputs.pr-number }}
+          PR_NUMBER: ${{ steps.version.outputs.pr-number }}
         run: |
           gh pr edit "$PR_NUMBER" --body "$PR_BODY"
+
+  pack:
+    name: Pack release
+    runs-on: ubuntu-latest
+    needs: select-mode
+    if: needs.select-mode.outputs.mode == 'publish'
+    permissions:
+      contents: read
+      # Cross-run artifact download (actions/download-artifact with run-id +
+      # github-token) needs actions:read. Once a permissions block is declared,
+      # every unlisted scope defaults to none, so this must be explicit or the
+      # download 403s. (CR-001 / STRUCT-081)
+      actions: read
+    outputs:
+      pack-id: ${{ steps.pack.outputs.pack-dir-artifact-id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Publish the exact build CI produced and validated instead of rebuilding.
+      # The artifact's common ancestor is packages/, so downloading it to
+      # packages/ restores every package's build output.
+      - name: Download validated build artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: public-packages-dist
+          path: packages/
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # pnpm pack ships whatever is on disk and never builds, so a missing
+      # artifact would publish an empty package. Fail before packing.
+      - name: Assert every public package has a build
+        run: node .github/scripts/assert-public-dist.mjs
+
+      - name: Pack publishable packages
+        id: pack
+        uses: changesets/action/pack@v2
+        with:
+          publish-plan-artifact-id: ${{ needs.select-mode.outputs.plan-id }}
+
+  # OIDC trusted publishing is the only npm credential here: no static npm
+  # token is configured anywhere in this workflow, and setup-node has no
+  # registry auth URL. npm trusts this workflow by repository + workflow
+  # FILENAME, so renaming or moving release.yml silently breaks publishing
+  # (the job would fail auth, it would not fall back to a token). Do not
+  # rename this file.
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    # select-mode is a direct dependency, not just pack: Actions only exposes
+    # the outputs of jobs listed in `needs`, so without it the mode output is
+    # empty and this job's guard would never be true.
+    needs: [select-mode, pack]
+    if: needs.select-mode.outputs.mode == 'publish'
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          # Tags and GitHub Releases are created through the API.
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Publishes the tarballs pack produced, not the working tree, so what npm
+      # receives is exactly what the assertion step inspected. Creates one tag
+      # and one GitHub Release per published package.
+      - name: Publish packages
+        uses: changesets/action/publish@v2
+        with:
+          pack-dir-artifact-id: ${{ needs.pack.outputs.pack-id }}
+          create-github-releases: true
