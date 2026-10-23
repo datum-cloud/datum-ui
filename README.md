@@ -246,17 +246,15 @@ Commit the generated `.changeset/*.md` file with your PR.
 
 **For Maintainers:**
 
-1. After PRs are merged, a "Version Packages" PR is automatically created
-2. Review the PR to see version bumps and changelog
-3. When ready to release:
-   - Merge the "Version Packages" PR
-   - Create a [GitHub Release](https://github.com/datum-cloud/datum-ui/releases)
-   - GitHub Actions automatically publishes to npm
+1. After PRs with changesets merge, Release opens or updates one "Version Packages" PR that bumps every affected package.
+2. Review the PR body: each listed package, its bump type, and its changelog entries.
+3. Merge the PR when the team is ready. That publishes only the packages listed in it, each with its own npm version, git tag, and GitHub Release. There is no separate release step.
+4. A bot-created Version PR may leave its first CI run waiting for approval (`action_required`). Approve the pending run before merging.
 
 **Renovate PRs:**
-Dependency update PRs from Renovate automatically include changesets — no manual action needed.
+Renovate PRs that upgrade runtime dependencies (label `runtime-deps`) get a patch changeset automatically. devDependency-only updates do not.
 
-For detailed workflow documentation, see [.github/RELEASE_WORKFLOW.md](.github/RELEASE_WORKFLOW.md).
+For the full flow, trusted publishing setup, and recovery steps, see [.github/RELEASE_WORKFLOW.md](.github/RELEASE_WORKFLOW.md).
 
 ## License
 
