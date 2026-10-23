@@ -231,6 +231,29 @@ export default meta
 
 type Story = StoryObj<typeof AssistantWorkspace>
 
+type PlaygroundStory = StoryObj<HarnessProps>
+
+export const Playground: PlaygroundStory = {
+  name: 'Playground',
+  args: {
+    messages: CONVERSATION,
+    initialChats: MIXED_CHAT_LIST,
+    archive: false,
+    confirmDelete: false,
+    closable: false,
+    orientation: 'horizontal',
+  },
+  argTypes: {
+    messages: { control: false },
+    initialChats: { control: false },
+    orientation: { control: 'select', options: ['horizontal', 'vertical'] },
+    archive: { control: 'boolean' },
+    confirmDelete: { control: 'boolean' },
+    closable: { control: 'boolean' },
+  },
+  render: args => <WorkspaceHarness {...args} />,
+}
+
 export const Empty: Story = {
   name: 'Empty state',
   render: () => <WorkspaceHarness messages={[]} />,

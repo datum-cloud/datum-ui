@@ -1,0 +1,31 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { TokenPlayground } from './token-playground'
+
+<Meta title="Foundations/Design Tokens" />
+
+# Design Tokens
+
+Design tokens are the values. Theming is how they are applied.
+
+`@datum-cloud/datum-ui-tokens` is the TypeScript mirror of the CSS tokens in
+`@datum-cloud/datum-ui`. The CSS is the source of truth; this package is
+generated from it.
+
+## Install
+
+```sh
+pnpm add @datum-cloud/datum-ui-tokens
+```
+
+## Explore the tokens
+
+<TokenPlayground />
+
+## Generation contract
+
+The generated file is `packages/tokens/src/tokens.gen.ts`. Regenerate it with
+`pnpm --filter @datum-cloud/datum-ui-tokens gen:tokens`; CI runs
+`check:tokens` to catch drift.
+
+See `Foundations/Theming & Dark Mode` for the CSS custom properties and
+`Foundations/Type Scale` for the web type scale.

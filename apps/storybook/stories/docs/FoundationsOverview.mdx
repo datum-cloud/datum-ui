@@ -1,0 +1,28 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Foundations/Overview" />
+
+# Foundations
+
+Three related layers.
+
+## Design Tokens
+
+Design tokens are the values: colors, spacing, radii, and typography. The CSS is
+the source of truth; `@datum-cloud/datum-ui-tokens` is the TypeScript mirror.
+
+## Theming
+
+Theming is how those tokens are applied: light/dark/system mode, the provider,
+CSS variables, and overrides. Theming consumes tokens; it does not define them.
+
+## Type Scale
+
+The type scale is the typography ramp built from the type tokens. It is shared
+by raw Tailwind classes and the Typography components.
+
+## Where to go
+
+- `Foundations/Design Tokens` — browse the token values and the playground.
+- `Foundations/Theming & Dark Mode` — apply tokens and switch themes.
+- `Foundations/Type Scale` — use the named text sizes.

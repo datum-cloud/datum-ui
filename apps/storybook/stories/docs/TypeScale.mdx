@@ -1,8 +1,11 @@
 import { Meta } from '@storybook/addon-docs/blocks'
+import { DocsTable } from './docs-table'
 
-<Meta title="Docs/Type Scale" />
+<Meta title="Foundations/Type Scale" />
 
 # Type Scale
+
+The typography ramp built from the type tokens.
 
 The rules for sizing text in Datum UI. One named scale is shared by raw Tailwind
 classes and the `Typography` components, so `text-sm` and `<Text size="sm">`
@@ -38,26 +41,102 @@ Desktop values, in px (`font-size` / `line-height`).
 Reach for `5xs` only where 9px already earns its place; `4xs` is the smallest
 size meant for text a reader parses rather than glances at.
 
-| Class / `size` | px | Use for |
-|---|---|---|
-| `5xs` | 9 / 12 | The floor: dense numerics — badge counters, table micro-labels |
-| `4xs` | 10 / 14 | Smallest chips, overlines, counters |
-| `3xs` | 11 / 16 | Micro labels, dense badges |
-| `2xs` | 12 / 16 | Captions, timestamps, helper text |
-| `xs` | 13 / 18 | App body: tables, cards, forms |
-| `sm` | 14 / 20 | Emphasized body, card titles, labels (default `Text`) |
-| `base` | 16 / 24 | Long-form reading, section intros |
-| `lg` | 18 / 28 | Sub-section headings |
+<DocsTable>
+  <thead>
+    <tr>
+      <th>Class / <code>size</code></th>
+      <th>px</th>
+      <th>Use for</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>5xs</code></td>
+      <td>9 / 12</td>
+      <td>The floor: dense numerics — badge counters, table micro-labels</td>
+    </tr>
+    <tr>
+      <td><code>4xs</code></td>
+      <td>10 / 14</td>
+      <td>Smallest chips, overlines, counters</td>
+    </tr>
+    <tr>
+      <td><code>3xs</code></td>
+      <td>11 / 16</td>
+      <td>Micro labels, dense badges</td>
+    </tr>
+    <tr>
+      <td><code>2xs</code></td>
+      <td>12 / 16</td>
+      <td>Captions, timestamps, helper text</td>
+    </tr>
+    <tr>
+      <td><code>xs</code></td>
+      <td>13 / 18</td>
+      <td>App body: tables, cards, forms</td>
+    </tr>
+    <tr>
+      <td><code>sm</code></td>
+      <td>14 / 20</td>
+      <td>Emphasized body, card titles, labels (default <code>Text</code>)</td>
+    </tr>
+    <tr>
+      <td><code>base</code></td>
+      <td>16 / 24</td>
+      <td>Long-form reading, section intros</td>
+    </tr>
+    <tr>
+      <td><code>lg</code></td>
+      <td>18 / 28</td>
+      <td>Sub-section headings</td>
+    </tr>
+  </tbody>
+</DocsTable>
 
 ### Display — steps down on tablet / mobile
 
-| Class / `size` | Desktop | Tablet | Mobile |
-|---|---|---|---|
-| `xl` | 20 | 20 | 18 |
-| `2xl` | 24 | 24 | 20 |
-| `3xl` | 30 | 24 | 24 |
-| `4xl` | 36 | 30 | 24 |
-| `5xl`–`8xl` | 48–96 | one step down | two steps down |
+<DocsTable>
+  <thead>
+    <tr>
+      <th>Class / <code>size</code></th>
+      <th>Desktop</th>
+      <th>Tablet</th>
+      <th>Mobile</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>xl</code></td>
+      <td>20</td>
+      <td>20</td>
+      <td>18</td>
+    </tr>
+    <tr>
+      <td><code>2xl</code></td>
+      <td>24</td>
+      <td>24</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <td><code>3xl</code></td>
+      <td>30</td>
+      <td>24</td>
+      <td>24</td>
+    </tr>
+    <tr>
+      <td><code>4xl</code></td>
+      <td>36</td>
+      <td>30</td>
+      <td>24</td>
+    </tr>
+    <tr>
+      <td><code>5xl</code>–<code>8xl</code></td>
+      <td>48–96</td>
+      <td>one step down</td>
+      <td>two steps down</td>
+    </tr>
+  </tbody>
+</DocsTable>
 
 ## Using it
 
@@ -82,15 +161,52 @@ Raw utilities and the component are interchangeable:
 A heading below 14px is not a heading — use `<Text as="h4">` for a micro label
 that must stay in the outline.
 
-| `Title` level | Step | Element |
-|---|---|---|
-| 1 | `text-4xl` | `h1` |
-| 2 | `text-3xl` | `h2` |
-| 3 | `text-2xl` | `h3` |
-| 4 (default) | `text-xl` | `h4` |
-| 5 | `text-lg` | `h5` |
-| 6 | `text-base` | `h6` |
-| 7 | `text-sm` | `h6` — the 14px floor; there is no `h7` |
+<DocsTable>
+  <thead>
+    <tr>
+      <th><code>Title</code> level</th>
+      <th>Step</th>
+      <th>Element</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><code>text-4xl</code></td>
+      <td><code>h1</code></td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><code>text-3xl</code></td>
+      <td><code>h2</code></td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><code>text-2xl</code></td>
+      <td><code>h3</code></td>
+    </tr>
+    <tr>
+      <td>4 (default)</td>
+      <td><code>text-xl</code></td>
+      <td><code>h4</code></td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><code>text-lg</code></td>
+      <td><code>h5</code></td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td><code>text-base</code></td>
+      <td><code>h6</code></td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td><code>text-sm</code></td>
+      <td><code>h6</code> — the 14px floor; there is no <code>h7</code></td>
+    </tr>
+  </tbody>
+</DocsTable>
 
 `level` picks the size and the element together. Where the document outline and
 the visual size disagree, `as` decouples them: `<Title as="h2" level={5}>` is an
@@ -106,16 +222,57 @@ and text inside an alert, badge or muted container follows that container.
 When a color is needed, use a semantic token, never a raw palette color like
 `text-green-600`:
 
-| `textColor` | Class | Use for |
-|---|---|---|
-| `default` | `text-foreground` | Forcing the foreground color inside a colored parent |
-| `muted` | `text-muted-foreground` | Secondary text, metadata, hints |
-| `primary` | `text-primary` | Links and brand emphasis |
-| `secondary` | `text-secondary-foreground` | Text on secondary surfaces |
-| `destructive` | `text-destructive` | Errors |
-| `success` | `text-success` | Positive status |
-| `warning` | `text-warning` | Caution status |
-| `info` | `text-info` | Neutral status |
+<DocsTable>
+  <thead>
+    <tr>
+      <th><code>textColor</code></th>
+      <th>Class</th>
+      <th>Use for</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>default</code></td>
+      <td><code>text-foreground</code></td>
+      <td>Forcing the foreground color inside a colored parent</td>
+    </tr>
+    <tr>
+      <td><code>muted</code></td>
+      <td><code>text-muted-foreground</code></td>
+      <td>Secondary text, metadata, hints</td>
+    </tr>
+    <tr>
+      <td><code>primary</code></td>
+      <td><code>text-primary</code></td>
+      <td>Links and brand emphasis</td>
+    </tr>
+    <tr>
+      <td><code>secondary</code></td>
+      <td><code>text-secondary-foreground</code></td>
+      <td>Text on secondary surfaces</td>
+    </tr>
+    <tr>
+      <td><code>destructive</code></td>
+      <td><code>text-destructive</code></td>
+      <td>Errors</td>
+    </tr>
+    <tr>
+      <td><code>success</code></td>
+      <td><code>text-success</code></td>
+      <td>Positive status</td>
+    </tr>
+    <tr>
+      <td><code>warning</code></td>
+      <td><code>text-warning</code></td>
+      <td>Caution status</td>
+    </tr>
+    <tr>
+      <td><code>info</code></td>
+      <td><code>text-info</code></td>
+      <td>Neutral status</td>
+    </tr>
+  </tbody>
+</DocsTable>
 
 `success`, `warning` and `info` are theme tokens (`--success`, `--warning`,
 `--info`) with separate light and dark values, so a raw `text-success` class
@@ -150,16 +307,57 @@ because the scale is a plain `@theme`, not `@theme inline`: the utilities read
 
 ## Migrating from 2.x
 
-| Before | After | Change |
-|---|---|---|
-| `text-1xs` (12px) | `text-2xs` | none; `1xs` no longer exists |
-| `text-2xs` (9px) | `text-5xs` | none; `2xs` is now 12px |
-| `text-[10px]` | `text-4xs` | none |
-| `text-[11px]` | `text-3xs` | none |
-| `<Text size="base">` / `<Paragraph size="base">` | `size="sm"`, or omit it | none; `base` is now 16px |
-| `Title` levels | unchanged | desktop sizes are the same; tablet and mobile follow the scale |
-| `<Text>` / `<Title>` with no `textColor` | unchanged, or `textColor="default"` | now inherits the parent's color instead of forcing foreground; add `textColor="default"` only where the old forced color was wanted |
-| `text-green-600 dark:text-green-400` (and yellow / blue) | `text-success` / `text-warning` / `text-info` | none |
+<DocsTable>
+  <thead>
+    <tr>
+      <th>Before</th>
+      <th>After</th>
+      <th>Change</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>text-1xs</code> (12px)</td>
+      <td><code>text-2xs</code></td>
+      <td>none; <code>1xs</code> no longer exists</td>
+    </tr>
+    <tr>
+      <td><code>text-2xs</code> (9px)</td>
+      <td><code>text-5xs</code></td>
+      <td>none; <code>2xs</code> is now 12px</td>
+    </tr>
+    <tr>
+      <td><code>text-[10px]</code></td>
+      <td><code>text-4xs</code></td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td><code>text-[11px]</code></td>
+      <td><code>text-3xs</code></td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td><code>&lt;Text size="base"&gt;</code> / <code>&lt;Paragraph size="base"&gt;</code></td>
+      <td><code>size="sm"</code>, or omit it</td>
+      <td>none; <code>base</code> is now 16px</td>
+    </tr>
+    <tr>
+      <td><code>Title</code> levels</td>
+      <td>unchanged</td>
+      <td>desktop sizes are the same; tablet and mobile follow the scale</td>
+    </tr>
+    <tr>
+      <td><code>&lt;Text&gt;</code> / <code>&lt;Title&gt;</code> with no <code>textColor</code></td>
+      <td>unchanged, or <code>textColor="default"</code></td>
+      <td>now inherits the parent's color instead of forcing foreground; add <code>textColor="default"</code> only where the old forced color was wanted</td>
+    </tr>
+    <tr>
+      <td><code>text-green-600 dark:text-green-400</code> (and yellow / blue)</td>
+      <td><code>text-success</code> / <code>text-warning</code> / <code>text-info</code></td>
+      <td>none</td>
+    </tr>
+  </tbody>
+</DocsTable>
 
 Rename `text-2xs` → `text-5xs` **before** `text-1xs` → `text-2xs`, or the
 second rename's output gets caught by the first.

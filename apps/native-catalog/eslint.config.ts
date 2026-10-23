@@ -1,7 +1,7 @@
 import { createConfig } from '@repo/config/eslint'
 
 export default Promise.resolve(createConfig({ markdown: false })).then(config => [
-  { ignores: ['ios/**', 'android/**', '.expo/**', 'expo-env.d.ts'] },
+  { ignores: ['ios/**', 'android/**', '.expo/**', 'expo-env.d.ts', '.rnstorybook/storybook.requires.*'] },
   ...config,
   {
     files: ['*.js'],

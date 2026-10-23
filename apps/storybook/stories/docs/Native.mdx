@@ -1,0 +1,146 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Packages/Native" />
+
+# Native (React Native)
+
+The React Native component package. It shares the web prop names and design tokens, and renders on device.
+
+`@datum-cloud/datum-ui-native` is the React Native package for Datum UI. It
+uses the same prop names and variant unions as the web package (`type`, `theme`,
+`size`) and the shared `@datum-cloud/datum-ui-tokens`. It is styled with
+`StyleSheet`; there is no NativeWind or Tailwind runtime.
+
+This page covers install and setup. The interactive playground is the on-device
+Storybook in `apps/native-catalog`; the full component reference is in
+`packages/native/README.md`.
+
+## Install
+
+Use Expo's installer so the native packages match your Expo SDK:
+
+```sh
+npx expo install @datum-cloud/datum-ui-native react-native-svg react-native-reanimated react-native-worklets expo-font
+# optional: light haptics on Button press
+npx expo install expo-haptics
+```
+
+Peers: React 19, React Native ≥0.79, `react-native-svg` 15, and
+`react-native-reanimated` 4. `expo-haptics` is optional; Button skips haptics
+when it is missing.
+
+For the example app shell below, install safe-area context if your app does not
+already have it:
+
+```sh
+npx expo install react-native-safe-area-context
+```
+
+The package is tested with Expo 57 and React Native 0.86.3. In a monorepo, keep
+the React Native singletons (`react`, `react-native`,
+`react-native-reanimated`, `react-native-svg`) on one copy;
+`apps/native-catalog/metro.config.js` shows the resolver setup.
+
+## Fonts
+
+The package ships Alliance No.1 (Regular, Medium, SemiBold) and Canela Text
+(Regular). Embed them at build time with the `expo-font` config plugin so the
+first frame never waits on font loading:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      ["expo-font", {
+        "fonts": [
+          "node_modules/@datum-cloud/datum-ui-native/fonts/AllianceNo1-Regular.ttf",
+          "node_modules/@datum-cloud/datum-ui-native/fonts/AllianceNo1-Medium.ttf",
+          "node_modules/@datum-cloud/datum-ui-native/fonts/AllianceNo1-SemiBold.ttf",
+          "node_modules/@datum-cloud/datum-ui-native/fonts/CanelaText-Regular.ttf"
+        ]
+      }]
+    ]
+  }
+}
+```
+
+Keep `useFonts(datumFonts)` too, for Expo Go and the web. It is a no-op on iOS
+once the fonts are embedded:
+
+```tsx
+import { datumFonts } from '@datum-cloud/datum-ui-native'
+import { useFonts } from 'expo-font'
+
+const [loaded] = useFonts(datumFonts)
+```
+
+Components handle platform font names for you. In your own styles, use
+`useDatumTheme().fonts` (or `resolveFontFamily()`), not the raw font token names.
+
+## Theme and app shell
+
+Wrap the app in `DatumThemeProvider`; `scheme` accepts `light`, `dark`, or
+`system` (the default). Use `SafeAreaProvider` and `SafeAreaView` for screen
+insets:
+
+```tsx
+import { datumFonts, DatumThemeProvider } from '@datum-cloud/datum-ui-native'
+import { useFonts } from 'expo-font'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
+
+export default function App() {
+  const [loaded] = useFonts(datumFonts)
+
+  if (!loaded)
+    return null
+
+  return (
+    <SafeAreaProvider>
+      <DatumThemeProvider scheme="system">
+        <SafeAreaView style={{ flex: 1 }}>
+          {/* screens */}
+        </SafeAreaView>
+      </DatumThemeProvider>
+    </SafeAreaProvider>
+  )
+}
+```
+
+Without a provider, `useDatumTheme()` follows the OS appearance. Use
+`useDatumTheme()` for colors, spacing, typography, fonts, radius, and motion
+instead of hard-coded values.
+
+## First component
+
+```tsx
+import { Button, Text } from '@datum-cloud/datum-ui-native'
+
+export function Example() {
+  return (
+    <>
+      <Text size="base">Hello from Datum UI Native.</Text>
+      <Button type="primary" theme="solid">Save</Button>
+    </>
+  )
+}
+```
+
+`Button` uses `type`, `theme`, and `size`; the README has the full component
+table, including the assistant components and their props.
+
+## Run the native Storybook
+
+```sh
+pnpm --filter @repo/native-catalog storybook
+# or, for the iOS dev client
+pnpm --filter @repo/native-catalog storybook:ios
+```
+
+The native Storybook runs on a simulator or device; it is not a web URL.
+
+## Full reference
+
+- `packages/native/README.md` — component props, assistant, tokens, and
+  development notes.
+- `packages/native/README.md#fonts` — font families and platform details.
+- `packages/native/README.md#theme` — the full theme object.
