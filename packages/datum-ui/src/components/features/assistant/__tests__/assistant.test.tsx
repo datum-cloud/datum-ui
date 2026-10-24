@@ -2,7 +2,7 @@
 import type { UIMessage } from 'ai'
 import type { AssistantWorkspaceProps } from '../components/assistant-workspace'
 import type { HistoryPanelProps } from '../components/sidebar'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { getToolName } from 'ai'
 import { describe, expect, it, vi } from 'vitest'
 import { AssistantWorkspace } from '../components/assistant-workspace'
@@ -730,5 +730,52 @@ describe('plan card', () => {
     expect(buttons).toHaveLength(1)
     fireEvent.click(buttons[0]!)
     expect(onApprovePlan).toHaveBeenCalledWith('a2', 'plan-new')
+  })
+})
+
+describe('plan card follow-ups', () => {
+  const plan = {
+    token: 'tok-1',
+    status: 'pending' as const,
+    resources: [{ kind: 'Workload', name: 'api', action: 'create', manifest: 'kind: Workload\n' }],
+  }
+
+  it('turns expired on its own while the conversation sits idle', () => {
+    vi.useFakeTimers()
+    try {
+      const expiresAt = new Date(Date.now() + 60_000).toISOString()
+      render(<AssistantPlanCard data={{ ...plan, expiresAt }} canApprove />)
+      expect(screen.getByText('Nothing created yet')).toBeInTheDocument()
+      act(() => {
+        vi.advanceTimersByTime(61_000)
+      })
+      expect(screen.getByText('Expired')).toBeInTheDocument()
+    }
+    finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('shows a plan with no id without approving it or calling it replaced', () => {
+    const messages = [
+      { id: 'a1', role: 'assistant', parts: [{ type: PLAN_PART_TYPE, data: { ...plan, expiresAt: '2999-01-01T00:00:00Z' } }] },
+      { id: 'a2', role: 'assistant', parts: [{ type: PLAN_PART_TYPE, id: 'plan-2', data: { ...plan, expiresAt: '2999-01-01T00:00:00Z' } }] },
+    ] as unknown as UIMessage[]
+    render(
+      <Conversation
+        messages={messages}
+        status="ready"
+        htmlByUserMsgIndex={{ current: [] }}
+        containerRef={vi.fn()}
+        bottomRef={{ current: null }}
+        userScrolledUpRef={{ current: false }}
+        footer={<div />}
+        onApprovePlan={vi.fn()}
+      />,
+    )
+    expect(screen.queryByText('Replaced')).toBeNull()
+    const approve = screen.getAllByRole('button', { name: 'Approve and create' })
+    expect(approve[0]).toBeDisabled()
+    expect(approve[1]).toBeEnabled()
   })
 })
