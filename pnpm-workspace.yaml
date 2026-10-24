@@ -37,8 +37,8 @@ overrides:
   # The 7.x selector does not match the 8.x copy, so bumping it alone leaves the
   # consumer-facing line vulnerable. Patched floors are 7.29.1 and 8.10.2; both
   # entries take the latest of their own major, never crossing it.
-  "undici@>=7.0.0 <7.29.0": "7.30.0"
-  "undici@>=8.0.0 <8.10.2": "8.11.2"
+  "undici@>=7.0.0 <7.29.0": "7.30.1"
+  "undici@>=8.0.0 <8.10.2": "8.12.2"
   # GHSA HIGH on two separate lines: <1.1.17 and >=4.0.0 <5.0.8. The previous
   # entry pinned exactly 5.0.7, which is itself inside the vulnerable range,
   # and left the 1.x copy uncovered entirely.
@@ -59,14 +59,14 @@ overrides:
   # Keep it deduped to a single version.
   "@types/leaflet@>=1.9.0 <1.9.22": "1.9.22"
   # GHSA HIGH, dev tree only (storybook -> webpack -> schema-utils -> ajv).
-  "fast-uri@>=3.0.0 <3.1.4": "3.1.8"
+  "fast-uri@>=3.0.0 <3.1.4": "3.1.9"
   # GHSA HIGH, via storybook/vite/tailwind.
   "postcss@>=8.0.0 <8.5.18": "8.5.26"
   # dompurify has two copies and both are under the advisory floor (>=3.4.13):
   #   3.4.8  <- monaco-editor (dev)
   #   3.4.12 <- isomorphic-dompurify (runtime) and mermaid -> streamdown (dev)
   # One selector spanning the 3.x line covers both without crossing the major.
-  "dompurify@>=3.0.0 <3.4.13": "3.4.16"
+  "dompurify@>=3.0.0 <3.4.13": "3.4.17"
   # GHSA MODERATE x5 (prototype pollution, CSS injection, two DoS); mermaid
   # arrives via streamdown, dev tree only.
   "mermaid@>=11.0.0 <11.16.1": "11.17.2"
@@ -78,7 +78,7 @@ overrides:
   # 4.1.11), so this is the one entry that must cross a major. Dev tree only,
   # and the storybook build is verified against it -- if a future storybook
   # bumps its own mocker, drop this entry rather than widening it.
-  "@vitest/mocker@>=2.1.0 <4.1.11": "4.1.11"
+  "@vitest/mocker@>=2.1.0 <4.1.11": "4.1.12"
 
   # next, sharp and react-router are here only because `nuqs` (a devDependency,
   # used for one data-table adapter) declares five framework adapters as
@@ -86,8 +86,8 @@ overrides:
   # regardless. Nothing imports them -- `pnpm why next` resolves solely through
   # nuqs, no workspace manifest declares them, and no source file imports
   # `nuqs/adapters/*`. They accounted for 11 of the HIGH advisories.
-  "next@>=16.0.0 <16.2.11": "16.3.3"
-  "sharp@<0.35.0": "0.35.4"
+  "next@>=16.0.0 <16.2.11": "16.4.1"
+  "sharp@<0.35.0": "0.35.5"
   # react-router 7 cannot be fully patched: the RSC CSRF advisory
   # (>=7.12.0 <8.3.0) is fixed only in 8.3.0, outside nuqs's declared peer range
   # (^5 || ^6 || ^7). Forcing 8.3.0 emits a peer warning and nothing more --
@@ -102,3 +102,16 @@ overrides:
   # @changesets/cli) and react-devtools-core (via react-native). Both declare
   # caret 1.x ranges, so 1.11.0 sits inside what they already accept.
   "shell-quote@>=1.8.4 <1.11.0": "1.11.0"
+  # GHSA HIGH + MODERATE x3 + LOW (fixed 7.3.7). Dev tree only: storybook's
+  # csf-plugin and the vitest mocker both pull 7.3.6. Same minor line.
+  "vite@>=7.0.0 <7.3.7": "7.3.7"
+  # GHSA HIGH (fixed 4.6.6). Dev tree only: @eslint-react/shared pins 4.4.3.
+  # The 3.25.76 copy under @expo/cli is left alone -- the advisory has no 3.x
+  # patch and forcing expo's CLI onto zod 4 is not a safe override.
+  "zod@>=4.0.0 <4.6.6": "4.6.7"
+  # GHSA HIGH + MODERATE x2 (fixed 2.14.2). Dev tree only, via @changesets/cli.
+  "launch-editor@<2.14.2": "2.14.2"
+  # GHSA HIGH (fixed 1.2.2). Dev tree only: tailwind, css-tree, vue compiler.
+  "source-map-js@>=1.0.0 <1.2.2": "1.2.2"
+  # GHSA MODERATE (fixed 7.1.6). Dev tree only: eslint-plugin-vue.
+  "postcss-selector-parser@>=7.0.0 <7.1.6": "7.1.6"
