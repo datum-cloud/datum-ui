@@ -21,8 +21,16 @@ export {
 } from './context'
 
 export { useTurnRail } from './hooks'
+export { CHOICES_PART_TYPE, PLAN_PART_TYPE } from './types'
 export type {
+  AssistantAppliedResource,
+  AssistantChoiceIcon,
+  AssistantChoiceOption,
+  AssistantChoicesData,
   AssistantConfig,
+  AssistantPlanData,
+  AssistantPlanResource,
+  AssistantPlanStatus,
   ChatSummary,
   ConversationDensity,
   EffortId,

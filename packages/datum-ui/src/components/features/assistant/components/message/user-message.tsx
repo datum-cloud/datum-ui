@@ -5,7 +5,7 @@ import { cn } from '../../../../../utils/cn'
 
 interface UserMessageProps {
   html: string
-  /** `compact` uses one-step-smaller text and a slightly tighter bubble. */
+  /** `compact` uses a lighter bubble with even corners. */
   density?: ConversationDensity
 }
 
@@ -16,8 +16,8 @@ export function UserMessage({ html, density = 'default' }: UserMessageProps) {
     <div className="flex justify-end">
       <div
         className={cn(
-          'bg-border text-foreground max-w-[80%] rounded-2xl rounded-br-sm',
-          compact ? 'px-3 py-2 text-xs' : 'px-4 py-2.5 text-sm',
+          'text-foreground max-w-[80%] rounded-2xl px-4 py-2.5 text-sm',
+          compact ? 'bg-muted' : 'bg-border rounded-br-sm',
         )}
       >
         <div

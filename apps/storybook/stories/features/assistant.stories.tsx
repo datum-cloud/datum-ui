@@ -1,9 +1,11 @@
-import type { AssistantConfig, AssistantWorkspaceProps, ChatSummary, ConversationDensity, EffortId } from '@datum-cloud/datum-ui/assistant'
+import type { AssistantConfig, AssistantPlanStatus, AssistantWorkspaceProps, ChatSummary, ConversationDensity, EffortId } from '@datum-cloud/datum-ui/assistant'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import {
   AssistantConfigProvider,
   AssistantWorkspace,
+  CHOICES_PART_TYPE,
   Conversation as ConversationView,
+  PLAN_PART_TYPE,
   PromptCard,
 } from '@datum-cloud/datum-ui/assistant'
 import { useRef, useState } from 'react'
@@ -118,6 +120,7 @@ function ConversationHarness({ density }: { density?: ConversationDensity }) {
           userScrolledUpRef={userScrolledUpRef}
           footer={(
             <PromptCard
+              density={density}
               editor={null}
               isReady={false}
               canRetry={false}
@@ -314,10 +317,151 @@ export const EmbeddedDefault: Story = {
 }
 
 /**
- * `density="compact"`: assistant avatar beside each turn, a 42rem column,
- * one-step-smaller text and tighter markdown (headings at body size).
+ * `density="compact"`: fills the host's width, a filled avatar beside each
+ * assistant turn, tighter markdown (headings at body size), plain inline code,
+ * no copy or download actions, and a one-line composer.
  */
 export const EmbeddedCompact: Story = {
   name: 'Embedded: compact density',
   render: () => <ConversationHarness density="compact" />,
 }
+
+/**
+ * A pick-one question drawn as buttons (`data-choices` part), at compact
+ * density as on the project home page. Picking an option marks it and fades
+ * the rest; a real host then sends the label as the person's reply.
+ */
+function ChoicesHarness() {
+  const htmlByUserMsgIndexRef = useRef<string[]>([])
+  const bottomRef = useRef<HTMLDivElement | null>(null)
+  const userScrolledUpRef = useRef(false)
+  const noop = () => {}
+  const [selectedId, setSelectedId] = useState<string>()
+  const messages = [
+    {
+      id: 'u1',
+      role: 'user',
+      parts: [{ type: 'text', text: 'I want to run an app or container on Datum. Walk me through it step by step.' }],
+    },
+    {
+      id: 'a1',
+      role: 'assistant',
+      parts: [
+        { type: 'text', text: 'Let\'s get you deployed. A **workload** is your app running on Datum: you give it a container image and it runs on your network.' },
+        {
+          type: CHOICES_PART_TYPE,
+          id: 'call-1',
+          data: {
+            question: 'What do you want to deploy?',
+            options: [
+              { id: '1', label: 'My own image', icon: 'container' },
+              { id: '2', label: 'Try the nginx demo', icon: 'globe' },
+              { id: '3', label: 'Try the redis demo', icon: 'database' },
+            ],
+            selectedId,
+          },
+        },
+      ],
+    },
+  ] as unknown as ChatSummary['messages']
+
+  return (
+    <div className="border-border flex h-[480px] w-full flex-col overflow-hidden rounded-lg border">
+      <AssistantConfigProvider config={{ ...STORY_CONFIG, modelSelector: false }}>
+        <ConversationView
+          density="compact"
+          messages={messages}
+          status="ready"
+          htmlByUserMsgIndex={htmlByUserMsgIndexRef}
+          containerRef={noop}
+          bottomRef={bottomRef}
+          userScrolledUpRef={userScrolledUpRef}
+          onChoose={(_, option) => setSelectedId(option.id)}
+          footer={(
+            <PromptCard
+              density="compact"
+              editor={null}
+              isReady
+              canRetry={false}
+              onSend={noop}
+              onStop={noop}
+              onRetry={noop}
+              modelId=""
+              effortId="high"
+              onModelChange={noop}
+              onEffortChange={noop}
+            />
+          )}
+        />
+      </AssistantConfigProvider>
+    </div>
+  )
+}
+
+export const EmbeddedChoices: Story = {
+  name: 'Embedded: choice chips',
+  render: () => <ChoicesHarness />,
+}
+
+/** A plan card (`data-plan` part) in each of its states, at compact density. */
+function PlanHarness({ status, expiresAt = '2999-01-01T00:00:00Z' }: { status: AssistantPlanStatus, expiresAt?: string }) {
+  const htmlByUserMsgIndexRef = useRef<string[]>(['<p>ghcr.io/acme/orders-api:1.4 on port 8080. It should be public over HTTPS.</p>'])
+  const bottomRef = useRef<HTMLDivElement | null>(null)
+  const userScrolledUpRef = useRef(false)
+  const noop = () => {}
+  const resources = [
+    { kind: 'Workload', name: 'orders-api', action: 'create', manifest: 'apiVersion: compute.datumapis.com/v1alpha1\nkind: Workload\nmetadata:\n  name: orders-api\n', summary: 'Runs your container in us-central-1. It gets a private address on default, so nothing on the internet can reach it directly.' },
+    { kind: 'NetworkService', name: 'orders-api', action: 'create', manifest: 'kind: NetworkService\nmetadata:\n  name: orders-api\n', summary: 'A stable private name for the workload on port 8080, even as instances come and go.' },
+    { kind: 'HTTPProxy', name: 'orders-api', action: 'create', manifest: 'kind: HTTPProxy\nmetadata:\n  name: orders-api\n', summary: 'The public front door: an HTTPS hostname with TLS and WAF, forwarding to the network service.' },
+  ]
+  const messages = [
+    { id: 'u1', role: 'user', parts: [{ type: 'text', text: 'ghcr.io/acme/orders-api:1.4 on port 8080. It should be public over HTTPS.' }] },
+    {
+      id: 'a1',
+      role: 'assistant',
+      parts: [
+        { type: 'text', text: 'Here\'s the plan. Three pieces, all on your network default.' },
+        {
+          type: PLAN_PART_TYPE,
+          id: 'plan-1',
+          data: {
+            token: 'tok',
+            expiresAt,
+            resources,
+            status,
+            approvedAt: status === 'applied' || status === 'failed' ? '2026-10-23T10:51:00Z' : undefined,
+            applied: status === 'applied' ? resources.map(r => ({ action: 'create', kind: r.kind, name: r.name })) : undefined,
+            error: status === 'failed' ? 'nothing was changed: the platform rejected Workload "orders-api" when it was checked again just before applying.' : undefined,
+          },
+        },
+      ],
+    },
+  ] as unknown as ChatSummary['messages']
+
+  return (
+    <div className="border-border flex h-[720px] w-full flex-col overflow-hidden rounded-lg border">
+      <AssistantConfigProvider config={{ ...STORY_CONFIG, modelSelector: false }}>
+        <ConversationView
+          density="compact"
+          messages={messages}
+          status="ready"
+          htmlByUserMsgIndex={htmlByUserMsgIndexRef}
+          containerRef={noop}
+          bottomRef={bottomRef}
+          userScrolledUpRef={userScrolledUpRef}
+          onApprovePlan={noop}
+          onChangePlan={noop}
+          footer={(
+            <PromptCard density="compact" editor={null} isReady canRetry={false} onSend={noop} onStop={noop} onRetry={noop} modelId="" effortId="high" onModelChange={noop} onEffortChange={noop} />
+          )}
+        />
+      </AssistantConfigProvider>
+    </div>
+  )
+}
+
+export const PlanPending: Story = { name: 'Plan card: waiting for approval', render: () => <PlanHarness status="pending" /> }
+export const PlanApplying: Story = { name: 'Plan card: applying', render: () => <PlanHarness status="applying" /> }
+export const PlanApplied: Story = { name: 'Plan card: applied', render: () => <PlanHarness status="applied" /> }
+export const PlanFailed: Story = { name: 'Plan card: not applied', render: () => <PlanHarness status="failed" /> }
+export const PlanExpired: Story = { name: 'Plan card: expired', render: () => <PlanHarness status="pending" expiresAt="2020-01-01T00:00:00Z" /> }
