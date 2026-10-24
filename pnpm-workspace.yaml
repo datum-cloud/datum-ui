@@ -59,7 +59,7 @@ overrides:
   # Keep it deduped to a single version.
   "@types/leaflet@>=1.9.0 <1.9.22": "1.9.22"
   # GHSA HIGH, dev tree only (storybook -> webpack -> schema-utils -> ajv).
-  "fast-uri@>=3.0.0 <3.1.4": "3.1.8"
+  "fast-uri@>=3.0.0 <3.1.4": "3.1.9"
   # GHSA HIGH, via storybook/vite/tailwind.
   "postcss@>=8.0.0 <8.5.18": "8.5.26"
   # dompurify has two copies and both are under the advisory floor (>=3.4.13):
