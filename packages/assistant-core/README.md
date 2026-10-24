@@ -2,6 +2,10 @@
 
 The platform-free core of Datum's assistant ("Patch"), shared by the web assistant in [`@datum-cloud/datum-ui/assistant`](../datum-ui/src/components/features/assistant) and the React Native components in [`@datum-cloud/datum-ui-native`](../native/README.md). No React, DOM or React Native: `fetch`, the base URL and the token source are injected. Its only dependency is `ai` (a peer, for the `UIMessage` types).
 
+## Storybook
+
+[Assistant Core](https://storybook.prod.env.datum.net/?path=/docs/packages-assistant-core--docs) — the architecture and usage docs.
+
 ## Install
 
 ```sh

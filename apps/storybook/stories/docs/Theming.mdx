@@ -1,8 +1,11 @@
 import { Meta } from '@storybook/addon-docs/blocks'
+import { DocsTable } from './docs-table'
 
-<Meta title="Docs/Theming" />
+<Meta title="Foundations/Theming & Dark Mode" />
 
-# Theming
+# Theming & Dark Mode
+
+Theming applies the design tokens; it does not define them.
 
 Understand Datum UI's design token architecture and dark mode support.
 
@@ -19,23 +22,75 @@ Purpose tokens are defined on `:root` for light mode and overridden in `.dark` f
 
 ### Base Colors
 
-| Token | Light | Description |
-|-------|-------|-------------|
-| `--background` | Glacier Mist 700 | Page background |
-| `--foreground` | Midnight Fjord | Primary text |
-| `--primary` | Canyon Clay | Interactive elements, links |
-| `--border` | Glacier Mist 900 | Borders and dividers |
-| `--muted` | Gray 95.9% | Subdued backgrounds |
+<DocsTable>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Light</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>--background</code></td>
+      <td>Glacier Mist 700</td>
+      <td>Page background</td>
+    </tr>
+    <tr>
+      <td><code>--foreground</code></td>
+      <td>Midnight Fjord</td>
+      <td>Primary text</td>
+    </tr>
+    <tr>
+      <td><code>--primary</code></td>
+      <td>Canyon Clay</td>
+      <td>Interactive elements, links</td>
+    </tr>
+    <tr>
+      <td><code>--border</code></td>
+      <td>Glacier Mist 900</td>
+      <td>Borders and dividers</td>
+    </tr>
+    <tr>
+      <td><code>--muted</code></td>
+      <td>Gray 95.9%</td>
+      <td>Subdued backgrounds</td>
+    </tr>
+  </tbody>
+</DocsTable>
 
 ### Component-Specific
 
-| Token | Description |
-|-------|-------------|
-| `--input-background` | Input field background |
-| `--input-border` | Input field border |
-| `--input-focus-border` | Input focus state border |
-| `--table-accent` | Table row accent |
-| `--badge-primary` | Badge primary color |
+<DocsTable>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>--input-background</code></td>
+      <td>Input field background</td>
+    </tr>
+    <tr>
+      <td><code>--input-border</code></td>
+      <td>Input field border</td>
+    </tr>
+    <tr>
+      <td><code>--input-focus-border</code></td>
+      <td>Input focus state border</td>
+    </tr>
+    <tr>
+      <td><code>--table-accent</code></td>
+      <td>Table row accent</td>
+    </tr>
+    <tr>
+      <td><code>--badge-primary</code></td>
+      <td>Badge primary color</td>
+    </tr>
+  </tbody>
+</DocsTable>
 
 ## Dark Mode
 

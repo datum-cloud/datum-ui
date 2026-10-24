@@ -589,7 +589,7 @@ TAILWIND CUSTOM UTILITIES FOR THEME
 /* ========================================
 TYPE SCALE
 One named scale shared by raw `text-*` utilities and the Typography
-components. See Storybook "Docs/Type Scale" for the rules.
+components. See Storybook "Foundations/Type Scale" for the rules.
 
 Deliberately a plain `@theme`, not `@theme inline`: utilities must read
 `var(--text-*)` at runtime so the display steps below can shrink per

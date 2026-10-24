@@ -47,12 +47,12 @@ packages/
   datum-ui/        # Component library (@datum-cloud/datum-ui)
   tokens/          # Design tokens as TypeScript, generated from the CSS (@datum-cloud/datum-ui-tokens)
   native/          # React Native components (@datum-cloud/datum-ui-native)
+  assistant-core/  # Platform-free assistant core (@datum-cloud/datum-ui-assistant-core)
   shadcn/          # shadcn/ui primitives (@repo/shadcn)
   config/          # Shared config (TypeScript, Tailwind, ESLint)
 apps/
-  docs/            # Fumadocs documentation site
   storybook/       # Storybook component explorer
-  native-catalog/  # Expo app showing every native component in light and dark
+  native-catalog/  # Expo app + on-device Storybook for every native component
 ```
 
 | Package | Description | npm |
@@ -60,6 +60,7 @@ apps/
 | `@datum-cloud/datum-ui` | Published component library | [![npm](https://img.shields.io/npm/v/@datum-cloud/datum-ui)](https://www.npmjs.com/package/@datum-cloud/datum-ui) |
 | `@datum-cloud/datum-ui-tokens` | Colour, spacing, radius, type and motion tokens as plain TS ([README](packages/tokens/README.md)) | [![npm](https://img.shields.io/npm/v/@datum-cloud/datum-ui-tokens)](https://www.npmjs.com/package/@datum-cloud/datum-ui-tokens) |
 | `@datum-cloud/datum-ui-native` | React Native components ([README](packages/native/README.md)) | [![npm](https://img.shields.io/npm/v/@datum-cloud/datum-ui-native)](https://www.npmjs.com/package/@datum-cloud/datum-ui-native) |
+| `@datum-cloud/datum-ui-assistant-core` | Assistant core shared by web and native ([README](packages/assistant-core/README.md)) | [![npm](https://img.shields.io/npm/v/@datum-cloud/datum-ui-assistant-core)](https://www.npmjs.com/package/@datum-cloud/datum-ui-assistant-core) |
 | `@repo/shadcn` | Internal shadcn/ui primitives | — |
 | `@repo/config` | Shared TypeScript, Tailwind, and ESLint config | — |
 
@@ -80,6 +81,9 @@ pnpm install
 
 # Start Storybook (component explorer + docs)
 pnpm --filter @repo/storybook dev
+
+# Start the native Storybook (on-device)
+pnpm --filter @repo/native-catalog storybook
 
 # Build the component library
 pnpm --filter @datum-cloud/datum-ui build
@@ -246,17 +250,15 @@ Commit the generated `.changeset/*.md` file with your PR.
 
 **For Maintainers:**
 
-1. After PRs are merged, a "Version Packages" PR is automatically created
-2. Review the PR to see version bumps and changelog
-3. When ready to release:
-   - Merge the "Version Packages" PR
-   - Create a [GitHub Release](https://github.com/datum-cloud/datum-ui/releases)
-   - GitHub Actions automatically publishes to npm
+1. After PRs with changesets merge, Release opens or updates one "Version Packages" PR that bumps every affected package.
+2. Review the PR body: each listed package, its bump type, and its changelog entries.
+3. Merge the PR when the team is ready. That publishes only the packages listed in it, each with its own npm version, git tag, and GitHub Release. There is no separate release step.
+4. A bot-created Version PR may leave its first CI run waiting for approval (`action_required`). Approve the pending run before merging.
 
 **Renovate PRs:**
-Dependency update PRs from Renovate automatically include changesets — no manual action needed.
+Renovate PRs that upgrade runtime dependencies (label `runtime-deps`) get a patch changeset automatically. devDependency-only updates do not.
 
-For detailed workflow documentation, see [.github/RELEASE_WORKFLOW.md](.github/RELEASE_WORKFLOW.md).
+For the full flow, trusted publishing setup, and recovery steps, see [.github/RELEASE_WORKFLOW.md](.github/RELEASE_WORKFLOW.md).
 
 ## License
 

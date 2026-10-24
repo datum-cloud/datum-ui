@@ -4,6 +4,10 @@ Datum design tokens as plain TypeScript: colours, spacing, radius, type scale, f
 
 The CSS in `@datum-cloud/datum-ui` is the source of truth. `src/tokens.gen.ts` is generated from it and checked in CI.
 
+## Storybook
+
+[Design Tokens](https://storybook.prod.env.datum.net/?path=/docs/foundations-design-tokens--docs) — the token reference with a live playground.
+
 ## Install
 
 ```sh

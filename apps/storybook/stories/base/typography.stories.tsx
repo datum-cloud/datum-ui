@@ -17,7 +17,7 @@ const meta: Meta<typeof Title> = {
     docs: {
       description: {
         component:
-          'Semantic typography components with size, weight, and color variants on the shared type scale (see Docs/Type Scale).\n\n'
+          'Semantic typography components with size, weight, and color variants on the shared type scale (see Foundations/Type Scale).\n\n'
           + 'The Typography module provides `Title`, `Text`, `Paragraph`, `Link`, `List`, `ListItem`, '
           + '`Blockquote`, and `Code`. All components use CVA variants for consistent sizing, weight, and color. '
           + '`Title` renders responsive heading elements (h1–h6), `Text` supports inline formatting shortcuts '
@@ -158,7 +158,7 @@ export const TextSizes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Every `size` renders the `text-*` utility of the same name, so `<Text size="sm">` and `className="text-sm"` always match. `sm` (14px) is the default body size. See Docs/Type Scale for the rules.',
+        story: 'Every `size` renders the `text-*` utility of the same name, so `<Text size="sm">` and `className="text-sm"` always match. `sm` (14px) is the default body size. See Foundations/Type Scale for the rules.',
       },
     },
   },

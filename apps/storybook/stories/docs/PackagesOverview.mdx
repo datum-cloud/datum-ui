@@ -1,0 +1,36 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Packages/Overview" />
+
+# Packages
+
+Datum UI ships four packages. Pick the one that matches your platform.
+
+## `@datum-cloud/datum-ui`
+
+Web components built with shadcn/ui, Radix UI, and Tailwind. This Storybook is
+its component reference.
+
+## `@datum-cloud/datum-ui-native`
+
+React Native components. Same prop names and variants as the web package,
+styled with `StyleSheet` and the shared tokens. Its playground is the on-device
+Storybook in `apps/native-catalog`.
+
+## `@datum-cloud/datum-ui-assistant-core`
+
+The platform-free assistant core: logic, types, and transport shared by the web
+and native assistants. It has no UI and no React, DOM, or React Native
+dependency.
+
+## `@datum-cloud/datum-ui-tokens`
+
+The TypeScript mirror of the CSS design tokens. The CSS remains the source of
+truth.
+
+## Which package do I need?
+
+- Web app: `@datum-cloud/datum-ui`
+- React Native app: `@datum-cloud/datum-ui-native`
+- Assistant features: `@datum-cloud/datum-ui-assistant-core` plus the UI package for your platform
+- Token values in TypeScript: `@datum-cloud/datum-ui-tokens`

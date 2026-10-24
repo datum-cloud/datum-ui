@@ -93,3 +93,12 @@ overrides:
   # (^5 || ^6 || ^7). Forcing 8.3.0 emits a peer warning and nothing more --
   # strict-peer-dependencies is off and the adapter module is never loaded.
   "react-router@>=7.0.0 <8.3.0": "8.3.0"
+  # GHSA CRITICAL x2 (fixed 2.1.1 and 2.1.2). Dev tree only: @repo/config ->
+  # eslint-plugin-format -> oxfmt, which pins tinypool to exactly 2.1.0 and has
+  # no 0.35.x release that moves it. 2.1.2 is the closest patched release to the
+  # pin and stays on the 2.x line oxfmt was built against.
+  "tinypool@>=2.0.0 <2.1.2": "2.1.2"
+  # GHSA CRITICAL (fixed 1.11.0). Dev tree only: launch-editor (via
+  # @changesets/cli) and react-devtools-core (via react-native). Both declare
+  # caret 1.x ranges, so 1.11.0 sits inside what they already accept.
+  "shell-quote@>=1.8.4 <1.11.0": "1.11.0"
