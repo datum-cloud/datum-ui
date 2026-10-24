@@ -3,7 +3,7 @@
 import type { LucideIcon } from 'lucide-react'
 import type { AssistantPlanData, AssistantPlanResource } from '../../types'
 import { Box, Check, ClipboardList, Code, Globe, Network, Server, Split } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { cn } from '../../../../../utils/cn'
 import { Button } from '../../../../base/button'
 import { Icon } from '../../../../icons/icon-wrapper'
@@ -78,9 +78,12 @@ export interface AssistantPlanCardProps {
   onApprove?: () => void
   /** "Change something": the host puts the person in the composer to say what. */
   onChange?: () => void
-  /** The clock, for tests. */
+  /** A fixed clock, for tests. Without it the card keeps its own. */
   now?: number
 }
+
+/** The longest delay a browser timer honours; a longer one fires at once. */
+const MAX_TIMER_MS = 2 ** 31 - 1
 
 /**
  * A plan the assistant settled, as a card: one row per resource with what it
@@ -94,10 +97,23 @@ export function AssistantPlanCard({
   canApprove = false,
   onApprove,
   onChange,
-  now = Date.now(),
+  now,
 }: AssistantPlanCardProps) {
   const [showYaml, setShowYaml] = useState(false)
-  const state = cardState(data, latest, now)
+  // The card's own clock, so a waiting plan turns expired at expiresAt even
+  // while nothing else redraws the conversation.
+  const [clock, setClock] = useState(() => Date.now())
+  const state = cardState(data, latest, now ?? clock)
+
+  useEffect(() => {
+    if (now !== undefined || state !== 'pending')
+      return
+    const wait = Date.parse(data.expiresAt) - Date.now()
+    if (Number.isNaN(wait) || wait > MAX_TIMER_MS)
+      return
+    const timer = setTimeout(() => setClock(Date.now()), Math.max(wait, 0) + 50)
+    return () => clearTimeout(timer)
+  }, [now, state, data.expiresAt])
   const badge = BADGES[state]
   const approvedAt = timeOf(data.approvedAt)
   const appliedNames = new Set((data.applied ?? []).map(a => `${a.kind}/${a.name}`))

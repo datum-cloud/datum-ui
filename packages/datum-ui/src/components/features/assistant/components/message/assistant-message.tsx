@@ -164,16 +164,18 @@ export function AssistantMessage({
         }
 
         if (part.type === PLAN_PART_TYPE) {
-          const { id, data } = part as { id: string, data: AssistantPlanData }
-          const latest = latestPlanId === undefined || latestPlanId === id
+          const { id, data } = part as { id?: string, data: AssistantPlanData }
+          // A part with no id is malformed: show it, but nothing can name it
+          // to approve, and it must not read as replaced either.
+          const latest = !id || latestPlanId === undefined || latestPlanId === id
           return (
             <AssistantPlanCard
               key={i}
               data={data}
               latest={latest}
-              canApprove={canApprovePlan && latest && onApprovePlan !== undefined}
-              onApprove={() => onApprovePlan?.(id)}
-              onChange={() => onChangePlan?.(id)}
+              canApprove={canApprovePlan && latest && id !== undefined && onApprovePlan !== undefined}
+              onApprove={() => id && onApprovePlan?.(id)}
+              onChange={() => id && onChangePlan?.(id)}
             />
           )
         }
