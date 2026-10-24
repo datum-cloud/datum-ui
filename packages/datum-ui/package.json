@@ -493,7 +493,7 @@
     "recharts": ">=3 <4",
     "sonner": ">=2.0.7 <3",
     "streamdown": ">=2 <3",
-    "zod": ">=4 <5"
+    "zod": ">=4.6.6 <5"
   },
   "peerDependenciesMeta": {
     "@conform-to/react": {
@@ -666,7 +666,7 @@
     "@types/nprogress": "^0.2.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/coverage-v8": "^4.1.12",
     "ai": "^7.0.66",
     "date-fns": "^4.4.0",
     "date-fns-tz": "^3.2.0",
@@ -696,8 +696,8 @@
     "tailwindcss": "^4.3.3",
     "tsdown": "^0.22.14",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.10",
-    "zod": "^4.4.3"
+    "vitest": "^4.1.12",
+    "zod": "^4.6.6"
   },
   "publishConfig": {
     "access": "public"
