@@ -684,7 +684,7 @@
     "nuqs": "^2.9.6",
     "react": "^19.3.1",
     "react-day-picker": "^10.0.1",
-    "react-dom": "^19.2.8",
+    "react-dom": "^19.3.1",
     "react-dropzone": "^20.1.0",
     "react-hook-form": "^7.85.0",
     "react-leaflet": "^5.0.0",
