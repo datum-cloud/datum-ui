@@ -37,7 +37,7 @@ overrides:
   # The 7.x selector does not match the 8.x copy, so bumping it alone leaves the
   # consumer-facing line vulnerable. Patched floors are 7.29.1 and 8.10.2; both
   # entries take the latest of their own major, never crossing it.
-  "undici@>=7.0.0 <7.29.0": "7.30.0"
+  "undici@>=7.0.0 <7.29.0": "7.30.1"
   "undici@>=8.0.0 <8.10.2": "8.12.2"
   # GHSA HIGH on two separate lines: <1.1.17 and >=4.0.0 <5.0.8. The previous
   # entry pinned exactly 5.0.7, which is itself inside the vulnerable range,
