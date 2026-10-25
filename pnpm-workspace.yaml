@@ -106,9 +106,10 @@ overrides:
   # csf-plugin and the vitest mocker both pull 7.3.6. Same minor line.
   "vite@>=7.0.0 <7.3.7": "7.3.7"
   # GHSA HIGH (fixed 4.6.6). Dev tree only: @eslint-react/shared pins 4.4.3.
-  # The 3.25.76 copy under @expo/cli is left alone -- the advisory has no 3.x
-  # patch and forcing expo's CLI onto zod 4 is not a safe override.
   "zod@>=4.0.0 <4.6.6": "4.6.7"
+  "zod@<4": "4.6.7"
+  "uuid@<11.1.1": "11.1.1"
+  "katex@<0.18.2": "0.18.2"
   # GHSA HIGH + MODERATE x2 (fixed 2.14.2). Dev tree only, via @changesets/cli.
   "launch-editor@<2.14.2": "2.14.2"
   # GHSA HIGH (fixed 1.2.2). Dev tree only: tailwind, css-tree, vue compiler.
