@@ -37,7 +37,7 @@ overrides:
   # The 7.x selector does not match the 8.x copy, so bumping it alone leaves the
   # consumer-facing line vulnerable. Patched floors are 7.29.1 and 8.10.2; both
   # entries take the latest of their own major, never crossing it.
-  "undici@>=7.0.0 <7.29.0": "7.30.0"
+  "undici@>=7.0.0 <7.29.0": "7.30.1"
   "undici@>=8.0.0 <8.10.2": "8.12.2"
   # GHSA HIGH on two separate lines: <1.1.17 and >=4.0.0 <5.0.8. The previous
   # entry pinned exactly 5.0.7, which is itself inside the vulnerable range,
@@ -102,3 +102,16 @@ overrides:
   # @changesets/cli) and react-devtools-core (via react-native). Both declare
   # caret 1.x ranges, so 1.11.0 sits inside what they already accept.
   "shell-quote@>=1.8.4 <1.11.0": "1.11.0"
+  # GHSA HIGH + MODERATE x3 + LOW (fixed 7.3.7). Dev tree only: storybook's
+  # csf-plugin and the vitest mocker both pull 7.3.6. Same minor line.
+  "vite@>=7.0.0 <7.3.7": "7.3.7"
+  # GHSA HIGH (fixed 4.6.6). Dev tree only: @eslint-react/shared pins 4.4.3.
+  # The 3.25.76 copy under @expo/cli is left alone -- the advisory has no 3.x
+  # patch and forcing expo's CLI onto zod 4 is not a safe override.
+  "zod@>=4.0.0 <4.6.6": "4.6.7"
+  # GHSA HIGH + MODERATE x2 (fixed 2.14.2). Dev tree only, via @changesets/cli.
+  "launch-editor@<2.14.2": "2.14.2"
+  # GHSA HIGH (fixed 1.2.2). Dev tree only: tailwind, css-tree, vue compiler.
+  "source-map-js@>=1.0.0 <1.2.2": "1.2.2"
+  # GHSA MODERATE (fixed 7.1.6). Dev tree only: eslint-plugin-vue.
+  "postcss-selector-parser@>=7.0.0 <7.1.6": "7.1.6"
