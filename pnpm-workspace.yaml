@@ -78,7 +78,7 @@ overrides:
   # 4.1.11), so this is the one entry that must cross a major. Dev tree only,
   # and the storybook build is verified against it -- if a future storybook
   # bumps its own mocker, drop this entry rather than widening it.
-  "@vitest/mocker@>=2.1.0 <4.1.11": "4.1.11"
+  "@vitest/mocker@>=2.1.0 <4.1.11": "4.1.12"
 
   # next, sharp and react-router are here only because `nuqs` (a devDependency,
   # used for one data-table adapter) declares five framework adapters as
