@@ -493,7 +493,7 @@
     "recharts": ">=3 <4",
     "sonner": ">=2.0.7 <3",
     "streamdown": ">=2 <3",
-    "zod": ">=4 <5"
+    "zod": ">=4.6.6 <5"
   },
   "peerDependenciesMeta": {
     "@conform-to/react": {
