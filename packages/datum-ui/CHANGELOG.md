@@ -8,6 +8,8 @@
   
   Add `AssistantChoiceChips`, a pick-one question drawn as a row of buttons. `AssistantMessage` renders a `data-choices` part (`CHOICES_PART_TYPE`, with `AssistantChoicesData`) with it, and `Conversation` and `AssistantWorkspace` take an `onChoose(messageId, option)` callback. Only the latest turn's question can be answered, and only once it has finished streaming. A picked option stays marked with a check and the others fade.
 
+  Add `AssistantPlanCard`, a plan the assistant settled drawn as a card: one row per resource with its summary, a Create or Update badge and any diff, the YAML on request, and Approve and Change buttons. `AssistantMessage` renders a `data-plan` part (`PLAN_PART_TYPE`, with `AssistantPlanData`) with it, and `Conversation` and `AssistantWorkspace` take `onApprovePlan(messageId, planId)` and `onChangePlan(messageId, planId)`. The host tracks pending, applying, applied and failed; the card works out expired from `expiresAt` and replaced from whether a newer plan exists, and only the newest plan can be approved.
+
 ## 3.6.0
 
 ### Minor Changes
