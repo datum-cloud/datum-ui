@@ -33,21 +33,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create changeset if missing
-        id: changeset
-        run: |
-          bash .github/scripts/renovate-changeset.sh
-          if git diff --quiet -- .changeset; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Commit changeset
-        if: steps.changeset.outputs.changed == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .changeset
-          git commit -m "chore(deps): add runtime-dependency changeset"
-          git push
+      - name: Commit runtime-dependency changeset
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: .github/scripts/commit-changeset.sh
