@@ -72,7 +72,7 @@ overrides:
   "mermaid@>=11.0.0 <11.16.1": "11.17.2"
   # GHSA MODERATE x2 (array-limit bypass, DoS via attacker-controlled isBuffer).
   # Dev tree only: storybook-builder-rsbuild -> url -> qs.
-  "qs@>=6.0.0 <6.16.0": "6.16.0"
+  "qs@>=6.0.0 <6.16.0": "6.16.1"
   # GHSA MODERATE path traversal. The vulnerable copy is 3.2.7, bundled by
   # storybook-builder-rsbuild; the advisory has no 3.x patch (fixed only in
   # 4.1.11), so this is the one entry that must cross a major. Dev tree only,

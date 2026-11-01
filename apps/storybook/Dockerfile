@@ -1,5 +1,5 @@
-FROM node:24.22.1-alpine AS builder
-RUN corepack enable
+FROM node:26.13.0-alpine AS builder
+RUN npm install -g pnpm@11.22.0
 WORKDIR /app
 
 # Copy lockfile and package manifests first for layer caching

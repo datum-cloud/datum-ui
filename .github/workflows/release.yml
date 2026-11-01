@@ -62,7 +62,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24.22.1
+          node-version: 26.13.0
           # No npm registry auth is configured on purpose: publish uses OIDC
           # trusted publishing, so a cache restore of ~/.npmrc must not happen.
           package-manager-cache: false
@@ -96,7 +96,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24.22.1
+          node-version: 26.13.0
           package-manager-cache: false
 
       - name: Install dependencies
@@ -174,7 +174,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24.22.1
+          node-version: 26.13.0
           package-manager-cache: false
 
       - name: Install dependencies
@@ -231,7 +231,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24.22.1
+          node-version: 26.13.0
           package-manager-cache: false
 
       - name: Install dependencies
