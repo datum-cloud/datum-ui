@@ -29,5 +29,6 @@ export default defineConfig({
       },
     },
     globals: true,
+    execArgv: ['--no-experimental-webstorage'],
   },
 })
