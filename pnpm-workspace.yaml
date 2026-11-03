@@ -108,7 +108,7 @@ overrides:
   # GHSA HIGH (fixed 4.6.6). Dev tree only: @eslint-react/shared pins 4.4.3.
   "zod@>=4.0.0 <4.6.6": "4.6.7"
   "zod@<4": "4.6.7"
-  "uuid@<11.1.1": "11.1.1"
+  "uuid@<11.1.1": "14.0.3"
   "katex@<0.18.2": "0.18.2"
   # GHSA HIGH + MODERATE x2 (fixed 2.14.2). Dev tree only, via @changesets/cli.
   "launch-editor@<2.14.2": "2.14.2"
