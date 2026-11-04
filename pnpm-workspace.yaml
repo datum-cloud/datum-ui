@@ -104,7 +104,7 @@ overrides:
   "shell-quote@>=1.8.4 <1.11.0": "1.11.0"
   # GHSA HIGH + MODERATE x3 + LOW (fixed 7.3.7). Dev tree only: storybook's
   # csf-plugin and the vitest mocker both pull 7.3.6. Same minor line.
-  "vite@>=7.0.0 <7.3.7": "7.3.7"
+  "vite@>=7.0.0 <7.3.7": "8.3.5"
   # GHSA HIGH (fixed 4.6.6). Dev tree only: @eslint-react/shared pins 4.4.3.
   "zod@>=4.0.0 <4.6.6": "4.6.7"
   "zod@<4": "4.6.7"
