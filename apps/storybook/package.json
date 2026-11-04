@@ -19,13 +19,13 @@
     "lucide-react": "^1.31.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "zod": "^4.6.6"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
     "@repo/shadcn": "workspace:*",
-    "@rsbuild/core": "^2.1.13",
-    "@rsbuild/plugin-react": "^2.1.0",
+    "@rsbuild/core": "^2.3.1",
+    "@rsbuild/plugin-react": "^2.1.1",
     "@storybook/addon-a11y": "^10.5.8",
     "@storybook/addon-docs": "^10.5.8",
     "@storybook/addon-links": "^10.5.8",
