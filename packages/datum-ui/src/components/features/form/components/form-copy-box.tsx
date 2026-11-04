@@ -1,8 +1,8 @@
-import { CheckIcon, CopyIcon } from 'lucide-react'
 import * as React from 'react'
 import { Button, toast } from '../../..'
 import { useCopyToClipboard } from '../../../../hooks/use-copy-to-clipboard'
 import { cn } from '../../../../utils/cn'
+import { CopyStateIcon } from '../../_shared'
 import { useFieldContext } from '../context/field-context'
 
 export interface FormCopyBoxProps {
@@ -101,7 +101,7 @@ export function FormCopyBox({
                 )}
                 onClick={copyToClipboard}
               >
-                {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
+                <CopyStateIcon copied={copied} className="size-4" />
               </button>
             )
           : (
@@ -112,7 +112,7 @@ export function FormCopyBox({
                 className={cn('h-7 w-fit gap-1 px-2 text-xs', buttonClassName)}
                 onClick={copyToClipboard}
               >
-                <CopyIcon className="size-3!" />
+                <CopyStateIcon copied={copied} className="size-3!" />
                 {copied ? 'Copied' : 'Copy'}
               </Button>
             )}

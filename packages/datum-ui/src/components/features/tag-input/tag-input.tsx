@@ -104,7 +104,7 @@ export function TagsInput({ ref, value, onValueChange, placeholder, maxItems, mi
         ref={ref}
         dir={dir}
         className={cn(
-          'border-input-border bg-input-background/50 text-input-foreground flex min-h-10 flex-wrap items-center gap-1 overflow-hidden rounded-lg border px-3 py-2 transition-all',
+          'border-input-border bg-input-background/50 text-input-foreground relative flex min-h-10 flex-wrap items-center gap-1 overflow-hidden rounded-lg border px-3 py-2 transition-[border-color,box-shadow]',
           activeIndex === -1
             ? 'focus-within:border-input-focus-border focus-within:shadow-(--input-focus-shadow) focus-within:ring-0 focus-within:ring-offset-0 focus-within:outline-hidden'
             : 'focus-within:ring-0 focus-within:ring-offset-0 focus-within:outline-hidden',

@@ -42,4 +42,44 @@ describe('radioGroup', () => {
     await user.click(secondRadio)
     expect(handleChange).toHaveBeenCalledWith('b')
   })
+
+  it('keeps every dot mounted so selection can animate between items', () => {
+    const { container } = render(
+      <RadioGroup defaultValue="a">
+        <RadioGroupItem value="a" />
+        <RadioGroupItem value="b" />
+      </RadioGroup>,
+    )
+    expect(container.querySelectorAll('[data-slot="radio-group-indicator"]')).toHaveLength(2)
+  })
+
+  it('moves the selection in uncontrolled mode', async () => {
+    const user = userEvent.setup()
+    render(
+      <RadioGroup defaultValue="a">
+        <RadioGroupItem value="a" />
+        <RadioGroupItem value="b" />
+      </RadioGroup>,
+    )
+    const radios = screen.getAllByRole('radio')
+    await user.click(radios.at(1)!)
+    expect(radios.at(0)).toHaveAttribute('data-state', 'unchecked')
+    expect(radios.at(1)).toHaveAttribute('data-state', 'checked')
+  })
+
+  it('follows a controlled value', () => {
+    const { rerender } = render(
+      <RadioGroup value="a">
+        <RadioGroupItem value="a" />
+        <RadioGroupItem value="b" />
+      </RadioGroup>,
+    )
+    rerender(
+      <RadioGroup value="b">
+        <RadioGroupItem value="a" />
+        <RadioGroupItem value="b" />
+      </RadioGroup>,
+    )
+    expect(screen.getAllByRole('radio').at(1)).toHaveAttribute('data-state', 'checked')
+  })
 })

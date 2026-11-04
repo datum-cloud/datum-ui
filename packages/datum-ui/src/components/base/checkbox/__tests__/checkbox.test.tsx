@@ -29,4 +29,27 @@ describe('checkbox', () => {
     const checkbox = screen.getByRole('checkbox')
     expect(checkbox).toHaveAttribute('data-state', 'checked')
   })
+
+  it('toggles uncontrolled state on click', async () => {
+    const user = userEvent.setup()
+    render(<Checkbox />)
+    const checkbox = screen.getByRole('checkbox')
+
+    await user.click(checkbox)
+    expect(checkbox).toHaveAttribute('data-state', 'checked')
+    await user.click(checkbox)
+    expect(checkbox).toHaveAttribute('data-state', 'unchecked')
+  })
+
+  it('keeps the indicator mounted while unchecked so it can animate out', () => {
+    const { container } = render(<Checkbox />)
+    expect(container.querySelector('[data-slot="checkbox-indicator"] svg')).not.toBeNull()
+  })
+
+  it('renders the indeterminate state', () => {
+    render(<Checkbox checked="indeterminate" />)
+    const checkbox = screen.getByRole('checkbox')
+    expect(checkbox).toHaveAttribute('data-state', 'indeterminate')
+    expect(checkbox).toHaveAttribute('aria-checked', 'mixed')
+  })
 })

@@ -16,12 +16,13 @@ import {
   toolLabel,
 } from '@datum-cloud/datum-ui-assistant-core'
 import { code } from '@streamdown/code'
-import { Brain, Check, Copy, Download } from 'lucide-react'
+import { Brain, Download } from 'lucide-react'
 import { Fragment, useState } from 'react'
 import { Streamdown } from 'streamdown'
 import { cn } from '../../../../../utils/cn'
 import { Tooltip } from '../../../../base/tooltip'
 import { Icon } from '../../../../icons/icon-wrapper'
+import { CopyStateIcon } from '../../../_shared'
 import { useAssistantConfig } from '../../context'
 import { CHOICES_PART_TYPE, PLAN_PART_TYPE } from '../../types'
 import { AssistantChoiceChips } from './choice-chips'
@@ -271,7 +272,7 @@ function MessageActions({ msg }: { msg: UIMessage }) {
           aria-label="Copy message"
           className="hover:text-foreground rounded p-1 transition-colors"
         >
-          {copied ? <Icon icon={Check} className="size-3.5" /> : <Icon icon={Copy} className="size-3.5" />}
+          <CopyStateIcon copied={copied} className="size-3.5" size={16} strokeWidth={1} absoluteStrokeWidth />
         </button>
       </Tooltip>
       <Tooltip message="Download as Markdown" side="top">
