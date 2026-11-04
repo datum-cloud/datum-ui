@@ -43,6 +43,21 @@ test('only the publish job gets id-token', () => {
   assert.equal((release.match(/id-token: write/g) ?? []).length, 1)
 })
 
+test('publish installs only the root project and runs no install scripts', () => {
+  const job = release.match(/\n {2}publish:\n([\s\S]*?)(?=\n {2}[a-z][\w-]*:\n|$)/)?.[1]
+  assert.ok(job, 'publish job is defined')
+  const installs = job.match(/^ +run: pnpm install.*$/gm) ?? []
+  assert.equal(installs.length, 1, `publish must install exactly once, got: ${installs.join(' | ')}`)
+  assert.match(installs[0], /--frozen-lockfile/)
+  assert.match(installs[0], /--filter design-system\b/)
+  // The filter names the root project, which owns @changesets/cli.
+  const rootPkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+  assert.equal(rootPkg.name, 'design-system')
+  assert.ok(rootPkg.devDependencies?.['@changesets/cli'], 'root package must own @changesets/cli')
+  assert.match(installs[0], /--fail-if-no-match/)
+  assert.match(installs[0], /--ignore-scripts/)
+})
+
 test('no npm token fallback exists', () => {
   assert.doesNotMatch(release, /NPM_TOKEN|NODE_AUTH_TOKEN|registry-url/)
 })
