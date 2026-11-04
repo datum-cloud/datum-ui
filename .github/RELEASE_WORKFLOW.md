@@ -105,8 +105,8 @@ approves the bot-created Version PR run and decides when to merge.
 | --- | --- | --- | --- |
 | `select-mode` | Successful CI push to `main` | Read the repo; run `changesets/action/select-mode@v2`; write the mode output and publish plan artifact | Write contents or mint an OIDC token |
 | `version` | `mode == version` | Write contents and pull requests; run `pnpm changeset version`; create/edit the Version PR | Publish to npm or mint an OIDC token |
-| `pack` | `mode == publish` | Read contents and Actions artifacts; download the CI build; assert `dist/`; run `changesets/action/pack@v2` | Publish to npm or mint an OIDC token |
-| `publish` | `mode == publish` | Write contents (tags and releases); mint an OIDC token; run `changesets/action/publish@v2` | Edit pull requests |
+| `pack` | `mode == publish` | Read contents and Actions artifacts; download the CI build; assert the build output; run `changesets/action/pack@v2` | Publish to npm or mint an OIDC token |
+| `publish` | `mode == publish` | Write contents (tags and releases); mint an OIDC token; install only the root project with `--ignore-scripts`; run `changesets/action/publish@v2` | Edit pull requests; install workspace dependencies or run install scripts |
 
 The workflow sets `permissions: {}` at the top level and grants each job only
 the scopes in this table. Only `publish` has `id-token: write`. `pack` takes no
@@ -450,7 +450,7 @@ cannot prove the trusted-publisher entry exists until CI publishes once.
 | Path | Purpose |
 | --- | --- |
 | `.github/scripts/check-npm-packages.mjs` | CI guard: classifies every public package as `ok`, `manual`, `missing`, or a registry error, against the changesets `ignore` list, and warns on manifest issues that break trusted publishing. |
-| `.github/scripts/assert-public-dist.mjs` | Fails `pack` if any non-private `packages/*` package has no `dist/`. |
+| `.github/scripts/assert-public-dist.mjs` | Fails `pack` if any non-private `packages/*` package has a missing or empty `dist/`, or a missing or empty entry from its `files` array (`LICENSE`, `README.md` and `src` excepted). Also fails when `packages/` cannot be read. |
 | `.github/scripts/generate-version-pr-body.sh` | Asks `changeset status` for the release plan JSON and pipes it to the formatter. |
 | `.github/scripts/format-version-pr-body.mjs` | Builds the Version PR body and bump type from that JSON. |
 

@@ -234,8 +234,16 @@ jobs:
           node-version: 26.13.0
           package-manager-cache: false
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      # This job can mint an OIDC token, so it installs as little as possible.
+      # changesets/action/publish resolves @changesets/cli/bin.js from the repo
+      # root and runs `changeset publish --from-pack-dir`, which reads package
+      # manifests, .changeset/ and the plan, then runs `pnpm publish <tarball>`.
+      # None of that loads a workspace package's dependencies, so install only
+      # the root project (`design-system`, which owns @changesets/cli) and run
+      # no install scripts. --fail-if-no-match stops the job here if the root
+      # package is renamed and the filter no longer selects it.
+      - name: Install release tooling
+        run: pnpm install --frozen-lockfile --filter design-system --fail-if-no-match --ignore-scripts
 
       # Publishes the tarballs pack produced, not the working tree, so what npm
       # receives is exactly what the assertion step inspected. Creates one tag
