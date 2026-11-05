@@ -38,7 +38,7 @@ overrides:
   # consumer-facing line vulnerable. Patched floors are 7.29.1 and 8.10.2; both
   # entries take the latest of their own major, never crossing it.
   "undici@>=7.0.0 <7.29.0": "7.30.1"
-  "undici@>=8.0.0 <8.10.2": "8.12.2"
+  "undici@>=8.0.0 <8.10.2": "8.12.3"
   # GHSA HIGH on two separate lines: <1.1.17 and >=4.0.0 <5.0.8. The previous
   # entry pinned exactly 5.0.7, which is itself inside the vulnerable range,
   # and left the 1.x copy uncovered entirely.
@@ -61,7 +61,7 @@ overrides:
   # GHSA HIGH, dev tree only (storybook -> webpack -> schema-utils -> ajv).
   "fast-uri@>=3.0.0 <3.1.4": "3.1.9"
   # GHSA HIGH, via storybook/vite/tailwind.
-  "postcss@>=8.0.0 <8.5.18": "8.5.26"
+  "postcss@>=8.0.0 <8.5.18": "8.5.32"
   # dompurify has two copies and both are under the advisory floor (>=3.4.13):
   #   3.4.8  <- monaco-editor (dev)
   #   3.4.12 <- isomorphic-dompurify (runtime) and mermaid -> streamdown (dev)
@@ -72,7 +72,7 @@ overrides:
   "mermaid@>=11.0.0 <11.16.1": "11.17.2"
   # GHSA MODERATE x2 (array-limit bypass, DoS via attacker-controlled isBuffer).
   # Dev tree only: storybook-builder-rsbuild -> url -> qs.
-  "qs@>=6.0.0 <6.16.0": "6.16.1"
+  "qs@>=6.0.0 <6.16.0": "6.17.1"
   # GHSA MODERATE path traversal. The vulnerable copy is 3.2.7, bundled by
   # storybook-builder-rsbuild; the advisory has no 3.x patch (fixed only in
   # 4.1.11), so this is the one entry that must cross a major. Dev tree only,
@@ -97,11 +97,11 @@ overrides:
   # eslint-plugin-format -> oxfmt, which pins tinypool to exactly 2.1.0 and has
   # no 0.35.x release that moves it. 2.1.2 is the closest patched release to the
   # pin and stays on the 2.x line oxfmt was built against.
-  "tinypool@>=2.0.0 <2.1.2": "2.1.2"
+  "tinypool@>=2.0.0 <2.1.2": "2.2.0"
   # GHSA CRITICAL (fixed 1.11.0). Dev tree only: launch-editor (via
   # @changesets/cli) and react-devtools-core (via react-native). Both declare
   # caret 1.x ranges, so 1.11.0 sits inside what they already accept.
-  "shell-quote@>=1.8.4 <1.11.0": "1.11.0"
+  "shell-quote@>=1.8.4 <1.11.0": "1.12.0"
   # GHSA HIGH + MODERATE x3 + LOW (fixed 7.3.7). Dev tree only: storybook's
   # csf-plugin and the vitest mocker both pull 7.3.6. Same minor line.
   "vite@>=7.0.0 <7.3.7": "8.3.5"
@@ -109,10 +109,10 @@ overrides:
   "zod@>=4.0.0 <4.6.6": "4.6.7"
   "zod@<4": "4.6.7"
   "uuid@<11.1.1": "14.0.3"
-  "katex@<0.18.2": "0.18.2"
+  "katex@<0.18.2": "0.19.1"
   # GHSA HIGH + MODERATE x2 (fixed 2.14.2). Dev tree only, via @changesets/cli.
   "launch-editor@<2.14.2": "2.14.2"
   # GHSA HIGH (fixed 1.2.2). Dev tree only: tailwind, css-tree, vue compiler.
   "source-map-js@>=1.0.0 <1.2.2": "1.2.2"
   # GHSA MODERATE (fixed 7.1.6). Dev tree only: eslint-plugin-vue.
-  "postcss-selector-parser@>=7.0.0 <7.1.6": "7.1.6"
+  "postcss-selector-parser@>=7.0.0 <7.1.6": "7.1.7"
