@@ -9,9 +9,11 @@ const meta: Meta<typeof Spinner> = {
       description: {
         component:
           'An animated circular loading indicator with configurable size and color.\n\n'
-          + 'Spinner renders an animated SVG with a track circle and a spinning arc indicator. '
-          + 'It is used inside buttons during loading states and as a standalone loading indicator. '
-          + 'Size is controlled via the `className` prop using Tailwind size utilities (e.g. `size-4`, `size-6`).',
+          + 'Spinner draws a faint track with an arc that fades from a transparent tail to a solid head, '
+          + 'turning clockwise once every 0.8s. The rotation runs through Motion as a Web Animations API '
+          + 'transform, so it stays smooth while the main thread is busy. '
+          + 'Size and colour come from `className` (e.g. `size-6`, `text-white`); the track follows the arc colour. '
+          + 'It defaults to `text-primary`, which is clay in light mode and moss in dark mode.',
       },
     },
   },
@@ -55,6 +57,26 @@ export const Sizes: Story = {
       <Spinner className="size-6" />
       <Spinner className="size-8" />
       <Spinner className="size-10" />
+    </div>
+  ),
+}
+
+export const OnColor: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Recolour with a text colour class. The track follows the arc, so one class covers both.',
+      },
+    },
+  },
+  render: () => (
+    <div className="flex items-center gap-4">
+      <div className="bg-primary flex size-14 items-center justify-center rounded-lg">
+        <Spinner className="text-primary-foreground size-6" />
+      </div>
+      <div className="bg-foreground flex size-14 items-center justify-center rounded-lg">
+        <Spinner className="text-background size-6" />
+      </div>
     </div>
   ),
 }

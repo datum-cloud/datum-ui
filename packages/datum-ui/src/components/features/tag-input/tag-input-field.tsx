@@ -1,9 +1,11 @@
 import type * as React from 'react'
 import type { UseTagsInputResult } from './use-tags-input'
 import { X as RemoveIcon } from 'lucide-react'
-import { Badge, Input } from '../..'
+import { AnimatePresence } from 'motion/react'
+import { Input } from '../..'
 import { cn } from '../../../utils/cn'
 import { Icon } from '../../icons/icon-wrapper'
+import { MotionBadge, useChipMotion } from '../_shared'
 
 interface TagInputFieldProps {
   value: string[]
@@ -30,40 +32,44 @@ export function TagInputField({ value, placeholder, input }: TagInputFieldProps)
     handleChange,
     mousePreventDefault,
   } = input
+  const chipMotion = useChipMotion()
 
   return (
     <>
-      {value.map((item, index) => (
-        <Badge
-          tabIndex={activeIndex !== -1 ? 0 : activeIndex}
-          key={item}
-          aria-disabled={disableButton}
-          data-active={activeIndex === index}
-          className={cn(
-            'data-[active=\'true\']:ring-muted-foreground relative flex items-center gap-1 truncate rounded px-1 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 data-[active=\'true\']:ring-2',
-          )}
-          type="secondary"
-        >
-          <span className="text-xs">{item}</span>
-          <button
-            type="button"
-            aria-label={`Remove ${item} option`}
-            aria-roledescription="button to remove option"
-            disabled={disableButton}
-            onMouseDown={mousePreventDefault}
-            onClick={() => removeValue(item)}
-            className="disabled:cursor-not-allowed"
+      <AnimatePresence initial={false} mode="popLayout">
+        {value.map((item, index) => (
+          <MotionBadge
+            key={item}
+            {...chipMotion}
+            tabIndex={activeIndex !== -1 ? 0 : activeIndex}
+            aria-disabled={disableButton}
+            data-active={activeIndex === index}
+            className={cn(
+              'data-[active=\'true\']:ring-muted-foreground relative flex items-center gap-1 truncate rounded px-1 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 data-[active=\'true\']:ring-2',
+            )}
+            type="secondary"
           >
-            <span className="sr-only">
-              Remove
-              {item}
-              {' '}
-              option
-            </span>
-            <Icon icon={RemoveIcon} className="hover:stroke-destructive h-4 w-4" />
-          </button>
-        </Badge>
-      ))}
+            <span className="text-xs">{item}</span>
+            <button
+              type="button"
+              aria-label={`Remove ${item} option`}
+              aria-roledescription="button to remove option"
+              disabled={disableButton}
+              onMouseDown={mousePreventDefault}
+              onClick={() => removeValue(item)}
+              className="disabled:cursor-not-allowed"
+            >
+              <span className="sr-only">
+                Remove
+                {item}
+                {' '}
+                option
+              </span>
+              <Icon icon={RemoveIcon} className="hover:stroke-destructive h-4 w-4" />
+            </button>
+          </MotionBadge>
+        ))}
+      </AnimatePresence>
       <Input
         tabIndex={0}
         aria-label="input tag"

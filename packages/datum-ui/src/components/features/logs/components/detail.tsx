@@ -3,7 +3,7 @@
 import type { LucideIcon } from 'lucide-react'
 import type { PointerEvent, ReactNode } from 'react'
 import type { UserAgentDevice } from '../utils/user-agent'
-import { Bot, ChevronDown, ChevronUp, Copy, HelpCircle, Monitor, Smartphone, Tablet, X } from 'lucide-react'
+import { Bot, ChevronDown, ChevronUp, HelpCircle, Monitor, Smartphone, Tablet, X } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { memo, useCallback, useRef, useState } from 'react'
 import { useBreakpoint } from '../../../../hooks/use-breakpoint'
@@ -12,6 +12,7 @@ import { cn } from '../../../../utils/cn'
 import { Button } from '../../../base/button'
 import { Sheet } from '../../../base/sheet'
 import { Icon } from '../../../icons/icon-wrapper'
+import { CopyStateIcon } from '../../_shared'
 import { DateTime } from '../../date-time'
 import { getBrowserTimezone, getTimezoneAbbreviation } from '../../date-time/formatters'
 import { useLogs } from '../hooks/use-logs'
@@ -59,12 +60,30 @@ function keyedParams(params: ReadonlyArray<[string, string]>): Array<{ id: strin
   })
 }
 
+/**
+ * Icon button that copies `text` and shows a check until the copied state
+ * resets. Each button owns its hook so only the one clicked flips.
+ */
+function LogsCopyButton({ text, label, small = false }: { text: string, label: string, small?: boolean }) {
+  const [copied, copy] = useCopyToClipboard()
+  return (
+    <Button
+      type="secondary"
+      theme="borderless"
+      size="icon"
+      className={small ? '-my-1 size-6' : undefined}
+      aria-label={label}
+      onClick={() => copy(text, { withToast: true })}
+    >
+      <CopyStateIcon copied={copied} size={small ? 14 : 16} strokeWidth={1} absoluteStrokeWidth />
+    </Button>
+  )
+}
+
 // Memoised so the resize drag (which re-renders the panel per frame) does not
 // reparse the line and rebuild the label list on every pointer move.
 const DetailBody = memo(({ showClose = true }: { showClose?: boolean }) => {
   const { selectedEntry, selectPrevious, selectNext, setSelectedId } = useLogs()
-  const [, copy] = useCopyToClipboard()
-
   if (!selectedEntry)
     return null
 
@@ -107,15 +126,7 @@ const DetailBody = memo(({ showClose = true }: { showClose?: boolean }) => {
             >
               <Icon icon={ChevronDown} />
             </Button>
-            <Button
-              type="secondary"
-              theme="borderless"
-              size="icon"
-              aria-label="Copy log line"
-              onClick={() => copy(displayLine, { withToast: true })}
-            >
-              <Icon icon={Copy} />
-            </Button>
+            <LogsCopyButton text={displayLine} label="Copy log line" />
             {showClose && (
               <Button
                 type="secondary"
@@ -188,16 +199,7 @@ const DetailBody = memo(({ showClose = true }: { showClose?: boolean }) => {
                 <div className="bg-background col-span-3 min-w-0 px-3 py-2.5" data-slot="logs-client">
                   <div className="mb-1 flex items-center justify-between">
                     <span className="text-muted-foreground text-3xs font-medium">Client</span>
-                    <Button
-                      type="secondary"
-                      theme="borderless"
-                      size="icon"
-                      className="-my-1 size-6"
-                      aria-label="Copy user agent"
-                      onClick={() => copy(client.raw, { withToast: true })}
-                    >
-                      <Icon icon={Copy} size={14} />
-                    </Button>
+                    <LogsCopyButton text={client.raw} label="Copy user agent" small />
                   </div>
                   <div className="flex items-center gap-2 text-xs">
                     <Icon icon={DEVICE_ICONS[client.device]} className="text-muted-foreground shrink-0" />
@@ -215,16 +217,7 @@ const DetailBody = memo(({ showClose = true }: { showClose?: boolean }) => {
                 <div className="bg-background col-span-3 min-w-0 px-3 py-2.5" data-slot="logs-search-params">
                   <div className="mb-1.5 flex items-center justify-between">
                     <span className="text-muted-foreground text-3xs font-medium">Search params</span>
-                    <Button
-                      type="secondary"
-                      theme="borderless"
-                      size="icon"
-                      className="-my-1 size-6"
-                      aria-label="Copy search params"
-                      onClick={() => copy(`?${request.search}`, { withToast: true })}
-                    >
-                      <Icon icon={Copy} size={14} />
-                    </Button>
+                    <LogsCopyButton text={`?${request.search}`} label="Copy search params" small />
                   </div>
                   <dl className="flex flex-wrap gap-1.5">
                     {keyedParams(request.params).map(({ id, key, value }) => (

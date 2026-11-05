@@ -46,4 +46,24 @@ describe('switch', () => {
     }
     expect(screen.getByRole('switch')).toHaveAttribute('aria-checked', 'true')
   })
+
+  it('toggles uncontrolled state on click', async () => {
+    const user = userEvent.setup()
+    render(<Switch defaultChecked />)
+    const switchEl = screen.getByRole('switch')
+
+    await user.click(switchEl)
+    expect(switchEl).toHaveAttribute('aria-checked', 'false')
+    await user.click(switchEl)
+    expect(switchEl).toHaveAttribute('aria-checked', 'true')
+  })
+
+  it('still calls pointer handlers passed by the consumer', async () => {
+    const user = userEvent.setup()
+    const onPointerDown = vi.fn()
+    render(<Switch onPointerDown={onPointerDown} />)
+
+    await user.click(screen.getByRole('switch'))
+    expect(onPointerDown).toHaveBeenCalled()
+  })
 })

@@ -1,1 +1,1 @@
-export * from '@repo/shadcn/ui/spinner'
+export { Spinner } from './spinner'

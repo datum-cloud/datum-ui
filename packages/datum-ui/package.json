@@ -572,9 +572,6 @@
     "monaco-editor": {
       "optional": true
     },
-    "motion": {
-      "optional": true
-    },
     "nprogress": {
       "optional": true
     },

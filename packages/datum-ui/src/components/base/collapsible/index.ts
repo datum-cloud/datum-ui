@@ -1,1 +1,1 @@
-export * from '@repo/shadcn/ui/collapsible'
+export { Collapsible, CollapsibleContent, CollapsibleTrigger } from './collapsible'

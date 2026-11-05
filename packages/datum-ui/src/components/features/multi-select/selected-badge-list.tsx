@@ -1,8 +1,9 @@
 import type { MultiSelectOption, MultiSelectVariant } from './multi-select-shared'
 import { ChevronDown, XCircle, XIcon } from 'lucide-react'
+import { AnimatePresence } from 'motion/react'
 import * as React from 'react'
 import { cn } from '../../../utils/cn'
-import { Badge } from '../../base/badge'
+import { MotionBadge, useChipMotion } from '../_shared'
 import { multiSelectVariants } from './multi-select-shared'
 
 /**
@@ -86,64 +87,70 @@ export function SelectedBadgeList({
 }: SelectedBadgeListProps) {
   const visibleOptions = selectedOptions.slice(0, maxCount === -1 ? undefined : maxCount)
   const overflowCount = maxCount === -1 ? 0 : selectedOptions.length - maxCount
+  const chipMotion = useChipMotion()
 
   return (
     <div className="flex w-full items-center justify-between">
-      <div className="flex flex-wrap items-center gap-2">
-        {visibleOptions.map((option) => {
-          const IconComponent = option.icon
-          return (
-            <Badge
-              key={option.value}
+      <div className="relative flex flex-wrap items-center gap-2">
+        <AnimatePresence initial={false} mode="popLayout">
+          {visibleOptions.map((option) => {
+            const IconComponent = option.icon
+            return (
+              <MotionBadge
+                key={option.value}
+                {...chipMotion}
+                className={cn(
+                  multiSelectVariants({ variant }),
+                  'truncate',
+                  isAnimating && 'animate-bounce',
+                  clickableBadges && 'cursor-pointer',
+                  badgeClassName,
+                )}
+                style={{ animationDuration: `${animation}s` }}
+                onClick={(event) => {
+                  if (clickableBadges) {
+                    event.stopPropagation()
+                    event.preventDefault()
+                    onBadgeClick?.(option)
+                  }
+                }}
+              >
+                {IconComponent && (
+                  <IconComponent className="text-muted-foreground size-3" />
+                )}
+                <span className="max-w-[120px] truncate">{option.label}</span>
+                <IconAction
+                  label={`Remove ${option.label}`}
+                  onActivate={() => onRemove(option.value)}
+                  className="text-muted-foreground ml-1"
+                >
+                  <XCircle className="size-3" aria-hidden="true" />
+                </IconAction>
+              </MotionBadge>
+            )
+          })}
+          {overflowCount > 0 && (
+            <MotionBadge
+              key="overflow"
+              {...chipMotion}
               className={cn(
                 multiSelectVariants({ variant }),
-                'truncate',
+                'text-muted-foreground',
                 isAnimating && 'animate-bounce',
-                clickableBadges && 'cursor-pointer',
-                badgeClassName,
               )}
               style={{ animationDuration: `${animation}s` }}
-              onClick={(event) => {
-                if (clickableBadges) {
-                  event.stopPropagation()
-                  event.preventDefault()
-                  onBadgeClick?.(option)
-                }
-              }}
             >
-              {IconComponent && (
-                <IconComponent className="text-muted-foreground size-3" />
-              )}
-              <span className="max-w-[120px] truncate">{option.label}</span>
+              {`+ ${overflowCount} more`}
               <IconAction
-                label={`Remove ${option.label}`}
-                onActivate={() => onRemove(option.value)}
+                label="Clear extra selected"
+                onActivate={onClearExtra}
                 className="text-muted-foreground ml-1"
               >
                 <XCircle className="size-3" aria-hidden="true" />
               </IconAction>
-            </Badge>
-          )
-        })}
-        {overflowCount > 0 && (
-          <Badge
-            className={cn(
-              multiSelectVariants({ variant }),
-              'text-muted-foreground',
-              isAnimating && 'animate-bounce',
-            )}
-            style={{ animationDuration: `${animation}s` }}
-          >
-            {`+ ${overflowCount} more`}
-            <IconAction
-              label="Clear extra selected"
-              onActivate={onClearExtra}
-              className="text-muted-foreground ml-1"
-            >
-              <XCircle className="size-3" aria-hidden="true" />
-            </IconAction>
-          </Badge>
-        )}
+            </MotionBadge>
+          )}
+        </AnimatePresence>
       </div>
       <div className="flex items-center justify-between">
         <IconAction label="Clear all" onActivate={onClearAll} className="text-muted-foreground mx-2">

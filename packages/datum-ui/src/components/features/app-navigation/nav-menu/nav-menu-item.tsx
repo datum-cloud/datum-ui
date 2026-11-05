@@ -1,10 +1,17 @@
 import type { NavItem, NavItemBadge } from './types'
+// The raw Radix primitives, not `base/collapsible`: this menu runs its own CSS
+// height keyframes plus a Motion stagger tuned for the rail, so it opts out of
+// the base component's Motion height animation.
+import {
+  Root as Collapsible,
+  Content as CollapsibleContent,
+  Trigger as CollapsibleTrigger,
+} from '@radix-ui/react-collapsible'
 import { ChevronRight, ExternalLinkIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 import { memo } from 'react'
 import { cn } from '../../../../utils/cn'
 import { EASE } from '../../../../utils/motion'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../../base/collapsible'
 import {
   SidebarGroup,
   SidebarGroupContent,

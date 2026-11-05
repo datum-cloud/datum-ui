@@ -14,9 +14,6 @@
   "base/chart": [
     "test"
   ],
-  "base/collapsible": [
-    "test"
-  ],
   "base/command": [
     "test"
   ],
@@ -38,25 +35,13 @@
   "base/skeleton": [
     "test"
   ],
-  "base/spinner": [
-    "test"
-  ],
   "base/table": [
-    "test"
-  ],
-  "base/typography": [
     "test"
   ],
   "base/visuallyhidden": [
     "test"
   ],
-  "features/app-navigation": [
-    "test"
-  ],
   "features/date-picker": [
-    "test"
-  ],
-  "features/grid": [
     "test"
   ],
   "features/nprogress": [
