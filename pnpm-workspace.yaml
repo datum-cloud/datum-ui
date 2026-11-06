@@ -62,11 +62,14 @@ overrides:
   "fast-uri@>=3.0.0 <3.1.4": "3.1.9"
   # GHSA HIGH, via storybook/vite/tailwind.
   "postcss@>=8.0.0 <8.5.18": "8.5.32"
-  # dompurify has two copies and both are under the advisory floor (>=3.4.13):
-  #   3.4.8  <- monaco-editor (dev)
-  #   3.4.12 <- isomorphic-dompurify (runtime) and mermaid -> streamdown (dev)
-  # One selector spanning the 3.x line covers both without crossing the major.
-  "dompurify@>=3.0.0 <3.4.13": "3.4.17"
+  # dompurify resolves as two copies from parents with different specs:
+  #   3.4.15 <- monaco-editor (dev + peer), which pins dompurify exactly
+  #   3.4.17 <- isomorphic-dompurify (runtime), already patched
+  # monaco-editor's exact pin cannot move on its own, and every 3.x release from
+  # 3.4.4 through 3.4.16 carries the advisory (fixed in 3.4.17). The selector
+  # must therefore span the whole 3.x line up to the patch, not stop at 3.4.12.
+  # One entry covers both copies without crossing the major.
+  "dompurify@>=3.0.0 <3.4.17": "3.4.17"
   # GHSA MODERATE x5 (prototype pollution, CSS injection, two DoS); mermaid
   # arrives via streamdown, dev tree only.
   "mermaid@>=11.0.0 <11.16.1": "11.17.2"
