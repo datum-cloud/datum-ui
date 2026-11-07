@@ -119,3 +119,5 @@ overrides:
   "source-map-js@>=1.0.0 <1.2.2": "1.2.2"
   # GHSA MODERATE (fixed 7.1.6). Dev tree only: eslint-plugin-vue.
   "postcss-selector-parser@>=7.0.0 <7.1.6": "7.1.7"
+  "minimatch@^10": "11.0.4"
+  "glob@^13": "14.0.3"
