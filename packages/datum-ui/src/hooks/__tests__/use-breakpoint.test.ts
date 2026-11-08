@@ -64,22 +64,25 @@ describe('useBreakpoint', () => {
     setViewport(500)
 
     let root: ReturnType<typeof hydrateRoot> | undefined
-    await act(async () => {
-      root = hydrateRoot(container, createElement(Probe), {
-        onRecoverableError: error => recoverableErrors.push(error),
+    try {
+      await act(async () => {
+        root = hydrateRoot(container, createElement(Probe), {
+          onRecoverableError: error => recoverableErrors.push(error),
+        })
       })
-    })
 
-    const hydrationErrors = consoleError.mock.calls.filter(args =>
-      args.some(arg => typeof arg === 'string' && /hydrat/i.test(arg)),
-    )
+      const hydrationErrors = consoleError.mock.calls.filter(args =>
+        args.some(arg => typeof arg === 'string' && /hydrat/i.test(arg)),
+      )
 
-    expect(recoverableErrors).toEqual([])
-    expect(hydrationErrors).toEqual([])
-    expect(container.textContent).toBe('mobile')
-
-    await act(async () => root?.unmount())
-    consoleError.mockRestore()
-    container.remove()
+      expect(recoverableErrors).toEqual([])
+      expect(hydrationErrors).toEqual([])
+      expect(container.textContent).toBe('mobile')
+    }
+    finally {
+      await act(async () => root?.unmount())
+      consoleError.mockRestore()
+      container.remove()
+    }
   })
 })
