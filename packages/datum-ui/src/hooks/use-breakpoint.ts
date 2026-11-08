@@ -23,18 +23,26 @@ function getBreakpoint(): BreakpointTier {
  * Returns the current viewport breakpoint tier.
  *
  * Breakpoints: mobile <768px, tablet 768–1023px, desktop ≥1024px.
- * SSR-safe: defaults to 'desktop' on server; client corrects on mount.
+ *
+ * `initial` is the tier the server rendered with. Pass the viewport the server
+ * already knows about (for example a viewport client hint) so the hydration
+ * render matches; without one it defaults to 'desktop'. The client measures on
+ * mount and tracks resizes after that, so the first render stays deterministic
+ * on both sides.
  */
-export function useBreakpoint(): BreakpointTier {
-  const [breakpoint, setBreakpoint] = useState<BreakpointTier>(getBreakpoint)
+export function useBreakpoint(initial: BreakpointTier = 'desktop'): BreakpointTier {
+  const [breakpoint, setBreakpoint] = useState<BreakpointTier>(initial)
 
   useEffect(() => {
-    const mqTablet = window.matchMedia(`(min-width: ${TABLET_MIN}px)`)
-    const mqDesktop = window.matchMedia(`(min-width: ${DESKTOP_MIN}px)`)
-
     const update = () => {
+      // eslint-disable-next-line react/set-state-in-effect -- intentional: replace the server's guess with the measured viewport after hydration
       setBreakpoint(getBreakpoint())
     }
+
+    update()
+
+    const mqTablet = window.matchMedia(`(min-width: ${TABLET_MIN}px)`)
+    const mqDesktop = window.matchMedia(`(min-width: ${DESKTOP_MIN}px)`)
 
     mqTablet.addEventListener('change', update)
     mqDesktop.addEventListener('change', update)
