@@ -1,5 +1,16 @@
 # @datum-cloud/datum-ui
 
+## 3.10.0
+
+### Minor Changes
+
+- 696413a: `Logs.Filters` keeps ticked values listed even when the facet data stops including them, so a selection can always be cleared. Previously, if a host built facets from rows already narrowed by the selection, the other options and sometimes the ticked one disappeared. New `buildLogFacetCountQuery` and `facetFromLokiCounts` helpers let hosts fetch each facet's full option list and counts for the time range from Loki, independent of what is ticked.
+- 696413a: New `useLogsUrlState()` hook in `@datum-cloud/datum-ui/logs` keeps the log explorer's time range, filters, search, live toggle and open row in the query string, so a refresh or a shared link reopens the same view. Spread its result onto `Logs.Root`. It uses the History API by default, or takes React Router's `useSearchParams()` pair. `parseLogsUrlState` and `writeLogsUrlState` do the same conversion without React.
+
+### Patch Changes
+
+- 7874f9e: Select, Autocomplete, MultiSelect, the date/time pickers and `ButtonGroupText` now share one trigger style, so they line up when they sit side by side in a toolbar. Each one uses 12px inline padding, `text-sm` at regular weight, the `Input` placeholder colour, and 16px muted icons with an 8px gap, so every chevron or clear icon ends 12px from the right border. Before this change, `SelectTrigger` was medium weight with a faded chevron. The picker trigger used `px-4` with Button colours and a hover fill. MultiSelect's chevron sat about 24px in, and `ButtonGroupText` was medium weight with `px-4`. A new Storybook page, Foundations / Field Alignment, shows the triggers together. Trigger icons (chevrons, calendar, clear) now use the `Icon` wrapper's 1px stroke instead of lucide's heavier default, the clear X is 14px so it doesn't outweigh the chevron next to it, and MultiSelect keeps `px-3` on the left when it shows chips. The logs toolbar search box is now `h-9`, matching the Live, Refresh and Export buttons beside it.
+
 ## 3.9.0
 
 ### Minor Changes
