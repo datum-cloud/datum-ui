@@ -1,5 +1,11 @@
 # @datum-cloud/datum-ui
 
+## 3.9.0
+
+### Minor Changes
+
+- 1cd6406: Make `useBreakpoint` hydrate safely by starting from an optional `initial` breakpoint (defaulting to `desktop`) and measuring the viewport after mount.
+
 ## 3.8.0
 
 ### Minor Changes
