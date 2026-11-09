@@ -87,12 +87,13 @@ export function LogsToolbar({
   children?: ReactNode
   className?: string
 }) {
-  const { onRefresh, onExport, entries } = useLogs()
+  const { onRefresh, onExport, entries, isFetching, live } = useLogs()
+  const refreshing = isFetching && !live
 
   return (
     <div
       data-slot="logs-toolbar"
-      className={cn('flex items-center gap-2 border-b px-3 py-2', className)}
+      className={cn('relative flex items-center gap-2 border-b px-3 py-2', className)}
     >
       <LogsSearch />
       {children}
@@ -105,7 +106,7 @@ export function LogsToolbar({
           aria-label="Refresh logs"
           onClick={onRefresh}
         >
-          <Icon icon={RefreshCw} />
+          <Icon icon={RefreshCw} className={cn(refreshing && 'animate-spin')} />
         </Button>
       )}
       {onExport && (
@@ -118,6 +119,14 @@ export function LogsToolbar({
         >
           <Icon icon={Download} />
         </Button>
+      )}
+      {refreshing && (
+        <div
+          role="progressbar"
+          aria-label="Loading logs"
+          data-slot="logs-progress"
+          className="bg-primary/60 absolute inset-x-0 -bottom-px h-0.5 animate-pulse"
+        />
       )}
     </div>
   )
