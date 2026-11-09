@@ -1,7 +1,7 @@
 'use client'
 
-import type { LogsRootProps } from '../types'
-import { useCallback, useMemo, useRef } from 'react'
+import type { LogFacet, LogsRootProps } from '../types'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from '../../../../utils/cn'
 import { useControllableState } from '../hooks/use-controllable-state'
 import { LogsContext } from '../hooks/use-logs'
@@ -22,6 +22,13 @@ function useShallowArray<T>(next: readonly T[]): readonly T[] {
   return same ? prev : next
 }
 
+/** Content signature for facets: names, values and counts. */
+function facetsKey(facets: readonly LogFacet[]): string {
+  return facets
+    .map(facet => `${facet.name}=${facet.options.map(option => `${option.value}:${option.count ?? ''}`).join(',')}`)
+    .join('|')
+}
+
 export function LogsRoot({
   entries,
   facets,
@@ -37,6 +44,7 @@ export function LogsRoot({
   selectedId,
   defaultSelectedId = null,
   isLoading = false,
+  isFetching = false,
   error,
   columns = DEFAULT_LOG_COLUMNS,
   onTimeRangeChange,
@@ -75,10 +83,22 @@ export function LogsRoot({
     onChange: onSelectedIdChange,
   })
 
-  const resolvedFacets = useMemo(
+  const latestFacets = useMemo(
     () => facets ?? facetsFromEntries(entries),
     [facets, entries],
   )
+  // While a request is in flight, keep the last facets that had options. A
+  // host that derives facets from rows, or drops them while its facet query
+  // reloads, would otherwise blank the filters on every click. Stored as state
+  // and updated during render (React's "previous value" pattern), keyed on
+  // content so an inline `facets` array doesn't update it on every render.
+  const latestKey = useMemo(() => facetsKey(latestFacets), [latestFacets])
+  const [lastFacets, setLastFacets] = useState({ key: latestKey, facets: latestFacets })
+  if (latestFacets.length > 0 && latestKey !== lastFacets.key)
+    setLastFacets({ key: latestKey, facets: latestFacets })
+  const resolvedFacets = latestFacets.length === 0 && (isLoading || isFetching)
+    ? lastFacets.facets
+    : latestFacets
   const resolvedHistogram = useMemo(
     () => histogram ?? histogramFromEntries(entries, currentTimeRange),
     [histogram, entries, currentTimeRange],
@@ -153,6 +173,7 @@ export function LogsRoot({
     selectPrevious,
     selectNext,
     isLoading,
+    isFetching,
     error,
     columns: resolvedColumns,
     hasActiveFilters: filtersAreActive(currentFilters),
@@ -179,6 +200,7 @@ export function LogsRoot({
     selectPrevious,
     selectNext,
     isLoading,
+    isFetching,
     error,
     resolvedColumns,
     onRefresh,

@@ -79,20 +79,34 @@ export function PickerTrigger({
         </span>
       </span>
       {clearable && hasValue && (
-        <button
-          type="button"
+        // Not a <button>: the trigger is one, and a nested button is invalid
+        // HTML. The server-rendered page then closes the trigger early and
+        // drops the X below it until React hydrates. A role="button" span
+        // with a tab stop and Enter/Space keeps it operable, as MultiSelect's
+        // chip actions do.
+        <span
+          role="button"
+          tabIndex={0}
           aria-label="Clear"
           onClick={(e) => {
             e.stopPropagation()
+            e.preventDefault()
             actions.clear()
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation()
+              e.preventDefault()
+              actions.clear()
+            }
           }}
           // -m-0.5 p-0.5 widens the hit area without pushing the icon off the
           // 12px right edge every other trigger's chevron sits on.
-          className="text-muted-foreground hover:text-destructive -m-0.5 shrink-0 rounded-sm p-0.5 transition-colors"
+          className="text-muted-foreground hover:text-destructive focus-visible:ring-ring -m-0.5 inline-flex shrink-0 cursor-pointer rounded-sm p-0.5 transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           {/* `!` beats the base Button's `[&_svg]:size-4`, which would otherwise win on specificity. */}
           <Icon icon={X} size={14} className="size-3.5! shrink-0" aria-hidden="true" />
-        </button>
+        </span>
       )}
     </Button>
   )

@@ -91,6 +91,7 @@ export function LogsTable({ className }: { className?: string }) {
     selectedId,
     setSelectedId,
     isLoading,
+    isFetching,
     error,
     selectPrevious,
     selectNext,
@@ -143,7 +144,7 @@ export function LogsTable({ className }: { className?: string }) {
       data-slot="logs-table"
       className={cn('flex min-h-0 flex-1 flex-col overflow-auto outline-none', className)}
       tabIndex={0}
-      aria-busy={isLoading || undefined}
+      aria-busy={isLoading || isFetching || undefined}
       onKeyDown={onKeyDown}
     >
       {showErrorBanner && (
@@ -177,7 +178,12 @@ export function LogsTable({ className }: { className?: string }) {
             ))}
           </TableRow>
         </TableHeader>
-        <TableBody>
+        {/* Earlier results stay while a request is in flight, dimmed so the
+            change reads as pending rather than done. */}
+        <TableBody
+          data-fetching={isFetching && hasRows ? '' : undefined}
+          className="transition-opacity duration-150 data-fetching:opacity-60"
+        >
           {showSkeleton && (
             Array.from({ length: SKELETON_ROWS }, (_, index) => (
               <TableRow key={`skeleton-${index}`} data-slot="logs-skeleton-row">

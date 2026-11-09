@@ -153,12 +153,10 @@ export function LogsFilters({ className }: { className?: string }) {
         <LogsTimeRangeFilter />
         {showFacetSkeleton
           ? <LogsFiltersSkeleton />
-          : facets.map((facet, index) => (
-              <LogsFilterGroup
-                key={facet.name}
-                facet={facet}
-                defaultOpen={index === 0}
-              />
+          : facets.map(facet => (
+              // Every group starts open, so all options are visible at once
+              // and the loaded list matches the skeleton (no collapse on load).
+              <LogsFilterGroup key={facet.name} facet={facet} defaultOpen />
             ))}
       </div>
     </aside>

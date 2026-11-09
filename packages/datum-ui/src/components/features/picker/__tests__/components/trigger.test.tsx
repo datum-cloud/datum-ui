@@ -1,4 +1,5 @@
 import { fireEvent, render } from '@testing-library/react'
+import { renderToString } from 'react-dom/server'
 import { describe, expect, it, vi } from 'vitest'
 import { Picker } from '../../components/root'
 import { PickerTrigger } from '../../components/trigger'
@@ -45,7 +46,20 @@ describe('picker.Trigger', () => {
     expect(getByRole('button', { name: /clear/i })).toBeDefined()
   })
 
-  it('clear is a real button, stops propagation, and calls clear()', () => {
+  it('clear stops propagation and calls clear()', () => {
+    const onChange = vi.fn()
+    const { getByRole } = render(
+      <Picker.Root mode="date" value={new Date(2026, 0, 15)} onChange={onChange}>
+        <PickerTrigger placeholder="Pick a date" clearable />
+      </Picker.Root>,
+    )
+    const trigger = getByRole('combobox')
+    fireEvent.click(getByRole('button', { name: /clear/i }))
+    expect(onChange).toHaveBeenCalledWith(null)
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+  })
+
+  it.each(['Enter', ' '])('clear works from the keyboard (%j)', (key) => {
     const onChange = vi.fn()
     const { getByRole } = render(
       <Picker.Root mode="date" value={new Date(2026, 0, 15)} onChange={onChange}>
@@ -53,9 +67,20 @@ describe('picker.Trigger', () => {
       </Picker.Root>,
     )
     const clearBtn = getByRole('button', { name: /clear/i })
-    expect(clearBtn.tagName).toBe('BUTTON')
-    fireEvent.click(clearBtn)
+    expect(clearBtn.tabIndex).toBe(0)
+    fireEvent.keyDown(clearBtn, { key })
     expect(onChange).toHaveBeenCalledWith(null)
+  })
+
+  it('never nests a button in the trigger, so server HTML keeps the X inside', () => {
+    const html = renderToString(
+      <Picker.Root mode="date" value={new Date(2026, 0, 15)} onChange={vi.fn()}>
+        <PickerTrigger placeholder="Pick a date" clearable />
+      </Picker.Root>,
+    )
+    expect(html.match(/<button/g)).toHaveLength(1)
+    const doc = new DOMParser().parseFromString(html, 'text/html')
+    expect(doc.querySelector('button [aria-label="Clear"]')).not.toBeNull()
   })
 
   it('does not render Clear when clearable is false', () => {

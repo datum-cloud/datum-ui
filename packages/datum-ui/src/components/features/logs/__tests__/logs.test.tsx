@@ -81,6 +81,89 @@ describe('logs filters', () => {
     await user.click(screen.getByRole('button', { name: 'Reset' }))
     expect(checkbox).not.toBeChecked()
   })
+
+  it('opens every filter group by default', () => {
+    render(
+      <Logs.Root
+        entries={entries}
+        facets={[
+          { name: 'severity', label: 'Severity', options: [{ value: 'WARN', count: 1 }] },
+          { name: 'service_name', label: 'Service', options: [{ value: 'compute-workload', count: 1 }] },
+          { name: 'resource_name', label: 'Resource', options: [{ value: 'checkout-api', count: 1 }] },
+        ]}
+      >
+        <Logs.Filters />
+      </Logs.Root>,
+    )
+
+    for (const name of ['WARN', 'compute-workload', 'checkout-api'])
+      expect(screen.getByRole('checkbox', { name })).toBeVisible()
+  })
+})
+
+describe('logs refreshing', () => {
+  it('keeps rows and shows progress while fetching, without skeletons', () => {
+    const { container } = render(
+      <Logs.Root entries={entries} isFetching onRefresh={() => {}}>
+        <Logs.Toolbar />
+        <Logs.Table />
+      </Logs.Root>,
+    )
+
+    expect(screen.getByRole('progressbar', { name: 'Loading logs' })).toBeInTheDocument()
+    expect(screen.getByText(/upstream timeout/)).toBeInTheDocument()
+    expect(container.querySelector('[data-slot="logs-skeleton-row"]')).toBeNull()
+    expect(container.querySelector('tbody')).toHaveAttribute('data-fetching')
+    expect(container.querySelector('[data-slot="logs-table"]')).toHaveAttribute('aria-busy', 'true')
+  })
+
+  it('shows no progress bar while live, so polls do not flash it', () => {
+    render(
+      <Logs.Root entries={entries} isFetching live>
+        <Logs.Toolbar />
+      </Logs.Root>,
+    )
+    expect(screen.queryByRole('progressbar')).toBeNull()
+  })
+
+  it('settles with an inline facets array that is new on every render', () => {
+    function Inline() {
+      const [count, setCount] = useState(0)
+      return (
+        <Logs.Root entries={entries} facets={[{ name: 'severity', label: 'Severity', options: [{ value: 'INFO', count }] }]}>
+          <button type="button" onClick={() => setCount(c => c + 1)}>bump</button>
+          <Logs.Filters />
+        </Logs.Root>
+      )
+    }
+    render(<Inline />)
+    fireEvent.click(screen.getByRole('button', { name: 'bump' }))
+    expect(screen.getByRole('checkbox', { name: /INFO/ })).toBeInTheDocument()
+  })
+
+  it('keeps the last facets while a request is in flight', () => {
+    const facet = { name: 'severity', label: 'Severity', options: [{ value: 'WARN', count: 1 }] }
+    const { rerender } = render(
+      <Logs.Root entries={entries} facets={[facet]}>
+        <Logs.Filters />
+      </Logs.Root>,
+    )
+    expect(screen.getByRole('checkbox', { name: 'WARN' })).toBeInTheDocument()
+
+    rerender(
+      <Logs.Root entries={[]} facets={[]} isFetching>
+        <Logs.Filters />
+      </Logs.Root>,
+    )
+    expect(screen.getByRole('checkbox', { name: 'WARN' })).toBeInTheDocument()
+
+    rerender(
+      <Logs.Root entries={[]} facets={[]}>
+        <Logs.Filters />
+      </Logs.Root>,
+    )
+    expect(screen.queryByRole('checkbox', { name: 'WARN' })).toBeNull()
+  })
 })
 
 describe('logs explorer', () => {

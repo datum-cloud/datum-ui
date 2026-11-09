@@ -7,7 +7,7 @@ import {
   Logs,
   useLogsUrlState,
 } from '@datum-cloud/datum-ui/logs'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { albLogEntries, logEntries as allEntries } from '../helpers/logs-fixture'
 
 const facets = facetsFromEntries(allEntries)
@@ -133,6 +133,58 @@ export const UrlState: Story = {
 // the LogQL query to a resource. Service is not a facet since it is implied.
 const proxyEntries = allEntries.filter(entry => entry.labels.resource_name === 'gateway-eu-west')
 const proxyFacets = facetsFromEntries(proxyEntries, ['severity'])
+
+function RefreshingStory() {
+  // Stands in for a server query: each filter or search change takes a moment
+  // to answer, and the previous result stays on screen meanwhile, as TanStack
+  // Query does with `placeholderData: keepPreviousData`.
+  const [filters, setFilters] = useState<LogFilters>({})
+  const [search, setSearch] = useState('')
+  const [refreshes, setRefreshes] = useState(0)
+  const [answered, setAnswered] = useState({ filters, search, refreshes, entries: allEntries })
+  // In flight until the answer matches what was asked for.
+  const isFetching = answered.filters !== filters || answered.search !== search || answered.refreshes !== refreshes
+
+  useEffect(() => {
+    const timer = setTimeout(
+      () => setAnswered({ filters, search, refreshes, entries: filterEntries(allEntries, filters, search) }),
+      1200,
+    )
+    return () => clearTimeout(timer)
+  }, [filters, search, refreshes])
+  const shown = answered.entries
+
+  return (
+    <div className="h-screen">
+      <Logs.Root
+        entries={shown}
+        facets={facets}
+        filters={filters}
+        onFiltersChange={setFilters}
+        search={search}
+        onSearchChange={setSearch}
+        isFetching={isFetching}
+        onRefresh={() => setRefreshes(count => count + 1)}
+      >
+        <Logs.Explorer />
+      </Logs.Root>
+    </div>
+  )
+}
+
+export const Refreshing: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Each filter, search or refresh takes 1.2s to answer. `isFetching` keeps the previous '
+          + 'rows on screen, dimmed, with a progress bar under the toolbar and a spinning Refresh '
+          + 'icon. Skeletons are only for the first load (`isLoading`).',
+      },
+    },
+  },
+  render: () => <RefreshingStory />,
+}
 
 export const SingleProxy: Story = {
   parameters: {

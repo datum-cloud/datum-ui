@@ -139,7 +139,20 @@ export interface LogsRootProps {
   defaultLive?: boolean
   selectedId?: string | null
   defaultSelectedId?: string | null
+  /**
+   * The first load: nothing to show yet, so the table, timeline and filters
+   * draw skeletons. For later requests use `isFetching` instead.
+   */
   isLoading?: boolean
+  /**
+   * A request is in flight while earlier results are still on screen (a
+   * filter, search or range change, or a refresh). The explorer keeps those
+   * results, dims the rows and shows a progress bar under the toolbar rather
+   * than swapping to skeletons. Pair it with keeping previous data in your
+   * query (TanStack's `placeholderData: keepPreviousData`). No bar while Live
+   * is on, so each poll doesn't flash it.
+   */
+  isFetching?: boolean
   error?: ReactNode
   columns?: readonly LogColumnSpec[]
   onTimeRangeChange?: (range: LogTimeRange) => void
@@ -174,6 +187,7 @@ export interface LogsContextValue {
   selectPrevious: () => void
   selectNext: () => void
   isLoading: boolean
+  isFetching: boolean
   error: ReactNode
   columns: readonly LogColumn[]
   hasActiveFilters: boolean
