@@ -81,6 +81,24 @@ describe('logs filters', () => {
     await user.click(screen.getByRole('button', { name: 'Reset' }))
     expect(checkbox).not.toBeChecked()
   })
+
+  it('opens every filter group by default', () => {
+    render(
+      <Logs.Root
+        entries={entries}
+        facets={[
+          { name: 'severity', label: 'Severity', options: [{ value: 'WARN', count: 1 }] },
+          { name: 'service_name', label: 'Service', options: [{ value: 'compute-workload', count: 1 }] },
+          { name: 'resource_name', label: 'Resource', options: [{ value: 'checkout-api', count: 1 }] },
+        ]}
+      >
+        <Logs.Filters />
+      </Logs.Root>,
+    )
+
+    for (const name of ['WARN', 'compute-workload', 'checkout-api'])
+      expect(screen.getByRole('checkbox', { name })).toBeVisible()
+  })
 })
 
 describe('logs explorer', () => {
