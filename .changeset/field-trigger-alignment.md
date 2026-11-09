@@ -1,5 +1,0 @@
----
-"@datum-cloud/datum-ui": patch
----
-
-Select, Autocomplete, MultiSelect, the date/time pickers and `ButtonGroupText` now share one trigger style, so they line up when they sit side by side in a toolbar. Each one uses 12px inline padding, `text-sm` at regular weight, the `Input` placeholder colour, and 16px muted icons with an 8px gap, so every chevron or clear icon ends 12px from the right border. Before this change, `SelectTrigger` was medium weight with a faded chevron. The picker trigger used `px-4` with Button colours and a hover fill. MultiSelect's chevron sat about 24px in, and `ButtonGroupText` was medium weight with `px-4`. A new Storybook page, Foundations / Field Alignment, shows the triggers together. Trigger icons (chevrons, calendar, clear) now use the `Icon` wrapper's 1px stroke instead of lucide's heavier default, the clear X is 14px so it doesn't outweigh the chevron next to it, and MultiSelect keeps `px-3` on the left when it shows chips. The logs toolbar search box is now `h-9`, matching the Live, Refresh and Export buttons beside it.
