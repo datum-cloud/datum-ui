@@ -12,6 +12,7 @@ import {
 } from '@repo/shadcn/ui/select'
 import * as React from 'react'
 import { cn } from '../../../utils/cn'
+import { fieldTriggerClassName } from '../../../utils/field-styles'
 
 const Select = ShadcnSelect
 
@@ -28,17 +29,10 @@ function SelectTrigger({ ref, className, ...props }: React.ComponentProps<typeof
     <ShadcnSelectTrigger
       ref={ref}
       className={cn(
-        'rounded-lg',
-        'bg-input-background/50',
-        'text-input-foreground',
-        'border-input-border',
-        'placeholder:text-input-placeholder',
-        // Flat at rest like Input; the shadcn base adds shadow-xs.
-        'shadow-none',
-        'focus-visible:ring-0 focus-visible:ring-offset-0',
-        'focus-visible:border-input-focus-border',
-        'focus-visible:shadow-(--input-focus-shadow)',
-        'aria-invalid:border-destructive',
+        // Shared with Autocomplete, MultiSelect and the pickers so they line up.
+        // Also flattens the shadcn base (shadow-xs, rounded-md, ring).
+        fieldTriggerClassName,
+        'data-[placeholder]:text-input-placeholder',
         className,
       )}
       {...props}

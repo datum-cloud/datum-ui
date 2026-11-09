@@ -5,7 +5,7 @@ import { Separator } from '@repo/shadcn/ui/separator'
 import { cva } from 'class-variance-authority'
 
 const buttonGroupVariants = cva(
-  'flex w-fit items-stretch has-[>[data-slot=button-group]]:gap-2 [&>*]:focus-visible:relative [&>*]:focus-visible:z-10 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-md [&>[data-slot=select-trigger]:not([class*=\'w-\'])]:w-fit [&>input]:flex-1',
+  'flex w-fit items-stretch has-[>[data-slot=button-group]]:gap-2 [&>*]:focus-visible:relative [&>*]:focus-visible:z-10 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-lg [&>[data-slot=select-trigger]:not([class*=\'w-\'])]:w-fit [&>input]:flex-1',
   {
     variants: {
       orientation: {
@@ -49,7 +49,9 @@ function ButtonGroupText({
   return (
     <Comp
       className={cn(
-        'bg-muted flex items-center gap-2 rounded-md border px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*=\'size-\'])]:size-4',
+        // Sized and typed like the field triggers it sits beside (Select,
+        // MultiSelect, pickers): 12px padding, text-sm, regular weight.
+        'bg-muted text-muted-foreground border-input-border flex items-center gap-2 rounded-lg border px-3 text-sm font-normal [&_svg]:pointer-events-none [&_svg:not([class*=\'size-\'])]:size-4',
         className,
       )}
       {...props}
