@@ -1,5 +1,7 @@
 export { resolveLogColumns } from './components/columns'
 export { useLogs } from './hooks/use-logs'
+export { useLogsUrlState } from './hooks/use-logs-url-state'
+export type { LogsUrlStateProps, SetLogsSearchParams, UseLogsUrlStateOptions } from './hooks/use-logs-url-state'
 export { Logs } from './logs'
 export type {
   BuildLogQLOptions,
@@ -24,7 +26,9 @@ export type {
   ParsedTextLogLine,
 } from './types'
 export {
+  buildLogFacetCountQuery,
   buildLogQL,
+  facetFromLokiCounts,
   facetsFromEntries,
   filterEntries,
   flattenLokiStreams,
@@ -36,13 +40,17 @@ export {
   LOG_TIME_PRESETS,
   logLineDisplay,
   logRequestHost,
+  LOGS_URL_KEYS,
   logTimeRangeLabel,
   logUserAgent,
   nsToDate,
   parseLogLine,
+  parseLogsUrlState,
   parseUserAgent,
   resolveLogTimeRange,
   searchableLogText,
   severityBadgeType,
   splitPathQuery,
+  writeLogsUrlState,
 } from './utils'
+export type { BuildLogFacetCountQueryOptions, LogsUrlState, LogsUrlStateOptions, LokiVectorResponse, LokiVectorSample } from './utils'

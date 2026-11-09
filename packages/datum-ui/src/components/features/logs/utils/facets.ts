@@ -3,7 +3,7 @@ import { CANONICAL_FACET_NAMES, FACET_LABELS, SEVERITY_ORDER } from './constants
 import { logRequestHost } from './host'
 import { formatHttpLogLine, logLineDisplay } from './parse-log-line'
 
-function facetLabel(name: string): string {
+export function facetLabel(name: string): string {
   const mapped = FACET_LABELS[name]
   if (mapped)
     return mapped
@@ -11,7 +11,7 @@ function facetLabel(name: string): string {
   return raw ? raw.charAt(0).toUpperCase() + raw.slice(1) : raw
 }
 
-function compareFacetValues(name: string, a: string, b: string): number {
+export function compareFacetValues(name: string, a: string, b: string): number {
   if (name === 'severity') {
     const aIndex = SEVERITY_ORDER.indexOf(a as typeof SEVERITY_ORDER[number])
     const bIndex = SEVERITY_ORDER.indexOf(b as typeof SEVERITY_ORDER[number])

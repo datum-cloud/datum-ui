@@ -1,12 +1,13 @@
-import type { LogColumnSpec, LogFilters, LogTimeRange } from '@datum-cloud/datum-ui/logs'
+import type { LogColumnSpec, LogFilters, LogTimeRange, SetLogsSearchParams } from '@datum-cloud/datum-ui/logs'
 import type { Meta, StoryObj } from 'storybook-react-rsbuild'
 import {
   facetsFromEntries,
   filterEntries,
   lastThirtyMinutes,
   Logs,
+  useLogsUrlState,
 } from '@datum-cloud/datum-ui/logs'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { albLogEntries, logEntries as allEntries } from '../helpers/logs-fixture'
 
 const facets = facetsFromEntries(allEntries)
@@ -81,6 +82,51 @@ export const Explorer: Story = {
     },
   },
   render: () => <ExplorerStory />,
+}
+
+function UrlStateStory() {
+  // Stands in for a router's search params so the demo doesn't rewrite the
+  // Storybook iframe URL. In an app, call useLogsUrlState() with no arguments
+  // (History API) or pass React Router's useSearchParams() pair.
+  const [params, setParams] = useState(() => new URLSearchParams())
+  const setSearchParams = useCallback<SetLogsSearchParams>(update => setParams(prev => update(prev)), [])
+  const logsState = useLogsUrlState({ searchParams: params, setSearchParams })
+  const entries = useMemo(
+    () => filterEntries(allEntries, logsState.filters, logsState.search),
+    [logsState.filters, logsState.search],
+  )
+  const query = decodeURIComponent(params.toString())
+
+  return (
+    <div className="flex h-screen flex-col">
+      <div className="bg-muted/40 border-b px-3 py-2 font-mono text-xs" data-testid="logs-url">
+        <span className="text-muted-foreground">/logs</span>
+        {query ? `?${query}` : ''}
+      </div>
+      <div className="min-h-0 flex-1">
+        <Logs.Root {...logsState} entries={entries} facets={facets} onRefresh={() => {}} onExport={() => {}}>
+          <Logs.Explorer />
+        </Logs.Root>
+      </div>
+    </div>
+  )
+}
+
+export const UrlState: Story = {
+  name: 'URL state',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`useLogsUrlState()` keeps the time range, filters, search, live toggle and open row in the query string, '
+          + 'so a refresh or a shared link reopens the same view. Spread its result onto `Logs.Root` and read the same '
+          + 'values to build the LogQL query. The bar above the explorer shows the query string it writes. With no '
+          + 'arguments it uses the History API; pass `{ searchParams, setSearchParams }` from React Router\'s '
+          + '`useSearchParams()` to go through the router instead.',
+      },
+    },
+  },
+  render: () => <UrlStateStory />,
 }
 
 // One proxy's slice of the mixed fixture, as a host would pass after scoping
