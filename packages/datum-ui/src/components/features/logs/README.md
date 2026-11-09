@@ -43,6 +43,35 @@ The host owns fetching. Facet checkboxes and search in Storybook filter client-s
 
 The table shows one state at a time. Skeleton rows appear only while loading with nothing to show; an error with no rows renders the in-table error state; an error while rows are already on screen (a failed refresh) keeps the rows and shows a slim `logs-error-banner` above them with the message and Retry.
 
+## URL state
+
+`useLogsUrlState()` keeps the time range, filters, search, live toggle and open row in the query string, so a refresh, the back button or a shared link reopens the same view. Spread its result onto `Logs.Root`, and read the same values to build the query:
+
+```tsx
+import { buildLogQL, Logs, resolveLogTimeRange, useLogsUrlState } from '@datum-cloud/datum-ui/logs'
+
+const logsState = useLogsUrlState()
+const query = buildLogQL({ matchers: logsState.filters, lineContains: logsState.search })
+const { from, to } = resolveLogTimeRange(logsState.timeRange)
+
+<Logs.Root {...logsState} entries={entries} onRefresh={refetch}>
+  <Logs.Explorer />
+</Logs.Root>
+```
+
+With no arguments it reads and writes `window.location` through the History API. That suits plain pages and Next.js App Router, which follows History API calls. If a client router owns the URL (React Router, TanStack Router), pass its search params instead. Writing `window.history` behind the router's back leaves its location stale, and its next navigation can drop these params:
+
+```tsx
+const [searchParams, setSearchParams] = useSearchParams()
+const logsState = useLogsUrlState({ searchParams, setSearchParams })
+```
+
+The URL looks like `?range=last-1h&filter=severity:ERROR&filter=service_name:waf&q=timeout&live=1&log=<entry id>`. A hand-picked range is written as `from` and `to` ISO timestamps instead of `range`. Defaults are left out, params the app owns are kept, and malformed values fall back to defaults so an old or hand-edited link still opens. Changes replace the current history entry; pass `history: 'push'` to add one per change. Pass `prefix: 'logs.'` when two explorers share a page or a key clashes with one the app uses, and `defaultTimeRange` if the page doesn't default to the last 30 minutes.
+
+A preset range is resolved to "now" when the URL is read, and the hook hands back the same `timeRange` object until one of its own params changes, so it is safe to use as a query key. Call `resolveLogTimeRange` before each refresh as usual. `parseLogsUrlState` and `writeLogsUrlState` are the same conversion without React, for loaders or server code.
+
+The open row (`log`) is an entry id, which is only stable while the same query returns the same lines. On a link with a preset range the row may have scrolled out of the window, and the detail panel simply stays closed.
+
 ## Time range
 
 The sidebar time control leads with relative presets (`LOG_TIME_PRESETS`: last 15 minutes through last 7 days) and keeps the absolute date/time picker beside them. Picking a preset stores its key on `LogTimeRange.preset`; hand-picked ranges have no `preset`. Before each refresh or poll, call `resolveLogTimeRange(range)` to re-anchor a preset window to "now" — absolute ranges pass through unchanged. `logTimeRangeLabel(range)` gives the same text the trigger shows.
@@ -66,6 +95,30 @@ const query = resolveLogTimeRange(timeRange) // { from, to, preset: 'last-30m' }
 A LogQL `count_over_time` range query (`sum(count_over_time({...}[step]))` with `step = (to - from) / 60`) maps directly onto `LogHistogramBucket`.
 
 `facetsFromEntries` defaults to `severity`, `service_name`, and `resource_name`. Pass a name list as the second argument to include other labels.
+
+## Facet options from Loki
+
+`facetsFromEntries` only sees the rows you fetched. If those rows came from a query that already applies the user's facet selections, ticking `200` refetches only 200s and every other status code drops out of the list. The counts also only cover the page (around 100 lines), not the window.
+
+To keep every option listed with its real total for the time range, fetch facets separately, scoped by the page's own matchers but not by the user's selections or search:
+
+```ts
+import { buildLogFacetCountQuery, facetFromLokiCounts } from '@datum-cloud/datum-ui/logs'
+
+const query = buildLogFacetCountQuery({
+  label: 'response_code',
+  matchers: { route_name: [routeName] }, // page scope only
+  timeRange: resolveLogTimeRange(timeRange),
+})
+// sum by (response_code) (count_over_time({route_name="..."}[1800s]))
+// Run as an instant query: GET /loki/api/v1/query?query=...&time=<timeRange.to>
+
+const facet = facetFromLokiCounts('response_code', response, { label: 'Status code' })
+```
+
+Run one query per facet, in parallel, and refetch them when the time range or scope changes, not when filters change. Loki can group by indexed stream labels and by structured metadata. A facet derived in the browser from several labels (such as the Host column, via `logRequestHost`) has no single label to group by, so keep building that one from entries.
+
+Whatever the facets contain, `Logs.Filters` always lists the values that are ticked, so a selection can always be cleared.
 
 On a single-resource page, query with that matcher already applied, pass only the remaining facets (usually `severity`), and hide implied columns:
 

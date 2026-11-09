@@ -2,6 +2,8 @@ import type { AutocompleteOption } from './autocomplete.types'
 import { ChevronDown } from 'lucide-react'
 import * as React from 'react'
 import { cn } from '../../../utils/cn'
+import { fieldIconClassName, fieldPlaceholderClassName, fieldTriggerClassName } from '../../../utils/field-styles'
+import { Icon } from '../../icons/icon-wrapper'
 import { LoaderOverlay } from '../loader-overlay'
 
 interface TriggerProps {
@@ -31,7 +33,7 @@ function Trigger({ ref, selectedOption, createdValue, renderValue, placeholder, 
     displayContent = <span className="truncate">{createdValue}</span>
   }
   else {
-    displayContent = <span className="text-muted-foreground">{placeholder}</span>
+    displayContent = <span className={cn('truncate', fieldPlaceholderClassName)}>{placeholder}</span>
   }
 
   return (
@@ -43,11 +45,8 @@ function Trigger({ ref, selectedOption, createdValue, renderValue, placeholder, 
       aria-expanded={open}
       disabled={disabled || loading}
       className={cn(
-        'text-input-foreground placeholder:text-input-placeholder',
-        'border-input-border bg-input-background/50 relative flex h-10 w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition-all',
-        'focus-visible:border-input-focus-border focus-visible:shadow-(--input-focus-shadow)',
-        'focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-hidden',
-        'aria-invalid:border-destructive',
+        fieldTriggerClassName,
+        'relative h-10 justify-between py-2',
         (disabled || loading) && 'cursor-not-allowed opacity-50',
         className,
       )}
@@ -55,7 +54,7 @@ function Trigger({ ref, selectedOption, createdValue, renderValue, placeholder, 
     >
       {loading && <LoaderOverlay />}
       <div className="min-w-0 flex-1">{displayContent}</div>
-      <ChevronDown className="text-muted-foreground ml-2 size-4 shrink-0" />
+      <Icon icon={ChevronDown} className={fieldIconClassName} aria-hidden="true" />
     </button>
   )
 }

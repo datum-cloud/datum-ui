@@ -3,6 +3,8 @@ import { ChevronDown, XCircle, XIcon } from 'lucide-react'
 import { AnimatePresence } from 'motion/react'
 import * as React from 'react'
 import { cn } from '../../../utils/cn'
+import { fieldIconClassName } from '../../../utils/field-styles'
+import { Icon } from '../../icons/icon-wrapper'
 import { MotionBadge, useChipMotion } from '../_shared'
 import { multiSelectVariants } from './multi-select-shared'
 
@@ -90,8 +92,8 @@ export function SelectedBadgeList({
   const chipMotion = useChipMotion()
 
   return (
-    <div className="flex w-full items-center justify-between">
-      <div className="relative flex flex-wrap items-center gap-2">
+    <div className="flex w-full items-center justify-between gap-2">
+      <div className="relative flex min-w-0 flex-wrap items-center gap-2">
         <AnimatePresence initial={false} mode="popLayout">
           {visibleOptions.map((option) => {
             const IconComponent = option.icon
@@ -124,7 +126,7 @@ export function SelectedBadgeList({
                   onActivate={() => onRemove(option.value)}
                   className="text-muted-foreground ml-1"
                 >
-                  <XCircle className="size-3" aria-hidden="true" />
+                  <Icon icon={XCircle} size={12} className="size-3" aria-hidden="true" />
                 </IconAction>
               </MotionBadge>
             )
@@ -146,18 +148,18 @@ export function SelectedBadgeList({
                 onActivate={onClearExtra}
                 className="text-muted-foreground ml-1"
               >
-                <XCircle className="size-3" aria-hidden="true" />
+                <Icon icon={XCircle} size={12} className="size-3" aria-hidden="true" />
               </IconAction>
             </MotionBadge>
           )}
         </AnimatePresence>
       </div>
-      <div className="flex items-center justify-between">
-        <IconAction label="Clear all" onActivate={onClearAll} className="text-muted-foreground mx-2">
-          <XIcon className="h-4" aria-hidden="true" />
+      <div className="flex shrink-0 items-center gap-2">
+        <IconAction label="Clear all" onActivate={onClearAll} className="text-muted-foreground hover:text-foreground rounded-sm">
+          <Icon icon={XIcon} size={14} className="size-3.5 shrink-0" aria-hidden="true" />
         </IconAction>
-        <span className="bg-border flex h-full min-h-6 w-px" aria-hidden="true" />
-        <ChevronDown className="text-muted-foreground mx-2 h-4" aria-hidden="true" />
+        <span className="bg-border h-4 w-px" aria-hidden="true" />
+        <Icon icon={ChevronDown} className={fieldIconClassName} aria-hidden="true" />
       </div>
     </div>
   )

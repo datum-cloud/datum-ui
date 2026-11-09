@@ -20,6 +20,14 @@ export function LogsFilterGroup({
 }) {
   const { filters, toggleFilterValue } = useLogs()
   const selected = filters[facet.name] ?? []
+  // A ticked value stays listed even when the facet data no longer has it
+  // (e.g. the host derived facets from rows already narrowed by this filter),
+  // so it can always be unticked.
+  const known = new Set(facet.options.map(option => option.value))
+  const options = [
+    ...facet.options,
+    ...selected.filter(value => !known.has(value)).map(value => ({ value, count: undefined })),
+  ]
 
   return (
     <Collapsible defaultOpen={defaultOpen} className="border-b border-border">
@@ -29,7 +37,7 @@ export function LogsFilterGroup({
       </CollapsibleTrigger>
       <CollapsibleContent>
         <ul className="flex flex-col gap-1 px-3 pb-3">
-          {facet.options.map(option => (
+          {options.map(option => (
             <li key={option.value}>
               <label className="hover:bg-muted/40 flex cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-sm">
                 <Checkbox

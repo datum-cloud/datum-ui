@@ -2,6 +2,8 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Button } from '@repo/shadcn/ui/button'
 import { CalendarIcon, X } from 'lucide-react'
 import { cn } from '../../../../utils/cn'
+import { fieldIconClassName, fieldPlaceholderClassName, fieldTriggerClassName } from '../../../../utils/field-styles'
+import { Icon } from '../../../icons/icon-wrapper'
 import { usePickerContext } from './context'
 
 interface PickerTriggerProps extends Omit<ComponentProps<typeof Button>, 'children'> {
@@ -21,7 +23,7 @@ interface PickerTriggerProps extends Omit<ComponentProps<typeof Button>, 'childr
 }
 
 const DEFAULT_ICON = (
-  <CalendarIcon className="text-muted-foreground size-4 shrink-0" />
+  <Icon icon={CalendarIcon} className={fieldIconClassName} aria-hidden="true" />
 )
 
 export function PickerTrigger({
@@ -59,13 +61,20 @@ export function PickerTrigger({
           actions.close()
         else actions.open()
       }}
-      // rounded-lg matches Input/Select/Autocomplete; the shadcn base Button is rounded-md.
-      className={cn('w-full justify-between gap-2 rounded-lg font-normal', triggerClassName, className)}
+      // Restyle the shadcn outline Button as a field so it lines up with
+      // Input/Select/Autocomplete/MultiSelect: same tokens, padding and weight,
+      // and no hover fill (fields don't change colour on hover).
+      className={cn(
+        fieldTriggerClassName,
+        'h-10 justify-between hover:bg-input-background/50 hover:text-input-foreground',
+        triggerClassName,
+        className,
+      )}
       {...slotProps}
     >
       <span className="flex flex-1 items-center gap-2 truncate">
         {renderedIcon}
-        <span className={cn('truncate', !hasValue && 'text-muted-foreground')}>
+        <span className={cn('truncate', !hasValue && fieldPlaceholderClassName)}>
           {hasValue ? (children ? children(state.pendingValue) : String(state.pendingValue)) : placeholder}
         </span>
       </span>
@@ -77,9 +86,12 @@ export function PickerTrigger({
             e.stopPropagation()
             actions.clear()
           }}
-          className="text-muted-foreground hover:text-destructive shrink-0 rounded-sm p-0.5 transition-colors"
+          // -m-0.5 p-0.5 widens the hit area without pushing the icon off the
+          // 12px right edge every other trigger's chevron sits on.
+          className="text-muted-foreground hover:text-destructive -m-0.5 shrink-0 rounded-sm p-0.5 transition-colors"
         >
-          <X className="size-3.5" />
+          {/* `!` beats the base Button's `[&_svg]:size-4`, which would otherwise win on specificity. */}
+          <Icon icon={X} size={14} className="size-3.5! shrink-0" aria-hidden="true" />
         </button>
       )}
     </Button>

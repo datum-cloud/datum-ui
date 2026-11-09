@@ -6,6 +6,8 @@ export {
   FACET_LABELS,
   SEVERITY_ORDER,
 } from './constants'
+export { buildLogFacetCountQuery, facetFromLokiCounts } from './facet-counts'
+export type { BuildLogFacetCountQueryOptions, LokiVectorResponse, LokiVectorSample } from './facet-counts'
 export { facetsFromEntries, filterEntries, searchableLogText } from './facets'
 export { flattenLokiStreams, nsToDate } from './flatten-loki'
 export {
@@ -33,5 +35,7 @@ export {
   logTimeRangeLabel,
   resolveLogTimeRange,
 } from './time-range'
+export { LOGS_URL_KEYS, logsUrlStateKey, parseLogsUrlState, writeLogsUrlState } from './url-state'
+export type { LogsUrlState, LogsUrlStateOptions } from './url-state'
 export { logUserAgent, parseUserAgent } from './user-agent'
 export type { ParsedUserAgent, UserAgentDevice } from './user-agent'

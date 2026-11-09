@@ -48,7 +48,8 @@ export function LogsSearch({
         onChange={event => setValue(event.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="pl-9"
+        // h-9 matches the toolbar's buttons (Live, Refresh, Export, Filters).
+        className="h-9 pl-9"
         data-slot="logs-search"
       />
     </div>

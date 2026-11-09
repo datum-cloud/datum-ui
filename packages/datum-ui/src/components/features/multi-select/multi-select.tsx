@@ -2,10 +2,12 @@ import type { MultiSelectOption, MultiSelectVariant } from './multi-select-share
 import { CheckIcon, ChevronDown, WandSparkles } from 'lucide-react'
 import * as React from 'react'
 import { cn } from '../../../utils/cn'
+import { fieldIconClassName, fieldPlaceholderClassName, fieldTriggerClassName } from '../../../utils/field-styles'
 import { useControllableState } from '../../base/hooks'
 import { useOptionPicker } from '../../base/option-picker'
 import { ResponsivePopover } from '../../base/responsive-popover'
 import { Separator } from '../../base/separator'
+import { Icon } from '../../icons/icon-wrapper'
 import { LoaderOverlay } from '../loader-overlay'
 import { MultiSelectOptions } from './multi-select-options'
 import { SelectedBadgeList } from './selected-badge-list'
@@ -320,6 +322,8 @@ export function MultiSelect({
 
   // ---- Trigger ----
 
+  const showBadges = hasSelection && !isLoading && options.length > 0
+
   const triggerJSX = (
     <button
       {...rest}
@@ -331,15 +335,13 @@ export function MultiSelect({
         setIsPopoverOpen(prev => !prev)
       }}
       className={cn(
-        'text-input-foreground placeholder:text-input-placeholder',
-        'border-input-border bg-input-background/50 relative flex min-h-10 w-full items-center justify-between rounded-lg border px-2 py-1 text-left text-sm transition-all',
-        'focus-visible:border-input-focus-border focus-visible:shadow-(--input-focus-shadow)',
-        'focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-hidden',
+        fieldTriggerClassName,
+        'relative min-h-10 justify-between py-1',
         (disabled || isLoading) && 'cursor-not-allowed opacity-50',
         className,
       )}
     >
-      {hasSelection && !isLoading && options.length > 0
+      {showBadges
         ? (
             <SelectedBadgeList
               selectedOptions={selectedOptions}
@@ -356,10 +358,10 @@ export function MultiSelect({
             />
           )
         : (
-            <div className="flex w-full items-center justify-between px-2">
-              <span className="text-muted-foreground text-sm">{placeholder}</span>
-              <ChevronDown className="text-muted-foreground mx-1 h-4" aria-hidden="true" />
-            </div>
+            <>
+              <span className={cn('min-w-0 flex-1 truncate', fieldPlaceholderClassName)}>{placeholder}</span>
+              <Icon icon={ChevronDown} className={fieldIconClassName} aria-hidden="true" />
+            </>
           )}
 
       {isLoading && <LoaderOverlay className="rounded-lg" />}
