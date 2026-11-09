@@ -1,4 +1,14 @@
-name: CI
+# This workflow reports the required `ci / Build and test` check on pull
+# requests. Its name must not be `CI`: `.github/workflows/release.yml` starts a
+# release for every completed workflow named `CI`, and this caller uploads no
+# `public-packages-dist` artifact, so naming it `CI` made Release's pack job
+# fail with "Artifact not found" on every merge to `main`.
+#
+# The check context comes from the `ci` job key below, not from this workflow
+# name (see datum-cloud/galactic required-ci.yaml, which reports the same
+# `ci / Build and test` check under the name `Required CI`), so the required
+# check the ruleset enforces is unchanged.
+name: Required CI
 
 on:
   pull_request:

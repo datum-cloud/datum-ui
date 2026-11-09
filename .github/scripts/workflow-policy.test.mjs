@@ -65,3 +65,21 @@ test('no npm token fallback exists', () => {
 test('only the version job can edit pull requests', () => {
   assert.equal((release.match(/pull-requests: write/g) ?? []).length, 1)
 })
+
+test('workflow names are unique', () => {
+  // `on: workflow_run: workflows: [<name>]` matches every workflow with that
+  // name, so two files sharing one name both trigger the dependent workflow.
+  const dir = '.github/workflows'
+  const seen = new Map()
+  for (const file of fs.readdirSync(dir)) {
+    if (!/\.ya?ml$/.test(file)) continue
+    const name = fs.readFileSync(`${dir}/${file}`, 'utf8').match(/^name:[ \t]*(.+?)[ \t]*$/m)?.[1]
+    if (!name) continue
+    assert.equal(
+      seen.get(name),
+      undefined,
+      `${file} and ${seen.get(name)} both use the workflow name "${name}"`,
+    )
+    seen.set(name, file)
+  }
+})
