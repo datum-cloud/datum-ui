@@ -1,6 +1,7 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useRef, useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { Dialog } from '../dialog'
 
@@ -86,5 +87,37 @@ describe('dialog', () => {
     expect(screen.getByText('My Description')).toBeInTheDocument()
     expect(screen.getByText('Body content')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument()
+  })
+
+  it('lets a controlled dialog choose where focus goes on close', async () => {
+    const user = userEvent.setup()
+    function Controlled() {
+      const [open, setOpen] = useState(false)
+      const openerRef = useRef<HTMLButtonElement>(null)
+      return (
+        <>
+          <button ref={openerRef} type="button" onClick={() => setOpen(true)}>Open</button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog.Content
+              onCloseAutoFocus={(e) => {
+                e.preventDefault()
+                openerRef.current?.focus()
+              }}
+            >
+              <Dialog.Header title="Title" description="Description" />
+              <Dialog.Footer>
+                <button type="button" onClick={() => setOpen(false)}>Done</button>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog>
+        </>
+      )
+    }
+    render(<Controlled />)
+
+    await user.click(screen.getByRole('button', { name: 'Open' }))
+    await user.click(await screen.findByRole('button', { name: 'Done' }))
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Open' })).toHaveFocus())
   })
 })

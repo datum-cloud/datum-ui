@@ -160,6 +160,12 @@ export interface SemanticColors {
   toastSuccessBackground: string
   toastSuccessForeground: string
   toastSuccessIcon: string
+  toastWarningBackground: string
+  toastWarningForeground: string
+  toastWarningIcon: string
+  toastInfoBackground: string
+  toastInfoForeground: string
+  toastInfoIcon: string
 }
 
 export type ColorScheme = 'light' | 'dark'
@@ -301,6 +307,12 @@ export const colors: { light: SemanticColors, dark: SemanticColors } = {
     toastSuccessBackground: '#4d6356',
     toastSuccessForeground: '#f6f6f5',
     toastSuccessIcon: '#f6f6f5',
+    toastWarningBackground: '#a16207',
+    toastWarningForeground: '#f6f6f5',
+    toastWarningIcon: '#f6f6f5',
+    toastInfoBackground: '#384555',
+    toastInfoForeground: '#f6f6f5',
+    toastInfoIcon: '#f6f6f5',
   },
   dark: {
     background: '#0c1d31',
@@ -437,6 +449,12 @@ export const colors: { light: SemanticColors, dark: SemanticColors } = {
     toastSuccessBackground: '#e6f59f',
     toastSuccessForeground: '#0c1d31',
     toastSuccessIcon: '#0c1d31',
+    toastWarningBackground: '#ca8a04',
+    toastWarningForeground: '#0c1d31',
+    toastWarningIcon: '#0c1d31',
+    toastInfoBackground: '#90969c',
+    toastInfoForeground: '#0c1d31',
+    toastInfoIcon: '#0c1d31',
   },
 }
 

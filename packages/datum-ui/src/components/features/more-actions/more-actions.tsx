@@ -1,4 +1,4 @@
-import type { ActionItem } from './types'
+import type { ActionConfirm, ActionItem } from './types'
 import { Ellipsis } from 'lucide-react'
 import { useState } from 'react'
 import { Button, Tooltip } from '../..'
@@ -6,7 +6,7 @@ import { cn } from '../../../utils/cn'
 import { ResponsiveDropdown } from '../../base/responsive-dropdown'
 import { ActionRow } from './action-row'
 
-export type { ActionItem }
+export type { ActionConfirm, ActionItem }
 
 interface MoreActionsBaseProps<TData> {
   row?: TData

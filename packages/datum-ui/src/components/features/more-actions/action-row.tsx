@@ -1,6 +1,8 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { ActionItem } from './types'
+import { useRef, useState } from 'react'
 import { cn } from '../../../utils/cn'
+import { ConfirmActionDialog } from './confirm-action-dialog'
 
 interface ActionRowProps<TData> {
   action: ActionItem<TData>
@@ -13,6 +15,8 @@ export function ActionRow<TData,>({
   data,
   onSelect,
 }: ActionRowProps<TData>) {
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+  const buttonRef = useRef<HTMLButtonElement>(null)
   const isDisabled
     = typeof action.disabled === 'function'
       ? action.disabled(data)
@@ -27,12 +31,19 @@ export function ActionRow<TData,>({
     ? (<IconComponent className="size-4" />)
     : (action.icon as ReactNode)
 
-  return (
+  const row = (
     <button
+      ref={buttonRef}
       type="button"
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
+        if (action.confirm) {
+          // The menu stays open under the dialog so this row stays mounted and
+          // takes focus back if the user cancels.
+          setIsConfirmOpen(true)
+          return
+        }
         action.onClick(data)
         onSelect()
       }}
@@ -48,5 +59,23 @@ export function ActionRow<TData,>({
       {iconNode}
       <span>{action.label}</span>
     </button>
+  )
+
+  if (!action.confirm)
+    return row
+
+  return (
+    <>
+      {row}
+      <ConfirmActionDialog
+        action={action}
+        confirm={action.confirm}
+        data={data}
+        open={isConfirmOpen}
+        onOpenChange={setIsConfirmOpen}
+        onConfirmed={onSelect}
+        returnFocusRef={buttonRef}
+      />
+    </>
   )
 }

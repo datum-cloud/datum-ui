@@ -1,6 +1,6 @@
 import type { ColorScheme, SemanticColors, TypeSize } from '@datum-cloud/datum-ui-tokens'
 import type { ReactNode } from 'react'
-import type { GestureResponderEvent, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import type { GestureResponderEvent, Insets, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import type { HapticStyle } from '../haptics'
 import type { ButtonSize, ButtonTheme, ButtonType } from '../variants'
 import { withAlpha } from '@datum-cloud/datum-ui-tokens'
@@ -134,6 +134,27 @@ const SIZES: Record<ButtonSize, SizeSpec> = {
   link: { paddingHorizontal: 0, text: 'sm' },
 }
 
+/** Smallest touch target on either axis (iOS HIG, WCAG 2.5.5), in points. */
+const MIN_TOUCH_TARGET = 44
+
+/** Slop for one side so that `visual` plus both sides reaches the minimum. */
+function slopFor(visual: number): number {
+  return Math.max(0, Math.ceil((MIN_TOUCH_TARGET - visual) / 2))
+}
+
+/**
+ * Hit slop that grows a button's touch area to the minimum target without
+ * changing how it looks. `height` is the rendered height; `width` is only known
+ * for icon-only buttons, so text buttons grow vertically alone.
+ */
+function minTargetHitSlop(height: number, width?: number): Insets | undefined {
+  const vertical = slopFor(height)
+  const horizontal = width === undefined ? 0 : slopFor(width)
+  if (vertical === 0 && horizontal === 0)
+    return undefined
+  return { top: vertical, bottom: vertical, left: horizontal, right: horizontal }
+}
+
 export type ButtonIcon = ReactNode | ((props: { color: string, size: number }) => ReactNode)
 
 export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> {
@@ -149,6 +170,12 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
   iconPosition?: 'left' | 'right'
   /** Light impact haptic on press when expo-haptics is installed. Defaults to true. */
   haptic?: boolean | HapticStyle
+  /**
+   * Defaults to whatever grows the touch area to 44pt: every size vertically,
+   * and icon-only buttons horizontally too. Pass a value to replace it, or
+   * `null` for none.
+   */
+  hitSlop?: PressableProps['hitSlop']
   children?: ReactNode
   style?: StyleProp<ViewStyle>
   textStyle?: StyleProp<TextStyle>
@@ -172,6 +199,7 @@ export function Button({
   onPressIn,
   onPressOut,
   onPress,
+  hitSlop,
   ...props
 }: ButtonProps) {
   const t = useDatumTheme()
@@ -184,6 +212,9 @@ export function Button({
   const step = t.typography.sizes[spec.text]
   const isIconOnly = Boolean((icon || loading) && (children === undefined || children === null || children === false))
   const iconSize = Math.round(step.fontSize * 1.15)
+  const isSquare = isIconOnly && spec.square !== undefined
+  // The link size has no fixed height; its text line sets it.
+  const defaultHitSlop = minTargetHitSlop(spec.height ?? step.lineHeight, isSquare ? spec.square : undefined)
 
   const timing = { duration: t.motion.duration.fast, easing: Easing.bezier(...t.motion.easing.out) }
   const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }))
@@ -238,8 +269,8 @@ export function Button({
     borderColor: colors.border,
     backgroundColor: colors.background,
     height: spec.height,
-    paddingHorizontal: isIconOnly && spec.square ? 0 : spec.paddingHorizontal,
-    width: isIconOnly && spec.square ? spec.square : undefined,
+    paddingHorizontal: isSquare ? 0 : spec.paddingHorizontal,
+    width: isSquare ? spec.square : undefined,
     alignSelf: block ? 'stretch' : 'flex-start',
     opacity: isDisabled ? 0.5 : theme === 'link' && pressed ? 0.8 : 1,
   }
@@ -247,12 +278,14 @@ export function Button({
   return (
     <AnimatedPressable
       accessibilityRole="button"
-      accessibilityState={{ disabled: isDisabled, busy: loading }}
       disabled={isDisabled}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       onPress={handlePress}
       {...props}
+      // After the spread so a caller's state adds to disabled/busy, not replaces them.
+      accessibilityState={{ ...props.accessibilityState, disabled: isDisabled, busy: loading }}
+      hitSlop={hitSlop === undefined ? defaultHitSlop : hitSlop}
       style={[container, animatedStyle, style]}
     >
       {isIconOnly
