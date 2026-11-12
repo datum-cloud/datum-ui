@@ -66,6 +66,9 @@ function RichTextEditorRoot({
     editable: !disabled,
     autofocus: autoFocus ? 'end' : false,
     onUpdate: ({ editor: ed }) => {
+      // A queued update can land after teardown; a destroyed editor has no document to read.
+      if (ed.isDestroyed)
+        return
       // Normalize empty editor state — Tiptap returns <p></p> when empty,
       // which breaks string validation. Return empty string if no text content.
       const text = ed.getText().trim()
@@ -86,10 +89,14 @@ function RichTextEditorRoot({
     },
   })
 
+  // The effects below skip a destroyed editor. Tiptap destroys the instance on
+  // unmount and when StrictMode re-runs effects, and a destroyed editor throws
+  // from setEditable, getHTML and view.dispatch.
+
   // Honor `disabled` changes after mount — the initial `editable` value would
   // otherwise be the only one that ever takes effect.
   useEffect(() => {
-    if (!editor)
+    if (!editor || editor.isDestroyed)
       return
     if (editor.isEditable === disabled)
       editor.setEditable(!disabled)
@@ -99,7 +106,7 @@ function RichTextEditorRoot({
   // controlled parent echoing onChange back into `content` doesn't reset the
   // selection on every keystroke, and empty-vs-`<p></p>` doesn't loop.
   useEffect(() => {
-    if (!editor)
+    if (!editor || editor.isDestroyed)
       return
     const next = content ?? ''
     const isNextEmpty = next === '' || next === '<p></p>'
@@ -109,7 +116,7 @@ function RichTextEditorRoot({
 
   // Honor `placeholder` changes after mount (e.g. i18n locale switch).
   useEffect(() => {
-    if (!editor)
+    if (!editor || editor.isDestroyed)
       return
     const placeholderExtension = editor.extensionManager.extensions.find(
       ext => ext.name === 'placeholder',
