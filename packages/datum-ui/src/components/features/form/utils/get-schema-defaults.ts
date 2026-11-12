@@ -1,5 +1,5 @@
 import type { z } from 'zod'
-import { getObjectShape } from './zod-helpers'
+import { getObjectShape, unwrapSchema } from './zod-helpers'
 
 /**
  * Derive default values from a Zod schema that match what React Hook Form's
@@ -19,11 +19,11 @@ import { getObjectShape } from './zod-helpers'
  * - boolean -> `false`
  * - array -> `[]`
  * - object -> `{}` (recursive)
- * - optional/nullable wrappers -> unwrap and derive inner default
+ * - optional/nullable/transform wrappers -> unwrap and derive inner default
  * - `.default()` -> use the provided default value
  */
 export function getSchemaDefaults(
-  schema: z.ZodType,
+  schema: z.core.$ZodType,
 ): Record<string, unknown> {
   const shape = getObjectShape(schema)
   if (!shape)
@@ -32,7 +32,7 @@ export function getSchemaDefaults(
   const defaults: Record<string, unknown> = {}
 
   for (const [key, fieldSchema] of Object.entries(shape)) {
-    defaults[key] = getFieldDefault(fieldSchema as z.ZodType)
+    defaults[key] = getFieldDefault(fieldSchema)
   }
 
   return defaults
@@ -42,29 +42,16 @@ export function getSchemaDefaults(
  * Get the default value for a Zod field type that matches what RHF's
  * `useController` will produce when registering the field.
  *
- * Unwraps optional/nullable/default wrappers to find the inner type,
- * then returns the natural "empty" value for that type.
+ * Unwraps wrappers (see `unwrapSchema`) to find the inner type, then returns
+ * the natural "empty" value for that type.
  */
-function getFieldDefault(schema: z.ZodType): unknown {
-  const { type } = schema.def
+function getFieldDefault(schema: z.core.$ZodType): unknown {
+  // Peel optional/nullable/default/pipe wrappers. `.default(value)` wins.
+  const unwrapped = unwrapSchema(schema)
+  if (unwrapped.hasDefault)
+    return unwrapped.defaultValue
 
-  // `.default(value)` — use the provided default
-  if (type === 'default') {
-    const defaultDef = schema.def as unknown as { defaultValue: unknown }
-    return defaultDef.defaultValue
-  }
-
-  // Wrappers: unwrap to find inner type
-  if (type === 'optional' || type === 'nullable') {
-    const innerDef = schema.def as unknown as { innerType: z.ZodType }
-    return getFieldDefault(innerDef.innerType)
-  }
-
-  // `.pipe()` (from `.transform()` in Zod v4)
-  if (type === 'pipe') {
-    const pipeDef = schema.def as unknown as { in: z.ZodType }
-    return getFieldDefault(pipeDef.in)
-  }
+  const { type } = unwrapped.schema._zod.def
 
   // Leaf types — match what useController produces on registration
   if (type === 'string')
@@ -76,7 +63,7 @@ function getFieldDefault(schema: z.ZodType): unknown {
   if (type === 'array')
     return []
   if (type === 'object')
-    return getSchemaDefaults(schema)
+    return getSchemaDefaults(unwrapped.schema)
 
   // Everything else (enum, literal, union, etc.) — undefined
   return undefined

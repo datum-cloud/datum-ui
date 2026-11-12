@@ -1,5 +1,5 @@
-import { z } from 'zod'
-import { getObjectShape } from './zod-helpers'
+import type { z } from 'zod'
+import { getObjectShape, unwrapSchema } from './zod-helpers'
 
 export interface FieldConstraint {
   required: boolean
@@ -30,7 +30,7 @@ export interface FieldConstraints {
  * Used by both Conform and RHF adapters to determine required fields.
  */
 export function getFieldConstraints(
-  schema: z.ZodType,
+  schema: z.core.$ZodType,
 ): Record<string, FieldConstraint> {
   const shape = getObjectShape(schema)
   if (!shape)
@@ -40,7 +40,7 @@ export function getFieldConstraints(
 
   for (const [key, fieldSchema] of Object.entries(shape)) {
     constraints[key] = {
-      required: isRequired(fieldSchema as z.ZodType),
+      required: !unwrapSchema(fieldSchema).isOptional,
     }
   }
 
@@ -48,73 +48,43 @@ export function getFieldConstraints(
 }
 
 /**
- * Determine if a Zod field type is required.
- * Optional, nullable, and default-wrapped types are not required.
- */
-function isRequired(schema: z.ZodType): boolean {
-  const { type } = schema.def
-
-  if (type === 'optional' || type === 'nullable' || type === 'default') {
-    return false
-  }
-
-  return true
-}
-
-/**
- * Extract field-level constraints from a single Zod field schema.
- * Used to extract constraints like min/max dates, array lengths, string patterns, etc.
- * for individual form fields.
+ * Extract field-level constraints from a single Zod field schema: whether it
+ * is required, min/max dates, array lengths and string lengths.
  *
- * NOTE: Uses Zod v4.3.6 internal API (_zod.def) for constraint extraction.
- * This API may change in future Zod versions.
+ * Wrappers are peeled first (see `unwrapSchema`), so the constraints of
+ * `z.date().min(x).transform(...)` or `z.string().max(5).optional()` are found.
+ *
+ * NOTE: Reads Zod 4 check defs (`check._zod.def`). `.min()` / `.max()` are
+ * stored as `greater_than` / `less_than` on dates and as `min_length` /
+ * `max_length` on arrays and strings.
  */
-export function getFieldConstraintsSingle(schema: z.ZodTypeAny): FieldConstraints {
-  const constraints: FieldConstraints = {}
+export function getFieldConstraintsSingle(schema: z.core.$ZodType): FieldConstraints {
+  const unwrapped = unwrapSchema(schema)
+  const { def } = unwrapped.schema._zod
+  const constraints: FieldConstraints = { required: !unwrapped.isOptional }
 
-  // Unwrap optional/nullable/default schemas
-  let unwrapped: z.ZodTypeAny = schema
-  while (
-    unwrapped instanceof z.ZodOptional
-    || unwrapped instanceof z.ZodNullable
-    || unwrapped instanceof z.ZodDefault
-  ) {
-    unwrapped = (unwrapped._def as any).innerType
-  }
+  for (const check of def.checks ?? []) {
+    const checkDef = (check as z.core.$ZodChecks)._zod.def
 
-  // Date constraints
-  // NOTE: Zod v4.3.6 stores check data in check._zod.def structure
-  // Checks use 'greater_than' for min() and 'less_than' for max()
-  if (unwrapped instanceof z.ZodDate) {
-    const checks = unwrapped._def.checks || []
-    for (const check of checks) {
-      const checkDef = (check as any)._zod?.def
-      if (checkDef) {
-        if (checkDef.check === 'greater_than') {
-          constraints.minDate = new Date(checkDef.value)
-        }
-        if (checkDef.check === 'less_than') {
-          constraints.maxDate = new Date(checkDef.value)
-        }
-      }
+    if (def.type === 'date') {
+      if (checkDef.check === 'greater_than')
+        constraints.minDate = new Date(checkDef.value as Date)
+      if (checkDef.check === 'less_than')
+        constraints.maxDate = new Date(checkDef.value as Date)
     }
-  }
 
-  // Array constraints
-  // NOTE: Zod v4.3.6 stores array length constraints in check._zod.def structure
-  // Checks use 'min_length' and 'max_length' with 'minimum' and 'maximum' properties
-  if (unwrapped instanceof z.ZodArray) {
-    const checks = unwrapped._def.checks || []
-    for (const check of checks) {
-      const checkDef = (check as any)._zod?.def
-      if (checkDef) {
-        if (checkDef.check === 'min_length') {
-          constraints.minItems = checkDef.minimum
-        }
-        if (checkDef.check === 'max_length') {
-          constraints.maxItems = checkDef.maximum
-        }
-      }
+    if (def.type === 'array') {
+      if (checkDef.check === 'min_length')
+        constraints.minItems = checkDef.minimum
+      if (checkDef.check === 'max_length')
+        constraints.maxItems = checkDef.maximum
+    }
+
+    if (def.type === 'string') {
+      if (checkDef.check === 'min_length')
+        constraints.minLength = checkDef.minimum
+      if (checkDef.check === 'max_length')
+        constraints.maxLength = checkDef.maximum
     }
   }
 

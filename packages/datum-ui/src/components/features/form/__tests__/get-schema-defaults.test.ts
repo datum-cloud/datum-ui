@@ -89,4 +89,19 @@ describe('getSchemaDefaults', () => {
     const merged = schemaA.and(schemaB)
     expect(getSchemaDefaults(merged)).toEqual({ name: '', age: undefined })
   })
+
+  it('unwraps .transform() to the input type', () => {
+    const schema = z.object({
+      name: z.string().optional().transform(value => value?.trim()),
+      tags: z.array(z.string()).transform(value => value.join(',')),
+    })
+    expect(getSchemaDefaults(schema)).toEqual({ name: '', tags: [] })
+  })
+
+  it('uses a default nested under a transform', () => {
+    const schema = z.object({
+      role: z.string().default('user').transform(value => value.toUpperCase()),
+    })
+    expect(getSchemaDefaults(schema)).toEqual({ role: 'user' })
+  })
 })
