@@ -1,5 +1,14 @@
 # @datum-cloud/datum-ui-native
 
+## 0.1.1
+
+### Patch Changes
+
+- 202d9f4: Keep `Button` announcing its disabled and busy state when a caller passes its own `accessibilityState`, by merging the two instead of letting the caller's value replace them.
+- 202d9f4: Give `Button` a default `hitSlop` that grows its touch area to 44pt, vertically for every size and on both axes for icon-only buttons, without changing how it looks; pass `hitSlop` to override it or `null` to turn it off.
+- Updated dependencies [202d9f4]
+  - @datum-cloud/datum-ui-tokens@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes
