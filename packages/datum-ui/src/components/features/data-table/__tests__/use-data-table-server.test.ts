@@ -84,6 +84,23 @@ describe('useDataTableServer', () => {
     expect(result.current.store.getSnapshot().filters).toEqual({})
   })
 
+  it('syncs a limit prop change into the store page size', () => {
+    const { result, rerender } = renderHook(
+      ({ limit }) => useDataTableServer<TestResponse, TestRow>({
+        columns: testColumns,
+        fetchFn: mockFetchFn,
+        transform: mockTransform,
+        limit,
+      }),
+      { initialProps: { limit: 10 } },
+    )
+    expect(result.current.store.getSnapshot().pageSize).toBe(10)
+
+    rerender({ limit: 25 })
+
+    expect(result.current.store.getSnapshot().pageSize).toBe(25)
+  })
+
   it('manages page size', () => {
     const { result } = renderHook(() =>
       useDataTableServer<TestResponse, TestRow>({

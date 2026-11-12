@@ -5,10 +5,10 @@ import type { ReactNode } from 'react'
 import type { UseServerTableOptions } from '../hooks/use-data-table-server'
 import type { DataTableStore, UseDataTableServerOptions } from '../types'
 import type { DataTableFeatures } from './features'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useServerTable } from '../hooks/use-data-table-server'
+import { useDataTableStoreInstance } from '../hooks/use-data-table-store-instance'
 import { DataTableRenderKeyContext, DataTableStoreContext, TableInstanceContext } from './data-table-context'
-import { createDataTableStore } from './store'
 
 export type DataTableServerProviderProps<TResponse, TData extends RowData> = UseDataTableServerOptions<TResponse, TData> & {
   readonly className?: string
@@ -55,20 +55,17 @@ export function ServerProvider<TResponse, TData extends RowData>(props: DataTabl
     children,
   } = props
 
-  // Store created immediately — works during SSR
-  const store = useMemo<DataTableStore<TData>>(
-    () => createDataTableStore<TData>({
-      data: [] as TData[],
-      mode: 'server',
-      isLoading: true,
-      defaultSort,
-      defaultFilters,
-      pageSize: limit,
-      columnCount: columns.length,
-    }),
-    // eslint-disable-next-line react/exhaustive-deps
-    [], // intentionally empty — store created once
-  )
+  // Store created immediately — works during SSR. The shared hook also syncs
+  // later `limit` prop changes into the store's page size.
+  const store = useDataTableStoreInstance<TData>({
+    data: [],
+    mode: 'server',
+    isLoading: true,
+    defaultSort,
+    defaultFilters,
+    pageSize: limit,
+    columnCount: columns.length,
+  })
 
   // Table instance — null during SSR, created after hydration
   const [tableReady, setTableReady] = useState(false)

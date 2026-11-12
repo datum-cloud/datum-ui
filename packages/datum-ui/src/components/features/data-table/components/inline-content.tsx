@@ -32,7 +32,7 @@ export function DataTableInlineContent<TData extends RowData>({
     return () => {
       unregisterInlineContent(id)
     }
-  // eslint-disable-next-line react/exhaustive-deps -- mount/unmount only
+  // eslint-disable-next-line react/exhaustive-deps -- mount/unmount only; the effect below re-registers on prop changes
   }, [id, registerInlineContent, unregisterInlineContent])
 
   // Prop sync: update registration when props change (skip initial render)

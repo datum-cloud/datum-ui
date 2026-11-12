@@ -55,11 +55,14 @@ function MapTileLayer({
   attribution,
   darkUrl,
   darkAttribution,
+  theme,
   ...props
 }: Partial<TileLayerProps> & {
   name?: string
   darkUrl?: string
   darkAttribution?: string
+  /** Resolved theme from the app's theme provider. Detected from <html> when omitted. */
+  theme?: 'light' | 'dark'
   ref?: Ref<TileLayer>
 }) {
   const map = _useMap()
@@ -71,7 +74,7 @@ function MapTileLayer({
   const DEFAULT_URL = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
   const DEFAULT_DARK_URL = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
 
-  const { resolvedTheme } = useTheme()
+  const { resolvedTheme } = useTheme(theme)
   const resolvedUrl
     = resolvedTheme === 'dark' ? (darkUrl ?? url ?? DEFAULT_DARK_URL) : (url ?? DEFAULT_URL)
   const resolvedAttribution

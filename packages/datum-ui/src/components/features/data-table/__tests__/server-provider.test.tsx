@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { useDataTableStore } from '../core/data-table-context'
 import { ServerProvider } from '../core/server-provider'
-import { useDataTableLoading } from '../hooks/use-selectors'
+import { useDataTableLoading, useDataTablePagination } from '../hooks/use-selectors'
 
 interface TestRow {
   readonly id: string
@@ -26,11 +26,13 @@ function mockTransform(response: TestResponse) {
 function ContextReader() {
   const store = useDataTableStore()
   const { isLoading } = useDataTableLoading()
+  const { pageSize } = useDataTablePagination()
   const mode = store.getSnapshot().mode
   return (
     <div>
       <span data-testid="mode">{mode}</span>
       <span data-testid="loading">{String(isLoading)}</span>
+      <span data-testid="page-size">{pageSize}</span>
     </div>
   )
 }
@@ -76,6 +78,30 @@ describe('serverProvider', () => {
       </ServerProvider>,
     )
     expect(screen.getByTestId('child')).toBeInTheDocument()
+  })
+
+  it('syncs limit prop updates into the store and refetches with the new limit', async () => {
+    const fetchSpy = (vi.fn() as any).mockResolvedValue({ items: testData })
+    const { rerender } = render(
+      <ServerProvider columns={testColumns} fetchFn={fetchSpy} transform={mockTransform} limit={10}>
+        <ContextReader />
+      </ServerProvider>,
+    )
+    expect(screen.getByTestId('page-size')).toHaveTextContent('10')
+    await vi.waitFor(() => {
+      expect(fetchSpy).toHaveBeenLastCalledWith(expect.objectContaining({ limit: 10 }))
+    })
+
+    rerender(
+      <ServerProvider columns={testColumns} fetchFn={fetchSpy} transform={mockTransform} limit={25}>
+        <ContextReader />
+      </ServerProvider>,
+    )
+
+    await vi.waitFor(() => {
+      expect(screen.getByTestId('page-size')).toHaveTextContent('25')
+      expect(fetchSpy).toHaveBeenLastCalledWith(expect.objectContaining({ limit: 25 }))
+    })
   })
 
   it('starts loading and fetches after hydration', async () => {

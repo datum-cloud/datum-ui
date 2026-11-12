@@ -20,6 +20,48 @@ const testColumns = [
 ]
 
 describe('useDataTableClient', () => {
+  it('syncs a pageSize prop change into the store', () => {
+    const { result, rerender } = renderHook(
+      ({ pageSize }) => useDataTableClient({ data: testData, columns: testColumns, pageSize }),
+      { initialProps: { pageSize: 5 } },
+    )
+    expect(result.current.store.getSnapshot().pageSize).toBe(5)
+
+    rerender({ pageSize: 10 })
+
+    expect(result.current.store.getSnapshot().pageSize).toBe(10)
+  })
+
+  it('keeps the same store and its state across re-renders', () => {
+    const { result, rerender } = renderHook(
+      ({ pageSize }) => useDataTableClient({ data: testData, columns: testColumns, pageSize }),
+      { initialProps: { pageSize: 5 } },
+    )
+    const store = result.current.store
+    act(() => {
+      store.setSearch('pod')
+    })
+
+    rerender({ pageSize: 5 })
+
+    expect(result.current.store).toBe(store)
+    expect(result.current.store.getSnapshot().search).toBe('pod')
+  })
+
+  it('does not write the seed pageSize over adapter state when StrictMode re-runs effects', () => {
+    const stateAdapter = {
+      read: () => ({ pageSize: 50 }),
+      write: () => {},
+    }
+
+    const { result } = renderHook(
+      () => useDataTableClient({ data: testData, columns: testColumns, pageSize: 5, stateAdapter }),
+      { reactStrictMode: true },
+    )
+
+    expect(result.current.store.getSnapshot().pageSize).toBe(50)
+  })
+
   it('returns initial state with defaults', () => {
     const { result } = renderHook(() =>
       useDataTableClient({ data: testData, columns: testColumns }),
