@@ -154,6 +154,12 @@ export interface SelectionColumnOptions<TData extends RowData = Record<string, a
 
 // ── Context ──
 
+/**
+ * @deprecated Nothing provides this value any more. Read table state through
+ * the selector hooks (`useDataTableRows`, `useDataTableSorting`,
+ * `useDataTableFilters`, `useDataTableSearch`, `useDataTableSelection`,
+ * `useDataTablePagination`, `useDataTableLoading`) instead.
+ */
 export interface DataTableContextValue<TData extends RowData> {
   readonly table: ReactTable<DataTableFeatures, TData>
   readonly mode: 'client' | 'server'

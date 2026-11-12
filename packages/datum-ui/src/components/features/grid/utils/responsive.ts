@@ -42,7 +42,7 @@ export function registerMediaQuery(query: string, callback: MediaQueryCallback):
  * form (`[{ md: 16 }, 8]`). Row uses this to decide whether to register media
  * queries; without it, array-form responsive gutters never track the viewport
  * and `getGutter` resolves them against the all-true initial `screens`, i.e. the
- * largest breakpoint (BUG-084).
+ * largest breakpoint.
  */
 export function isResponsiveGutter(gutter: Gutter | [Gutter, Gutter]): boolean {
   const parts = Array.isArray(gutter) ? gutter : [gutter]

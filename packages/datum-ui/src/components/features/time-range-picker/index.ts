@@ -1,5 +1,3 @@
-// app/modules/datum-ui/components/time-range-picker/index.ts
-//
 // @deprecated The entire `@datum-cloud/datum-ui/time-range-picker` barrel
 // is deprecated. Use `@datum-cloud/datum-ui/picker` (DateTimeRangePicker /
 // TimeRangePicker / Picker.* primitives) instead. Removed in 1.0.0. See

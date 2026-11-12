@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { useControllableState } from '../lib/use-controllable-state'
+import { useControllableState } from '../../../base/hooks'
 
 describe('useControllableState', () => {
   it('uncontrolled: owns state and notifies', () => {

@@ -72,7 +72,7 @@ export function useTagsInput({
 
   // Track any pending "auto-clear" timer so it can be cancelled on unmount or
   // whenever a newer error replaces it (prevents a stale timer wiping a fresh
-  // error — BUG-044).
+  // error).
   const errorTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const clearErrorTimer = React.useCallback(() => {
@@ -179,7 +179,7 @@ export function useTagsInput({
         onValueChange([...value, ...validValues])
       }
 
-      // Surface feedback about dropped values (BUG-160 / BUG-043).
+      // Surface feedback about dropped values.
       if (exceededMax) {
         setError(`Maximum of ${parseMaxItems} tags allowed`)
       }

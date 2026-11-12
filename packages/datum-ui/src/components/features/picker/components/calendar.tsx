@@ -16,7 +16,7 @@ const CALENDAR_RESPONSIVE_CLASSNAMES = { root: 'w-full md:w-fit' }
  * react-day-picker hands back the clicked day cell at midnight, discarding any
  * time-of-day the user already chose via the time input. Re-apply the previous
  * wall-clock time (read from the pending ISO in the display timezone) onto the
- * newly clicked day so selecting a different date keeps the time (BUG-033).
+ * newly clicked day so selecting a different date keeps the time.
  */
 function mergeTimeFromIso(day: Date, prevIso: unknown, timezone: string): Date {
   const merged = new Date(day)

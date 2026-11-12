@@ -1,6 +1,6 @@
 import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz'
 
-// Consolidated onto the canonical picker timezone module (STRUCT-011).
+// Consolidated onto the canonical picker timezone module.
 // `getBrowserTimezone` is re-exported for the deprecated barrel; the
 // date+time conversion helpers below are unique to this shim.
 export { getBrowserTimezone } from '../../picker/utils/timezone'

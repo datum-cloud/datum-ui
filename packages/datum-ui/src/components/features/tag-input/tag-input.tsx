@@ -124,7 +124,7 @@ export function TagsInput({ ref, value, onValueChange, placeholder, maxItems, mi
       {/* Hidden input for form submission. The visible wrapper above already
           carries any consumer-provided `id` (via `...props`), so the select must
           not duplicate it — a duplicate DOM id breaks label association and a11y
-          tooling (BUG-158). */}
+          tooling. */}
       <select
         name={name}
         key={key}

@@ -31,8 +31,7 @@ const Row: React.FC<RowProps> = ({
     // Register viewport tracking whenever the gutter contains a responsive
     // breakpoint object — for the object form AND the array form (e.g.
     // `[{ md: 16 }, 8]`). Previously the array form bailed here, so its screens
-    // never updated and getGutter always resolved to the largest breakpoint
-    // (BUG-084).
+    // never updated and getGutter always resolved to the largest breakpoint.
     if (!isResponsiveGutter(gutter)) {
       return
     }

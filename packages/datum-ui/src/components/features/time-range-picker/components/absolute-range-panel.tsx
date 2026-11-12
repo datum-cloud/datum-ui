@@ -4,7 +4,6 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Button, Calendar, Input } from '../../..'
 import { cn } from '../../../../utils/cn'
 import { ResponsivePopover } from '../../../base/responsive-popover'
-// app/modules/datum-ui/components/time-range-picker/components/absolute-range-panel.tsx
 import { utcStringToZonedDate, zonedDateToUtcString } from '../utils/timezone'
 
 interface CustomRangePanelProps {
@@ -38,7 +37,7 @@ function parseDateTimeParts(zonedDate: Date): { date: Date, time: string } {
 /**
  * Parse a (possibly malformed/empty) UTC string into zoned date+time parts,
  * degrading to the current instant instead of producing an Invalid Date that
- * would crash `format()` during render (BUG-145).
+ * would crash `format()` during render.
  */
 function safeParseDateTimeParts(utc: string, timezone: string): { date: Date, time: string } {
   try {
@@ -109,8 +108,8 @@ export function CustomRangePanel({
   const [endDateOpen, setEndDateOpen] = useState(false)
 
   // Local state for date and time (in user's timezone). Parsed lazily (once)
-  // via safe initializers so a malformed prop can't crash render (BUG-145) and
-  // the parse doesn't re-run on every render (BUG-036).
+  // via safe initializers so a malformed prop can't crash render and
+  // the parse doesn't re-run on every render.
   const [startDate, setStartDate] = useState<Date>(() => safeParseDateTimeParts(fromUtc, timezone).date)
   const [startTime, setStartTime] = useState<string>(() => safeParseDateTimeParts(fromUtc, timezone).time)
   const [endDate, setEndDate] = useState<Date>(() => safeParseDateTimeParts(toUtc, timezone).date)
@@ -127,7 +126,7 @@ export function CustomRangePanel({
 
   // Update local state when UTC props OR the display timezone change (from an
   // external source like preset selection or a TimezoneSelector). A
-  // timezone-only change must re-derive the wall-clock date/time too (BUG-036).
+  // timezone-only change must re-derive the wall-clock date/time too.
   useEffect(() => {
     const tzChanged = timezone !== prevTimezoneRef.current
     const fromChanged = fromUtc !== prevFromUtcRef.current
@@ -193,7 +192,7 @@ export function CustomRangePanel({
   )
 
   // Cancel any pending debounced time-input update so it can't fire later with
-  // stale captured values and revert an immediate date selection (BUG-144).
+  // stale captured values and revert an immediate date selection.
   const cancelPendingDebounce = useCallback(() => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current)
@@ -254,7 +253,7 @@ export function CustomRangePanel({
   )
 
   // "Today" as seen in the display timezone — future-day disabling must be
-  // relative to the display tz, not the browser's local day (BUG-079).
+  // relative to the display tz, not the browser's local day.
   const endOfTodayInTz = endOfDay(utcStringToZonedDate(new Date().toISOString(), timezone))
   const isFutureDay = (date: Date): boolean => date > endOfTodayInTz
   // The end date must be on or after the start day (compare whole days so a
@@ -365,5 +364,5 @@ export function CustomRangePanel({
   )
 }
 
-// Keep the old name for backward compatibility during refactor
+// `AbsoluteRangePanel` is the older public name for the same component.
 export { CustomRangePanel as AbsoluteRangePanel }

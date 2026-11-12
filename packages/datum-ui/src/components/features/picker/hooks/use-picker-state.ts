@@ -209,11 +209,11 @@ export function usePickerState<M extends PickerMode>({
   // Sync prop → pending when the value changes externally, but:
   //  - ignore a new object identity carrying identical content (inline
   //    `{ from, to }` props re-created every render) — content compare, not
-  //    identity (BUG-081);
+  //    identity;
   //  - while the popover is open, don't clobber in-progress *uncommitted* edits
   //    (pending diverged from the last synced value) — that would wipe the
   //    user's half-picked range / preset highlight on any unrelated parent
-  //    re-render (BUG-072). A genuine external value change with no pending
+  //    re-render. A genuine external value change with no pending
   //    edits still syncs (e.g. controlled value swapped programmatically).
   const lastSyncedValueRef = useRef(value)
   useEffect(() => {
@@ -267,7 +267,7 @@ export function usePickerState<M extends PickerMode>({
         dispatch({ type: 'SET_RANGE', payload: r })
         // react-day-picker reports the first calendar click as a same-day
         // range ({ from: d, to: d }). In immediate mode, committing+closing on
-        // that first click makes multi-day selection impossible (BUG-143), so
+        // that first click makes multi-day selection impossible, so
         // wait until the two endpoints differ before auto-committing.
         if (
           effectiveCommitRef.current === 'immediate'

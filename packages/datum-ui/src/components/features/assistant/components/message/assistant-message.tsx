@@ -17,8 +17,9 @@ import {
 } from '@datum-cloud/datum-ui-assistant-core'
 import { code } from '@streamdown/code'
 import { Brain, Download } from 'lucide-react'
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { Streamdown } from 'streamdown'
+import { useCopyToClipboard } from '../../../../../hooks/use-copy-to-clipboard'
 import { cn } from '../../../../../utils/cn'
 import { Tooltip } from '../../../../base/tooltip'
 import { Icon } from '../../../../icons/icon-wrapper'
@@ -240,17 +241,10 @@ function AssistantAvatar() {
 }
 
 function MessageActions({ msg }: { msg: UIMessage }) {
-  const [copied, setCopied] = useState(false)
+  const [copied, copy] = useCopyToClipboard()
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(messageText(msg))
-      setCopied(true)
-      setTimeout(setCopied, 1500, false)
-    }
-    catch {
-      // clipboard unavailable
-    }
+  const handleCopy = () => {
+    void copy(messageText(msg))
   }
 
   const handleDownload = () => {
