@@ -1,5 +1,23 @@
 # @datum-cloud/datum-ui
 
+## 3.12.0
+
+### Minor Changes
+
+- 202d9f4: Add an optional `confirm` field to `ActionItem` so MoreActions and data-table or grouped-table row actions ask in a dialog before running `onClick`, and an optional `onCloseAutoFocus` prop on `Dialog.Content` for returning focus from a controlled dialog.
+
+### Patch Changes
+
+- f661f8f: Make `Autosearch` call the latest `onSearch` and `onValueChange` props when a pending debounce fires or a single result auto-selects, instead of the handlers from an earlier render.
+- 778598e: `Text copyable` and the assistant message copy action now show a check for two seconds after a successful copy, no longer throw when the browser has no clipboard (insecure origins), and `Text copyable` also copies the text of nested element children.
+- f661f8f: Sync a changed `pageSize` (or server `limit`) prop into the DataTable store from `useDataTableClient`, `useDataTableServer` and the server provider, not only from the client provider.
+- 778598e: Mark the `DataTableContextValue` type as deprecated, because nothing provides that value any more; read table state through the `useDataTable*` selector hooks instead.
+- 0f952d5: Stop the form adapters marking optional fields that use `.transform()`, `.catch()` or `z.preprocess()` as required, so they no longer show a required asterisk or `aria-required`. Schema defaults now read through the same wrappers, so fields wrapped in `.catch()`, `.readonly()`, `.nonoptional()`, `.prefault()` or `z.preprocess()` start from their type's empty value (or the prefault value) instead of `undefined`.
+- 202d9f4: `Form.CopyBox` now uses theme tokens for its surface and value text, so it is readable in dark mode and the value meets 4.5:1 contrast in both themes.
+- f661f8f: Make `CodeEditor` and `MapTileLayer` follow the `ThemeProvider` resolved theme, so a `system` theme on a dark OS gets the dark editor and an explicit light or dark choice gets the matching map tiles. `MapTileLayer` also accepts an optional `theme` prop to force light or dark tiles.
+- 2be5b0e: Stop `RichTextEditor` throwing when `disabled`, `content` or `placeholder` change after its Tiptap editor was destroyed, which crashed under React StrictMode effect re-runs.
+- 202d9f4: Warning and info toasts now have their own muted colours (new `toast-warning-*` and `toast-info-*` tokens) instead of reusing the error and success ones, and every status toast shows a labelled status icon. `toast.message` keeps its current look. The toast root now lays out as a flex row and carries a `data-variant` attribute.
+
 ## 3.11.0
 
 ### Minor Changes
