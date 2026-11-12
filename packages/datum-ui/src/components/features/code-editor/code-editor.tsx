@@ -77,11 +77,12 @@ export function CodeEditor({
   readOnly = false,
   minHeight = '200px',
 }: CodeEditorProps) {
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
   const editorRef = useRef<MonacoEditor | null>(null)
   const formatTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const monacoTheme = theme === 'dark' ? 'vs-dark' : 'light'
+  // resolvedTheme, not theme: a `system` theme must follow the OS preference.
+  const monacoTheme = resolvedTheme === 'dark' ? 'vs-dark' : 'light'
   const showPlaceholder = !!placeholder && value.length === 0
 
   // Clear any pending auto-format timer on unmount so the callback can't fire

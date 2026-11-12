@@ -1,10 +1,5 @@
 import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz'
 
-// Canonical tz-aware day-boundary helpers live in the neutral shared module so
-// sibling features (legacy time-range-picker) can consume them without reaching
-// into picker internals. Re-exported here for picker-internal consumers.
-export { endOfDayInTz, startOfDayInTz } from '../../_shared/timezone'
-
 /** Browser-detected IANA timezone, falling back to UTC if unavailable. */
 export function getBrowserTimezone(): string {
   try {

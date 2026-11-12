@@ -3,7 +3,6 @@
 import type { ColumnDef, RowData } from '@tanstack/react-table'
 import type { DataTableFeatures } from '../core/features'
 import type {
-  CreateStoreOptions,
   DataTableStore,
   SelectionColumnOptions,
   StateAdapter,
@@ -13,7 +12,7 @@ import { useTable } from '@tanstack/react-table'
 import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react'
 import { withSelectionColumn } from '../columns/selection-column'
 import { dataTableFeatures } from '../core/features'
-import { createDataTableStore } from '../core/store'
+import { useDataTableStoreInstance } from './use-data-table-store-instance'
 
 export type { UseDataTableClientOptions }
 
@@ -138,34 +137,21 @@ export function useDataTableClient<TData extends RowData>(options: UseDataTableC
     stateAdapter,
   } = options
 
-  // 1. Create store (once)
-  const store = useMemo<DataTableStore<TData>>(
-    () => createDataTableStore<TData>({
-      data,
-      mode: 'client',
-      defaultSort,
-      defaultFilters,
-      pageSize,
-      searchableColumns,
-      searchFn,
-      filterFns,
-      getRowId,
-    } as CreateStoreOptions<TData>),
-    // eslint-disable-next-line react/exhaustive-deps
-    [], // intentionally empty — store created once
-  )
+  // 1. Create the store once and keep `data` and `pageSize` synced into it
+  const store = useDataTableStoreInstance<TData>({
+    data,
+    mode: 'client',
+    defaultSort,
+    defaultFilters,
+    pageSize,
+    columnCount: columns.length,
+    searchableColumns,
+    searchFn,
+    filterFns,
+    getRowId,
+  })
 
-  // 2. Sync data changes into store (skip initial render — store already has it)
-  const isInitialRender = useRef(true)
-  useEffect(() => {
-    if (isInitialRender.current) {
-      isInitialRender.current = false
-      return
-    }
-    store.setData(data)
-  }, [data, store])
-
-  // 3. Create table from store
+  // 2. Create table from store
   const { table } = useClientTable(store, { columns, getRowId, enableRowSelection, stateAdapter })
 
   return { store, table }

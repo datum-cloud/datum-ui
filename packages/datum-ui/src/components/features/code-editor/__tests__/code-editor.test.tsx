@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ThemeProvider } from '../../../themes'
 import { CodeEditor } from '../code-editor'
 
@@ -49,6 +49,27 @@ vi.mock('@monaco-editor/react', () => ({
 function renderWithTheme(ui: React.ReactElement) {
   return render(<ThemeProvider>{ui}</ThemeProvider>)
 }
+
+/** Make `prefers-color-scheme: dark` report the given OS preference. */
+function stubSystemTheme(systemTheme: 'light' | 'dark') {
+  vi.spyOn(window, 'matchMedia').mockImplementation(query => ({
+    matches: systemTheme === 'dark',
+    media: query,
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  }))
+}
+
+afterEach(() => {
+  vi.restoreAllMocks()
+  localStorage.clear()
+  document.documentElement.removeAttribute('data-theme')
+  document.documentElement.style.colorScheme = ''
+})
 
 describe('codeEditor', () => {
   it('renders without crashing', () => {
@@ -124,12 +145,48 @@ describe('codeEditor', () => {
     expect(editor).toHaveAttribute('data-language', language)
   })
 
-  it('uses correct theme based on ThemeProvider', () => {
-    renderWithTheme(<CodeEditor value="" language="json" />)
+  it('uses the light Monaco theme when the theme is light', () => {
+    stubSystemTheme('dark')
+    render(
+      <ThemeProvider defaultTheme="light">
+        <CodeEditor value="" language="json" />
+      </ThemeProvider>,
+    )
 
-    const editor = screen.getByTestId('monaco-editor')
-    // Default theme should be 'light' (since ThemeProvider defaults to light)
-    expect(editor).toHaveAttribute('data-theme', 'light')
+    expect(screen.getByTestId('monaco-editor')).toHaveAttribute('data-theme', 'light')
+  })
+
+  it('uses the dark Monaco theme when the theme is dark', () => {
+    stubSystemTheme('light')
+    render(
+      <ThemeProvider defaultTheme="dark">
+        <CodeEditor value="" language="json" />
+      </ThemeProvider>,
+    )
+
+    expect(screen.getByTestId('monaco-editor')).toHaveAttribute('data-theme', 'vs-dark')
+  })
+
+  it('follows a dark OS preference when the theme is system', () => {
+    stubSystemTheme('dark')
+    render(
+      <ThemeProvider defaultTheme="system">
+        <CodeEditor value="" language="json" />
+      </ThemeProvider>,
+    )
+
+    expect(screen.getByTestId('monaco-editor')).toHaveAttribute('data-theme', 'vs-dark')
+  })
+
+  it('follows a light OS preference when the theme is system', () => {
+    stubSystemTheme('light')
+    render(
+      <ThemeProvider defaultTheme="system">
+        <CodeEditor value="" language="json" />
+      </ThemeProvider>,
+    )
+
+    expect(screen.getByTestId('monaco-editor')).toHaveAttribute('data-theme', 'light')
   })
 
   it('sets custom id on hidden input', () => {

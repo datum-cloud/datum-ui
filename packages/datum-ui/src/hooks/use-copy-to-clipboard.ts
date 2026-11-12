@@ -5,6 +5,9 @@ interface CopyOptions {
   toastMessage?: string
 }
 
+/** How long `isCopied` stays true after a successful copy. */
+export const COPY_RESET_DELAY_MS = 2000
+
 type CopyFn = (text: string, options?: CopyOptions) => Promise<boolean>
 
 export function useCopyToClipboard(): [boolean, CopyFn] {
@@ -50,7 +53,7 @@ export function useCopyToClipboard(): [boolean, CopyFn] {
       }
       timeoutRef.current = setTimeout(() => {
         setIsCopied(false)
-      }, 2000)
+      }, COPY_RESET_DELAY_MS)
 
       return true
     }

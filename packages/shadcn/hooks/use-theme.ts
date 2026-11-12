@@ -1,39 +1,52 @@
 import * as React from 'react'
 
+type ResolvedTheme = 'light' | 'dark'
+
+/** Attributes a theme provider may write on <html>. */
+const THEME_ATTRIBUTES = ['class', 'data-theme']
+
+function detectTheme(): ResolvedTheme {
+  const root = document.documentElement
+  const attribute = root.getAttribute('data-theme')
+  if (root.classList.contains('dark') || attribute === 'dark')
+    return 'dark'
+  if (root.classList.contains('light') || attribute === 'light')
+    return 'light'
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
 /**
  * Lightweight theme detection hook for shadcn components.
- * Detects dark mode via the `dark` class on <html> (Tailwind convention)
- * or falls back to prefers-color-scheme media query.
+ *
+ * Pass `theme` when the caller already knows the resolved theme (for example
+ * from a theme provider): the hook returns it and does not watch the DOM.
+ * Without it the hook reads an explicit `dark`/`light` class or `data-theme`
+ * on <html>, then falls back to the prefers-color-scheme media query.
  */
-export function useTheme(): { resolvedTheme: 'light' | 'dark' } {
-  const [resolvedTheme, setResolvedTheme] = React.useState<'light' | 'dark'>('light')
+export function useTheme(theme?: ResolvedTheme): { resolvedTheme: ResolvedTheme } {
+  const [detectedTheme, setDetectedTheme] = React.useState<ResolvedTheme>('light')
 
   React.useEffect(() => {
-    const detect = (): 'light' | 'dark' => {
-      if (document.documentElement.classList.contains('dark'))
-        return 'dark'
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches)
-        return 'dark'
-      return 'light'
-    }
+    if (theme)
+      return
 
-    setResolvedTheme(detect())
+    const update = () => setDetectedTheme(detectTheme())
+    update()
 
-    const observer = new MutationObserver(() => setResolvedTheme(detect()))
+    const observer = new MutationObserver(update)
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['class'],
+      attributeFilter: THEME_ATTRIBUTES,
     })
 
     const mql = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = () => setResolvedTheme(detect())
-    mql.addEventListener('change', onChange)
+    mql.addEventListener('change', update)
 
     return () => {
       observer.disconnect()
-      mql.removeEventListener('change', onChange)
+      mql.removeEventListener('change', update)
     }
-  }, [])
+  }, [theme])
 
-  return { resolvedTheme }
+  return { resolvedTheme: theme ?? detectedTheme }
 }

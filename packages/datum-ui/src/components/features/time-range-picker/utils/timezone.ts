@@ -1,6 +1,4 @@
-// app/modules/datum-ui/components/time-range-picker/utils/timezone.ts
-//
-// Consolidated onto the canonical picker timezone module (STRUCT-011). The
+// Consolidated onto the canonical picker timezone module. The
 // offset/label/browser helpers and the ISO<->zoned conversions are re-used
 // from `picker/utils/timezone`; only the `TimezoneOption`-shaped helpers and
 // the `datetime-local` input-string helpers (unique to this deprecated shim)

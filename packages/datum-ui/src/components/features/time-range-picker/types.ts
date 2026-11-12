@@ -1,5 +1,3 @@
-// app/modules/datum-ui/components/time-range-picker/types.ts
-
 /**
  * Time range value - stores UTC timestamps
  * All from/to values are ISO 8601 UTC strings (e.g., '2024-01-15T04:00:00Z')

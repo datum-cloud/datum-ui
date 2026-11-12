@@ -43,6 +43,7 @@ const meta: Meta<typeof MoreActions> = {
           + 'Each action supports an optional `icon`, a `variant` of `\'default\'` or `\'destructive\'` (red text), '
           + 'and `disabled`/`hidden` as booleans or functions receiving the `row` data. '
           + 'Pass a `tooltip` string or function for additional context on hover. '
+          + 'Set `confirm` to ask in a dialog before `onClick` runs. '
           + 'When all actions are hidden the component renders nothing.',
       },
     },
@@ -101,6 +102,38 @@ export const WithRowData: Story = {
       },
     ]
     return <MoreActions row={row} actions={rowActions} />
+  },
+}
+
+export const ConfirmDestructive: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'An action with `confirm` opens a dialog and runs `onClick` only after the user confirms. '
+          + '`title` and `description` take a node or a function of the `row`, and a destructive action gets a danger confirm button. '
+          + 'Here `onClick` returns a promise, so both buttons stay disabled until it settles: the dialog closes when it resolves and stays open when it rejects.',
+      },
+    },
+  },
+  render: () => {
+    const row = { id: 'proj-1', name: 'My Project' }
+    const confirmActions: ActionItem<typeof row>[] = [
+      { key: 'edit', label: 'Edit', icon: <PencilIcon />, onClick: () => {} },
+      {
+        key: 'delete',
+        label: 'Delete',
+        variant: 'destructive',
+        icon: <TrashIcon />,
+        onClick: () => new Promise<void>(resolve => setTimeout(resolve, 1500)),
+        confirm: {
+          title: r => `Delete ${r.name}?`,
+          description: 'The project and its resources are removed for everyone. This cannot be undone.',
+          confirmLabel: 'Delete project',
+        },
+      },
+    ]
+    return <MoreActions row={row} actions={confirmActions} />
   },
 }
 

@@ -1,5 +1,4 @@
 import type { ApiTimeRange, PresetConfig, TimeRangeValue } from '../types'
-// app/modules/datum-ui/components/time-range-picker/utils/to-api-format.ts
 import { DEFAULT_PRESETS, getDefaultPreset, getPresetRange } from '../presets'
 import { getBrowserTimezone } from './timezone'
 

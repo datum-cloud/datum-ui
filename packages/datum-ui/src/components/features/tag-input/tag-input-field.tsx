@@ -75,7 +75,7 @@ export function TagInputField({ value, placeholder, input }: TagInputFieldProps)
         aria-label="input tag"
         disabled={disableInput}
         // A chip is active: keep the field controlled but non-editable so React
-        // never warns about a `value` without `onChange` (BUG-159).
+        // never warns about a `value` without `onChange`.
         readOnly={activeIndex !== -1}
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}

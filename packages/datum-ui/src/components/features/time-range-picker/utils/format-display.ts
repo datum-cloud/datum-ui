@@ -1,4 +1,3 @@
-// app/modules/datum-ui/components/time-range-picker/utils/format-display.ts
 import type { TimeRangeValue } from '../types'
 import { format, isSameDay, isSameYear } from 'date-fns'
 import { formatUtcForDisplay, utcStringToZonedDate, utcToLocalInputString } from './timezone'

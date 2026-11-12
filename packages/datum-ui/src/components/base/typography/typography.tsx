@@ -1,7 +1,8 @@
 import type { VariantProps } from 'class-variance-authority'
 import { cva } from 'class-variance-authority'
-import { CopyIcon } from 'lucide-react'
+import { CheckIcon, CopyIcon } from 'lucide-react'
 import * as React from 'react'
+import { useCopyToClipboard } from '../../../hooks/use-copy-to-clipboard'
 import { cn } from '../../../utils/cn'
 
 // ---------------------------------------------------------------------------
@@ -189,6 +190,48 @@ interface TextProps
   code?: boolean
 }
 
+/** Plain text of a React node: strings and numbers, joined through nested elements. */
+function getNodeText(node: React.ReactNode): string {
+  if (typeof node === 'string' || typeof node === 'number') {
+    return String(node)
+  }
+  if (Array.isArray(node)) {
+    return node.map(getNodeText).join('')
+  }
+  if (React.isValidElement<{ children?: React.ReactNode }>(node)) {
+    return getNodeText(node.props.children)
+  }
+  return ''
+}
+
+/**
+ * The `copyable` button. It lives in its own component so `Text` only pays
+ * for the clipboard hook when `copyable` is set.
+ */
+function CopyTextButton({ text }: { text: string }) {
+  const [isCopied, copy] = useCopyToClipboard()
+  const label = isCopied ? 'Copied' : 'Copy text'
+  const StateIcon = isCopied ? CheckIcon : CopyIcon
+
+  return (
+    <>
+      <button
+        type="button"
+        aria-label={label}
+        className="hover:bg-accent hover:text-accent-foreground ml-2 inline-flex size-4 items-center justify-center rounded-md text-sm font-medium transition-colors"
+        onClick={() => {
+          void copy(text)
+        }}
+        title={label}
+      >
+        <StateIcon className="size-3" aria-hidden="true" />
+      </button>
+      {/* Announces the copy to screen readers; the button's own label change is not announced. */}
+      <span role="status" className="sr-only">{isCopied ? 'Copied' : ''}</span>
+    </>
+  )
+}
+
 function Text({
   className,
   size,
@@ -221,24 +264,12 @@ function Text({
               ? 'mark'
               : type
 
+  // Only plain text can be copied; a component child has no text to read here.
+  const copyText = copyable ? getNodeText(children) : ''
   const content = (
     <>
       {children}
-      {copyable && (
-        <button
-          type="button"
-          aria-label="Copy text"
-          className="hover:bg-accent hover:text-accent-foreground ml-2 inline-flex size-4 items-center justify-center rounded-md text-sm font-medium transition-colors"
-          onClick={() => {
-            if (typeof children === 'string') {
-              navigator.clipboard.writeText(children).catch(() => {})
-            }
-          }}
-          title="Copy text"
-        >
-          <CopyIcon className="size-3" aria-hidden="true" />
-        </button>
-      )}
+      {copyText && <CopyTextButton text={copyText} />}
     </>
   )
 

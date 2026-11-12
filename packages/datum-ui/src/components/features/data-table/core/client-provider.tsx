@@ -3,12 +3,12 @@
 import type { ReactTable, RowData } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
 import type { UseClientTableOptions } from '../hooks/use-data-table-client'
-import type { CreateStoreOptions, DataTableStore, UseDataTableClientOptions } from '../types'
+import type { DataTableStore, UseDataTableClientOptions } from '../types'
 import type { DataTableFeatures } from './features'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useClientTable } from '../hooks/use-data-table-client'
+import { useDataTableStoreInstance } from '../hooks/use-data-table-store-instance'
 import { DataTableRenderKeyContext, DataTableStoreContext, TableInstanceContext } from './data-table-context'
-import { createDataTableStore } from './store'
 
 export type DataTableClientProviderProps<TData extends RowData> = UseDataTableClientOptions<TData> & {
   readonly loading?: boolean
@@ -59,48 +59,21 @@ export function ClientProvider<TData extends RowData>(props: DataTableClientProv
     children,
   } = props
 
-  // Store created immediately — works during SSR
-  const store = useMemo<DataTableStore<TData>>(
-    () => createDataTableStore<TData>({
-      data,
-      mode: 'client',
-      isLoading: true,
-      defaultSort,
-      defaultFilters,
-      pageSize,
-      columnCount: columns.length,
-      searchableColumns,
-      searchFn,
-      filterFns,
-      getRowId,
-    } as CreateStoreOptions<TData>),
-    // eslint-disable-next-line react/exhaustive-deps
-    [], // intentionally empty — store created once
-  )
-
-  // Sync data changes into store (skip initial render — store already has it)
-  const isInitialRender = useRef(true)
-  useEffect(() => {
-    if (isInitialRender.current) {
-      isInitialRender.current = false
-      return
-    }
-    store.setData(data)
-  }, [data, store])
-
-  // Sync pageSize prop changes — store was seeded with the initial value via
-  // useMemo([]), but later prop updates (e.g. Storybook control changes,
-  // parent-controlled paging) were silently dropped. Skip the initial render
-  // because the store already has it.
-  const isPageSizeInitial = useRef(true)
-  useEffect(() => {
-    if (isPageSizeInitial.current) {
-      isPageSizeInitial.current = false
-      return
-    }
-    if (pageSize != null)
-      store.setPageSize(pageSize)
-  }, [pageSize, store])
+  // Store created immediately — works during SSR. The shared hook also syncs
+  // later `data` and `pageSize` prop changes into it.
+  const store = useDataTableStoreInstance<TData>({
+    data,
+    mode: 'client',
+    isLoading: true,
+    defaultSort,
+    defaultFilters,
+    pageSize,
+    columnCount: columns.length,
+    searchableColumns,
+    searchFn,
+    filterFns,
+    getRowId,
+  })
 
   // Table instance — null during SSR, created after hydration
   const [tableReady, setTableReady] = useState(false)

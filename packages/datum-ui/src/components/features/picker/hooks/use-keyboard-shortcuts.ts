@@ -36,7 +36,7 @@ function isEditableTarget(target: EventTarget | null): boolean {
  * The listener is attached to `document` rather than the picker root, because
  * the popover content is portaled to `document.body` and is therefore outside
  * the root's DOM subtree — a root-scoped listener never sees those keydowns
- * once focus moves into the popover (BUG-078).
+ * once focus moves into the popover.
  *
  * To keep the legacy footgun fixed (presets firing while the user types in an
  * input), keydowns originating from editable controls are ignored. Modifier

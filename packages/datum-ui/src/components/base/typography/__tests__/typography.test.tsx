@@ -1,6 +1,7 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
-import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { act, fireEvent, render, screen } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { COPY_RESET_DELAY_MS } from '../../../../hooks/use-copy-to-clipboard'
 import { Paragraph, Text, Title } from '../typography'
 
 // The type scale's contract: every `size` renders the `text-*` utility of the
@@ -162,5 +163,99 @@ describe('title', () => {
     render(<Title>default</Title>)
     const el = screen.getByRole('heading', { level: 4 })
     expect(el).toHaveClass('text-xl')
+  })
+})
+
+describe('text copyable', () => {
+  function stubClipboard(value: unknown) {
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value })
+  }
+
+  /** Clicks the button and lets the hook's async clipboard write settle. */
+  async function clickCopy() {
+    fireEvent.click(screen.getByRole('button', { name: 'Copy text' }))
+    await act(async () => {})
+  }
+
+  afterEach(() => {
+    vi.useRealTimers()
+    Reflect.deleteProperty(navigator, 'clipboard')
+  })
+
+  it('renders no copy button unless copyable is set', () => {
+    render(<Text>plain</Text>)
+
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  })
+
+  it('copies the text and shows the copied state until the reset delay passes', async () => {
+    vi.useFakeTimers()
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    stubClipboard({ writeText })
+    render(<Text copyable>api-key-123</Text>)
+
+    await clickCopy()
+
+    expect(writeText).toHaveBeenCalledWith('api-key-123')
+    expect(screen.getByRole('button', { name: 'Copied' })).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Copied')
+
+    act(() => {
+      vi.advanceTimersByTime(COPY_RESET_DELAY_MS)
+    })
+
+    expect(screen.getByRole('button', { name: 'Copy text' })).toBeInTheDocument()
+  })
+
+  it('copies the text of nested element children', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    stubClipboard({ writeText })
+    render(
+      <Text copyable>
+        Project
+        {' '}
+        <strong>
+          datum-
+          {42}
+        </strong>
+      </Text>,
+    )
+
+    await clickCopy()
+
+    expect(writeText).toHaveBeenCalledWith('Project datum-42')
+  })
+
+  it('renders no copy button when the children have no plain text to copy', () => {
+    function Label() {
+      return <span>from a component</span>
+    }
+    render(
+      <Text copyable>
+        <Label />
+      </Text>,
+    )
+
+    expect(screen.getByText('from a component')).toBeInTheDocument()
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  })
+
+  it('does not throw or show the copied state when the clipboard is unavailable', async () => {
+    stubClipboard(undefined)
+    render(<Text copyable>secret</Text>)
+
+    await clickCopy()
+
+    expect(screen.getByRole('button', { name: 'Copy text' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Copied' })).not.toBeInTheDocument()
+  })
+
+  it('keeps the copy state when the clipboard write is rejected', async () => {
+    stubClipboard({ writeText: vi.fn().mockRejectedValue(new Error('denied')) })
+    render(<Text copyable>secret</Text>)
+
+    await clickCopy()
+
+    expect(screen.getByRole('button', { name: 'Copy text' })).toBeInTheDocument()
   })
 })

@@ -14,7 +14,7 @@ import { useTable } from '@tanstack/react-table'
 import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react'
 import { withSelectionColumn } from '../columns/selection-column'
 import { dataTableFeatures } from '../core/features'
-import { createDataTableStore } from '../core/store'
+import { useDataTableStoreInstance } from './use-data-table-store-instance'
 
 export type { UseDataTableServerOptions }
 
@@ -217,18 +217,15 @@ export function useDataTableServer<TResponse, TData extends RowData>(
     stateAdapter,
   } = options
 
-  // 1. Create store
-  const store = useMemo<DataTableStore<TData>>(
-    () => createDataTableStore<TData>({
-      data: [] as TData[],
-      mode: 'server',
-      defaultSort,
-      defaultFilters,
-      pageSize: limit,
-    }),
-    // eslint-disable-next-line react/exhaustive-deps
-    [],
-  )
+  // 1. Create the store once and keep `limit` synced into its page size
+  const store = useDataTableStoreInstance<TData>({
+    data: [],
+    mode: 'server',
+    defaultSort,
+    defaultFilters,
+    pageSize: limit,
+    columnCount: columns.length,
+  })
 
   // 2. Create table from store
   const { table } = useServerTable(store, {

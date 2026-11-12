@@ -1,5 +1,3 @@
-// app/modules/datum-ui/components/time-range-picker/utils/index.ts
-
 export {
   formatDateForInput,
   formatSingleTimeDisplay,

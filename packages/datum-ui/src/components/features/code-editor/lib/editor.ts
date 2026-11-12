@@ -8,7 +8,7 @@ import { CORE_SCHEMA, dump, FAILSAFE_SCHEMA, floatCoreTag, intCoreTag, load } fr
  * formatting normalization (`1.0`, `0755`, `1e3`) are detected by comparing the
  * source token against the number's canonical `String()` form. Genuine numbers
  * (`8080`, `3.14`, `-5`) still resolve to native JS numbers, preserving the
- * original BUG-008 fix where `port: 8080` must stay a number.
+ * rule that `port: 8080` must stay a number.
  */
 function preserveLosslessNumbers(
   baseTag: ScalarTagDefinition<number>,

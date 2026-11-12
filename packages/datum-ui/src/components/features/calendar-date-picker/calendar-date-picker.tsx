@@ -32,7 +32,7 @@ export function CalendarDatePicker({
 
   // A from-only value (valid per CalendarDatePickerProps, e.g. single-date
   // usage with numberOfMonths={1}) is rendered as a same-day range so the
-  // selected date is shown instead of the empty placeholder (BUG-140).
+  // selected date is shown instead of the empty placeholder.
   const value = date?.from
     ? { from: date.from, to: date.to ?? date.from }
     : null

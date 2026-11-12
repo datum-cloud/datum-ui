@@ -231,6 +231,12 @@ Light-mode tokens on :root, dark-mode tokens on .dark
   --toast-success-background: var(--pine-forge);
   --toast-success-foreground: var(--glacier-mist-700);
   --toast-success-icon: var(--glacier-mist-700);
+  --toast-warning-background: var(--btn-warning-hover);
+  --toast-warning-foreground: var(--glacier-mist-700);
+  --toast-warning-icon: var(--glacier-mist-700);
+  --toast-info-background: var(--app-dark-utility-2);
+  --toast-info-foreground: var(--glacier-mist-700);
+  --toast-info-icon: var(--glacier-mist-700);
 }
 
 /* ========================================
@@ -297,6 +303,12 @@ Light-mode tokens on :root, dark-mode tokens on .dark
   --toast-success-background: var(--primary);
   --toast-success-foreground: var(--midnight-fjord);
   --toast-success-icon: var(--midnight-fjord);
+  --toast-warning-background: var(--btn-warning-hover);
+  --toast-warning-foreground: var(--midnight-fjord);
+  --toast-warning-icon: var(--midnight-fjord);
+  --toast-info-background: var(--app-dark-utility-4);
+  --toast-info-foreground: var(--midnight-fjord);
+  --toast-info-icon: var(--midnight-fjord);
 
   /* Chart colors - dark mode */
   --chart-1: hsl(220 70% 50%);
@@ -497,6 +509,12 @@ TAILWIND CUSTOM UTILITIES FOR THEME
   --color-toast-success-background: var(--toast-success-background);
   --color-toast-success-foreground: var(--toast-success-foreground);
   --color-toast-success-icon: var(--toast-success-icon);
+  --color-toast-warning-background: var(--toast-warning-background);
+  --color-toast-warning-foreground: var(--toast-warning-foreground);
+  --color-toast-warning-icon: var(--toast-warning-icon);
+  --color-toast-info-background: var(--toast-info-background);
+  --color-toast-info-foreground: var(--toast-info-foreground);
+  --color-toast-info-icon: var(--toast-info-icon);
 
   /* Badge */
   --color-badge-primary: var(--badge-primary);

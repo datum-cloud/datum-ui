@@ -1,8 +1,7 @@
-// app/modules/datum-ui/components/time-range-picker/presets.ts
 import type { DateRange, PresetConfig } from './types'
 import { subDays, subHours, subMinutes } from 'date-fns'
 // Timezone-day boundaries share the single canonical implementation from the
-// picker (STRUCT-014) — these were copy-pasted helpers before.
+// picker — these were copy-pasted helpers before.
 import {
   endOfDayInTz as endOfDayInTimezone,
   startOfDayInTz as startOfDayInTimezone,

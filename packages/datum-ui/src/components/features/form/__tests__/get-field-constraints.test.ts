@@ -132,3 +132,87 @@ describe('getFieldConstraintsSingle - array constraints', () => {
     expect(constraints.maxItems).toBe(5)
   })
 })
+
+describe('getFieldConstraints - wrapped fields', () => {
+  it('marks .optional().transform() as not required', () => {
+    const schema = z.object({ name: z.string().optional().transform(value => value?.trim()) })
+
+    expect(getFieldConstraints(schema).name?.required).toBe(false)
+  })
+
+  it('keeps .transform() on a required string required', () => {
+    const schema = z.object({ name: z.string().min(2).max(10).transform(value => value.trim()) })
+
+    expect(getFieldConstraints(schema).name?.required).toBe(true)
+  })
+
+  it('marks a nested default plus transform as not required', () => {
+    const schema = z.object({
+      role: z.string().default('user').transform(value => value.toUpperCase()),
+      tags: z.array(z.string()).default([]).optional().transform(value => value ?? []),
+    })
+    const constraints = getFieldConstraints(schema)
+
+    expect(constraints.role?.required).toBe(false)
+    expect(constraints.tags?.required).toBe(false)
+  })
+
+  it('marks .nullish() and .catch() as not required', () => {
+    const schema = z.object({
+      nickname: z.string().nullish(),
+      theme: z.string().catch('light'),
+    })
+    const constraints = getFieldConstraints(schema)
+
+    expect(constraints.nickname?.required).toBe(false)
+    expect(constraints.theme?.required).toBe(false)
+  })
+
+  it('reads the inner schema of z.preprocess()', () => {
+    const schema = z.object({
+      age: z.preprocess(value => Number(value), z.number()),
+      score: z.preprocess(value => Number(value), z.number().optional()),
+    })
+    const constraints = getFieldConstraints(schema)
+
+    expect(constraints.age?.required).toBe(true)
+    expect(constraints.score?.required).toBe(false)
+  })
+
+  it('treats .optional().nonoptional() as required again', () => {
+    const schema = z.object({ name: z.string().optional().nonoptional() })
+
+    expect(getFieldConstraints(schema).name?.required).toBe(true)
+  })
+})
+
+describe('getFieldConstraintsSingle - wrapped fields', () => {
+  it('reads string min/max through .transform() on a required string', () => {
+    const schema = z.string().min(2).max(10).transform(value => value.trim())
+
+    expect(getFieldConstraintsSingle(schema)).toEqual({ required: true, minLength: 2, maxLength: 10 })
+  })
+
+  it('reads string min/max through .optional().transform()', () => {
+    const schema = z.string().min(2).max(10).optional().transform(value => value?.trim())
+
+    expect(getFieldConstraintsSingle(schema)).toEqual({ required: false, minLength: 2, maxLength: 10 })
+  })
+
+  it('reads date min/max through a transform', () => {
+    const minDate = new Date('2024-01-01')
+    const maxDate = new Date('2024-12-31')
+    const schema = z.date().min(minDate).max(maxDate).transform(value => value.toISOString())
+
+    const constraints = getFieldConstraintsSingle(schema)
+
+    expect(constraints.minDate).toEqual(minDate)
+    expect(constraints.maxDate).toEqual(maxDate)
+  })
+
+  it('reads array min/max through a nested default plus transform', () => {
+    const schema = z.array(z.string()).min(1).max(5).default(['a']).transform(value => value.join(','))
+
+    expect(getFieldConstraintsSingle(schema)).toEqual({ required: false, minItems: 1, maxItems: 5 })
+  })
+})

@@ -11,7 +11,7 @@ import {
   subMinutes,
 } from 'date-fns'
 import { fromZonedTime, toZonedTime } from 'date-fns-tz'
-import { endOfDayInTz, startOfDayInTz } from '../utils/timezone'
+import { endOfDayInTz, startOfDayInTz } from '../../_shared/timezone'
 
 /**
  * Compute a `{ from, to }` window in `tz` wall-clock space using date-fns

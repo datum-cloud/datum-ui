@@ -489,7 +489,7 @@ function useConformWatchAll(names: string[]): Record<string, unknown> {
       }
     }
     return result
-    // eslint-disable-next-line react/exhaustive-deps
+    // eslint-disable-next-line react/exhaustive-deps -- `names` is a new array each render; `namesKey` tracks its content
   }, [allFields, namesKey])
 }
 

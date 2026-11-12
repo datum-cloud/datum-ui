@@ -76,13 +76,13 @@ export function FormCopyBox({
   return (
     <div
       className={cn(
-        'group border-input flex h-10 w-full overflow-hidden rounded-lg border bg-[#F6F6F580] text-xs focus-within:outline-hidden',
+        'group border-input flex h-10 w-full overflow-hidden rounded-lg border bg-muted text-xs focus-within:outline-hidden',
         className,
       )}
     >
       <div
         className={cn(
-          'flex w-full items-center overflow-hidden px-3 py-2 text-xs opacity-50',
+          'flex w-full items-center overflow-hidden px-3 py-2 text-xs text-foreground/70',
           contentClassName,
         )}
       >

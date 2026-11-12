@@ -63,10 +63,11 @@ Button or element that triggers the dialog to open.
 
 Container for the dialog content. Applies Datum UI styling.
 
-| Prop        | Type        | Default | Description      |
-| ----------- | ----------- | ------- | ---------------- |
-| `children`  | `ReactNode` | -       | Dialog content   |
-| `className` | `string`    | -       | Additional class |
+| Prop               | Type                     | Default | Description                                                                                                          |
+| ------------------ | ------------------------ | ------- | -------------------------------------------------------------------------------------------------------------------- |
+| `children`         | `ReactNode`              | -       | Dialog content                                                                                                       |
+| `className`        | `string`                 | -       | Additional class                                                                                                     |
+| `onCloseAutoFocus` | `(event: Event) => void` | -       | Runs as focus leaves the closing dialog. Call `event.preventDefault()` and focus an element when there is no Trigger |
 
 ### Dialog.Header
 

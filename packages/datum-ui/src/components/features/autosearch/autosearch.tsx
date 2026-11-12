@@ -2,6 +2,7 @@ import type { AutocompleteOption } from '../autocomplete'
 import type { AutosearchProps } from './autosearch.types'
 import { AlertCircle, Loader2, X } from 'lucide-react'
 import * as React from 'react'
+import { useLatestRef } from '../../../hooks/use-latest-ref'
 import { cn } from '../../../utils/cn'
 import { Button } from '../../base/button'
 import { Input } from '../../base/input'
@@ -78,6 +79,12 @@ export function Autosearch({
 
   const searchDebounceRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Latest consumer callbacks. The debounce timer and the auto-select effect
+  // run after the render that scheduled them, so they read the callbacks
+  // through refs: a parent that swaps a handler never gets the old one called.
+  const onSearchRef = useLatestRef(onSearch)
+  const onValueChangeRef = useLatestRef(onValueChange)
+
   // ===== Debounced onSearch forwarding =====
   // The engine's onSearchChange disables internal filtering (correct — consumer owns results).
   // We wrap it so the actual onSearch callback fires after the debounce delay.
@@ -95,17 +102,17 @@ export function Autosearch({
       setSearchExecuted(false)
 
       if (!normalized) {
-        onSearch?.('')
+        onSearchRef.current?.('')
         return
       }
 
       searchDebounceRef.current = setTimeout(() => {
         setSearchExecuted(true)
-        onSearch?.(normalized)
+        onSearchRef.current?.(normalized)
         searchDebounceRef.current = null
       }, searchDebounceMs)
     },
-    [onSearch, searchDebounceMs],
+    [onSearchRef, searchDebounceMs],
   )
 
   // Cleanup timeout on unmount
@@ -138,6 +145,8 @@ export function Autosearch({
     onOpenChange: setOpen,
   })
 
+  const setSearchRef = useLatestRef(picker.setSearch)
+
   // ===== Open / close logic =====
   // Open only when there's a search query, no value selected, and results > 1
   const hasSearch = Boolean(picker.search.trim())
@@ -167,12 +176,12 @@ export function Autosearch({
     if (options.length === 1 && !options[0]!.disabled) {
       const option = options[0]!
       setPersistedOption(option)
-      onValueChange?.(option.value)
+      onValueChangeRef.current?.(option.value)
       // setSearch('') forwards onSearch('') and resets searchExecuted.
-      picker.setSearch('')
+      setSearchRef.current('')
       setOpen(false)
     }
-  }, [options, value, hasSearch, loading, searchExecuted]) // eslint-disable-line react/exhaustive-deps
+  }, [options, value, hasSearch, loading, searchExecuted, onValueChangeRef, setSearchRef])
 
   // ===== Clear =====
   const handleClear = React.useCallback(() => {
