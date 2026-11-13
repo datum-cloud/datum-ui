@@ -6,7 +6,7 @@ import { CodeEditorTabs } from '../code-editor-tabs'
 
 // Mock @monaco-editor/react
 vi.mock('@monaco-editor/react', () => ({
-  default: ({
+  Editor: ({
     value,
     onChange,
     onMount,

@@ -1,6 +1,8 @@
 import type { OnMount } from '@monaco-editor/react'
 import type { CodeEditorProps } from './types'
-import Editor from '@monaco-editor/react'
+// Named, not default: when a server renders this, Node loads the package's
+// CommonJS build, where the default import is the whole module object.
+import { Editor } from '@monaco-editor/react'
 import { useEffect, useRef } from 'react'
 import { cn } from '../../../utils/cn'
 import { useTheme } from '../../themes'
