@@ -6,7 +6,7 @@ import { CodeEditor } from '../code-editor'
 
 // Mock @monaco-editor/react
 vi.mock('@monaco-editor/react', () => ({
-  default: ({
+  Editor: ({
     value,
     onChange,
     onMount,
