@@ -1,5 +1,11 @@
 # @datum-cloud/datum-ui
 
+## 3.12.1
+
+### Patch Changes
+
+- 991050f: Fix `CodeEditor` crashing when a page renders on the server: import `Editor` from `@monaco-editor/react` by name, since Node loads the package's CommonJS build, where the default import is the whole module object.
+
 ## 3.12.0
 
 ### Minor Changes
