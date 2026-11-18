@@ -31,6 +31,7 @@ export function TaskPanelActions({ task }: TaskPanelActionsProps) {
                 label: item.id ?? 'Error',
                 status: 'failed',
                 message: item.message,
+                detail: item.detail,
               })),
             )}
         >
@@ -72,7 +73,7 @@ function resolveActions(task: Task): ButtonProps[] {
           return null
         const failed = failedMap.get(id)
         if (failed)
-          return { id, status: 'failed' as const, message: failed.message, data: item }
+          return { id, status: 'failed' as const, message: failed.message, detail: failed.detail, data: item }
         if (succeededSet.has(id))
           return { id, status: 'succeeded' as const, data: item }
         return null

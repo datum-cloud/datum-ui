@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type { TaskQueueConfig } from '../types'
 import { createContext, useEffect, useMemo, useRef } from 'react'
+import { useDescribeError } from '../../error-content/error-description-context'
 import { TaskQueue } from '../engine'
 
 export interface TaskQueueContextValue {
@@ -17,8 +18,18 @@ interface TaskQueueProviderProps {
 export function TaskQueueProvider({ children, config }: TaskQueueProviderProps) {
   const queueRef = useRef<TaskQueue | null>(null)
 
+  // The queue is built once, so it reads the tree's describer through a ref.
+  const describe = useDescribeError()
+  const describeRef = useRef(describe)
+  useEffect(() => {
+    describeRef.current = describe
+  }, [describe])
+
   if (!queueRef.current) {
-    queueRef.current = new TaskQueue(config)
+    queueRef.current = new TaskQueue({
+      ...config,
+      formatError: config?.formatError ?? (error => describeRef.current(error)),
+    })
   }
 
   // Cleanup on unmount: fully dispose the queue (cancel running AND pending

@@ -363,3 +363,87 @@ describe('taskQueue multi-tab reconcile (CR-010)', () => {
     void handle
   })
 })
+
+describe('taskQueue error formatting', () => {
+  const plain = () => ({ title: 'Plain', detail: 'raw' })
+
+  it('formats an error a processor throws', async () => {
+    const queue = new TaskQueue({ storage: new MemoryTaskStorage(), formatError: plain })
+    const outcome = await queue.enqueue({ title: 't', processor: async () => {
+      throw new Error('raw')
+    } }).promise
+    expect(outcome.failedItems[0]).toEqual({ message: 'Plain', detail: 'raw' })
+  })
+
+  it('formats an error thrown for one item', async () => {
+    const queue = new TaskQueue({ storage: new MemoryTaskStorage(), formatError: plain })
+    const outcome = await queue.enqueue({
+      title: 't',
+      items: [{ id: 'a' }, { id: 'b' }],
+      processItem: async (item) => {
+        if (item.id === 'b')
+          throw new Error('raw')
+      },
+    }).promise
+    expect(outcome.failedItems).toEqual([{ id: 'b', message: 'Plain', detail: 'raw' }])
+  })
+
+  it('prefers a task\'s own formatError over the config\'s', async () => {
+    const queue = new TaskQueue({ storage: new MemoryTaskStorage(), formatError: plain })
+    const outcome = await queue.enqueue({
+      title: 't',
+      formatError: () => ({ title: 'Per task' }),
+      processor: async () => {
+        throw new Error('raw')
+      },
+    }).promise
+    expect(outcome.failedItems[0]?.message).toBe('Per task')
+  })
+
+  it('keeps a message the processor passes to fail as written', async () => {
+    const queue = new TaskQueue({ storage: new MemoryTaskStorage(), formatError: plain })
+    const outcome = await queue.enqueue({
+      title: 't',
+      items: [{ id: 'a' }],
+      processItem: async (_item, ctx) => ctx.fail('a', 'Written by the processor'),
+    }).promise
+    expect(outcome.failedItems).toEqual([{ id: 'a', message: 'Written by the processor' }])
+  })
+
+  it('stores the thrown message with no formatError anywhere', async () => {
+    const queue = new TaskQueue({ storage: new MemoryTaskStorage() })
+    const outcome = await queue.enqueue({ title: 't', processor: async () => {
+      throw new Error('raw')
+    } }).promise
+    expect(outcome.failedItems[0]).toEqual({ message: 'raw' })
+  })
+
+  it('falls back to the raw message when formatError throws, and keeps going', async () => {
+    const queue = new TaskQueue({
+      storage: new MemoryTaskStorage(),
+      formatError: () => {
+        throw new Error('formatter broke')
+      },
+    })
+    const seen: string[] = []
+    const outcome = await queue.enqueue({
+      title: 't',
+      items: [{ id: 'a' }, { id: 'b' }],
+      processItem: async (item) => {
+        seen.push(item.id)
+        if (item.id === 'a')
+          throw new Error('raw')
+      },
+    }).promise
+    expect(outcome.failedItems).toEqual([{ id: 'a', message: 'raw' }])
+    expect(seen).toEqual(['a', 'b'])
+  })
+
+  it('reads a saved failed item that has no detail', () => {
+    const storage = new MemoryTaskStorage()
+    storage.set('old', makeStoredTask({ id: 'old', status: 'failed', failed: 1, failedItems: [{ message: 'old' }] }))
+    const queue = new TaskQueue({ storage })
+    const saved = queue.getSnapshot().find(t => t.id === 'old')!
+    expect(saved.failedItems).toEqual([{ message: 'old' }])
+  })
+})

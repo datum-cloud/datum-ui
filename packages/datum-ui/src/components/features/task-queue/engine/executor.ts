@@ -1,7 +1,9 @@
-import type { Task, TaskContext, TaskOutcome, TaskProcessor } from '../types'
+import type { FormatTaskError, Task, TaskContext, TaskOutcome, TaskProcessor } from '../types'
 
 export interface ExecutorCallbacks {
   onUpdate: (task: Task) => void
+  /** Describes an error the processor throws. */
+  formatError?: FormatTaskError
   onCancelReady?: (setCancelled: (v: boolean) => void) => void
   onTaskComplete?: () => void
 }
@@ -59,12 +61,12 @@ export function createTaskContext<TItem = unknown, TResult = unknown>(
       }
       updateTask()
     },
-    fail(itemId?: string, message?: string) {
+    fail(itemId?: string, message?: string, detail?: string) {
       task.failed += 1
       if (itemId || message) {
         task.failedItems = [
           ...task.failedItems,
-          { id: itemId, message: message ?? 'Unknown error' },
+          { id: itemId, message: message ?? 'Unknown error', ...(detail !== undefined && { detail }) },
         ]
       }
       // Check errorStrategy: 'stop' - set flag to stop processing
@@ -153,8 +155,7 @@ export async function executeTask<TResult = unknown>(
   }
   catch (error) {
     task.status = 'failed'
-    const message = error instanceof Error ? error.message : 'Unknown error'
-    task.failedItems = [...task.failedItems, { message }]
+    task.failedItems = [...task.failedItems, describeThrown(error, callbacks.formatError)]
     task.failed += 1
   }
 
@@ -170,5 +171,24 @@ export async function executeTask<TResult = unknown>(
     failed: task.failed,
     failedItems: [...task.failedItems],
     result: task.result,
+  }
+}
+
+/**
+ * A thrown error as a failed item's message and raw detail. A formatter that
+ * is missing or itself throws leaves the raw message, so a broken formatter
+ * never stops the queue.
+ */
+export function describeThrown(error: unknown, formatError?: FormatTaskError): { message: string, detail?: string } {
+  const raw = error instanceof Error ? error.message : 'Unknown error'
+  if (!formatError)
+    return { message: raw }
+  try {
+    const { title, detail } = formatError(error)
+    return { message: title, ...(detail !== undefined && { detail }) }
+  }
+  catch {
+    // Formatting is best effort; the raw message still tells the person what failed.
+    return { message: raw }
   }
 }

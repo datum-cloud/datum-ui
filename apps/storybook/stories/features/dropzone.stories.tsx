@@ -35,13 +35,17 @@ type Story = StoryObj<DropzoneStoryArgs>
 
 function DefaultStory(args: DropzoneStoryArgs) {
   const [files, setFiles] = useState<File[] | undefined>(undefined)
+  const [error, setError] = useState<string>()
   return (
     <div className="max-w-md">
       <Dropzone
         disabled={args.disabled}
         src={files}
-        onDrop={accepted => setFiles(accepted)}
-        onError={err => alert(err.message)}
+        onDrop={(accepted) => {
+          setFiles(accepted)
+          setError(undefined)
+        }}
+        onError={err => setError(err.message)}
       >
         <DropzoneEmptyState
           label="Drop files here or click to upload"
@@ -49,6 +53,7 @@ function DefaultStory(args: DropzoneStoryArgs) {
         />
         <DropzoneContent />
       </Dropzone>
+      {error && <p role="alert" className="text-destructive mt-2 text-xs whitespace-pre-line">{error}</p>}
     </div>
   )
 }
@@ -68,12 +73,16 @@ export const Default: Story = {
 
 function WithConstraintsStory() {
   const [files, setFiles] = useState<File[] | undefined>(undefined)
+  const [error, setError] = useState<string>()
   return (
     <div className="max-w-md">
       <Dropzone
         src={files}
-        onDrop={accepted => setFiles(accepted)}
-        onError={err => alert(err.message)}
+        onDrop={(accepted) => {
+          setFiles(accepted)
+          setError(undefined)
+        }}
+        onError={err => setError(err.message)}
         accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.gif'] }}
         maxSize={5 * 1024 * 1024}
         maxFiles={3}
@@ -85,6 +94,7 @@ function WithConstraintsStory() {
         />
         <DropzoneContent description="Drag and drop or click to replace" />
       </Dropzone>
+      {error && <p role="alert" className="text-destructive mt-2 text-xs whitespace-pre-line">{error}</p>}
     </div>
   )
 }
