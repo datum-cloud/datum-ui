@@ -2,17 +2,18 @@
 
 import type { ReactNode } from 'react'
 import type { AssistantConfig, LinkRenderProps } from '../types'
-import { DEFAULT_ASSISTANT_CONFIG as CORE_DEFAULT_ASSISTANT_CONFIG } from '@datum-cloud/datum-ui-assistant-core'
+import { DEFAULT_ASSISTANT_CONFIG as CORE_DEFAULT_ASSISTANT_CONFIG, isInternalHref } from '@datum-cloud/datum-ui-assistant-core'
 import { createContext, useContext } from 'react'
 
 /**
- * Framework-agnostic link renderer: internal routes (`/…`) render as a plain
- * same-tab anchor, everything else opens in a new tab. Hosts override
+ * Framework-agnostic link renderer: internal routes (`/…`, but not `//…` or
+ * `/\…`, which browsers read as another site) render as a plain same-tab
+ * anchor, everything else opens in a new tab. Hosts override
  * `renderLink` to add routing (e.g. a router `<Link>`) or icons (e.g. a Sentry
  * glyph) — see the host config.
  */
 export function defaultRenderLink({ href, children }: LinkRenderProps): ReactNode {
-  if (href?.startsWith('/')) {
+  if (isInternalHref(href)) {
     return (
       <a href={href} className="underline">
         {children}

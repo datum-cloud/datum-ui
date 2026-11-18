@@ -1,7 +1,20 @@
 'use client'
 
 import type { ConversationDensity } from '../../types'
+import { useMemo, useSyncExternalStore } from 'react'
 import { cn } from '../../../../../utils/cn'
+import { sanitizeUserHtml, stripTagsToHtml } from '../../utils/sanitize-html'
+
+// The server render has no DOMParser and shows plain text; hydration reads the
+// server value first so the markup matches, then re-renders with the
+// sanitized HTML. A client-only render goes straight to the sanitized HTML.
+function subscribeNever(): () => void {
+  return () => {}
+}
+
+function hasDomParser(): boolean {
+  return typeof DOMParser !== 'undefined'
+}
 
 interface UserMessageProps {
   html: string
@@ -9,9 +22,17 @@ interface UserMessageProps {
   density?: ConversationDensity
 }
 
-/** A user's message — a right-aligned bubble rendering the sanitized input HTML. */
+/**
+ * A user's message — a right-aligned bubble rendering the input HTML. It
+ * sanitizes `html` itself rather than trusting the host to have done so.
+ */
 export function UserMessage({ html, density = 'default' }: UserMessageProps) {
   const compact = density === 'compact'
+  const canParse = useSyncExternalStore(subscribeNever, hasDomParser, () => false)
+  const safeHtml = useMemo(
+    () => (canParse ? sanitizeUserHtml(html) : stripTagsToHtml(html)),
+    [canParse, html],
+  )
   return (
     <div className="flex justify-end">
       <div
@@ -22,7 +43,7 @@ export function UserMessage({ html, density = 'default' }: UserMessageProps) {
       >
         <div
           className="[&_em]:italic [&_p]:my-0.5 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_s]:line-through [&_strong]:font-semibold [&_u]:underline"
-          dangerouslySetInnerHTML={{ __html: html }}
+          dangerouslySetInnerHTML={{ __html: safeHtml }}
         />
       </div>
     </div>

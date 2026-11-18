@@ -50,6 +50,13 @@ export interface AssistantConfigData {
   modelSelector: ModelSelectorConfig | false
   /** Tool name → progress label ("Searching users…"). Host-specific tool set. */
   toolLabels: Record<string, string>
+  /**
+   * Origins (scheme, host and port) whose images an assistant reply may load,
+   * e.g. `https://cdn.datum.net`. Unset or empty loads none: any other image
+   * is shown as a link or as text, so a prompt-injected image URL cannot
+   * leak data the moment a reply renders.
+   */
+  imageOrigins?: string[]
 }
 
 /**
