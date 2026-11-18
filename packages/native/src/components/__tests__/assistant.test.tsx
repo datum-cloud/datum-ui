@@ -1,6 +1,7 @@
 import type { UIMessage } from '@datum-cloud/datum-ui-assistant-core'
 import { colors } from '@datum-cloud/datum-ui-tokens'
 import { act, fireEvent, screen } from '@testing-library/react-native'
+import { Image } from 'react-native'
 import { platformFonts } from '../../theme/fonts'
 import { AssistantMessage } from '../assistant/assistant-message'
 import { BRAIN_GLYPH } from '../assistant/brain-path'
@@ -21,6 +22,10 @@ const webBrain = require('../../../test/brain-source.cjs').readWebBrain as () =>
 const user = (id: string, text: string): UIMessage => ({ id, role: 'user', parts: [{ type: 'text', text }] })
 const reply = (id: string, parts: UIMessage['parts']): UIMessage => ({ id, role: 'assistant', parts })
 const runningTool = { type: 'dynamic-tool', toolName: 'alb__alb_list', toolCallId: 't1', state: 'input-available', input: {} } as const
+
+// Image.getSize has a promise and a callback overload; jest.spyOn types the
+// callback one (returning void), so the promise mock is cast to getSize's type.
+const resolveImageSize = (() => Promise.resolve({ width: 1, height: 1 })) as unknown as typeof Image.getSize
 
 describe('brain glyph', () => {
   it('matches the web BrainGlyph path exactly', () => {
@@ -89,6 +94,47 @@ describe.each(SCHEMES)('assistant (%s)', (scheme) => {
     await renderIn(scheme, ui)
     await fireEvent.press(screen.getByRole('link'))
     expect(onLinkPress).toHaveBeenCalledWith('/project/p/alb/web')
+  })
+
+  it('shows an image from an origin the host has not allowed as text, without loading it', async () => {
+    // The markdown image component sizes a remote image with Image.getSize,
+    // which fetches it: a blocked image must never get that far.
+    const getSize = jest.spyOn(Image, 'getSize').mockImplementation(resolveImageSize)
+    try {
+      await renderIn(scheme, <AssistantMarkdown text="![secret](https://attacker.example/x.png)" />)
+      expect(getSize).not.toHaveBeenCalled()
+      expect(screen.getByText('Image: secret (attacker.example)')).toBeOnTheScreen()
+    }
+    finally {
+      getSize.mockRestore()
+    }
+  })
+
+  it('loads an image from an allowed origin', async () => {
+    const getSize = jest.spyOn(Image, 'getSize').mockImplementation(resolveImageSize)
+    try {
+      const ui = (
+        <AssistantConfigProvider config={{ imageOrigins: ['https://attacker.example'] }}>
+          <AssistantMarkdown text="![secret](https://attacker.example/x.png)" />
+        </AssistantConfigProvider>
+      )
+      await renderIn(scheme, ui)
+      expect(getSize.mock.calls[0]?.[0]).toBe('https://attacker.example/x.png')
+      expect(screen.queryByText('Image: secret (attacker.example)')).toBeNull()
+    }
+    finally {
+      getSize.mockRestore()
+    }
+  })
+
+  it('shows an SVG from an allowed origin as a link, since an SVG can load other origins', async () => {
+    const ui = (
+      <AssistantConfigProvider config={{ imageOrigins: ['https://cdn.datum.net'] }}>
+        <AssistantMarkdown text="![logo](https://cdn.datum.net/logo.svg?v=1)" />
+      </AssistantConfigProvider>
+    )
+    await renderIn(scheme, ui)
+    expect(screen.getByText('Image: logo (cdn.datum.net)')).toBeOnTheScreen()
   })
 
   it('closes an unterminated code block while streaming and renders it mono', async () => {
