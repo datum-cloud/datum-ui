@@ -68,6 +68,7 @@ export function createDataTableStore<TData extends RowData>(
     mode: options.mode,
     isLoading: options.isLoading ?? false,
     error: null,
+    refetchToken: 0,
     inlineContents: [],
     _version: 0,
   }
@@ -174,6 +175,13 @@ export function createDataTableStore<TData extends RowData>(
 
     setError: (error) => {
       setState({ ...state, error })
+    },
+
+    refetch: () => {
+      // Client tables hold their data already; there is nothing to fetch.
+      if (state.mode === 'client')
+        return
+      setState({ ...state, refetchToken: state.refetchToken + 1 })
     },
 
     registerFilter: (column, strategy) => {

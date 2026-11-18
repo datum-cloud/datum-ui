@@ -66,7 +66,7 @@ export function useServerTable<TResponse, TData extends RowData>(
   const hasNextPageRef = useRef(false)
 
   // 1. Read store state
-  const { sorting, filters, search, rowSelection, pageSize, pageIndex }
+  const { sorting, filters, search, rowSelection, pageSize, pageIndex, refetchToken }
     = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot)
 
   // 2. Fetch on query change — also resets cursors when query params change
@@ -132,7 +132,7 @@ export function useServerTable<TResponse, TData extends RowData>(
         if (cancelled)
           return
         store.setServerData([] as TData[])
-        store.setError(error instanceof Error ? error : new Error(String(error)))
+        store.setError(toError(error))
         hasNextPageRef.current = false
       })
       .finally(() => {
@@ -143,7 +143,7 @@ export function useServerTable<TResponse, TData extends RowData>(
     return () => {
       cancelled = true
     }
-  }, [sorting, filters, search, pageSize, pageIndex, store])
+  }, [sorting, filters, search, pageSize, pageIndex, refetchToken, store])
 
   // 3. Resolve columns
   const resolvedColumns = useMemo(
@@ -198,6 +198,20 @@ export function useServerTable<TResponse, TData extends RowData>(
   }, [sorting, filters, search, pageSize])
 
   return { table }
+}
+
+/**
+ * The store holds an `Error`. A thrown non-Error (a Kubernetes Status object,
+ * a response body) keeps its own message and travels as `cause`, so an error
+ * display can still read its reason and status.
+ */
+function toError(value: unknown): Error {
+  if (value instanceof Error)
+    return value
+  const message = typeof value === 'object' && value !== null && typeof (value as { message?: unknown }).message === 'string'
+    ? (value as { message: string }).message
+    : String(value)
+  return new Error(message, { cause: value })
 }
 
 // ── useDataTableServer (convenience wrapper) ──

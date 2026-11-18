@@ -311,6 +311,13 @@ export interface BulkActionsProps<TData extends RowData> {
 
 export interface ContentProps<TData extends RowData = Record<string, any>> {
   readonly emptyMessage?: ReactNode
+  /**
+   * Shown instead of the empty message when loading failed. A function gets
+   * the error and a `retry` that fetches the same page again (a no-op for
+   * client tables). Defaults to `ErrorContent` with a Retry button on server
+   * tables.
+   */
+  readonly errorContent?: ReactNode | ((error: Error, retry: () => void) => ReactNode)
   readonly className?: string
   readonly tableClassName?: string
   readonly headerClassName?: string
@@ -433,6 +440,8 @@ export interface DataTableStoreState<TData extends RowData> {
   readonly mode: 'client' | 'server'
   readonly isLoading: boolean
   readonly error: Error | null
+  /** Bumped by `refetch()`; a server table fetches again when it changes. */
+  readonly refetchToken: number
   readonly inlineContents: readonly InlineContentEntry<TData>[]
   /** Monotonic counter incremented on every state change. Used by table-dependent selectors to detect updates. */
   readonly _version: number
@@ -455,6 +464,8 @@ export interface DataTableStore<TData extends RowData> {
   readonly setPagination: (pageIndex: number, pageSize: number) => void
   readonly setLoading: (loading: boolean) => void
   readonly setError: (error: Error | null) => void
+  /** Fetch the current page again with the same sort, filters and search. No-op in client mode. */
+  readonly refetch: () => void
   readonly registerFilter: (column: string, strategy: FilterStrategy) => void
   readonly unregisterFilter: (column: string) => void
   readonly registerInlineContent: (entry: InlineContentEntry<TData>) => void

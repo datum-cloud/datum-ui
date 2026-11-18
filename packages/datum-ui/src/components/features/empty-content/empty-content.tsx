@@ -2,14 +2,12 @@ import type { VariantProps } from 'class-variance-authority'
 import type { AnchorHTMLAttributes, ReactNode } from 'react'
 import type { ButtonProps } from '../../base/button'
 import { cva } from 'class-variance-authority'
-import { Fragment } from 'react'
 import { cn } from '../../../utils/cn'
-import { Button } from '../../base/button'
-import { Tooltip } from '../../base/tooltip'
 import miloStamp from './assets/milo-stamp.svg'
 import scene5 from './assets/scene-5.png'
 import scene6 from './assets/scene-6.png'
 import scene7 from './assets/scene-7.png'
+import { ContentAction } from './content-action'
 
 /** Shared by every action kind: full Button surface + presentation concerns. */
 interface BaseAction extends Omit<ButtonProps, 'asChild' | 'htmlType' | 'children'> {
@@ -118,22 +116,6 @@ const actionsContainerVariants = cva('flex items-center flex-col', {
   },
 })
 
-// Action button variants
-const actionButtonVariants = cva('flex items-center gap-1', {
-  variants: {
-    size: {
-      xs: 'text-xs',
-      sm: 'text-xs',
-      md: 'text-xs',
-      lg: 'text-sm',
-      xl: 'text-sm',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-  },
-})
-
 // Size to button size mapping
 const BUTTON_SIZE_MAP = {
   xs: 'xs',
@@ -143,17 +125,9 @@ const BUTTON_SIZE_MAP = {
   xl: 'default',
 } as const
 
-// Button size back to the nearest container size (for actionButtonVariants text class)
-const BUTTON_SIZE_TO_CONTAINER: Record<
-  NonNullable<ButtonProps['size']>,
-  NonNullable<VariantProps<typeof actionButtonVariants>['size']>
-> = {
-  xs: 'xs',
-  small: 'sm',
-  default: 'lg',
-  large: 'xl',
-  icon: 'md',
-  link: 'md',
+/** A stable key for an action: its kind, label and position (labels can repeat). */
+function actionKey(action: EmptyContentAction, position: number): string {
+  return `${action.as ?? 'button'}-${action.label}-${position}`
 }
 
 export interface EmptyContentProps extends VariantProps<typeof containerVariants> {
@@ -183,75 +157,6 @@ export function EmptyContent({
   const buttonSize = BUTTON_SIZE_MAP[size ?? 'md']
   const LinkComp = linkComponent || 'a'
   const visibleActions = actions.filter(action => !action.hidden)
-
-  const renderAction = (action: EmptyContentAction, index: number) => {
-    const renderAsLink
-      = (action.as === 'link' || action.as === 'external-link') && !action.disabled
-
-    // Strip all non-Button keys (meta + anchor) so only Button props reach <Button>.
-    const {
-      as: _as,
-      label,
-      tooltip,
-      tooltipSide,
-      hidden: _hidden,
-      to,
-      target,
-      rel,
-      download,
-      hrefLang,
-      referrerPolicy,
-      ping,
-      type = 'secondary',
-      size: sizeOverride,
-      className: actionClassName,
-      ...buttonProps
-    } = action as ButtonAction & Partial<LinkAction>
-
-    const resolvedSize = sizeOverride ?? buttonSize
-    const wrapperSize = BUTTON_SIZE_TO_CONTAINER[resolvedSize ?? 'xs'] ?? 'md'
-
-    const button = (
-      <Button
-        type={type}
-        size={resolvedSize}
-        className={cn(actionButtonVariants({ size: wrapperSize }), actionClassName)}
-        {...buttonProps}
-      >
-        {label}
-      </Button>
-    )
-
-    let control: ReactNode = button
-
-    if (renderAsLink) {
-      const isExternal = action.as === 'external-link'
-      const linkHref = LinkComp === 'a' ? { href: to ?? '' } : { to: to ?? '' }
-      control = (
-        <LinkComp
-          {...linkHref}
-          target={target ?? (isExternal ? '_blank' : '_self')}
-          rel={isExternal ? 'noopener noreferrer' : rel}
-          download={download}
-          hrefLang={hrefLang}
-          referrerPolicy={referrerPolicy}
-          ping={ping}
-        >
-          {button}
-        </LinkComp>
-      )
-    }
-
-    if (tooltip) {
-      control = (
-        <Tooltip message={tooltip} side={tooltipSide}>
-          <span className="inline-flex">{control}</span>
-        </Tooltip>
-      )
-    }
-
-    return <Fragment key={`${action.as ?? 'button'}-${label}-${index}`}>{control}</Fragment>
-  }
 
   return (
     <div className={cn(containerVariants({ variant, size, orientation }), className)}>
@@ -285,7 +190,14 @@ export function EmptyContent({
         {subtitle && <span className={subtitleVariants({ size })}>{subtitle}</span>}
         {visibleActions.length > 0 && (
           <div className={actionsContainerVariants({ size, spacing })}>
-            {visibleActions.map(renderAction)}
+            {visibleActions.map((action, index) => (
+              <ContentAction
+                key={actionKey(action, index)}
+                action={action}
+                buttonSize={buttonSize}
+                linkComponent={LinkComp}
+              />
+            ))}
           </div>
         )}
 

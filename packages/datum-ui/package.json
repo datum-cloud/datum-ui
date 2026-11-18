@@ -287,6 +287,11 @@
       "types": "./dist/components/features/empty-content/index.d.ts",
       "default": "./dist/empty-content/index.mjs"
     },
+    "./error-content": {
+      "source": "./src/components/features/error-content/index.ts",
+      "types": "./dist/components/features/error-content/index.d.ts",
+      "default": "./dist/error-content/index.mjs"
+    },
     "./form": {
       "source": "./src/components/features/form/index.ts",
       "types": "./dist/components/features/form/index.d.ts",
