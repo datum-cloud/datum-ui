@@ -60,6 +60,12 @@ function StatusCell({ item }: { item: TaskSummaryItem }) {
       {item.message && item.status !== 'success' && (
         <span className="text-muted-foreground pl-5.5 text-xs text-wrap">{item.message}</span>
       )}
+      {item.detail && item.detail !== item.message && item.status !== 'success' && (
+        <details className="pl-5.5">
+          <summary className="text-muted-foreground cursor-pointer text-xs">Error details</summary>
+          <pre className="text-foreground mt-1 font-mono text-xs break-words whitespace-pre-wrap">{item.detail}</pre>
+        </details>
+      )}
     </div>
   )
 }
@@ -137,6 +143,7 @@ function useTaskSummaryItems(
       label: getItemLabel(item.id ?? ''),
       status: 'failed',
       message: item.message,
+      detail: item.detail,
     }))
 
     return [...failed, ...succeeded]

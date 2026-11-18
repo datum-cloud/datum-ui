@@ -28,12 +28,73 @@ function renderBytes(bytes: number) {
   return `${size.toFixed(2)}${units[unitIndex]}`
 }
 
+/**
+ * The MIME types an accept option allows. react-dropzone 20 widened `accept`
+ * from `Accept` to `Accept | AcceptGroup[]`; `Object.keys()` on the array form
+ * yields "0", "1", so normalise to MIME keys first. Both shapes are in range --
+ * the peer is `>=15 <21`.
+ */
+function acceptedTypeList(accept: DropzoneOptions['accept']): string[] {
+  return Array.isArray(accept)
+    ? accept.flatMap(group => Object.keys(group.accept))
+    : Object.keys(accept ?? {})
+}
+
+/** One reason a file was rejected, told plainly. */
+export interface DropzoneRejection {
+  file: File
+  /** react-dropzone's error code, e.g. `file-too-large`. */
+  code: string
+  message: string
+}
+
+interface RejectionLimits {
+  maxSize?: number
+  minSize?: number
+  maxFiles?: number
+  accept?: DropzoneOptions['accept']
+}
+
+/** One plain sentence per rejection error, using the same sizes and types as the caption. */
+export function rejectionMessages(rejections: FileRejection[], limits: RejectionLimits): DropzoneRejection[] {
+  return rejections.flatMap(({ file, errors }) =>
+    errors.map(error => ({ file, code: error.code, message: rejectionSentence(file, error, limits) })),
+  )
+}
+
+function rejectionSentence(file: File, error: FileRejection['errors'][number], limits: RejectionLimits): string {
+  const size = renderBytes(file.size)
+  switch (error.code) {
+    case 'file-too-large':
+      return limits.maxSize === undefined
+        ? error.message
+        : `${file.name} is ${size}; files must be under ${renderBytes(limits.maxSize)}.`
+    case 'file-too-small':
+      return limits.minSize === undefined
+        ? error.message
+        : `${file.name} is ${size}; files must be at least ${renderBytes(limits.minSize)}.`
+    case 'file-invalid-type': {
+      const types = acceptedTypeList(limits.accept)
+      const use = types.length > 0 ? ` Use ${new Intl.ListFormat('en').format(types)}.` : ''
+      return `${file.name} isn't a supported file type.${use}`
+    }
+    case 'too-many-files':
+      return limits.maxFiles === 1 || limits.maxFiles === undefined
+        ? 'You can add 1 file at a time.'
+        : `You can add up to ${limits.maxFiles} files at a time.`
+    default:
+      return error.message
+  }
+}
+
 const DropzoneContext = createContext<DropzoneContextType | undefined>(undefined)
 
 export type DropzoneProps = Omit<DropzoneOptions, 'onDrop'> & {
   src?: File[]
   className?: string
   onDrop?: (acceptedFiles: File[], fileRejections: FileRejection[], event: DropEvent) => void
+  /** Every reason files were rejected, one entry per error. */
+  onReject?: (rejections: DropzoneRejection[]) => void
   children?: ReactNode
 }
 
@@ -44,6 +105,7 @@ export function Dropzone({
   minSize,
   onDrop,
   onError,
+  onReject,
   disabled,
   src,
   className,
@@ -58,11 +120,14 @@ export function Dropzone({
     onError,
     disabled,
     onDrop: (acceptedFiles, fileRejections, event) => {
-      // Surface the first rejection (if any) without discarding accepted files:
-      // a mixed drop should still deliver the valid files to the consumer.
+      // Explain every rejection without discarding accepted files: a mixed
+      // drop should still deliver the valid files to the consumer.
       if (fileRejections.length > 0) {
-        const message = fileRejections.at(0)?.errors.at(0)?.message
-        onError?.(new Error(message))
+        const rejections = rejectionMessages(fileRejections, { maxSize, minSize, maxFiles, accept })
+        onReject?.(rejections)
+        // react-dropzone repeats `too-many-files` on every file; say it once.
+        const message = [...new Set(rejections.map(r => r.message))].join('\n')
+        onError?.(new Error(message, { cause: rejections }))
       }
 
       onDrop?.(acceptedFiles, fileRejections, event)
@@ -198,13 +263,7 @@ export function DropzoneEmptyState({
       sizeClause = `less than ${renderBytes(maxSize)}`
     }
 
-    // react-dropzone 20 widened `accept` from `Accept` to `Accept | AcceptGroup[]`.
-    // `Object.keys()` on the array form yields "0", "1", so normalise to MIME keys
-    // first. Both shapes are in range -- the peer is `>=15 <21`.
-    const acceptedTypes = Array.isArray(accept)
-      ? accept.flatMap(group => Object.keys(group.accept))
-      : Object.keys(accept ?? {})
-
+    const acceptedTypes = acceptedTypeList(accept)
     if (acceptedTypes.length > 0) {
       caption = `Accepts ${new Intl.ListFormat('en').format(acceptedTypes)}`
       if (sizeClause) {

@@ -1,5 +1,6 @@
 import type {
   EnqueueOptions,
+  FormatTaskError,
   ItemContext,
   ProcessItemEnqueueOptions,
   SummaryRenderContent,
@@ -17,7 +18,7 @@ import type {
 } from '../types'
 import { TASK_QUEUE_DEFAULTS } from '../constants'
 import { extractItemId, generateTaskId } from '../utils'
-import { executeTask } from './executor'
+import { describeThrown, executeTask } from './executor'
 import { detectStorage } from './storage'
 import { SummaryStore } from './summary-store'
 
@@ -67,11 +68,15 @@ export class TaskQueue {
   private readonly instanceId = generateTaskId()
   /** True when the backend broadcasts writes across tabs (localStorage). */
   private sharedStorage = false
+  /** Describes thrown errors for tasks that do not set their own formatError. */
+  private readonly formatError?: FormatTaskError
+
   /** Keepalive that re-stamps this instance's live tasks in shared storage. */
   private heartbeatTimer?: ReturnType<typeof setInterval>
 
   constructor(config: TaskQueueConfig = {}) {
     this.concurrency = config.concurrency ?? TASK_QUEUE_DEFAULTS.concurrency
+    this.formatError = config.formatError
     this.storage
       = config.storage
         ?? detectStorage({
@@ -299,6 +304,7 @@ export class TaskQueue {
       getItemId,
       onComplete: options.onComplete as ((outcome: TaskOutcome) => void | Promise<void>) | undefined,
       timeoutMs,
+      formatError: options.formatError,
     })
 
     const promise = new Promise<TaskOutcome<TResult>>((resolve) => {
@@ -601,6 +607,7 @@ export class TaskQueue {
       getItemId,
       errorStrategy = 'continue',
     } = options
+    const formatError = options.formatError ?? this.formatError
 
     return async (ctx) => {
       const pending = [...ctx.items]
@@ -625,6 +632,7 @@ export class TaskQueue {
             itemId,
             processItem,
             ctx,
+            formatError,
           ).finally(() => {
             // Remove from inFlight when done
             const idx = inFlight.indexOf(promise)
@@ -648,6 +656,7 @@ export class TaskQueue {
     itemId: string,
     processItem: (item: TItem, ctx: ItemContext) => Promise<void>,
     ctx: TaskContext<TItem, TResult>,
+    formatError?: FormatTaskError,
   ): Promise<void> {
     let manuallyHandled = false
 
@@ -675,9 +684,8 @@ export class TaskQueue {
     catch (error) {
       // Auto-fail if not manually handled
       if (!manuallyHandled) {
-        const message
-          = error instanceof Error ? error.message : 'Unknown error'
-        ctx.fail(itemId, message)
+        const { message, detail } = describeThrown(error, formatError)
+        ctx.fail(itemId, message, detail)
       }
     }
   }
@@ -718,6 +726,7 @@ export class TaskQueue {
 
     try {
       const outcome = await executeTask(task, runtime.processor, {
+        formatError: runtime.formatError ?? this.formatError,
         onUpdate: (updated) => {
           // Drop updates once a timeout has already finalized this task, so the
           // settling processor cannot overwrite the timeout status.

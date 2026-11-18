@@ -93,6 +93,7 @@ export const manifest = [
   { subpath: './dropdown', source: './src/components/features/dropdown/index.ts' },
   { subpath: './dropzone', source: './src/components/features/dropzone/index.ts' },
   { subpath: './empty-content', source: './src/components/features/empty-content/index.ts' },
+  { subpath: './error-content', source: './src/components/features/error-content/index.ts' },
   { subpath: './form', source: './src/components/features/form/index.ts' },
   { subpath: './form/adapters/conform', source: './src/components/features/form/adapters/conform/index.ts' },
   { subpath: './form/adapters/rhf', source: './src/components/features/form/adapters/rhf/index.ts' },

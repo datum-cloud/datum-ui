@@ -2,12 +2,14 @@
 import type { ColumnDef } from '@tanstack/react-table'
 import type { ReactNode } from 'react'
 import type { DataTableFeatures } from '../core/features'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useEffect } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { DataTableContent } from '../components/content'
 import { ClientProvider } from '../core/client-provider'
-import { DataTableRenderKeyContext, DataTableStoreContext, TableInstanceContext } from '../core/data-table-context'
+import { DataTableRenderKeyContext, DataTableStoreContext, TableInstanceContext, useDataTableStore } from '../core/data-table-context'
+import { ServerProvider } from '../core/server-provider'
 import { createDataTableStore } from '../core/store'
 
 interface TestRow {
@@ -303,5 +305,61 @@ describe('dataTableContent loading state', () => {
     )
 
     expect(screen.getByText('No pods found')).toBeInTheDocument()
+  })
+})
+
+describe('dataTableContent load errors', () => {
+  interface Row { readonly id: string, readonly name: string }
+  const columns = [{ accessorKey: 'name' as const, header: 'Name' }]
+  const transform = (response: { items: Row[] }) => ({ data: response.items, hasNextPage: false })
+  const denied = { kind: 'Status', reason: 'NotFound', code: 404, message: 'gone' }
+
+  function renderServer(fetchFn: any, content: ReactNode = <DataTableContent />) {
+    return render(<ServerProvider columns={columns} fetchFn={fetchFn} transform={transform}>{content}</ServerProvider>)
+  }
+
+  it('shows the error with Retry instead of No results', async () => {
+    const { container } = renderServer((vi.fn() as any).mockRejectedValue(denied))
+    expect(await screen.findByText('This item no longer exists.')).toBeInTheDocument()
+    expect(container.querySelector('[data-slot="dt-error"]')).not.toBeNull()
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument()
+    expect(screen.queryByText('No results.')).toBeNull()
+  })
+
+  it('clears the error and shows rows after a successful retry', async () => {
+    const fetchFn = (vi.fn() as any).mockRejectedValueOnce(denied).mockResolvedValue({ items: [{ id: '1', name: 'Pod A' }] })
+    const { container } = renderServer(fetchFn)
+    await userEvent.click(await screen.findByRole('button', { name: 'Retry' }))
+    expect(await screen.findByText('Pod A')).toBeInTheDocument()
+    await waitFor(() => expect(container.querySelector('[data-slot="dt-error"]')).toBeNull())
+  })
+
+  it('renders errorContent as a node or a function', async () => {
+    renderServer((vi.fn() as any).mockRejectedValue(denied), <DataTableContent errorContent="Custom" />)
+    expect(await screen.findByText('Custom')).toBeInTheDocument()
+  })
+
+  it('passes the error and retry to an errorContent function', async () => {
+    const fetchFn = (vi.fn() as any).mockRejectedValue(new Error('boom'))
+    renderServer(fetchFn, <DataTableContent errorContent={(error, retry) => <button type="button" onClick={retry}>{error.message}</button>} />)
+    await userEvent.click(await screen.findByRole('button', { name: 'boom' }))
+    await waitFor(() => expect(fetchFn).toHaveBeenCalledTimes(2))
+  })
+
+  it('shows the error without Retry in client mode', async () => {
+    function FailLocally() {
+      const store = useDataTableStore()
+      useEffect(() => store.setError(new Error('local failure')), [store])
+      return null
+    }
+    const { container } = render(
+      <ClientProvider data={[]} columns={columns}>
+        <FailLocally />
+        <DataTableContent />
+      </ClientProvider>,
+    )
+    expect(await screen.findByRole('heading', { name: 'local failure' })).toBeInTheDocument()
+    expect(container.querySelector('[data-slot="dt-error"]')).not.toBeNull()
+    expect(screen.queryByRole('button', { name: 'Retry' })).toBeNull()
   })
 })

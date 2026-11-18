@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { ButtonProps } from '../../base/button'
+import type { ErrorDescription } from '../error-content/describe-api-error'
 
 // --- Task Status ---
 
@@ -17,7 +18,12 @@ export type ItemStatus = 'succeeded' | 'failed'
 export interface FailedItem {
   id?: string
   message: string
+  /** The raw technical error, when `message` is a plain-language headline. */
+  detail?: string
 }
+
+/** Turns a thrown error into a plain headline (`title`) and raw text (`detail`). */
+export type FormatTaskError = (error: unknown) => ErrorDescription
 
 // --- Task Metadata ---
 
@@ -42,7 +48,7 @@ export interface TaskCompletionInfo<TItem = unknown> {
   status: TaskStatus
   completed: number
   failed: number
-  items: Array<{ id: string, status: ItemStatus, message?: string, data: TItem }>
+  items: Array<{ id: string, status: ItemStatus, message?: string, detail?: string, data: TItem }>
 }
 
 // --- Task ---
@@ -126,6 +132,8 @@ export interface TaskRuntime {
   timeoutMs?: number
   /** Set once a timeout has fired so the settling processor can't overwrite it. */
   timedOut?: boolean
+  /** This task's own formatError, if it set one. */
+  formatError?: FormatTaskError
 }
 
 // --- Task Context ---
@@ -136,8 +144,8 @@ export interface TaskContext<TItem = unknown, TResult = unknown> {
   readonly failedItems: readonly FailedItem[]
   /** Mark current item as succeeded. Pass itemId to enable retry of remaining items on cancel. */
   succeed: (itemId?: string) => void
-  /** Mark current item as failed. Pass itemId and message for retry support. */
-  fail: (itemId?: string, message?: string) => void
+  /** Mark current item as failed. Pass itemId and message for retry support, and detail for the raw error. */
+  fail: (itemId?: string, message?: string, detail?: string) => void
   setTitle: (title: string) => void
   setResult: (result: TResult) => void
   /** Register cleanup function to call on cancel/timeout. Used for watch subscription cleanup. */
@@ -169,6 +177,8 @@ export interface TaskOutcome<TResult = unknown> {
 
 interface BaseEnqueueOptions<TItem = unknown, TResult = unknown> {
   title: string
+  /** How to describe an error this task throws. Overrides TaskQueueConfig.formatError. */
+  formatError?: FormatTaskError
   icon?: ReactNode
   category?: string
   metadata?: TaskMetadata
@@ -274,6 +284,8 @@ export interface TaskQueueConfig {
   redisClient?: RedisClient | null
   /** Global custom renderer for TaskSummaryDialog content. Can be overridden per showSummary call. */
   summaryRenderContent?: SummaryRenderContent
+  /** How to describe a thrown error. TaskQueueProvider defaults it to the tree's useDescribeError(). */
+  formatError?: FormatTaskError
 }
 
 // --- Storage ---
@@ -305,6 +317,8 @@ export interface TaskSummaryItem {
   label: string
   status: 'success' | 'failed'
   message?: string
+  /** The raw technical error, shown under "Error details". */
+  detail?: string
 }
 
 export type SummaryRenderContent = (items: TaskSummaryItem[]) => ReactNode

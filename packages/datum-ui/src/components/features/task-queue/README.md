@@ -80,6 +80,21 @@ enqueue({
 });
 ```
 
+### Plain-Language Errors
+
+An error a processor throws, for a whole task or one item, is described with the app's error describer (see `@datum-cloud/datum-ui/error-content`). The summary shows a plain headline, such as `You don't have permission to delete dnsrecordsets.`, with the raw text under **Error details**. Text you pass to `ctx.fail` is shown as written.
+
+Change the wording for one task, or for the whole queue through `TaskQueueProvider`'s `config`:
+
+```tsx
+enqueue({
+  title: 'Deleting records',
+  items: records,
+  formatError: error => ({ title: 'Could not delete this record', detail: String(error) }),
+  processItem: async record => deleteRecord(record.id),
+});
+```
+
 ### Custom Item ID (for objects)
 
 By default, the queue extracts IDs from items automatically (`item.id` → `item.name` → `item.key` → `item.uuid` → `JSON.stringify`). Override when needed:

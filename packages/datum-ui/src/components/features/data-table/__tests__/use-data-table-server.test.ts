@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { useDataTableServer } from '../hooks/use-data-table-server'
 
@@ -154,5 +154,24 @@ describe('useDataTableServer', () => {
     })
 
     expect(result.current.store.getSnapshot().filters).toEqual({})
+  })
+
+  it('fetches again with the same arguments on refetch', async () => {
+    const fetchFn = (vi.fn() as any).mockResolvedValue({ items: [{ id: '1', name: 'Pod A' }] })
+    const { result } = renderHook(() => useDataTableServer<TestResponse, TestRow>({ columns: testColumns, fetchFn, transform: mockTransform }))
+    await waitFor(() => expect(fetchFn).toHaveBeenCalledTimes(1))
+    act(() => result.current.store.refetch())
+    await waitFor(() => expect(fetchFn).toHaveBeenCalledTimes(2))
+    expect(fetchFn.mock.calls[1][0]).toEqual(fetchFn.mock.calls[0][0])
+  })
+
+  it('keeps a thrown non-Error value readable and as the cause', async () => {
+    const thrown = { kind: 'Status', message: 'denied' }
+    const fetchFn = (vi.fn() as any).mockRejectedValue(thrown)
+    const { result } = renderHook(() => useDataTableServer<TestResponse, TestRow>({ columns: testColumns, fetchFn, transform: mockTransform }))
+    await waitFor(() => expect(result.current.store.getSnapshot().error).not.toBeNull())
+    const error = result.current.store.getSnapshot().error!
+    expect(error.message).toBe('denied')
+    expect(error.cause).toBe(thrown)
   })
 })

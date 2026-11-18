@@ -3,7 +3,7 @@
 import type { HeaderGroup, Row, RowData } from '@tanstack/react-table'
 import type { DataTableFeatures } from '../core/features'
 import type { DataTableStoreState, InlineContentEntry } from '../types'
-import { useCallback, useRef, useSyncExternalStore } from 'react'
+import { useCallback, useMemo, useRef, useSyncExternalStore } from 'react'
 import { useDataTableStore, useRenderKey, useTableInstanceOrNull } from '../core/data-table-context'
 
 function shallowEqual(a: Record<string, unknown>, b: Record<string, unknown>): boolean {
@@ -150,13 +150,15 @@ export function useDataTableRows<TData extends RowData>() {
 }
 
 export function useDataTableLoading() {
-  return useSliceSelector(
+  const store = useDataTableStore()
+  const slice = useSliceSelector(
     useCallback((state: DataTableStoreState<any>) => ({
       isLoading: state.isLoading,
       error: state.error,
       columnCount: state.columnCount,
     }), []),
   )
+  return useMemo(() => ({ ...slice, refetch: store.refetch }), [slice, store])
 }
 
 export function useDataTableInlineContents<TData extends RowData>() {

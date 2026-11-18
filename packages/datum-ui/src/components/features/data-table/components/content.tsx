@@ -1,6 +1,7 @@
 'use client'
 
 import type { Cell, Row, RowData } from '@tanstack/react-table'
+import type { ReactNode } from 'react'
 import type { DataTableFeatures } from '../core/features'
 import type { ContentProps, InlineContentEntry } from '../types'
 import { flexRender } from '@tanstack/react-table'
@@ -15,7 +16,9 @@ import {
   TableHeader,
   TableRow,
 } from '../../../base/table'
+import { ErrorContent } from '../../error-content/error-content'
 import { DEFAULT_LOADING_ROWS } from '../constants'
+import { useDataTableStore } from '../core/data-table-context'
 import { useDataTableInlineContents, useDataTableLoading, useDataTablePagination, useDataTableRows } from '../hooks/use-selectors'
 
 /**
@@ -92,8 +95,28 @@ function renderInlineContentRow<TData extends RowData>(
   )
 }
 
+/** The body of a table whose load failed: the app's `errorContent`, or ErrorContent with Retry. */
+function renderLoadError(
+  error: Error,
+  errorContent: ContentProps['errorContent'],
+  retry: (() => void) | undefined,
+): ReactNode {
+  if (typeof errorContent === 'function')
+    return errorContent(error, retry ?? (() => {}))
+  if (errorContent !== undefined)
+    return errorContent
+  return (
+    <ErrorContent
+      error={error}
+      variant="minimal"
+      actions={retry ? [{ label: 'Retry', onClick: retry }] : undefined}
+    />
+  )
+}
+
 export function DataTableContent<TData extends RowData = Record<string, any>>({
   emptyMessage,
+  errorContent,
   className,
   tableClassName,
   headerClassName,
@@ -106,7 +129,8 @@ export function DataTableContent<TData extends RowData = Record<string, any>>({
   onRowClick,
 }: ContentProps<TData>) {
   const { rows, headerGroups, totalColumns } = useDataTableRows<TData>()
-  const { isLoading, columnCount } = useDataTableLoading()
+  const { isLoading, columnCount, error, refetch } = useDataTableLoading()
+  const isServer = useDataTableStore<TData>().getSnapshot().mode === 'server'
   const { pageSize } = useDataTablePagination()
   const { inlineContents } = useDataTableInlineContents<TData>()
   const openInlineContents = useMemo(() => inlineContents.filter(e => e.open), [inlineContents])
@@ -186,17 +210,25 @@ export function DataTableContent<TData extends RowData = Record<string, any>>({
                     </TableRow>
                   ))
                 )
-              : (
-                  <TableRow data-slot="dt-row">
-                    <TableCell
-                      colSpan={colSpan}
-                      className="h-24 text-center"
-                      data-slot="dt-empty"
-                    >
-                      {emptyMessage ?? 'No results.'}
-                    </TableCell>
-                  </TableRow>
-                )}
+              : error
+                ? (
+                    <TableRow data-slot="dt-row">
+                      <TableCell colSpan={colSpan} className="text-center" data-slot="dt-error">
+                        {renderLoadError(error, errorContent, isServer ? refetch : undefined)}
+                      </TableCell>
+                    </TableRow>
+                  )
+                : (
+                    <TableRow data-slot="dt-row">
+                      <TableCell
+                        colSpan={colSpan}
+                        className="h-24 text-center"
+                        data-slot="dt-empty"
+                      >
+                        {emptyMessage ?? 'No results.'}
+                      </TableCell>
+                    </TableRow>
+                  )}
         </TableBody>
       </Table>
     </div>
