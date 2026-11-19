@@ -29,9 +29,6 @@
   "base/separator": [
     "test"
   ],
-  "base/sidebar": [
-    "test"
-  ],
   "base/skeleton": [
     "test"
   ],
@@ -45,9 +42,6 @@
     "test"
   ],
   "features/nprogress": [
-    "test"
-  ],
-  "features/stepper": [
     "test"
   ]
 }
