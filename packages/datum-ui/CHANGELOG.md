@@ -1,5 +1,18 @@
 # @datum-cloud/datum-ui
 
+## 3.13.0
+
+### Minor Changes
+
+- 4cafc46: Assistant replies load images only from origins listed in the new `imageOrigins` config option; other images show as a link or as text. On native, SVG images always show as a link, since an SVG can load images from other origins. Links written `//host` or `/\host` now open as external links, and `UserMessage` sanitizes its `html` itself. Hosts that want images in replies must list their origins.
+- 215551b: Adds `@datum-cloud/datum-ui/error-content`: `ErrorContent`, `describeApiError` and `ErrorDescriptionProvider` for plain-language errors that keep the raw text under Error details. A failed `DataTable.Server` load now shows an error with Retry instead of "No results."; the store has `refetch()` and `DataTable.Content` takes `errorContent`. TaskQueue formats thrown errors (override with `formatError`) and shows the raw text in its summary. Dropzone explains each rejected file and adds `onReject`.
+
+### Patch Changes
+
+- 7b148db: Select dropdowns now fit the space on screen. They were always up to 24rem tall, so when there wasn't that much room above or below the field (a phone, or a field low on the page) the list ran off screen and its first or last options couldn't be reached. They now shrink to the space available and scroll.
+- Updated dependencies [4cafc46]
+  - @datum-cloud/datum-ui-assistant-core@0.2.0
+
 ## 3.12.1
 
 ### Patch Changes
