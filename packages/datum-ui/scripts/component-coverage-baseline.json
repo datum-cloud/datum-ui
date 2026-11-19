@@ -43,8 +43,5 @@
   ],
   "features/nprogress": [
     "test"
-  ],
-  "features/stepper": [
-    "test"
   ]
 }
