@@ -75,7 +75,9 @@ describe('placeAutocomplete', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')))
     render(<PlaceAutocomplete debounceMs={0} />)
     await userEvent.type(screen.getByPlaceholderText('Search'), 'Berlin')
-    expect(await screen.findByText(/network down/)).toBeInTheDocument()
+    // Each letter starts a search, so query afresh rather than hold an element an
+    // earlier search rendered.
+    await waitFor(() => expect(screen.getByText(/network down/)).toBeInTheDocument())
   })
 
   it('cancels an earlier search so its late response never replaces the latest results', async () => {
