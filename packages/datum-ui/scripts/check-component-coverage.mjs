@@ -44,6 +44,25 @@ function walk(dir) {
   return out
 }
 
+/**
+ * The [section, name] pairs an export's source publishes. A source under
+ * src/components/ is one component; an aggregate entry under src/exports/
+ * (e.g. ./map re-exports Map and PlaceAutocomplete) publishes every component
+ * it re-exports with `export * from '../components/<section>/<name>'`.
+ */
+function componentsOf(source) {
+  const direct = source.match(/^\.\/src\/components\/(base|features)\/([^/]+)\//)
+  if (direct) {
+    return [[direct[1], direct[2]]]
+  }
+  if (!/^\.\/src\/exports\/[^/]+\.ts$/.test(source)) {
+    return []
+  }
+  const text = fs.readFileSync(path.join(PKG_ROOT, source), 'utf8')
+  return [...text.matchAll(/export \* from '\.\.\/components\/(base|features)\/([^/']+)'/g)]
+    .map(([, section, name]) => [section, name])
+}
+
 /** Public component exports resolved to { key, name, dir }. */
 function collectComponents() {
   const pkg = JSON.parse(fs.readFileSync(path.join(PKG_ROOT, 'package.json'), 'utf8'))
@@ -53,14 +72,11 @@ function collectComponents() {
     if (typeof source !== 'string') {
       continue
     }
-    const m = source.match(/^\.\/src\/components\/(base|features)\/([^/]+)\//)
-    if (!m) {
-      continue
-    }
-    const [, section, name] = m
-    const key = `${section}/${name}`
-    if (!seen.has(key)) {
-      seen.set(key, { key, name, dir: path.join(PKG_ROOT, 'src', 'components', section, name) })
+    for (const [section, name] of componentsOf(source)) {
+      const key = `${section}/${name}`
+      if (!seen.has(key)) {
+        seen.set(key, { key, name, dir: path.join(PKG_ROOT, 'src', 'components', section, name) })
+      }
     }
   }
   return [...seen.values()].sort((a, b) => a.key.localeCompare(b.key))
