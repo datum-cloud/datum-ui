@@ -47,9 +47,12 @@ describe('useTaskQueue', () => {
     const { result } = renderHook(() => useTaskQueue({ status: 'completed' }), { wrapper })
     let id = ''
     act(() => {
+      // A task that never finishes must stay out of the completed list.
+      result.current.enqueue({ title: 'Never done', processor: () => new Promise<void>(() => {}) })
       id = result.current.enqueue({ title: 'Quick task', processor: async () => {} }).id
     })
     await waitFor(() => expect(result.current.tasks.map(task => task.id)).toEqual([id]))
+    expect(result.current.tasks.every(task => task.status === 'completed')).toBe(true)
     act(() => result.current.dismiss(id))
     await waitFor(() => expect(result.current.tasks).toHaveLength(0))
   })

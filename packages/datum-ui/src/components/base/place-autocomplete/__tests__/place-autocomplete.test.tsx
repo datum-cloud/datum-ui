@@ -27,7 +27,8 @@ describe('placeAutocomplete', () => {
     await userEvent.type(screen.getByPlaceholderText('Search'), 'Berlin')
     expect(await screen.findByRole('option', { name: /Berlin/ })).toBeInTheDocument()
     expect(screen.getByRole('option', { name: /Bern/ })).toBeInTheDocument()
-    expect(String(fetchFn.mock.calls.at(-1)?.[0])).toContain('Berlin')
+    // The list can show an earlier keystroke's results first; wait for the full query.
+    await waitFor(() => expect(String(fetchFn.mock.calls.at(-1)?.[0])).toContain('Berlin'))
     await waitFor(() => expect(onResultsChange).toHaveBeenLastCalledWith(expect.arrayContaining([expect.objectContaining({ properties: expect.objectContaining({ name: 'Berlin' }) })])))
   })
 

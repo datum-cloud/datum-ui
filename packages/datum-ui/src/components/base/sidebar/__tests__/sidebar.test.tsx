@@ -65,9 +65,14 @@ describe('sidebarProvider', () => {
     expect(state()).toBe('expanded')
   })
 
-  it('ignores a bare b, including one typed in the sidebar input', async () => {
+  it('ignores a bare b pressed on the page', () => {
     renderSidebar()
     fireEvent.keyDown(window, { key: 'b' })
+    expect(state()).toBe('expanded')
+  })
+
+  it('ignores a b typed in the sidebar input', async () => {
+    renderSidebar()
     await userEvent.type(screen.getByPlaceholderText('Filter'), 'b')
     expect(state()).toBe('expanded')
   })
