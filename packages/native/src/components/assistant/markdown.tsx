@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
-import type { TextStyle, ViewStyle } from 'react-native'
+import type { ImageStyle, TextStyle, ViewStyle } from 'react-native'
 import type { MarkedStyles } from 'react-native-marked'
 import type { DatumTheme } from '../../theme/theme'
-import { repairStreamingMarkdown } from '@datum-cloud/datum-ui-assistant-core'
+import { blockedImageLink, isAllowedImageSrc, repairStreamingMarkdown } from '@datum-cloud/datum-ui-assistant-core'
 import { withAlpha } from '@datum-cloud/datum-ui-tokens'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
@@ -59,6 +59,11 @@ export function markdownStyles(t: DatumTheme): MarkedStyles {
   }
 }
 
+/** The same `.svg` test react-native-marked uses to pick its SVG renderer. */
+function isSvgUri(uri: string): boolean {
+  return /\.svg$/i.test(uri.replace(/[?#].*/, ''))
+}
+
 /**
  * A react-native-marked renderer themed with the Datum tokens: mono code
  * blocks that scroll sideways, links routed through the host, and keys that
@@ -69,12 +74,21 @@ export function markdownStyles(t: DatumTheme): MarkedStyles {
 class DatumMarkdownRenderer extends Renderer {
   private readonly theme: DatumTheme
   private readonly onLink: (href: string) => void
+  private readonly imageOrigins: readonly string[] | undefined
+  private styleCache: MarkedStyles | undefined
   private seq = 0
 
-  constructor(theme: DatumTheme, onLink: (href: string) => void) {
+  constructor(theme: DatumTheme, onLink: (href: string) => void, imageOrigins: readonly string[] | undefined) {
     super({ selectable: true })
     this.theme = theme
     this.onLink = onLink
+    this.imageOrigins = imageOrigins
+  }
+
+  /** The themed markdown styles, built once per renderer when first needed. */
+  private styles(): MarkedStyles {
+    this.styleCache ??= markdownStyles(this.theme)
+    return this.styleCache
   }
 
   override getKey(): string {
@@ -148,6 +162,28 @@ class DatumMarkdownRenderer extends Renderer {
     )
   }
 
+  /**
+   * An image the host has not allowed (see `imageOrigins`) is never fetched:
+   * the base renderer sizes remote images with `Image.getSize`, which would
+   * leak a prompt-injected URL the moment the reply renders. A web URL shows
+   * as a link the person can tap; anything else shows as text. An SVG is
+   * blocked even from an allowed origin: the base renderer draws it with
+   * react-native-svg, which loads any `<image href>` inside it from anywhere.
+   */
+  override image(uri: string, alt?: string, style?: ImageStyle, title?: string): ReactNode {
+    if (isAllowedImageSrc(uri, this.imageOrigins) && !isSvgUri(uri))
+      return super.image(uri, alt, style, title)
+    const { label, href } = blockedImageLink(uri, alt)
+    const styles = this.styles()
+    if (!href)
+      return <Text key={this.getKey()} style={styles.text}>{label}</Text>
+    return (
+      <Text key={this.getKey()} accessibilityRole="link" onPress={() => this.onLink(href)} style={styles.link}>
+        {label}
+      </Text>
+    )
+  }
+
   override link(children: string | ReactNode[], href: string, styles?: TextStyle, title?: string): ReactNode {
     return (
       <Text
@@ -215,7 +251,7 @@ export interface AssistantMarkdownProps {
 /** An answer's markdown, rendered natively with the Datum type and colours. */
 export function AssistantMarkdown({ text, streaming = false, throttleMs = 80, testID }: AssistantMarkdownProps) {
   const t = useDatumTheme()
-  const { onLinkPress } = useAssistantConfig()
+  const { onLinkPress, imageOrigins } = useAssistantConfig()
   const shown = useThrottledValue(text, throttleMs, streaming)
   const source = streaming ? repairStreamingMarkdown(shown) : shown
   const styles = useMemo(() => markdownStyles(t), [t])
@@ -224,7 +260,10 @@ export function AssistantMarkdown({ text, streaming = false, throttleMs = 80, te
     [t],
   )
   // A new renderer per source restarts the key sequence (see DatumMarkdownRenderer).
-  const renderer = useMemo(() => new DatumMarkdownRenderer(t, onLinkPress), [t, onLinkPress, source])
+  const renderer = useMemo(
+    () => new DatumMarkdownRenderer(t, onLinkPress, imageOrigins),
+    [t, onLinkPress, imageOrigins, source],
+  )
   const elements = useMarkdown(source, { renderer, styles, theme, colorScheme: t.scheme })
   return <View testID={testID}>{elements}</View>
 }

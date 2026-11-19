@@ -4,7 +4,9 @@ import type { UIMessage } from 'ai'
 import type { ExtraProps } from 'streamdown'
 import type { AssistantChoiceOption, AssistantChoicesData, AssistantPlanData, ConversationDensity } from '../../types'
 import {
+  blockedImageLink,
   activeToolPart as findActiveToolPart,
+  isAllowedImageSrc,
   isReasoningUIPart,
   isStreamingMessage,
   isTextUIPart,
@@ -17,7 +19,7 @@ import {
 } from '@datum-cloud/datum-ui-assistant-core'
 import { code } from '@streamdown/code'
 import { Brain, Download } from 'lucide-react'
-import { Fragment } from 'react'
+import { createContext, Fragment, use } from 'react'
 import { Streamdown } from 'streamdown'
 import { useCopyToClipboard } from '../../../../../hooks/use-copy-to-clipboard'
 import { cn } from '../../../../../utils/cn'
@@ -63,6 +65,22 @@ interface AssistantMessageProps {
   canApprovePlan?: boolean
 }
 
+/** True inside a reply link, where a nested link would be invalid HTML. */
+const InsideLinkContext = createContext(false)
+
+/**
+ * An image the host has not allowed (see `imageOrigins`) is never fetched: a
+ * prompt-injected image URL would otherwise leak data the moment the reply
+ * renders. A web URL shows as a link the person can choose to open, unless the
+ * image already sits inside a link; anything else shows as text.
+ */
+function BlockedImage({ src, alt }: { src?: string, alt?: string }) {
+  const { renderLink } = useAssistantConfig()
+  const insideLink = use(InsideLinkContext)
+  const { label, href } = blockedImageLink(src, alt)
+  return href && !insideLink ? renderLink({ href, children: label }) : <span>{label}</span>
+}
+
 /** Streamdown overrides shared by both densities (code surfaces). */
 const STREAMDOWN_BASE_CLASSES
   = '**:data-[streamdown=\'code-block-body\']:bg-card **:data-[streamdown=\'inline-code\']:bg-card dark:**:data-[streamdown=\'inline-code\']:bg-accent **:data-[streamdown=\'inline-code\']:border'
@@ -94,7 +112,7 @@ export function AssistantMessage({
   latestPlanId,
   canApprovePlan = false,
 }: AssistantMessageProps) {
-  const { toolLabels, showReasoning, messageActions, renderLink, renderToolOutput }
+  const { toolLabels, showReasoning, messageActions, renderLink, renderToolOutput, imageOrigins }
     = useAssistantConfig()
   const isStreaming = isStreamingMessage({ isLastMessage, status })
   const hasText = messageHasText(msg)
@@ -137,16 +155,23 @@ export function AssistantMessage({
                 a: ({
                   href,
                   children,
-                }: React.AnchorHTMLAttributes<HTMLAnchorElement> & ExtraProps) =>
-                  renderLink({ href, children }),
-                img: ({ src, alt }: React.ImgHTMLAttributes<HTMLImageElement> & ExtraProps) => (
-                  <img
-                    src={src}
-                    alt={alt ?? ''}
-                    className="my-2 inline-block max-h-16 rounded-full"
-                    referrerPolicy="no-referrer"
-                  />
+                }: React.AnchorHTMLAttributes<HTMLAnchorElement> & ExtraProps) => (
+                  <InsideLinkContext value>{renderLink({ href, children })}</InsideLinkContext>
                 ),
+                img: ({ src, alt }: React.ImgHTMLAttributes<HTMLImageElement> & ExtraProps) =>
+                  isAllowedImageSrc(src, imageOrigins)
+                    ? (
+                        <img
+                          src={src}
+                          alt={alt ?? ''}
+                          className="my-2 inline-block max-h-16 rounded-full"
+                          referrerPolicy="no-referrer"
+                        />
+                      )
+                    : <BlockedImage src={src} alt={alt} />,
+                // A <picture> source would let the browser fetch its own
+                // srcset instead of the checked <img>, from any origin.
+                source: () => null,
               }}
             >
               {part.text}

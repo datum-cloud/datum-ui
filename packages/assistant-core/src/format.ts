@@ -90,3 +90,77 @@ export function deriveTitle(messages: UIMessage[], maxLength: number = 42): stri
   const text = first ? firstText(first) : ''
   return text.length > maxLength ? `${text.slice(0, maxLength)}…` : text || NEW_CHAT_TITLE
 }
+
+function originOf(value: string): string | undefined {
+  try {
+    return new URL(value).origin
+  }
+  catch {
+    return undefined
+  }
+}
+
+/**
+ * Whether an assistant reply may load the image at `src`: only an absolute
+ * `http:` or `https:` URL whose origin is in `origins`. Relative,
+ * protocol-relative, `data:` and `blob:` sources are refused, and an entry in
+ * `origins` that is not a URL is ignored.
+ */
+export function isAllowedImageSrc(src: string | undefined, origins: readonly string[] | undefined): boolean {
+  if (!src || !origins?.length)
+    return false
+  let url: URL
+  try {
+    url = new URL(src)
+  }
+  catch {
+    return false
+  }
+  if (url.protocol !== 'https:' && url.protocol !== 'http:')
+    return false
+  return origins.some(entry => originOf(entry) === url.origin)
+}
+
+/**
+ * Whether a link in an assistant reply points inside the host app: a path
+ * starting with a single `/`. Browsers read `//host` and `/\host` as another
+ * site, so those are external.
+ */
+export function isInternalHref(href: string | undefined): boolean {
+  // Browsers drop tabs and newlines from a URL before reading it, so
+  // `/\t/host` is `//host` by the time it is followed.
+  const path = href?.replace(/[\t\n\r]/g, '')
+  return path?.[0] === '/' && path[1] !== '/' && path[1] !== '\\'
+}
+
+/** A label for an image a reply may not load, and the URL to link it to. */
+export interface BlockedImageLink {
+  /** `Image: <alt> (<host>)`, `Image (<host>)`, `Image: <alt>` or `Image`. */
+  label: string
+  /** Set only for an `http:` or `https:` source, which a person may open. */
+  href?: string
+}
+
+/**
+ * How to show an image {@link isAllowedImageSrc} refused: a label naming the
+ * alt text and, for a web URL, its host, so the person sees where it points.
+ * Only a web URL gets an `href`; anything else is shown as text.
+ */
+export function blockedImageLink(src: string | undefined, alt: string | undefined): BlockedImageLink {
+  const name = alt ? `Image: ${alt}` : 'Image'
+  const url = src ? parseAbsoluteUrl(src) : undefined
+  if (!url || (url.protocol !== 'https:' && url.protocol !== 'http:'))
+    return { label: name }
+  return { label: `${name} (${url.hostname})`, href: src }
+}
+
+/** `src` as an absolute URL, or undefined when it does not parse as one. */
+function parseAbsoluteUrl(src: string): URL | undefined {
+  try {
+    return new URL(src)
+  }
+  catch {
+    // Relative and malformed sources have no host to show.
+    return undefined
+  }
+}

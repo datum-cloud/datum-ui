@@ -39,14 +39,18 @@ export type {
   ToolStartEvent,
   TurnState,
 } from './events'
+export type { BlockedImageLink } from './format'
 export {
   assistantErrorMessage,
+  blockedImageLink,
   chatFileName,
   chatToMarkdown,
   DEFAULT_ASSISTANT_CONFIG,
   deriveTitle,
   deriveTurns,
   formatRelativeTime,
+  isAllowedImageSrc,
+  isInternalHref,
   NEW_CHAT_TITLE,
   thinkingLabel,
 } from './format'

@@ -4,6 +4,7 @@ import type { AssistantWorkspaceProps } from '../components/assistant-workspace'
 import type { HistoryPanelProps } from '../components/sidebar'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { getToolName } from 'ai'
+import { renderToString } from 'react-dom/server'
 import { describe, expect, it, vi } from 'vitest'
 import { AssistantWorkspace } from '../components/assistant-workspace'
 import { PromptCard } from '../components/composer'
@@ -41,6 +42,65 @@ describe('sanitizeUserHtml', () => {
   })
 })
 
+describe('userMessage sanitizing', () => {
+  it('renders no script or image a host passes in its html', () => {
+    const { container } = render(
+      <UserMessage html="<p>hi</p><script>alert(1)</script><img src=x onerror=alert(1)>" />,
+    )
+    expect(container.querySelector('script')).toBeNull()
+    expect(container.querySelector('img')).toBeNull()
+    expect(screen.getByText('hi')).toBeInTheDocument()
+  })
+
+  it('keeps the formatting the composer allows', () => {
+    const { container } = render(<UserMessage html="<p>a <strong>b</strong></p>" />)
+    expect(container.querySelector('strong')).toHaveTextContent('b')
+  })
+
+  it('keeps escaped characters as text where DOMParser does not exist', () => {
+    vi.stubGlobal('DOMParser', undefined)
+    try {
+      // A JS string, not a JSX attribute: JSX would decode the entities first.
+      const escaped = '<p>a &amp; b &lt;c&gt;</p>'
+      const { container } = render(<UserMessage html={escaped} />)
+      expect(container.querySelector('p')).toHaveTextContent('a & b <c>')
+    }
+    finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('decodes non-breaking spaces and numeric entities where DOMParser does not exist', () => {
+    vi.stubGlobal('DOMParser', undefined)
+    try {
+      const escaped = '<p>a&nbsp;b &#60;c&#x3E; &#x1F600;</p>'
+      const { container } = render(<UserMessage html={escaped} />)
+      expect(container.querySelector('p')?.textContent).toBe('a\u00A0b <c> \u{1F600}')
+    }
+    finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('renders the same plain text on the server that the first client pass hydrates', () => {
+    const html = renderToString(<UserMessage html="<p>a <strong>b</strong></p>" />)
+    expect(html).not.toContain('<strong>')
+    expect(html).toContain('a b')
+  })
+
+  it('shows plain text without throwing where DOMParser does not exist', () => {
+    vi.stubGlobal('DOMParser', undefined)
+    try {
+      const { container } = render(<UserMessage html="<p>a <b>b</b></p>" />)
+      expect(container.querySelector('b')).toBeNull()
+      expect(container.querySelector('p')).toHaveTextContent('a b')
+    }
+    finally {
+      vi.unstubAllGlobals()
+    }
+  })
+})
+
 describe('formatRelativeTime', () => {
   it('reports very recent timestamps as "just now"', () => {
     expect(formatRelativeTime(Date.now())).toBe('just now')
@@ -69,6 +129,69 @@ describe('defaultRenderLink', () => {
     const link = screen.getByRole('link', { name: 'Datum' })
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  })
+
+  it.each(['//attacker.example', '/\\attacker.example'])('opens %s in a new tab, as another site', (href) => {
+    render(<>{defaultRenderLink({ href, children: 'Elsewhere' })}</>)
+    const link = screen.getByRole('link', { name: 'Elsewhere' })
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  })
+})
+
+describe('assistant message images', () => {
+  const replyWith = (text: string): UIMessage =>
+    ({ id: 'm1', role: 'assistant', parts: [{ type: 'text', text }] }) as UIMessage
+
+  const renderReply = (text: string, imageOrigins?: string[]) =>
+    render(
+      <AssistantConfigProvider config={imageOrigins ? { imageOrigins } : undefined}>
+        <AssistantMessage msg={replyWith(text)} isLastMessage status="ready" />
+      </AssistantConfigProvider>,
+    )
+
+  it('shows an image from an origin the host has not allowed as a link, without loading it', () => {
+    const { container } = renderReply('![secret](https://attacker.example/x.png?d=1)')
+    expect(container.querySelector('img')).toBeNull()
+    expect(screen.getByRole('link', { name: 'Image: secret (attacker.example)' }))
+      .toHaveAttribute('href', 'https://attacker.example/x.png?d=1')
+  })
+
+  it('labels a blocked image with no alt text by its host', () => {
+    renderReply('![](https://attacker.example/x.png)')
+    expect(screen.getByRole('link', { name: 'Image (attacker.example)' })).toBeInTheDocument()
+  })
+
+  it('loads an image from an allowed origin', () => {
+    const { container } = renderReply('![logo](https://attacker.example/x.png)', ['https://attacker.example'])
+    expect(container.querySelector('img')).toHaveAttribute('src', 'https://attacker.example/x.png')
+  })
+
+  it('drops picture sources, so an allowed image cannot pull in another origin', () => {
+    const { container } = renderReply(
+      '<picture><source srcset="https://attacker.example/s.png?d=1"><img src="https://cdn.datum.net/a.png"></picture>',
+      ['https://cdn.datum.net'],
+    )
+    expect(container.querySelector('source')).toBeNull()
+    expect(container.querySelector('[srcset]')).toBeNull()
+    expect(container.querySelector('img')).toHaveAttribute('src', 'https://cdn.datum.net/a.png')
+  })
+
+  it('shows a blocked image inside a link as text, so links never nest', () => {
+    const { container } = renderReply('[![a](https://attacker.example/x.png)](https://datum.net/docs)')
+    expect(container.querySelector('a a')).toBeNull()
+    expect(container.querySelectorAll('a')).toHaveLength(1)
+    expect(screen.getByRole('link')).toHaveAttribute('href', 'https://datum.net/docs')
+    expect(screen.getByText('Image: a (attacker.example)')).toBeInTheDocument()
+  })
+
+  // Streamdown's own hardening blocks data: images before our override sees
+  // them and labels them itself; what matters is that nothing loads or links.
+  it('shows a data image as text, with no image and no link', () => {
+    const { container } = renderReply('![logo](data:image/png;base64,AAAA)')
+    expect(container.querySelector('img')).toBeNull()
+    expect(screen.queryByRole('link')).toBeNull()
+    expect(screen.getByText(/logo/)).toBeInTheDocument()
   })
 })
 

@@ -3,12 +3,15 @@ import * as ai from 'ai'
 import { describe, expect, it } from 'vitest'
 import {
   assistantErrorMessage,
+  blockedImageLink,
   chatFileName,
   chatToMarkdown,
   DEFAULT_ASSISTANT_CONFIG,
   deriveTitle,
   deriveTurns,
   formatRelativeTime,
+  isAllowedImageSrc,
+  isInternalHref,
   thinkingLabel,
 } from '../src/format'
 import { repairStreamingMarkdown } from '../src/markdown'
@@ -116,5 +119,68 @@ describe('repairStreamingMarkdown', () => {
     ['only last line', '**a**\nplain', '**a**\nplain'],
   ])('%s', (_name, input, output) => {
     expect(repairStreamingMarkdown(input)).toBe(output)
+  })
+})
+
+describe('isAllowedImageSrc', () => {
+  const origins = ['https://CDN.datum.net/', 'not a url']
+
+  it('allows an image from a listed origin, whatever its case or default port', () => {
+    expect(isAllowedImageSrc('https://cdn.datum.net/a.png', origins)).toBe(true)
+    expect(isAllowedImageSrc('https://cdn.datum.net:443/a.png', origins)).toBe(true)
+  })
+
+  it('blocks other origins, relative, protocol-relative, data and blob sources', () => {
+    for (const src of [
+      'https://attacker.example/x.png',
+      'http://cdn.datum.net/a.png',
+      '/a.png',
+      '//attacker.example/x.png',
+      'data:image/png;base64,AAAA',
+      'blob:https://cdn.datum.net/1',
+      undefined,
+    ]) {
+      expect(isAllowedImageSrc(src, origins)).toBe(false)
+    }
+  })
+
+  it('blocks everything when no origins are configured', () => {
+    expect(isAllowedImageSrc('https://cdn.datum.net/a.png', undefined)).toBe(false)
+    expect(isAllowedImageSrc('https://cdn.datum.net/a.png', [])).toBe(false)
+  })
+})
+
+describe('isInternalHref', () => {
+  it('treats a single-slash path as internal', () => {
+    expect(isInternalHref('/project/p/alb/web')).toBe(true)
+  })
+
+  it('ignores the tabs and newlines browsers drop from a URL', () => {
+    for (const href of ['/\t/attacker.example', '/\n/attacker.example', '/\r\\attacker.example'])
+      expect(isInternalHref(href)).toBe(false)
+    expect(isInternalHref('/\tusers')).toBe(true)
+  })
+
+  it('treats protocol-relative and backslash forms, absolute URLs and nothing as external', () => {
+    for (const href of ['//attacker.example', '/\\attacker.example', 'https://datum.net', 'mailto:a@b.c', undefined]) {
+      expect(isInternalHref(href)).toBe(false)
+    }
+  })
+})
+
+describe('blockedImageLink', () => {
+  it('labels a web image with its alt text and host and keeps its URL', () => {
+    expect(blockedImageLink('https://attacker.example/x.png?d=1', 'secret'))
+      .toEqual({ label: 'Image: secret (attacker.example)', href: 'https://attacker.example/x.png?d=1' })
+  })
+
+  it('labels a web image with no alt text by its host', () => {
+    expect(blockedImageLink('http://attacker.example/x.png', ''))
+      .toEqual({ label: 'Image (attacker.example)', href: 'http://attacker.example/x.png' })
+  })
+
+  it('gives anything that is not a web URL a label and no link', () => {
+    for (const src of ['/a.png', '//attacker.example/x.png', 'data:image/png;base64,AAAA', 'javascript:alert(1)', undefined])
+      expect(blockedImageLink(src, 'logo')).toEqual({ label: 'Image: logo' })
   })
 })
