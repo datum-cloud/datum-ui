@@ -1,5 +1,16 @@
 # @datum-cloud/datum-ui-native
 
+## 0.2.0
+
+### Minor Changes
+
+- 4cafc46: Assistant replies load images only from origins listed in the new `imageOrigins` config option; other images show as a link or as text. On native, SVG images always show as a link, since an SVG can load images from other origins. Links written `//host` or `/\host` now open as external links, and `UserMessage` sanitizes its `html` itself. Hosts that want images in replies must list their origins.
+
+### Patch Changes
+
+- Updated dependencies [4cafc46]
+  - @datum-cloud/datum-ui-assistant-core@0.2.0
+
 ## 0.1.1
 
 ### Patch Changes

@@ -37,6 +37,18 @@ function publishedWorkspacePackages() {
 }
 const backupPath = `${pkgPath}.backup`
 
+/**
+ * Replace a file by renaming a sibling temp file over it. `changeset pack`
+ * packs packages in parallel, and packing a package that depends on this one
+ * reads this package.json; a rename means that reader sees the old or the new
+ * file, while writeFileSync would let it read the file empty mid-write.
+ */
+function replaceFile(target, contents) {
+  const temp = `${target}.${process.pid}.tmp`
+  fs.writeFileSync(temp, contents)
+  fs.renameSync(temp, target)
+}
+
 const mode = process.argv[2]
 
 if (mode === '--strip') {
@@ -55,13 +67,13 @@ if (mode === '--strip') {
     pkg[field] = Object.fromEntries(stripped)
   }
 
-  fs.writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`)
+  replaceFile(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`)
   console.log('Stripped workspace dependencies for publish')
 }
 else if (mode === '--restore') {
   if (fs.existsSync(backupPath)) {
-    fs.copyFileSync(backupPath, pkgPath)
-    fs.unlinkSync(backupPath)
+    // Renaming the backup over package.json is the same atomic swap.
+    fs.renameSync(backupPath, pkgPath)
     console.log('Restored package.json')
   }
 }
