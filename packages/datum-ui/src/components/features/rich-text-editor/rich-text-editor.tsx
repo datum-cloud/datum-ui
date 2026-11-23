@@ -16,6 +16,25 @@ import { UnderlineToolbar } from './toolbar/underline-toolbar'
 
 const RichTextEditorContext = createContext<RichTextEditorContextValue>({ editor: null })
 
+/**
+ * Whether a Tiptap instance can safely be read from or written to.
+ *
+ * Tiptap v3 can hand effects an instance that is already torn down:
+ * `destroy()` nulls the schema before effect closures observe
+ * `isDestroyed`, and a queued update or a dependency change can then run
+ * against the half-dead instance. `getHTML()`, `setEditable()` and
+ * `view.dispatch()` all throw on such an instance — in production,
+ * `getHTML()` on a schema-less instance surfaced as
+ * "Cannot read properties of null (reading 'cached')".
+ *
+ * Note: `isInitialized` is deliberately NOT part of this check — Tiptap
+ * flips it inside a `setTimeout(0)` after mount, so gating on it would skip
+ * legitimate syncs during the (safe, schema-present) mount window.
+ */
+function isEditorUsable(editor: RichTextEditorContextValue['editor']): boolean {
+  return !!editor && !editor.isDestroyed && !!editor.schema
+}
+
 export function useRichTextEditor() {
   return use(RichTextEditorContext)
 }
@@ -66,8 +85,9 @@ function RichTextEditorRoot({
     editable: !disabled,
     autofocus: autoFocus ? 'end' : false,
     onUpdate: ({ editor: ed }) => {
-      // A queued update can land after teardown; a destroyed editor has no document to read.
-      if (ed.isDestroyed)
+      // A queued update can land after teardown, or on an instance whose schema
+      // was nulled mid-lifecycle — getText()/getHTML() throw on both.
+      if (!isEditorUsable(ed))
         return
       // Normalize empty editor state — Tiptap returns <p></p> when empty,
       // which breaks string validation. Return empty string if no text content.
@@ -89,14 +109,16 @@ function RichTextEditorRoot({
     },
   })
 
-  // The effects below skip a destroyed editor. Tiptap destroys the instance on
-  // unmount and when StrictMode re-runs effects, and a destroyed editor throws
-  // from setEditable, getHTML and view.dispatch.
+  // The effects below skip editors that are not fully usable — see
+  // isEditorUsable. Tiptap v3 can hand us an instance that is mounted but
+  // still initializing, or already torn down (schema nulled) while
+  // isDestroyed does not yet reflect it to effect closures; reading or
+  // writing such an instance throws.
 
   // Honor `disabled` changes after mount — the initial `editable` value would
   // otherwise be the only one that ever takes effect.
   useEffect(() => {
-    if (!editor || editor.isDestroyed)
+    if (!isEditorUsable(editor))
       return
     if (editor.isEditable === disabled)
       editor.setEditable(!disabled)
@@ -106,7 +128,7 @@ function RichTextEditorRoot({
   // controlled parent echoing onChange back into `content` doesn't reset the
   // selection on every keystroke, and empty-vs-`<p></p>` doesn't loop.
   useEffect(() => {
-    if (!editor || editor.isDestroyed)
+    if (!isEditorUsable(editor))
       return
     const next = content ?? ''
     const isNextEmpty = next === '' || next === '<p></p>'
@@ -116,7 +138,7 @@ function RichTextEditorRoot({
 
   // Honor `placeholder` changes after mount (e.g. i18n locale switch).
   useEffect(() => {
-    if (!editor || editor.isDestroyed)
+    if (!isEditorUsable(editor))
       return
     const placeholderExtension = editor.extensionManager.extensions.find(
       ext => ext.name === 'placeholder',

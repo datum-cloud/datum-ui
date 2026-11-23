@@ -83,6 +83,52 @@ describe('richTextEditor — after the editor is destroyed', () => {
   })
 })
 
+describe('richTextEditor — instance torn mid-lifecycle (production repro)', () => {
+  type Editor = NonNullable<RichTextEditorContextValue['editor']>
+
+  /**
+   * Renders the editor and hands back the first Tiptap instance it created.
+   * Mirrors the helper in the "destroyed" suite above.
+   */
+  function renderEditor(props: { content?: string }) {
+    let firstEditor: Editor | null = null
+    function Probe() {
+      const { editor } = useRichTextEditor()
+      firstEditor ??= editor
+      return null
+    }
+    const ui = (next: typeof props) => (
+      <RichTextEditor {...next}>
+        <Probe />
+        <RichTextEditor.Content />
+        <RichTextEditor.CharacterCount />
+      </RichTextEditor>
+    )
+    const view = render(ui(props))
+    if (!firstEditor)
+      throw new Error('editor was not created')
+    return {
+      editor: firstEditor as Editor,
+      rerenderWith: (next: typeof props) => view.rerender(ui(next)),
+    }
+  }
+
+  it('does not throw when content changes on an instance whose schema was nulled before isDestroyed settled', () => {
+    const { editor, rerenderWith } = renderEditor({ content: '<p>First</p>' })
+    // Simulate the state observed in the production crash (cloud-portal ALB
+    // description editor, 2026-11): a teardown that races effect execution
+    // nulls the schema while isDestroyed still reports the instance as
+    // usable. Editor.getHTML() then hands the null schema to ProseMirror's
+    // DOMSerializer.fromSchema, which throws
+    // "Cannot read properties of null (reading 'cached')".
+    act(() => {
+      ;(editor as unknown as { schema: null }).schema = null
+    })
+
+    expect(() => rerenderWith({ content: '<p>Second</p>' })).not.toThrow()
+  })
+})
+
 describe('richTextContent', () => {
   it('renders read-only HTML content', () => {
     const { container } = render(<RichTextContent content="<p>Read only</p>" />)
