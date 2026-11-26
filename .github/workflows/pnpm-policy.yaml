@@ -1,0 +1,26 @@
+name: pnpm policy
+
+# Triggers, permissions and concurrency follow the org's vuln-scan.yaml
+# callers; this repository has no vuln-scan.yaml of its own to copy from.
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  pnpm-policy:
+    uses: datum-cloud/actions/.github/workflows/pnpm-policy.yaml@v1.31.0
+    with:
+      require-pnpm: true
+      require-lockfile: true
