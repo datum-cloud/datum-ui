@@ -2,7 +2,7 @@
   "name": "@datum-cloud/datum-ui",
   "type": "module",
   "version": "3.13.0",
-  "packageManager": "pnpm@11.28.10",
+  "packageManager": "pnpm@12.23.0",
   "license": "MIT",
   "repository": {
     "url": "https://github.com/datum-cloud/datum-ui"

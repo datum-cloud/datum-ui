@@ -2,8 +2,72 @@ packages:
   - "apps/*"
   - "packages/*"
 
-# Build scripts allowlist (pnpm 11 home for the former pnpm.onlyBuiltDependencies).
-# Only lefthook needs its install script (git hooks); the rest are not required.
+# Don't install a version until it has been public for one day (in minutes).
+# Our own packages are published and consumed across repositories on the same
+# day, so the delay must not hold them back.
+minimumReleaseAge: 1440
+minimumReleaseAgeExclude:
+  - '@datum-cloud/*'
+
+# Reject a version published with weaker provenance than the versions before
+# it, such as a release pushed with a stolen token for a package that normally
+# publishes from CI.
+trustPolicy: no-downgrade
+# Each version below was published without provenance after earlier releases
+# of the same package had it. Exempt by exact version, so the next release of
+# each package is checked again.
+trustPolicyExclude:
+  # Expo SDK 57, through apps/native-catalog and packages/native. Expo moved to
+  # trusted publishing with its SDK 58 canaries, so every later 57.x patch reads
+  # as a downgrade. Only SDK 58 releases have provenance, and @expo/cli 57 pins
+  # its helpers to the 57 line (for example @expo/env ~2.4.4), so an override
+  # can't reach them. Drop these when the repo moves to SDK 58.
+  - '@expo/cli@57.0.34'
+  - '@expo/config-plugins@57.0.13'
+  - '@expo/config@57.0.11'
+  - '@expo/env@2.4.4'
+  - '@expo/fingerprint@0.20.16'
+  - '@expo/image-utils@0.11.7'
+  - '@expo/inline-modules@0.1.9'
+  - '@expo/local-build-cache-provider@57.0.10'
+  - '@expo/log-box@57.0.5'
+  - '@expo/metro-config@57.0.14'
+  - '@expo/metro-file-map@57.0.5'
+  - '@expo/plist@0.8.2'
+  - '@expo/prebuild-config@57.0.21'
+  - '@expo/require-utils@57.0.7'
+  - '@expo/router-server@57.0.15'
+  - '@expo/schema-utils@57.0.3'
+  - babel-preset-expo@57.0.17
+  - expo-asset@57.0.21
+  - expo-constants@57.0.24
+  - expo-modules-autolinking@57.0.18
+  - expo-modules-core@57.0.26
+  - expo-modules-jsi@57.1.3
+  - expo@57.0.33
+  - jest-expo@57.0.6
+  # Through ts-checker-rspack-plugin (^4). 4.0.1 had provenance; no later 4.x
+  # release exists.
+  - chokidar@4.0.3
+  # Direct. 2.2.3 has provenance again but is under a day old, so
+  # minimumReleaseAge holds it back. Bump lefthook and drop this entry then.
+  - lefthook@2.2.2
+
+# Moved from .npmrc: pnpm reads its settings from this file. Optional peers
+# such as nuqs's framework adapters rely on it (see the overrides below).
+autoInstallPeers: true
+
+# These packages ship agent skills. The org decided none should be enabled.
+permissions:
+  '@tanstack/react-table':
+    skills: false
+  ai:
+    skills: false
+  tsdown:
+    skills: false
+
+# Dependencies whose install scripts may run. Only lefthook needs its script
+# (git hooks); the rest were reviewed and are not required.
 allowBuilds:
   '@swc/core': false
   core-js: false
@@ -85,7 +149,7 @@ overrides:
 
   # next, sharp and react-router are here only because `nuqs` (a devDependency,
   # used for one data-table adapter) declares five framework adapters as
-  # optional peers, and `auto-install-peers=true` in .npmrc installs them
+  # optional peers, and `autoInstallPeers` above installs them
   # regardless. Nothing imports them -- `pnpm why next` resolves solely through
   # nuqs, no workspace manifest declares them, and no source file imports
   # `nuqs/adapters/*`. They accounted for 11 of the HIGH advisories.
