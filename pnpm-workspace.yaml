@@ -49,9 +49,6 @@ trustPolicyExclude:
   # Through ts-checker-rspack-plugin (^4). 4.0.1 had provenance; no later 4.x
   # release exists.
   - chokidar@4.0.3
-  # Direct. 2.2.3 has provenance again but is under a day old, so
-  # minimumReleaseAge holds it back. Bump lefthook and drop this entry then.
-  - lefthook@2.2.2
 
 # Moved from .npmrc: pnpm reads its settings from this file. Optional peers
 # such as nuqs's framework adapters rely on it (see the overrides below).
